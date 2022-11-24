@@ -1,10 +1,8 @@
 package io.github.view.demo;
 
-import io.github.view.Application;
-
-public class Demo extends Application {
+public class Demo {
 
 	public static void main(String[] args) {
-		new Demo().start();
+
 	}
 }
