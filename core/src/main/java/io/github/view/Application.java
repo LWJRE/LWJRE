@@ -1,6 +1,9 @@
 package io.github.view;
 
+import io.github.view.core.Entity3D;
+import io.github.view.core.TestComponent;
 import io.github.view.core.TreeNode;
+import io.github.view.resources.Resource;
 import org.lwjgl.glfw.GLFW;
 
 public final class Application {
@@ -29,12 +32,17 @@ public final class Application {
 	private Application() {
 		this.mainThread = Thread.currentThread();
 		this.renderingThread = new Thread(this::renderingThread);
+		this.mainThread.setName("Main-Thread");
+		this.renderingThread.setName("Rendering-Thread");
 		this.root = new TreeNode();
+		Entity3D entity = new Entity3D();
+		entity.addComponent(TestComponent::new);
+		this.root.addChild(entity);
 	}
 
 	private void start() {
 		if(GLFW.glfwInit()) {
-			this.window = new Window("Hello", 300, 300);
+			this.window = new Window("Hello", 900, 900);
 			this.renderingThread.start();
 			while(!this.window.shouldClose()) {
 				this.root.process();
@@ -60,6 +68,7 @@ public final class Application {
 			this.root.render();
 			this.window.update();
 		}
+		Resource.cleanUp();
 		this.window.makeContextNonCurrent();
 	}
 
