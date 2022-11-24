@@ -1,5 +1,6 @@
 package io.github.view.resources;
 
+import io.github.view.Application;
 import io.github.view.math.Matrix4;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL20;
@@ -25,6 +26,8 @@ public class ShaderProgram extends Resource {
 	private final HashMap<String, Integer> uniformVariables = new HashMap<>();
 
 	public ShaderProgram(Shader... shaders) {
+		if(!Application.isRenderingThread())
+			throw new RuntimeException("Shader programs can only be created from the rendering thread");
 		this.id = GL20.glCreateProgram();
 		this.shaders = new int[shaders.length];
 		for(int i = 0; i < shaders.length; i++) {
@@ -36,6 +39,8 @@ public class ShaderProgram extends Resource {
 	}
 
 	private int getUniformLocation(String variable) {
+		if(!Application.isRenderingThread())
+			throw new RuntimeException("Uniform variables can only be loaded from the rendering thread");
 		if(this.uniformVariables.containsKey(variable)) {
 			return this.uniformVariables.get(variable);
 		} else {
@@ -56,6 +61,8 @@ public class ShaderProgram extends Resource {
 
 	@Override
 	public void delete() {
+		if(!Application.isRenderingThread())
+			throw new RuntimeException("Shader programs can only be deleted from the rendering thread");
 		for(int shader : this.shaders) {
 			GL20.glDetachShader(this.id, shader);
 		}
