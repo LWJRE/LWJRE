@@ -3,7 +3,7 @@ package io.github.view.core;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
 
-public final class Entity {
+public final class Entity extends TreeNode {
 
 	private final CopyOnWriteArrayList<Component> components = new CopyOnWriteArrayList<>();
 
@@ -12,7 +12,9 @@ public final class Entity {
 		this.components.add(component);
 	}
 
+	@Override
 	public void process() {
+		super.process();
 		this.components.removeIf(Component::wasRemoved);
 		this.components.forEach(component -> {
 			switch(component.getProcessState()) {
@@ -23,7 +25,9 @@ public final class Entity {
 		});
 	}
 
+	@Override
 	public void render() {
+		super.render();
 		this.components.removeIf(Component::wasRemoved);
 		this.components.forEach(component -> {
 			switch(component.getRenderingState()) {

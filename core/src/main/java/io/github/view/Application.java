@@ -1,7 +1,6 @@
 package io.github.view;
 
-import io.github.view.core.Entity;
-import io.github.view.core.TestComponent;
+import io.github.view.core.TreeNode;
 import org.lwjgl.glfw.GLFW;
 
 public final class Application {
@@ -25,21 +24,20 @@ public final class Application {
 	private final Thread mainThread;
 	private final Thread renderingThread;
 
-	private final Entity test;
+	private final TreeNode root;
 
 	private Application() {
 		this.mainThread = Thread.currentThread();
 		this.renderingThread = new Thread(this::renderingThread);
-		this.test = new Entity();
+		this.root = new TreeNode();
 	}
 
 	private void start() {
 		if(GLFW.glfwInit()) {
 			this.window = new Window("Hello", 300, 300);
 			this.renderingThread.start();
-			this.test.addComponent(TestComponent::new);
 			while(!this.window.shouldClose()) {
-				this.test.process();
+				this.root.process();
 				GLFW.glfwPollEvents();
 			}
 			try {
@@ -59,7 +57,7 @@ public final class Application {
 		this.window.makeContextCurrent();
 		while(!this.window.shouldClose()) {
 			Rendering.renderingProcess();
-			this.test.render();
+			this.root.render();
 			this.window.update();
 		}
 		this.window.makeContextNonCurrent();
