@@ -6,11 +6,11 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
-public class TestComponent extends Component {
+public class TestComponent extends Component3D {
 
 	private int vao, vbo;
 
-	public TestComponent(Entity entity) {
+	public TestComponent(Entity3D entity) {
 		super(entity);
 	}
 

@@ -2,13 +2,8 @@ package io.github.view.core;
 
 public class Component {
 
-	public final Entity entity;
 	private volatile State processState = State.NEW;
 	private volatile State renderingState = State.NEW;
-
-	public Component(Entity entity) {
-		this.entity = entity;
-	}
 
 	public void onStart() {
 		this.processState = State.READY;

@@ -3,12 +3,13 @@ package io.github.view.core;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
 
-public final class Entity extends TreeNode {
+public final class Entity3D extends TreeNode {
 
-	private final CopyOnWriteArrayList<Component> components = new CopyOnWriteArrayList<>();
+	public final Transform3D transform = new Transform3D();
+	private final CopyOnWriteArrayList<Component3D> components = new CopyOnWriteArrayList<>();
 
-	public void addComponent(Function<Entity, Component> constructor) {
-		Component component = constructor.apply(this);
+	public void addComponent(Function<Entity3D, Component3D> constructor) {
+		Component3D component = constructor.apply(this);
 		this.components.add(component);
 	}
 
