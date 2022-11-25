@@ -1,7 +1,7 @@
 package io.github.view;
 
+import io.github.view.core.CubeRenderer;
 import io.github.view.core.Entity3D;
-import io.github.view.core.TestComponent;
 import io.github.view.core.TreeNode;
 import io.github.view.resources.Resource;
 import org.lwjgl.glfw.GLFW;
@@ -36,7 +36,7 @@ public final class Application {
 		this.renderingThread.setName("Rendering-Thread");
 		this.root = new TreeNode();
 		Entity3D entity = new Entity3D();
-		entity.addComponent(TestComponent::new);
+		entity.addComponent(CubeRenderer::new);
 		this.root.addChild(entity);
 	}
 
