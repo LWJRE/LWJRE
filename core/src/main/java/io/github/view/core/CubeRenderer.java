@@ -16,6 +16,12 @@ public class CubeRenderer extends Component3D {
 	}
 
 	@Override
+	public void onStart() {
+		super.onStart();
+		this.entity.transform.scale = this.entity.transform.scale.multipliedBy(-1);
+	}
+
+	@Override
 	public void prepareRendering() {
 		super.prepareRendering();
 		this.cubeMesh = Mesh.createMesh3D(new float[] {
@@ -65,9 +71,19 @@ public class CubeRenderer extends Component3D {
 	}
 
 	@Override
+	public void onUpdate() {
+		super.onUpdate();
+		this.entity.transform.rotation = this.entity.transform.rotation.plus(0.0f, 0.000001f, 0.0f);
+		Camera3D.current().fov += 0.00001f;
+	}
+
+	@Override
 	public void render() {
 		super.render();
 		ShaderProgram.start(this.shader);
+		this.shader.loadUniform("transformation_matrix", this.entity.transform.matrix());
+		this.shader.loadUniform("projection_matrix", Camera3D.currentProjection());
+		this.shader.loadUniform("view_matrix", Camera3D.currentView());
 		this.cubeMesh.bind(mesh -> {
 			this.texture.bind();
 			mesh.draw();
