@@ -1,9 +1,6 @@
 package io.github.view;
 
-import io.github.view.core.Camera3D;
-import io.github.view.core.CubeRenderer;
-import io.github.view.core.Entity3D;
-import io.github.view.core.TreeNode;
+import io.github.view.core.*;
 import io.github.view.resources.Resource;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
@@ -38,10 +35,10 @@ public final class Application {
 		this.renderingThread.setName("Rendering-Thread");
 		this.root = new TreeNode();
 		Entity3D entity = new Entity3D();
-		entity.addComponent(CubeRenderer::new);
+		entity.addComponent(ModelRenderer::new);
 		Camera3D camera = new Camera3D();
 		camera.makeCurrent();
-		camera.position = camera.position.plus(0.0f, 0.0f, 2.0f);
+		camera.position = camera.position.plus(0.0f, 0.0f, 6.0f);
 		camera.rotation = camera.rotation.plus(0.01f, 0.01f, 0.01f);
 		this.root.addChild(camera);
 		this.root.addChild(entity);
@@ -71,6 +68,7 @@ public final class Application {
 	private void renderingThread() {
 		this.window.makeContextCurrent();
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
+		GL11.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		while(!this.window.shouldClose()) {
 			Rendering.renderingProcess();
 			this.root.render();
