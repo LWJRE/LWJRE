@@ -1,9 +1,14 @@
 package io.github.view.core;
 
-public class Component {
+public class Script {
 
+	protected final SceneObject object;
 	private volatile State processState = State.NEW;
 	private volatile State renderingState = State.NEW;
+
+	public Script(SceneObject object) {
+		this.object = object;
+	}
 
 	public void onStart() {
 		this.processState = State.READY;
@@ -25,7 +30,7 @@ public class Component {
 
 	}
 
-	public void cleanUpRendering() {
+	public void exitRendering() {
 		this.renderingState = State.REMOVED;
 	}
 

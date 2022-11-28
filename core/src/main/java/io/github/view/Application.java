@@ -26,22 +26,14 @@ public final class Application {
 	private final Thread mainThread;
 	private final Thread renderingThread;
 
-	private final TreeNode root;
+	private Scene currentScene;
 
 	private Application() {
 		this.mainThread = Thread.currentThread();
 		this.renderingThread = new Thread(this::renderingThread);
 		this.mainThread.setName("Main-Thread");
 		this.renderingThread.setName("Rendering-Thread");
-		this.root = new TreeNode();
-		Entity3D entity = new Entity3D();
-		entity.addComponent(ModelRenderer::new);
-		Camera3D camera = new Camera3D();
-		camera.makeCurrent();
-		camera.position = camera.position.plus(0.0f, 0.0f, 6.0f);
-		camera.rotation = camera.rotation.plus(0.01f, 0.01f, 0.01f);
-		this.root.addChild(camera);
-		this.root.addChild(entity);
+		this.currentScene = new Scene();
 	}
 
 	private void start() {
@@ -49,7 +41,7 @@ public final class Application {
 			this.window = new Window("Hello", 960, 540);
 			this.renderingThread.start();
 			while(!this.window.shouldClose()) {
-				this.root.process();
+				this.currentScene.process();
 				GLFW.glfwPollEvents();
 			}
 			try {
@@ -70,8 +62,8 @@ public final class Application {
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		while(!this.window.shouldClose()) {
-			Rendering.renderingProcess();
-			this.root.render();
+			RenderingSystem3D.renderingProcess();
+			this.currentScene.render();
 			this.window.update();
 		}
 		Resource.cleanUp();

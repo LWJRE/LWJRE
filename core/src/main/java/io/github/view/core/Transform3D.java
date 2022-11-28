@@ -3,38 +3,41 @@ package io.github.view.core;
 import io.github.view.math.Matrix4;
 import io.github.view.math.Vector3;
 
-public class Transform3D {
+public class Transform3D extends Script {
 
-	public Vector3 position = Vector3.ZERO;
-	public Vector3 rotation = Vector3.ZERO;
-	public Vector3 scale = Vector3.ONE;
+	private Position3D position;
+	private Rotation3D rotation;
+	private Scale3D scale;
 
-	public Matrix4 matrix() {
-		return new Matrix4(
-				this.scale.x(), 0.0f, 0.0f, 0.0f,
-				0.0f, this.scale.y(), 0.0f, 0.0f,
-				0.0f, 0.0f, this.scale.z(), 0.0f,
-				0.0f, 0.0f, 0.0f, 1.0f
-		).multiply(new Matrix4(
-				1.0f, 0.0f, 0.0f, 0.0f,
-				0.0f, (float) Math.cos(-this.rotation.x()), (float) -Math.sin(-this.rotation.x()), 0.0f,
-				0.0f, (float) Math.sin(-this.rotation.x()), (float) Math.cos(-this.rotation.x()), 0.0f,
-				0.0f, 0.0f, 0.0f, 1.0f
-		)).multiply(new Matrix4(
-				(float) Math.cos(-this.rotation.y()), 0.0f, (float) Math.sin(-this.rotation.y()), 0.0f,
-				0.0f, 1.0f, 0.0f, 0.0f,
-				(float) -Math.sin(-this.rotation.y()), 0.0f, (float) Math.cos(-this.rotation.y()), 0.0f,
-				0.0f, 0.0f, 0.0f, 1.0f
-		)).multiply(new Matrix4(
-				(float) Math.cos(-this.rotation.z()), (float) -Math.sin(-this.rotation.z()), 0.0f, 0.0f,
-				(float) Math.sin(-this.rotation.z()), (float) Math.cos(-this.rotation.z()), 0.0f, 0.0f,
-				0.0f, 0.0f, 1.0f, 0.0f,
-				0.0f, 0.0f, 0.0f, 1.0f
-		)).multiply(new Matrix4(
-				1.0f, 0.0f, 0.0f, this.position.x(),
-				0.0f, 1.0f, 0.0f, this.position.y(),
-				0.0f, 0.0f, 1.0f, this.position.z(),
-				0.0f, 0.0f, 0.0f, 1.0f
-		));
+	public Transform3D(SceneObject object) {
+		super(object);
+	}
+
+	@Override
+	public void onStart() {
+		this.position = this.object.getScript(Position3D.class);
+		this.rotation = this.object.getScript(Rotation3D.class);
+		this.scale = this.object.getScript(Scale3D.class);
+		super.onStart();
+	}
+
+	public final Vector3 getPosition() {
+		return this.position.get();
+	}
+
+	public final Vector3 getRotation() {
+		return this.rotation.get();
+	}
+
+	public final Vector3 getScale() {
+		return this.scale.get();
+	}
+
+	public final void translate(Vector3 translation) {
+		this.position.set(this.position.get().plus(translation));
+	}
+
+	public final Matrix4 matrix() {
+		return this.position.matrix().multiply(this.rotation.matrix()).multiply(this.scale.matrix());
 	}
 }
