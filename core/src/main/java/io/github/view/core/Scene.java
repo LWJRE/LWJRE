@@ -17,7 +17,7 @@ public final class Scene {
 		object.addScript(ModelRenderer::new);
 		SceneObject camera = new SceneObject();
 		Position3D cameraPosition = camera.addScript(Position3D::new);
-		cameraPosition.set(new Vector3(0.0f, 0.0f, 6.0f));
+		cameraPosition.set(new Vector3(0.0f, 1.0f, 6.0f));
 		Camera3D cameraScript = camera.addScript(Camera3D::new);
 		cameraScript.makeCurrent();
 		this.sceneObjects.add(object);
