@@ -5,7 +5,9 @@ import io.github.view.resources.Mesh;
 import io.github.view.resources.ModelLoader;
 import io.github.view.resources.Shader;
 
-public class ModelRenderer extends Script {
+import java.util.List;
+
+public class ModelRenderer extends Renderer3D {
 
 	private Transform3D transform;
 	private Mesh model;
@@ -30,21 +32,22 @@ public class ModelRenderer extends Script {
 	}
 
 	@Override
-	public void exitRendering() {
-		RenderingSystem3D.removeFromBatch(this);
-		super.exitRendering();
-	}
-
-	// TODO: Better system for different things
-	public void onRender(Mesh.DrawableMesh drawableMesh) {
+	public void render(Mesh.DrawableMesh mesh, List<Light> lights) {
 		this.shader.start();
 		this.shader.loadUniform("transformation_matrix", this.transform.matrix());
 		this.shader.loadUniform("projection_matrix", Camera3D.currentProjectionMatrix());
 		this.shader.loadUniform("view_matrix", Camera3D.currentViewMatrix());
-		drawableMesh.draw();
+		mesh.draw();
 	}
 
-	public Mesh getModel() {
-		return model;
+	@Override
+	public Mesh getMesh() {
+		return this.model;
+	}
+
+	@Override
+	public void exitRendering() {
+		RenderingSystem3D.removeFromBatch(this);
+		super.exitRendering();
 	}
 }
