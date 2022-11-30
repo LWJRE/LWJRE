@@ -20,8 +20,13 @@ public final class Scene {
 		cameraPosition.set(new Vector3(0.0f, 1.0f, 6.0f));
 		Camera3D cameraScript = camera.addScript(Camera3D::new);
 		cameraScript.makeCurrent();
+		SceneObject pointLight = new SceneObject();
+		Position3D lightPosition = pointLight.addScript(Position3D::new);
+		pointLight.addScript(PointLight3D::new);
+		lightPosition.set(new Vector3(0.0f, -10.0f, 0.0f));
 		this.sceneObjects.add(object);
 		this.sceneObjects.add(camera);
+		this.sceneObjects.add(pointLight);
 	}
 
 	public void process() {

@@ -37,6 +37,12 @@ public class ModelRenderer extends Renderer3D {
 		this.shader.loadUniform("transformation_matrix", this.transform.matrix());
 		this.shader.loadUniform("projection_matrix", Camera3D.currentProjectionMatrix());
 		this.shader.loadUniform("view_matrix", Camera3D.currentViewMatrix());
+		lights.forEach(light -> {
+			this.shader.loadUniform("light.color", light.color);
+			if(light instanceof PointLight3D pointLight) {
+				this.shader.loadUniform("light.position", pointLight.getPosition());
+			}
+		});
 		mesh.draw();
 	}
 

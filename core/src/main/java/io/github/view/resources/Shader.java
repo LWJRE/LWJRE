@@ -1,7 +1,9 @@
 package io.github.view.resources;
 
 import io.github.view.Application;
+import io.github.view.math.Color;
 import io.github.view.math.Matrix4;
+import io.github.view.math.Vector3;
 import io.github.view.utils.FileUtils;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
@@ -45,6 +47,14 @@ public final class Shader extends Resource {
 		}
 	}
 
+	public void loadUniform(String name, Vector3 vector) {
+		GL20.glUniform3f(this.getUniformLocation(name), vector.x(), vector.y(), vector.z());
+	}
+
+	public void loadUniform(String name, Color color) {
+		GL20.glUniform3f(this.getUniformLocation(name), color.r(), color.g(), color.b());
+	}
+
 	public void loadUniform(String name, Matrix4 matrix) {
 		FloatBuffer buffer = BufferUtils.createFloatBuffer(16);
 		buffer.put(matrix.m00()); buffer.put(matrix.m01()); buffer.put(matrix.m02()); buffer.put(matrix.m03());
@@ -70,6 +80,7 @@ public final class Shader extends Resource {
 	}
 
 	private static final HashMap<String, String> SHADER_CODE = new HashMap<>();
+
 
 	public static class Builder {
 
