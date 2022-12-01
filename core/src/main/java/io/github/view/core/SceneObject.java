@@ -18,12 +18,12 @@ public final class SceneObject {
 		return type.cast(this.scripts.get(type));
 	}
 
-	public void process() {
+	public void process(float time) {
 		this.scripts.values().removeIf(Script::wasRemoved);
 		this.scripts.values().forEach(script -> {
 			switch(script.getProcessState()) {
 				case NEW -> script.onStart();
-				case READY -> script.onUpdate();
+				case READY -> script.onUpdate(time);
 				case TO_BE_REMOVED -> script.onExit();
 			}
 		});

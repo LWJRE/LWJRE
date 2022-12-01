@@ -1,9 +1,8 @@
 package io.github.view;
 
-import io.github.view.core.*;
+import io.github.view.core.Scene;
 import io.github.view.resources.Resource;
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.opengl.GL11;
 
 public final class Application {
 
@@ -37,30 +36,28 @@ public final class Application {
 	}
 
 	private void start() {
-		if(GLFW.glfwInit()) {
-			this.window = new Window("Hello", 960, 540);
-			this.renderingThread.start();
-			while(!this.window.shouldClose()) {
-				this.currentScene.process();
-				GLFW.glfwPollEvents();
-			}
-			try {
+		try {
+			if(GLFW.glfwInit()) {
+				this.window = new Window("Hello", 960, 540);
+				this.renderingThread.start();
+				while(!this.window.shouldClose()) {
+					this.currentScene.process();
+					GLFW.glfwPollEvents();
+				}
 				this.renderingThread.join();
-			} catch (InterruptedException e) {
-				// TODO: Terminate program
-				throw new RuntimeException(e);
+				this.window.destroy();
+			} else {
+				System.err.println("Could not initialize GLFW");
 			}
-			this.window.destroy();
-		} else {
-			System.err.println("Could not initialize GLFW");
+		} catch(Exception e) {
+
+		} finally {
+			GLFW.glfwTerminate();
 		}
-		GLFW.glfwTerminate();
 	}
 
 	private void renderingThread() {
 		this.window.makeContextCurrent();
-		GL11.glEnable(GL11.GL_DEPTH_TEST);
-		GL11.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		while(!this.window.shouldClose()) {
 			RenderingSystem3D.renderingProcess();
 			this.currentScene.render();

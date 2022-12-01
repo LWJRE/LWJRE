@@ -47,6 +47,7 @@ public final class Shader extends Resource {
 		}
 	}
 
+	// TODO: Have a "Float3" class and load that instead
 	public void loadUniform(String name, Vector3 vector) {
 		GL20.glUniform3f(this.getUniformLocation(name), vector.x(), vector.y(), vector.z());
 	}

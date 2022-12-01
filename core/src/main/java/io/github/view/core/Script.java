@@ -14,7 +14,7 @@ public class Script {
 		this.processState = State.READY;
 	}
 
-	public void onUpdate() {
+	public void onUpdate(float time) {
 
 	}
 

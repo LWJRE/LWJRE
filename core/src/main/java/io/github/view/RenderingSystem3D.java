@@ -31,8 +31,10 @@ public final class RenderingSystem3D {
 	public static void renderingProcess() {
 		if(!Application.isRenderingThread())
 			throw new RuntimeException("Rendering process can only be called from rendering thread");
+		// TODO: Find a way to avoid checking the thread every time
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
+		GL11.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		BATCH.keySet().forEach(mesh -> mesh.bind(drawableMesh -> BATCH.get(mesh).forEach(renderer -> renderer.render(drawableMesh, LIGHTS))));
 	}
 
