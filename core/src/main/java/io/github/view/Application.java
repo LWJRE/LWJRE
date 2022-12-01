@@ -3,6 +3,7 @@ package io.github.view;
 import io.github.view.core.Scene;
 import io.github.view.graphics.Graphics;
 import io.github.view.graphics.Window;
+import io.github.view.input.Keyboard;
 import io.github.view.resources.Resource;
 import org.lwjgl.glfw.GLFW;
 
@@ -26,6 +27,9 @@ public final class Application {
 		if(!GLFW.glfwInit())
 			throw new IllegalStateException("Unable to initialize GLFW");
 		this.window = new Window("Hello", 960, 540); // TODO: Window config
+		this.window.setKeyCallback(((window1, key, scancode, action, mods) -> {
+			Keyboard.registerKeyEvent(key, action);
+		}));
 	}
 
 	// TODO: GLFW Error callback
@@ -35,7 +39,7 @@ public final class Application {
 			this.window.makeContextCurrent();
 			this.window.show();
 			Graphics.clearColor(0.0f, 0.5f, 1.0f, 0.0f);
-			while(!this.window.shouldClose()) {
+			while(!this.window.isCloseRequested()) {
 				Graphics.clearFramebuffer();
 				this.window.update();
 				GLFW.glfwPollEvents();
