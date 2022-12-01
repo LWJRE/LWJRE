@@ -1,6 +1,8 @@
 package io.github.view;
 
 import io.github.view.core.Scene;
+import io.github.view.graphics.Graphics;
+import io.github.view.graphics.Window;
 import io.github.view.resources.Resource;
 import org.lwjgl.glfw.GLFW;
 
@@ -8,63 +10,44 @@ public final class Application {
 
 	private static Application application;
 
-	public static boolean isMainThread() {
-		return Thread.currentThread().equals(application.mainThread);
-	}
-
 	public static boolean isRenderingThread() {
-		return Thread.currentThread().equals(application.renderingThread);
+		return true; // TODO: Remove this
 	}
 
 	public static Window window() {
 		return application.window;
 	}
 
-	private Window window;
-
-	private final Thread mainThread;
-	private final Thread renderingThread;
+	private final Window window;
 
 	private Scene currentScene;
 
 	private Application() {
-		this.mainThread = Thread.currentThread();
-		this.renderingThread = new Thread(this::renderingThread);
-		this.mainThread.setName("Main-Thread");
-		this.renderingThread.setName("Rendering-Thread");
-		this.currentScene = new Scene();
+		if(!GLFW.glfwInit())
+			throw new IllegalStateException("Unable to initialize GLFW");
+		this.window = new Window("Hello", 960, 540); // TODO: Window config
 	}
+
+	// TODO: GLFW Error callback
 
 	private void start() {
 		try {
-			if(GLFW.glfwInit()) {
-				this.window = new Window("Hello", 960, 540);
-				this.renderingThread.start();
-				while(!this.window.shouldClose()) {
-					this.currentScene.process();
-					GLFW.glfwPollEvents();
-				}
-				this.renderingThread.join();
-				this.window.destroy();
-			} else {
-				System.err.println("Could not initialize GLFW");
+			this.window.makeContextCurrent();
+			this.window.show();
+			Graphics.clearColor(0.0f, 0.5f, 1.0f, 0.0f);
+			while(!this.window.shouldClose()) {
+				Graphics.clearFramebuffer();
+				this.window.update();
+				GLFW.glfwPollEvents();
 			}
+			this.window.destroy();
 		} catch(Exception e) {
-
+			System.err.println("Uncaught exception");
+			e.printStackTrace();
 		} finally {
+			Resource.cleanUp(); // TODO: This might not be necessary
 			GLFW.glfwTerminate();
 		}
-	}
-
-	private void renderingThread() {
-		this.window.makeContextCurrent();
-		while(!this.window.shouldClose()) {
-			RenderingSystem3D.renderingProcess();
-			this.currentScene.render();
-			this.window.update();
-		}
-		Resource.cleanUp();
-		this.window.makeContextNonCurrent();
 	}
 
 	public static void main(String[] args) {
