@@ -2,23 +2,61 @@ package io.github.view.core;
 
 import io.github.view.graphics.RenderingSystem3D;
 import io.github.view.resources.Mesh;
-import io.github.view.resources.ModelLoader;
 import io.github.view.resources.Shader;
 
 import java.util.List;
 
-public class ModelRenderer extends Renderer3D {
+public class CubeRenderer extends Renderer3D {
 
-	private Mesh model;
+	private Mesh cubeMesh;
 	private Shader shader;
 
-	public ModelRenderer(SceneObject object) {
+	public CubeRenderer(SceneObject object) {
 		super(object);
 	}
 
 	@Override
 	public void onStart() {
-		this.model = ModelLoader.getOrLoadObj("/models/bunny.obj");
+		this.cubeMesh = Mesh.createMesh3D(new float[] {
+				-0.5f,0.5f,-0.5f,
+				-0.5f,-0.5f,-0.5f,
+				0.5f,-0.5f,-0.5f,
+				0.5f,0.5f,-0.5f,
+
+				-0.5f,0.5f,0.5f,
+				-0.5f,-0.5f,0.5f,
+				0.5f,-0.5f,0.5f,
+				0.5f,0.5f,0.5f,
+
+				0.5f,0.5f,-0.5f,
+				0.5f,-0.5f,-0.5f,
+				0.5f,-0.5f,0.5f,
+				0.5f,0.5f,0.5f,
+
+				-0.5f,0.5f,-0.5f,
+				-0.5f,-0.5f,-0.5f,
+				-0.5f,-0.5f,0.5f,
+				-0.5f,0.5f,0.5f,
+
+				-0.5f,0.5f,0.5f,
+				-0.5f,0.5f,-0.5f,
+				0.5f,0.5f,-0.5f,
+				0.5f,0.5f,0.5f,
+
+				-0.5f,-0.5f,0.5f,
+				-0.5f,-0.5f,-0.5f,
+				0.5f,-0.5f,-0.5f,
+				0.5f,-0.5f,0.5f
+		}, new int[] {
+				0,1,3,
+				3,1,2,
+				4,5,7,
+				7,5,6,
+				8,9,11,
+				11,9,10,
+				12,13,15,
+				15,13,14
+		}); // TODO: Cube normals
 		this.shader = Shader.main().create();
 		RenderingSystem3D.addToBatch(this);
 		super.onStart();
@@ -26,7 +64,7 @@ public class ModelRenderer extends Renderer3D {
 
 	@Override
 	public void render(Mesh.DrawableMesh mesh, List<Light> lights) {
-		this.shader.start();
+		this.shader.start(); // TODO: Common rendering between 3D objects
 		this.shader.loadUniform("transformation_matrix", this.transform.matrix());
 		this.shader.loadUniform("projection_matrix", Camera3D.currentProjectionMatrix());
 		this.shader.loadUniform("view_matrix", Camera3D.currentViewMatrix());
@@ -41,7 +79,7 @@ public class ModelRenderer extends Renderer3D {
 
 	@Override
 	public Mesh getMesh() {
-		return this.model;
+		return this.cubeMesh;
 	}
 
 	@Override

@@ -28,9 +28,17 @@ public final class Scene {
 		Position3D lightPosition = pointLight.addScript(Position3D::new);
 		pointLight.addScript(PointLight3D::new);
 		lightPosition.set(new Vector3(0.0f, -10.0f, 0.0f));
+		SceneObject cube = new SceneObject();
+		cube.addScript(Position3D::new);
+		cube.addScript(Rotation3D::new);
+		Scale3D cubeScale = cube.addScript(Scale3D::new);
+		cubeScale.set(new Vector3(5.0f, 1.0f, 5.0f));
+		cube.addScript(Transform3D::new);
+		cube.addScript(CubeRenderer::new);
 		this.sceneObjects.add(object);
 		this.sceneObjects.add(camera);
 		this.sceneObjects.add(pointLight);
+		this.sceneObjects.add(cube);
 	}
 
 	public void process() {

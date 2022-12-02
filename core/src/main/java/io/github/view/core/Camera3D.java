@@ -25,11 +25,6 @@ public class Camera3D extends Script {
 		this.position = this.object.getScript(Position3D.class);
 	}
 
-	@Override
-	public void onStart() {
-		super.onStart();
-	}
-
 	public final void makeCurrent() {
 		current = this;
 	}

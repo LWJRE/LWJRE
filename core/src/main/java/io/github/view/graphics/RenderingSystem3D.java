@@ -1,7 +1,6 @@
 package io.github.view.graphics;
 
 import io.github.view.core.Light;
-import io.github.view.core.ModelRenderer;
 import io.github.view.core.Renderer3D;
 import io.github.view.resources.Mesh;
 
@@ -13,7 +12,7 @@ public final class RenderingSystem3D {
 	private static final HashMap<Mesh, ArrayList<Renderer3D>> BATCH = new HashMap<>();
 	private static final ArrayList<Light> LIGHTS = new ArrayList<>();
 
-	public static void addToBatch(ModelRenderer renderer) {
+	public static void addToBatch(Renderer3D renderer) {
 		if(BATCH.containsKey(renderer.getMesh())) {
 			BATCH.get(renderer.getMesh()).add(renderer);
 		} else {
