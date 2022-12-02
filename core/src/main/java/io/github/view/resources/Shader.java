@@ -1,9 +1,9 @@
 package io.github.view.resources;
 
 import io.github.view.Application;
-import io.github.view.math.Color;
+import io.github.view.math.Float3;
+import io.github.view.math.Float4;
 import io.github.view.math.Matrix4;
-import io.github.view.math.Vector3;
 import io.github.view.utils.FileUtils;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
@@ -47,13 +47,20 @@ public final class Shader extends Resource {
 		}
 	}
 
-	// TODO: Have a "Float3" class and load that instead
-	public void loadUniform(String name, Vector3 vector) {
-		GL20.glUniform3f(this.getUniformLocation(name), vector.x(), vector.y(), vector.z());
+	public void loadUniform(String name, Float3 vec3) {
+		this.loadUniform(name, vec3.x(), vec3.y(), vec3.z());
 	}
 
-	public void loadUniform(String name, Color color) {
-		GL20.glUniform3f(this.getUniformLocation(name), color.r(), color.g(), color.b());
+	public void loadUniform(String name, float x, float y, float z) {
+		GL20.glUniform3f(this.getUniformLocation(name), x, y, z);
+	}
+
+	public void loadUniform(String name, Float4 vec4) {
+		this.loadUniform(name, vec4.x(), vec4.y(), vec4.z(), vec4.w());
+	}
+
+	public void loadUniform(String name, float x, float y, float z, float w) {
+		GL20.glUniform4f(this.getUniformLocation(name), x, y, z, w);
 	}
 
 	public void loadUniform(String name, Matrix4 matrix) {
@@ -81,7 +88,6 @@ public final class Shader extends Resource {
 	}
 
 	private static final HashMap<String, String> SHADER_CODE = new HashMap<>();
-
 
 	public static class Builder {
 

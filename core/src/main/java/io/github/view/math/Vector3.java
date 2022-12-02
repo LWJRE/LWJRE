@@ -1,6 +1,6 @@
 package io.github.view.math;
 
-public record Vector3(float x, float y, float z) implements Vector<Vector3> {
+public record Vector3(float x, float y, float z) implements Vector<Vector3>, Float3 {
 
 	public static final Vector3 ZERO = new Vector3(0.0f, 0.0f, 0.0f);
 	public static final Vector3 ONE = new Vector3(1.0f, 1.0f, 1.0f);
