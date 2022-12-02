@@ -9,26 +9,21 @@ import java.util.List;
 
 public class ModelRenderer extends Renderer3D {
 
-	private Transform3D transform;
+	private final Transform3D transform;
 	private Mesh model;
 	private Shader shader;
 
 	public ModelRenderer(SceneObject object) {
 		super(object);
+		this.transform = this.object.getScript(Transform3D.class);
 	}
 
 	@Override
 	public void onStart() {
-		this.transform = this.object.getScript(Transform3D.class);
-		super.onStart();
-	}
-
-	@Override
-	public void prepareRendering() {
 		this.model = ModelLoader.getOrLoadObj("/models/bunny.obj");
 		this.shader = Shader.main().create();
 		RenderingSystem3D.addToBatch(this);
-		super.prepareRendering();
+		super.onStart();
 	}
 
 	@Override
@@ -52,8 +47,8 @@ public class ModelRenderer extends Renderer3D {
 	}
 
 	@Override
-	public void exitRendering() {
+	public void onExit() {
 		RenderingSystem3D.removeFromBatch(this);
-		super.exitRendering();
+		super.onExit();
 	}
 }

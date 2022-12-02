@@ -4,18 +4,13 @@ import io.github.view.math.Vector3;
 
 public class KinematicBody3D extends Script {
 
-	private Transform3D transform;
+	private final Transform3D transform;
 	private Vector3 velocity = Vector3.ZERO;
 	private Vector3 acceleration = new Vector3(0.0f, -9.81f, 0.0f);
 
 	public KinematicBody3D(SceneObject object) {
 		super(object);
-	}
-
-	@Override
-	public void onStart() {
 		this.transform = this.object.getScript(Transform3D.class);
-		super.onStart();
 	}
 
 	@Override

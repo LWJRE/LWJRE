@@ -5,20 +5,15 @@ import io.github.view.math.Vector3;
 
 public class Transform3D extends Script {
 
-	private Position3D position;
-	private Rotation3D rotation;
-	private Scale3D scale;
+	private final Position3D position;
+	private final Rotation3D rotation;
+	private final Scale3D scale;
 
 	public Transform3D(SceneObject object) {
 		super(object);
-	}
-
-	@Override
-	public void onStart() {
 		this.position = this.object.getScript(Position3D.class);
 		this.rotation = this.object.getScript(Rotation3D.class);
 		this.scale = this.object.getScript(Scale3D.class);
-		super.onStart();
 	}
 
 	public final Vector3 getPosition() {
@@ -33,9 +28,13 @@ public class Transform3D extends Script {
 		return this.scale.get();
 	}
 
+	// TODO: Setters
+
 	public final void translate(Vector3 translation) {
 		this.position.set(this.position.get().plus(translation));
 	}
+
+	// TODO: Other operations
 
 	public final Matrix4 matrix() {
 		return this.position.matrix().multiply(this.rotation.matrix()).multiply(this.scale.matrix());

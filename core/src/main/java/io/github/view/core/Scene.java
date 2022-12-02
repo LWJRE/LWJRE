@@ -38,8 +38,4 @@ public final class Scene {
 		this.sceneObjects.forEach(sceneObject -> sceneObject.process((this.previousTime - time) / 1_000_000_000.0f));
 		this.previousTime = time;
 	}
-
-	public void render() {
-		this.sceneObjects.forEach(SceneObject::render);
-	}
 }

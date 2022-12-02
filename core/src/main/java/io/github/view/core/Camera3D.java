@@ -14,7 +14,7 @@ public class Camera3D extends Script {
 		return current != null ? current.viewMatrix() : Matrix4.IDENTITY;
 	}
 
-	private Position3D position;
+	private final Position3D position;
 
 	public float fov = 70.0f;
 	public float nearPlane = 0.1f;
@@ -22,11 +22,11 @@ public class Camera3D extends Script {
 
 	public Camera3D(SceneObject object) {
 		super(object);
+		this.position = this.object.getScript(Position3D.class);
 	}
 
 	@Override
 	public void onStart() {
-		this.position = this.object.getScript(Position3D.class);
 		super.onStart();
 	}
 

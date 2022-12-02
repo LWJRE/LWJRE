@@ -21,21 +21,10 @@ public final class SceneObject {
 	public void process(float time) {
 		this.scripts.values().removeIf(Script::wasRemoved);
 		this.scripts.values().forEach(script -> {
-			switch(script.getProcessState()) {
+			switch(script.getState()) {
 				case NEW -> script.onStart();
 				case READY -> script.onUpdate(time);
 				case TO_BE_REMOVED -> script.onExit();
-			}
-		});
-	}
-
-	public void render() {
-		this.scripts.values().removeIf(Script::wasRemoved);
-		this.scripts.values().forEach(script -> {
-			switch(script.getRenderingState()) {
-				case NEW -> script.prepareRendering();
-				case READY -> script.render();
-				case TO_BE_REMOVED -> script.exitRendering();
 			}
 		});
 	}

@@ -45,7 +45,6 @@ public final class Application {
 			while(!this.window.isCloseRequested()) {
 				Graphics.clearFramebuffer();
 				this.currentScene.process();
-				this.currentScene.render();
 				RenderingSystem3D.renderingProcess();
 				this.window.update();
 				GLFW.glfwPollEvents();
