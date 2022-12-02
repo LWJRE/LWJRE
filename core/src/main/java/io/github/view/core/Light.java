@@ -1,6 +1,6 @@
 package io.github.view.core;
 
-import io.github.view.RenderingSystem3D;
+import io.github.view.graphics.RenderingSystem3D;
 import io.github.view.math.Color;
 
 public class Light extends Script {

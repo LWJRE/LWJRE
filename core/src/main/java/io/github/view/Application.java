@@ -2,6 +2,7 @@ package io.github.view;
 
 import io.github.view.core.Scene;
 import io.github.view.graphics.Graphics;
+import io.github.view.graphics.RenderingSystem3D;
 import io.github.view.graphics.Window;
 import io.github.view.input.Keyboard;
 import io.github.view.resources.Resource;
@@ -21,7 +22,8 @@ public final class Application {
 
 	private final Window window;
 
-	private Scene currentScene;
+	// TODO: Load starting scene, change scene
+	private Scene currentScene = new Scene();
 
 	private Application() {
 		if(!GLFW.glfwInit())
@@ -38,9 +40,13 @@ public final class Application {
 		try {
 			this.window.makeContextCurrent();
 			this.window.show();
+			Graphics.depthTest(true);
 			Graphics.clearColor(0.0f, 0.5f, 1.0f, 0.0f);
 			while(!this.window.isCloseRequested()) {
 				Graphics.clearFramebuffer();
+				this.currentScene.process();
+				this.currentScene.render();
+				RenderingSystem3D.renderingProcess();
 				this.window.update();
 				GLFW.glfwPollEvents();
 			}

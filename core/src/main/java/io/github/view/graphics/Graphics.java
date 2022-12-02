@@ -13,4 +13,8 @@ public final class Graphics {
 	public static void clearFramebuffer() {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 	}
+
+	public static void depthTest(boolean depthTest) {
+		if(depthTest) GL11.glEnable(GL11.GL_DEPTH_TEST); else GL11.glDisable(GL11.GL_DEPTH_TEST);
+	}
 }
