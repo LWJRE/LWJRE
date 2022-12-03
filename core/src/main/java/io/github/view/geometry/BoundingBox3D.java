@@ -42,11 +42,11 @@ public record BoundingBox3D(Vector3 origin, Vector3 v1, Vector3 v2, Vector3 v3) 
 				this.origin(),
 				this.origin().plus(this.v1()),
 				this.origin().plus(this.v2()),
-				this.origin().plus(this.v3()),
 				this.origin().plus(this.v1()).plus(this.v2()),
-				this.origin().plus(this.v2()).plus(this.v3()),
 				this.origin().plus(this.v1()).plus(this.v3()),
-				this.origin().plus(this.v1()).plus(this.v2()).plus(this.v3())
+				this.origin().plus(this.v1()).plus(this.v2()).plus(this.v3()),
+				this.origin().plus(this.v3()),
+				this.origin().plus(this.v2()).plus(this.v3()),
 		};
 	}
 }
