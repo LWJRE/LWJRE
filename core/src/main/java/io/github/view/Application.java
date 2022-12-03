@@ -5,6 +5,7 @@ import io.github.view.graphics.Graphics;
 import io.github.view.graphics.RenderingSystem3D;
 import io.github.view.graphics.Window;
 import io.github.view.input.Keyboard;
+import io.github.view.physics.PhysicsSystem3D;
 import io.github.view.resources.Resource;
 import org.lwjgl.glfw.GLFW;
 
@@ -45,6 +46,7 @@ public final class Application {
 			while(!this.window.isCloseRequested()) {
 				Graphics.clearFramebuffer();
 				this.currentScene.process();
+				PhysicsSystem3D.physicsProcess();
 				RenderingSystem3D.renderingProcess();
 				this.window.update();
 				GLFW.glfwPollEvents();

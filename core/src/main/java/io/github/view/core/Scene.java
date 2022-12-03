@@ -35,6 +35,7 @@ public final class Scene {
 		cubeScale.set(new Vector3(5.0f, 1.0f, 5.0f));
 		cube.addScript(Transform3D::new);
 		cube.addScript(CubeRenderer::new);
+		cube.addScript(StaticBody3D::new);
 		this.sceneObjects.add(object);
 		this.sceneObjects.add(camera);
 		this.sceneObjects.add(pointLight);

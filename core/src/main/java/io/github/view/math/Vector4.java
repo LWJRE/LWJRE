@@ -2,6 +2,14 @@ package io.github.view.math;
 
 public record Vector4(float x, float y, float z, float w) implements Vector<Vector4>, Float4{
 
+	public Vector4(Vector3 xyz, float w) {
+		this(xyz.x(), xyz.y(), xyz.z(), w);
+	}
+
+	public Vector3 xyz() {
+		return new Vector3(this.x(), this.y(), this.z());
+	}
+
 	public Vector4 plus(float x, float y, float z, float w) {
 		return new Vector4(this.x() + x, this.y() + y, this.z() + z, this.w() + w);
 	}
