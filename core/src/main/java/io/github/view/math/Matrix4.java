@@ -24,6 +24,36 @@ public record Matrix4(
 		);
 	}
 
+	@Override
+	public Matrix4 negative() {
+		return new Matrix4(
+				-this.m00(), -this.m01(), -this.m02(), -this.m03(),
+				-this.m10(), -this.m11(), -this.m12(), -this.m13(),
+				-this.m20(), -this.m21(), -this.m22(), -this.m23(),
+				-this.m30(), -this.m31(), -this.m32(), -this.m33()
+		);
+	}
+
+	@Override
+	public Matrix4 transposed() {
+		return new Matrix4(
+				this.m00(), this.m10(), this.m20(), this.m30(),
+				this.m01(), this.m11(), this.m21(), this.m31(),
+				this.m02(), this.m12(), this.m22(), this.m32(),
+				this.m03(), this.m13(), this.m23(), this.m33()
+		);
+	}
+
+	@Override
+	public Matrix4 multipliedBy(float k) {
+		return new Matrix4(
+				this.m00() * k, this.m01() * k, this.m02() * k, this.m03() * k,
+				this.m10() * k, this.m11() * k, this.m12() * k, this.m13() * k,
+				this.m20() * k, this.m21() * k, this.m22() * k, this.m23() * k,
+				this.m30() * k, this.m31() * k, this.m32() * k, this.m33() * k
+		);
+	}
+
 	public Vector4 row0() {
 		return new Vector4(this.m00(), this.m01(), this.m02(), this.m03());
 	}
@@ -67,6 +97,20 @@ public record Matrix4(
 	}
 
 	@Override
+	public boolean isSymmetric() {
+		return this.m10() == this.m01() &&
+				this.m02() == this.m20() && this.m12() == this.m21() &&
+				this.m03() == this.m30() && this.m13() == this.m31() && this.m23() == this.m32();
+	}
+
+	@Override
+	public boolean isSkewSymmetric() {
+		return this.m10() == -this.m01() &&
+				this.m02() == -this.m20() && this.m12() == -this.m21() &&
+				this.m03() == -this.m30() && this.m13() == -this.m31() && this.m23() == -this.m32();
+	}
+
+	@Override
 	public Matrix4 multiply(Matrix4 matrix) {
 		return new Matrix4(
 				this.row0().dotProduct(matrix.column0()), this.row0().dotProduct(matrix.column1()), this.row0().dotProduct(matrix.column2()), this.row0().dotProduct(matrix.column3()),
@@ -74,5 +118,20 @@ public record Matrix4(
 				this.row2().dotProduct(matrix.column0()), this.row2().dotProduct(matrix.column1()), this.row2().dotProduct(matrix.column2()), this.row2().dotProduct(matrix.column3()),
 				this.row3().dotProduct(matrix.column0()), this.row3().dotProduct(matrix.column1()), this.row3().dotProduct(matrix.column2()), this.row3().dotProduct(matrix.column3())
 		);
+	}
+
+	@Override
+	public Matrix4 power(int exponent) {
+		if(exponent < 0) {
+			return this.transposed().power(-exponent);
+		} else if(exponent == 0) {
+			return IDENTITY;
+		} else {
+			Matrix4 result = this;
+			for(int i = 1; i < exponent; i++) {
+				result = result.multiply(this);
+			}
+			return result;
+		}
 	}
 }
