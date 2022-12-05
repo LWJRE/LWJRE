@@ -9,4 +9,12 @@ public record Projection(float max, float min) {
 	public boolean overlaps(float max, float min) {
 		return !(max < this.min() || this.max() < min);
 	}
+
+	public float getOverlap(Projection projection) {
+		return this.getOverlap(projection.max(), projection.min());
+	}
+
+	public float getOverlap(float max, float min) {
+		return Math.max(0.0f, Math.min(this.max, max) - Math.max(this.min, min));
+	}
 }

@@ -15,8 +15,24 @@ public record BoundingBox3D(Vector3 origin, Vector3 v1, Vector3 v2, Vector3 v3) 
 		);
 	}
 
+	public Vector3 getIntersection(BoundingBox3D boundingBox) {
+		Vector3[] axes = {this.v1().normalized(), this.v2().normalized(), this.v3().normalized(), boundingBox.v1().normalized(), boundingBox.v2().normalized(), boundingBox.v3().normalized()};
+		float minOverlap = -1.0f;
+		Vector3 overlapAxis = Vector3.ZERO;
+		for(Vector3 axis : axes) {
+			Projection projection1 = this.project(axis);
+			Projection projection2 = boundingBox.project(axis);
+			float overlap = projection1.getOverlap(projection2);
+			if(minOverlap == -1.0f || overlap < minOverlap) {
+				minOverlap = overlap;
+				overlapAxis = axis;
+			}
+		}
+		return overlapAxis.multipliedBy(minOverlap);
+	}
+
 	public boolean intersects(BoundingBox3D boundingBox) {
-		Vector3[] axes = {this.v1(), this.v2(), this.v3(), boundingBox.v1(), boundingBox.v2(), boundingBox.v3()};
+		Vector3[] axes = {this.v1().normalized(), this.v2().normalized(), this.v3().normalized(), boundingBox.v1().normalized(), boundingBox.v2().normalized(), boundingBox.v3().normalized()};
 		for(Vector3 axis : axes) {
 			Projection projection1 = this.project(axis);
 			Projection projection2 = boundingBox.project(axis);

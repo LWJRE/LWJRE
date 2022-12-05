@@ -23,4 +23,8 @@ public interface Vector<V extends Vector<V>> {
 	default float length() {
 		return (float) Math.sqrt(this.lengthSquared());
 	}
+
+	default V normalized() {
+		return this.dividedBy(this.length());
+	}
 }

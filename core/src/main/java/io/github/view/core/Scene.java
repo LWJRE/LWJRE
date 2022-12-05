@@ -12,29 +12,24 @@ public final class Scene {
 
 	public Scene() {
 		SceneObject object = new SceneObject();
-		Position3D objectPosition = object.addScript(Position3D::new);
-		object.addScript(Rotation3D::new);
-		object.addScript(Scale3D::new);
+		object.addScript(Position3D::new).set(new Vector3(0.0f, 10.0f, 0.0f));
+		object.addScript(Rotation3D::new)/*.set(new Vector3(1.0f, 1.0f, 1.0f))*/;
+		object.addScript(Scale3D::new).set(new Vector3(1.5f, 0.5f, 1.0f));
 		object.addScript(Transform3D::new);
-		object.addScript(ModelRenderer::new);
+		//object.addScript(ModelRenderer::new);
 		object.addScript(KinematicBody3D::new);
-		objectPosition.set(objectPosition.get().plus(0.0f, 50.0f, 0.0f));
 		SceneObject camera = new SceneObject();
-		Position3D cameraPosition = camera.addScript(Position3D::new);
-		cameraPosition.set(new Vector3(0.0f, 1.0f, 6.0f));
-		Camera3D cameraScript = camera.addScript(Camera3D::new);
-		cameraScript.makeCurrent();
+		camera.addScript(Position3D::new).set(new Vector3(0.0f, 1.0f, 6.0f));
+		camera.addScript(Camera3D::new).makeCurrent();
 		SceneObject pointLight = new SceneObject();
-		Position3D lightPosition = pointLight.addScript(Position3D::new);
+		pointLight.addScript(Position3D::new).set(new Vector3(0.0f, -10.0f, 0.0f));
 		pointLight.addScript(PointLight3D::new);
-		lightPosition.set(new Vector3(0.0f, -10.0f, 0.0f));
 		SceneObject cube = new SceneObject();
 		cube.addScript(Position3D::new);
 		cube.addScript(Rotation3D::new);
-		Scale3D cubeScale = cube.addScript(Scale3D::new);
-		cubeScale.set(new Vector3(5.0f, 1.0f, 5.0f));
+		cube.addScript(Scale3D::new).set(new Vector3(5.0f, 1.0f, 5.0f));
 		cube.addScript(Transform3D::new);
-		cube.addScript(CubeRenderer::new);
+		//cube.addScript(CubeRenderer::new);
 		cube.addScript(StaticBody3D::new);
 		this.sceneObjects.add(object);
 		this.sceneObjects.add(camera);
