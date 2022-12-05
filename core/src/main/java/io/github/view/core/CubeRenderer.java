@@ -57,7 +57,7 @@ public class CubeRenderer extends Renderer3D {
 				12,13,15,
 				15,13,14
 		}); // TODO: Cube normals
-		this.shader = Shader.main().create();
+		this.shader = Shader.main().createOrLoad();
 		RenderingSystem3D.addToBatch(this);
 		super.onStart();
 	}

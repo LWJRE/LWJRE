@@ -13,6 +13,7 @@ import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Objects;
 
 public final class Shader extends Resource {
 
@@ -88,6 +89,8 @@ public final class Shader extends Resource {
 	}
 
 	private static final HashMap<String, String> SHADER_CODE = new HashMap<>();
+	private static final HashMap<String, Integer> SHADERS = new HashMap<>();
+	private static final HashMap<Builder, Shader> PROGRAMS = new HashMap<>();
 
 	public static class Builder {
 
@@ -111,25 +114,31 @@ public final class Shader extends Resource {
 			return this;
 		}
 
-		// TODO: Replace with createOrLoad
-		public Shader create() {
-			if(!Application.isRenderingThread())
-				throw new RuntimeException("Shaders can only be created from the rendering thread");
-			int mainVertex = createShader(this.mainVertex, GL20.GL_VERTEX_SHADER, !this.vertex.isEmpty());
-			int mainFragment = createShader(this.mainFragment, GL20.GL_FRAGMENT_SHADER, !this.vertex.isEmpty());
-			ArrayList<Integer> shaders = new ArrayList<>();
-			shaders.add(mainVertex);
-			shaders.add(mainFragment);
-			shaders.addAll(this.vertex.stream().map(file -> createShader(file, GL20.GL_VERTEX_SHADER, false)).toList());
-			shaders.addAll(this.fragment.stream().map(file -> createShader(file, GL20.GL_FRAGMENT_SHADER, false)).toList());
-			return new Shader(shaders);
+		public Shader createOrLoad() {
+			if(PROGRAMS.containsKey(this)) {
+				return PROGRAMS.get(this);
+			} else {
+				int mainVertex = createOrGetShader(this.mainVertex, GL20.GL_VERTEX_SHADER, !this.vertex.isEmpty());
+				int mainFragment = createOrGetShader(this.mainFragment, GL20.GL_FRAGMENT_SHADER, !this.vertex.isEmpty());
+				ArrayList<Integer> shaders = new ArrayList<>();
+				shaders.add(mainVertex);
+				shaders.add(mainFragment);
+				shaders.addAll(this.vertex.stream().map(file -> createOrGetShader(file, GL20.GL_VERTEX_SHADER, false)).toList());
+				shaders.addAll(this.fragment.stream().map(file -> createOrGetShader(file, GL20.GL_FRAGMENT_SHADER, false)).toList());
+				Shader shader = new Shader(shaders);
+				PROGRAMS.put(this, shader);
+				return shader;
+			}
 		}
 
-		private static int createShader(String file, int type, boolean editCode) {
-			String shaderCode = getOrLoad(file);
+		private static int createOrGetShader(String file, int type, boolean editCode) {
+			String shaderCode = getOrReadShaderCode(file);
 			if(editCode) {
 				shaderCode = shaderCode.replaceFirst("#ifdef VERTEX", "#define VERTEX\n#ifdef VERTEX");
 				shaderCode = shaderCode.replaceFirst("#ifdef FRAGMENT", "#define FRAGMENT\n#ifdef FRAGMENT");
+			}
+			if(SHADERS.containsKey(shaderCode)) {
+				return SHADERS.get(shaderCode);
 			}
 			int shader = GL20.glCreateShader(type);
 			GL20.glShaderSource(shader, shaderCode);
@@ -141,16 +150,34 @@ public final class Shader extends Resource {
 				// TODO: Give better compilation feedback
 				throw new RuntimeException("Shader compilation exception");
 			}
+			SHADERS.put(shaderCode, shader);
 			return shader;
 		}
 
-		private static String getOrLoad(String file) {
+		private static String getOrReadShaderCode(String file) {
 			if(SHADER_CODE.containsKey(file)) {
 				return SHADER_CODE.get(file);
 			}
 			String shaderCode = FileUtils.readString(file);
 			SHADER_CODE.put(file, shaderCode);
 			return shaderCode;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			return obj instanceof Builder that &&
+					this.mainVertex.equals(that.mainVertex) && this.mainFragment.equals(that.mainFragment) &&
+					this.vertex.equals(that.vertex) && this.fragment.equals(that.fragment);
+		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hash(mainVertex, mainFragment, vertex, fragment);
+		}
+
+		@Override
+		public String toString() {
+			return this.mainVertex + " " + this.mainFragment + " " + this.vertex + " " + this.fragment;
 		}
 	}
 }

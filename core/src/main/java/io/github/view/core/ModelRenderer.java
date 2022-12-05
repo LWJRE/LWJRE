@@ -19,7 +19,7 @@ public class ModelRenderer extends Renderer3D {
 	@Override
 	public void onStart() {
 		this.model = ModelLoader.getOrLoadObj("/models/bunny.obj");
-		this.shader = Shader.main().create();
+		this.shader = Shader.main().createOrLoad();
 		RenderingSystem3D.addToBatch(this);
 		super.onStart();
 	}
