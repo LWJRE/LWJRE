@@ -1,6 +1,7 @@
 package io.github.view.resources;
 
 import io.github.view.Application;
+import io.github.view.math.Float2;
 import io.github.view.math.Float3;
 import io.github.view.math.Float4;
 import io.github.view.math.Matrix4;
@@ -46,6 +47,14 @@ public final class Shader extends Resource {
 			this.uniformVariables.put(variable, location);
 			return location;
 		}
+	}
+
+	public void loadUniform(String name, Float2 vec2) {
+		this.loadUniform(name, vec2.x(), vec2.y());
+	}
+
+	public void loadUniform(String name, float x, float y) {
+		GL20.glUniform2f(this.getUniformLocation(name), x, y);
 	}
 
 	public void loadUniform(String name, Float3 vec3) {
