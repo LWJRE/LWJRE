@@ -34,6 +34,10 @@ public class Transform3D extends Script {
 		this.position.set(this.position.get().plus(translation));
 	}
 
+	public final void rotate(float x, float y, float z) {
+		this.rotation.set(this.rotation.get().plus(x, y, z));
+	}
+
 	// TODO: Other operations
 
 	public final Matrix4 matrix() {
