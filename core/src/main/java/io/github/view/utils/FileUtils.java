@@ -1,6 +1,7 @@
 package io.github.view.utils;
 
 import io.github.view.resources.Texture;
+import org.yaml.snakeyaml.Yaml;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -65,6 +66,12 @@ public final class FileUtils {
 			} catch (IOException e) {
 				throw new RuntimeException("Error loading image " + file, e);
 			}
+		});
+	}
+
+	public static <T> T parseYaml(String file) {
+		return readFile(file, inputStream -> {
+			return new Yaml().load(inputStream);
 		});
 	}
 }

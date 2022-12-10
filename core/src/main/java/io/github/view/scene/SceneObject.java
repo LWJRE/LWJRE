@@ -15,10 +15,13 @@ public final class SceneObject {
 	}
 
 	public <S extends Script> S addScript(Function<SceneObject, S> constructor) {
-		S script = constructor.apply(this);
-		// TODO: Avoid inheritance causing duplicate scripts
-		this.scripts.put(script.getClass(), script);
-		return script;
+		if(constructor != null) {
+			S script = constructor.apply(this);
+			// TODO: Avoid inheritance causing duplicate scripts
+			this.scripts.put(script.getClass(), script);
+			return script;
+		}
+		return null;
 	}
 
 	public <S extends Script> S getScript(Class<S> type) {
