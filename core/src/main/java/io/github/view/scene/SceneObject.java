@@ -18,8 +18,10 @@ public final class SceneObject {
 		if(constructor != null) {
 			S script = constructor.apply(this);
 			// TODO: Avoid inheritance causing duplicate scripts
-			this.scripts.put(script.getClass(), script);
-			return script;
+			if(script != null) {
+				this.scripts.put(script.getClass(), script);
+				return script;
+			}
 		}
 		return null;
 	}

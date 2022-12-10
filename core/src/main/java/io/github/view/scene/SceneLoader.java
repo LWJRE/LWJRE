@@ -14,25 +14,28 @@ public class SceneLoader {
 		Scene scene = new Scene();
 		// TODO; Find a way to load things that does not require the root to be a list
 		List<List<Map<String, Object>>> sceneYaml = FileUtils.parseYaml(file);
-		sceneYaml.forEach(objectYaml -> objectYaml.forEach(scriptYaml -> scene.createObject().addScript(sceneObject -> {
-			try {
-				Script script = (Script) Reflection.instance(String.valueOf(scriptYaml.remove("script")), sceneObject);
-				scriptYaml.forEach((key, value) -> {
-					try {
-						Reflection.setField(script, key, value);
-					} catch (RuntimeException e) {
-						e.printStackTrace();
-					}
-				});
-				// TODO: Temporary
-				if(script instanceof Camera3D camera)
-					camera.makeCurrent();
-				return script;
-			} catch (RuntimeException e) {
-				e.printStackTrace();
-				return null;
-			}
-		})));
+		sceneYaml.forEach(objectYaml -> {
+			SceneObject sceneObject = scene.createObject();
+			objectYaml.forEach(scriptYaml -> sceneObject.addScript(object -> {
+				try {
+					Script script = (Script) Reflection.instance(String.valueOf(scriptYaml.remove("script")), object);
+					scriptYaml.forEach((key, value) -> {
+						try {
+							Reflection.setField(script, key, value);
+						} catch (RuntimeException e) {
+							e.printStackTrace();
+						}
+					});
+					// TODO: Temporary
+					if(script instanceof Camera3D camera)
+						camera.makeCurrent();
+					return script;
+				} catch (RuntimeException e) {
+					e.printStackTrace();
+					return null;
+				}
+			}));
+		});
 		return scene;
 	}
 
