@@ -3,6 +3,7 @@ package io.github.view.core;
 import io.github.view.geometry.BoundingBox3D;
 import io.github.view.math.Vector3;
 import io.github.view.physics.PhysicsSystem3D;
+import io.github.view.scene.SceneObject;
 
 public abstract class PhysicObject3D extends Script {
 

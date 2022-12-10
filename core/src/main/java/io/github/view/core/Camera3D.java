@@ -1,6 +1,7 @@
 package io.github.view.core;
 
 import io.github.view.math.Matrix4;
+import io.github.view.scene.SceneObject;
 
 public class Camera3D extends Script {
 

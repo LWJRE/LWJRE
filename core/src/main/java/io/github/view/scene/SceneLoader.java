@@ -1,22 +1,24 @@
-package io.github.view.core;
+package io.github.view.scene;
 
+import io.github.view.core.Camera3D;
+import io.github.view.core.Script;
 import io.github.view.math.Vector3;
+import io.github.view.utils.FileUtils;
+import org.yaml.snakeyaml.Yaml;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 import java.util.Map;
 
 public class SceneLoader {
 
 	public static Scene load(String file) {
 		Scene scene = new Scene();
-		SceneObject fallingBunny = scene.createObject();
-		fallingBunny.addScript(sceneObject -> createScript(sceneObject, "io.github.view.core.Position3D", Map.ofEntries(Map.entry("position", new Vector3(0.0f, 10.0f, 0.0f)))));
-		fallingBunny.addScript(sceneObject -> createScript(sceneObject, "io.github.view.core.Rotation3D", Map.of()));
-		fallingBunny.addScript(sceneObject -> createScript(sceneObject, "io.github.view.core.Scale3D", Map.of()));
-		fallingBunny.addScript(sceneObject -> createScript(sceneObject, "io.github.view.core.Transform3D", Map.of()));
-		fallingBunny.addScript(sceneObject -> createScript(sceneObject, "io.github.view.core.ModelRenderer", Map.of()));
-		fallingBunny.addScript(sceneObject -> createScript(sceneObject, "io.github.view.core.KinematicBody3D", Map.of()));
+		SceneObject bunny = scene.createObject();
+		loadObject("/bunny.yaml").forEach(script -> {
+			bunny.addScript(sceneObject -> createScript(sceneObject, (String) script.remove("script"), script));
+		});
 		SceneObject camera = scene.createObject();
 		camera.addScript(sceneObject -> createScript(sceneObject, "io.github.view.core.Position3D", Map.ofEntries(Map.entry("position", new Vector3(0.0f, 1.0f, 6.0f)))));
 		((Camera3D) camera.addScript(sceneObject -> createScript(sceneObject, "io.github.view.core.Camera3D", Map.of()))).makeCurrent();
@@ -58,5 +60,11 @@ public class SceneLoader {
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public static List<Map<String, Object>> loadObject(String file) {
+		return FileUtils.readFile(file, inputStream -> {
+			return new Yaml().load(inputStream);
+		});
 	}
 }

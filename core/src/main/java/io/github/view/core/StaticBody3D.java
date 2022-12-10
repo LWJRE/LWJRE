@@ -3,6 +3,7 @@ package io.github.view.core;
 import io.github.view.graphics.Debug;
 import io.github.view.math.Vector3;
 import io.github.view.resources.Shader;
+import io.github.view.scene.SceneObject;
 
 public class StaticBody3D extends PhysicObject3D {
 

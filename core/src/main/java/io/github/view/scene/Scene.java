@@ -1,4 +1,4 @@
-package io.github.view.core;
+package io.github.view.scene;
 
 import java.util.ArrayList;
 

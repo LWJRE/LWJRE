@@ -1,7 +1,7 @@
 package io.github.view;
 
-import io.github.view.core.Scene;
-import io.github.view.core.SceneLoader;
+import io.github.view.scene.Scene;
+import io.github.view.scene.SceneLoader;
 import io.github.view.graphics.Graphics;
 import io.github.view.graphics.RenderingSystem3D;
 import io.github.view.graphics.Window;

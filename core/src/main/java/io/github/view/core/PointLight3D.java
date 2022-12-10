@@ -1,6 +1,7 @@
 package io.github.view.core;
 
 import io.github.view.math.Vector3;
+import io.github.view.scene.SceneObject;
 
 public class PointLight3D extends Light {
 

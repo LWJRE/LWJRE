@@ -1,5 +1,7 @@
 package io.github.view.core;
 
+import io.github.view.scene.SceneObject;
+
 public class Script {
 
 	protected final SceneObject object;

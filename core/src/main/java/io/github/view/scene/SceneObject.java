@@ -1,4 +1,6 @@
-package io.github.view.core;
+package io.github.view.scene;
+
+import io.github.view.core.Script;
 
 import java.util.HashMap;
 import java.util.function.Function;

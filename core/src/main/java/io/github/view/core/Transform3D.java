@@ -2,6 +2,7 @@ package io.github.view.core;
 
 import io.github.view.math.Matrix4;
 import io.github.view.math.Vector3;
+import io.github.view.scene.SceneObject;
 
 public class Transform3D extends Script {
 

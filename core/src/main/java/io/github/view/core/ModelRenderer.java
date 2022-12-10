@@ -4,6 +4,7 @@ import io.github.view.graphics.RenderingSystem3D;
 import io.github.view.resources.Mesh;
 import io.github.view.resources.ModelLoader;
 import io.github.view.resources.Shader;
+import io.github.view.scene.SceneObject;
 
 import java.util.List;
 
