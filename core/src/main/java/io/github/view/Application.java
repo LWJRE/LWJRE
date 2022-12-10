@@ -25,7 +25,7 @@ public final class Application {
 	private final Window window;
 
 	// TODO: Load starting scene, change scene
-	private Scene currentScene = SceneLoader.load("");
+	private Scene currentScene = SceneLoader.loadScene("/scene.yaml");
 
 	private Application() {
 		if(!GLFW.glfwInit())

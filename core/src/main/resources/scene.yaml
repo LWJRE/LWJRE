@@ -1,0 +1,23 @@
+- # Bunny
+  - script: "io.github.view.core.Position3D"
+    position: !!io.github.view.math.Vector3 [ 0.0, 10.0, 0.0 ]
+  - script: "io.github.view.core.Rotation3D"
+  - script: "io.github.view.core.Scale3D"
+  - script: "io.github.view.core.Transform3D"
+  - script: "io.github.view.core.ModelRenderer"
+  - script: "io.github.view.core.KinematicBody3D"
+- # Camera
+  - script: "io.github.view.core.Position3D"
+    position: !!io.github.view.math.Vector3 [ 0.0, 1.0, 6.0 ]
+  - script: "io.github.view.core.Camera3D"
+- # Light
+  - script: "io.github.view.core.Position3D"
+    position: !!io.github.view.math.Vector3 [ 0.0, -10.0, 0.0 ]
+  - script: "io.github.view.core.PointLight3D"
+- # Cube
+  - script: "io.github.view.core.Position3D"
+  - script: "io.github.view.core.Rotation3D"
+  - script: "io.github.view.core.Scale3D"
+    scale: !!io.github.view.math.Vector3 [ 5.0, 1.0, 5.0 ]
+  - script: "io.github.view.core.Transform3D"
+  - script: "io.github.view.core.StaticBody3D"

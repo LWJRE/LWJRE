@@ -2,7 +2,6 @@ package io.github.view.scene;
 
 import io.github.view.core.Camera3D;
 import io.github.view.core.Script;
-import io.github.view.math.Vector3;
 import io.github.view.utils.FileUtils;
 import org.yaml.snakeyaml.Yaml;
 
@@ -13,24 +12,18 @@ import java.util.Map;
 
 public class SceneLoader {
 
-	public static Scene load(String file) {
+	public static Scene loadScene(String file) {
 		Scene scene = new Scene();
-		SceneObject bunny = scene.createObject();
-		loadObject("/bunny.yaml").forEach(script -> {
-			bunny.addScript(sceneObject -> createScript(sceneObject, (String) script.remove("script"), script));
+		// TODO; Find a way to load things that does not require the root to be a list
+		List<List<Map<String, Object>>> sceneYaml = FileUtils.readFile(file, inputStream -> {
+			return new Yaml().load(inputStream);
 		});
-		SceneObject camera = scene.createObject();
-		camera.addScript(sceneObject -> createScript(sceneObject, "io.github.view.core.Position3D", Map.ofEntries(Map.entry("position", new Vector3(0.0f, 1.0f, 6.0f)))));
-		((Camera3D) camera.addScript(sceneObject -> createScript(sceneObject, "io.github.view.core.Camera3D", Map.of()))).makeCurrent();
-		SceneObject pointLight = scene.createObject();
-		pointLight.addScript(sceneObject -> createScript(sceneObject, "io.github.view.core.Position3D", Map.ofEntries(Map.entry("position", new Vector3(0.0f, -10.0f, 0.0f)))));
-		pointLight.addScript(sceneObject -> createScript(sceneObject, "io.github.view.core.PointLight3D", Map.of()));
-		SceneObject cube = scene.createObject();
-		cube.addScript(sceneObject -> createScript(sceneObject, "io.github.view.core.Position3D", Map.of()));
-		cube.addScript(sceneObject -> createScript(sceneObject, "io.github.view.core.Rotation3D", Map.of()));
-		cube.addScript(sceneObject -> createScript(sceneObject, "io.github.view.core.Scale3D", Map.ofEntries(Map.entry("scale", new Vector3(5.0f, 1.0f, 5.0f)))));
-		cube.addScript(sceneObject -> createScript(sceneObject, "io.github.view.core.Transform3D", Map.of()));
-		cube.addScript(sceneObject -> createScript(sceneObject, "io.github.view.core.StaticBody3D", Map.of()));
+		sceneYaml.forEach(objectYaml -> {
+			SceneObject sceneObject = scene.createObject();
+			objectYaml.forEach(scriptYaml -> {
+				sceneObject.addScript(object -> createScript(object, (String) scriptYaml.remove("script"), scriptYaml));
+			});
+		});
 		return scene;
 	}
 
@@ -48,6 +41,9 @@ public class SceneLoader {
 					throw new RuntimeException(e);
 				}
 			});
+			// TODO: Temporary
+			if(script instanceof Camera3D camera)
+				camera.makeCurrent();
 			return script;
 		} catch (InstantiationException e) {
 			throw new RuntimeException(e);
