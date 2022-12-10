@@ -14,7 +14,7 @@ public class StaticBody3D extends PhysicObject3D {
 
 	@Override
 	public void onStart() {
-		this.tempShader = Shader.main().create();
+		this.tempShader = Shader.main().createOrLoad();
 		super.onStart();
 	}
 

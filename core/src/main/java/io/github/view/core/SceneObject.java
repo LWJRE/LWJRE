@@ -6,6 +6,11 @@ import java.util.function.Function;
 public final class SceneObject {
 
 	private final HashMap<Class<? extends Script>, Script> scripts = new HashMap<>();
+	public final Scene scene;
+
+	SceneObject(Scene scene) {
+		this.scene = scene;
+	}
 
 	public <S extends Script> S addScript(Function<SceneObject, S> constructor) {
 		S script = constructor.apply(this);

@@ -1,6 +1,7 @@
 package io.github.view;
 
 import io.github.view.core.Scene;
+import io.github.view.core.SceneLoader;
 import io.github.view.graphics.Graphics;
 import io.github.view.graphics.RenderingSystem3D;
 import io.github.view.graphics.Window;
@@ -24,7 +25,7 @@ public final class Application {
 	private final Window window;
 
 	// TODO: Load starting scene, change scene
-	private Scene currentScene = new Scene();
+	private Scene currentScene = SceneLoader.load("");
 
 	private Application() {
 		if(!GLFW.glfwInit())
