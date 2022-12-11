@@ -1,39 +1,40 @@
 package io.github.view;
 
-import io.github.view.scene.Scene;
-import io.github.view.scene.SceneLoader;
 import io.github.view.graphics.Graphics;
 import io.github.view.graphics.RenderingSystem3D;
 import io.github.view.graphics.Window;
 import io.github.view.input.Keyboard;
 import io.github.view.physics.PhysicsSystem3D;
 import io.github.view.resources.Resource;
+import io.github.view.scene.Scene;
+import io.github.view.scene.SceneLoader;
+import io.github.view.utils.PropertiesFile;
 import org.lwjgl.glfw.GLFW;
 
 public final class Application {
 
 	private static Application application;
 
-	public static boolean isRenderingThread() {
-		return true; // TODO: Remove this
-	}
-
 	public static Window window() {
 		return application.window;
 	}
 
-	private final Window window;
+	public static void changeScene(String sceneFile) {
+		application.currentScene = SceneLoader.loadScene(sceneFile);
+	}
 
-	// TODO: Load starting scene, change scene
-	private Scene currentScene = SceneLoader.loadScene("/scene.yaml");
+	private final Window window;
+	private Scene currentScene;
 
 	private Application() {
 		if(!GLFW.glfwInit())
 			throw new IllegalStateException("Unable to initialize GLFW");
-		this.window = new Window("Hello", 960, 540); // TODO: Window config
+		PropertiesFile applicationProperties = PropertiesFile.loadFromFile("/application.properties");
+		this.window = new Window(PropertiesFile.loadFromFile("/window.properties"));
 		this.window.setKeyCallback(((window1, key, scancode, action, mods) -> {
 			Keyboard.registerKeyEvent(key, action);
 		}));
+		this.currentScene = SceneLoader.loadScene(applicationProperties.getString("startScene"));
 	}
 
 	// TODO: GLFW Error callback

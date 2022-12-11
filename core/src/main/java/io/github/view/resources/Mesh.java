@@ -1,6 +1,5 @@
 package io.github.view.resources;
 
-import io.github.view.Application;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
@@ -19,8 +18,6 @@ public class Mesh extends Resource {
 	private final DrawableMesh drawableMesh;
 
 	private Mesh(float[] vertices, int size, DrawableMesh drawableMesh) {
-		if(!Application.isRenderingThread())
-			throw new RuntimeException("Vertex objects can only be bound from the rendering thread");
 		this.vertexArray = GL30.glGenVertexArrays();
 		GL30.glBindVertexArray(this.vertexArray);
 		this.storeData(vertices, size, 0);
@@ -33,8 +30,6 @@ public class Mesh extends Resource {
 	}
 
 	private void bind() {
-		if(!Application.isRenderingThread())
-			throw new RuntimeException("Vertex objects can only be bound from the rendering thread");
 		GL30.glBindVertexArray(this.vertexArray);
 		this.attributes.forEach(GL20::glEnableVertexAttribArray);
 	}
@@ -52,8 +47,6 @@ public class Mesh extends Resource {
 
 	@Override
 	protected void delete() {
-		if(!Application.isRenderingThread())
-			throw new RuntimeException("Vertex objects can only be deleted from the rendering thread");
 		GL30.glDeleteVertexArrays(this.vertexArray);
 		this.vertexBuffers.forEach(GL15::glDeleteBuffers);
 	}

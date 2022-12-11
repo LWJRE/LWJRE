@@ -1,5 +1,6 @@
 package io.github.view.graphics;
 
+import io.github.view.utils.PropertiesFile;
 import org.lwjgl.glfw.Callbacks;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWKeyCallbackI;
@@ -12,12 +13,26 @@ public class Window {
 
 	// TODO: Make sure window was not destroyed before using it
 
-	public Window(String title, int width, int height) {
-		GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, GLFW.GLFW_FALSE);
-		GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, GLFW.GLFW_FALSE); // TODO: Window config
+	public Window(PropertiesFile properties) {
+		GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, properties.get("visible", false) ? GLFW.GLFW_TRUE : GLFW.GLFW_FALSE);
+		GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, properties.get("resizeable", false) ? GLFW.GLFW_TRUE : GLFW.GLFW_FALSE);
+		GLFW.glfwWindowHint(GLFW.GLFW_DECORATED, properties.get("decorated", true) ? GLFW.GLFW_TRUE : GLFW.GLFW_FALSE);
+		GLFW.glfwWindowHint(GLFW.GLFW_FOCUSED, properties.get("focused", true) ? GLFW.GLFW_TRUE : GLFW.GLFW_FALSE);
+		GLFW.glfwWindowHint(GLFW.GLFW_MAXIMIZED, properties.get("maximized", false) ? GLFW.GLFW_TRUE : GLFW.GLFW_FALSE);
+		String title = properties.get("title", "untitled");
+		int width = properties.get("width", 300);
+		int height = properties.get("height", 300);
 		this.handle = GLFW.glfwCreateWindow(width, height, title, MemoryUtil.NULL, MemoryUtil.NULL); // TODO: Must be called from the main thread
 		if(this.handle == MemoryUtil.NULL)
 			throw new RuntimeException("Failed to create the GLFW window");
+	}
+
+	public Window(String title, int width, int height) {
+		this(new PropertiesFile().set("title", title).set("width", width).set("height", height));
+	}
+
+	public Window() {
+		this(new PropertiesFile());
 	}
 
 	public final void setKeyCallback(GLFWKeyCallbackI callback) {

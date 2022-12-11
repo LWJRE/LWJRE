@@ -1,6 +1,5 @@
 package io.github.view.resources;
 
-import io.github.view.Application;
 import io.github.view.math.Float2;
 import io.github.view.math.Float3;
 import io.github.view.math.Float4;
@@ -10,6 +9,7 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 
+import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,8 +38,6 @@ public final class Shader extends Resource {
 	}
 
 	private int getUniformLocation(String variable) {
-		if(!Application.isRenderingThread())
-			throw new RuntimeException("Uniform variables can only be loaded from the rendering thread");
 		if(this.uniformVariables.containsKey(variable)) {
 			return this.uniformVariables.get(variable);
 		} else {
@@ -84,8 +82,6 @@ public final class Shader extends Resource {
 
 	@Override
 	public void delete() {
-		if(!Application.isRenderingThread())
-			throw new RuntimeException("Shaders can only be deleted from the rendering thread");
 		for(int shader : this.shaders) {
 			GL20.glDetachShader(this.program, shader);
 			GL20.glDeleteShader(shader);
@@ -166,10 +162,13 @@ public final class Shader extends Resource {
 		private static String getOrReadShaderCode(String file) {
 			if(SHADER_CODE.containsKey(file)) {
 				return SHADER_CODE.get(file);
+			} else try {
+				String shaderCode = FileUtils.readString(file);
+				SHADER_CODE.put(file, shaderCode);
+				return shaderCode;
+			} catch (IOException e) {
+				throw new RuntimeException("Error loading shader code from file " + file, e);
 			}
-			String shaderCode = FileUtils.readString(file);
-			SHADER_CODE.put(file, shaderCode);
-			return shaderCode;
 		}
 
 		@Override
@@ -182,11 +181,6 @@ public final class Shader extends Resource {
 		@Override
 		public int hashCode() {
 			return Objects.hash(mainVertex, mainFragment, vertex, fragment);
-		}
-
-		@Override
-		public String toString() {
-			return this.mainVertex + " " + this.mainFragment + " " + this.vertex + " " + this.fragment;
 		}
 	}
 }
