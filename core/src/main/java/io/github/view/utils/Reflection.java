@@ -29,12 +29,18 @@ public final class Reflection {
 	}
 
 	public static void setField(Object object, String fieldName, Object value) {
+		setField(object, object.getClass(), fieldName, value);
+	}
+
+	private static void setField(Object object, Class<?> fromClass, String fieldName, Object value) {
 		try {
-			Field field = object.getClass().getDeclaredField(fieldName);
+			Field field = fromClass.getDeclaredField(fieldName);
 			field.setAccessible(true);
 			field.set(object, value);
 		} catch (NoSuchFieldException e) {
-			throw new RuntimeException("Cannot find field with name " + fieldName + " in class " + object.getClass(), e);
+			Class<?> superclass = fromClass.getSuperclass();
+			if(superclass != null) setField(object, superclass, fieldName, value);
+			else throw new RuntimeException("Cannot find field with name " + fieldName + " in class " + object.getClass(), e);
 		} catch (IllegalAccessException e) {
 			throw new RuntimeException("Cannot access field " + fieldName + " in object " + object, e);
 		}

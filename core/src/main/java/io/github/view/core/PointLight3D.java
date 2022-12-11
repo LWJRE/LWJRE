@@ -14,10 +14,10 @@ public class PointLight3D extends Light {
 	}
 
 	public final Vector3 getPosition() {
-		return this.position.get();
+		return this.position.getPosition();
 	}
 
 	public final void setPosition(Vector3 position) {
-		this.position.set(position);
+		this.position.setPosition(position);
 	}
 }

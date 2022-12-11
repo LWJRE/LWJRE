@@ -12,17 +12,28 @@ public class Position3D extends Script {
 		super(object);
 	}
 
-	public final Vector3 get() {
+	public final Vector3 getPosition() {
 		return this.position;
 	}
 
-	public final void set(Vector3 position) {
-		if(position == null)
-			throw new NullPointerException();
-		this.position = position;
+	public final void setPosition(Vector3 position) {
+		if(position == null) this.position = Vector3.ZERO;
+		else this.position = position;
 	}
 
-	public final Matrix4 matrix() {
+	public final void setPosition(float x, float y, float z) {
+		this.position = new Vector3(x, y, z);
+	}
+
+	public final void translate(Vector3 translation) {
+		this.position = this.position.plus(translation);
+	}
+
+	public final void translate(float x, float y, float z) {
+		this.position = this.position.plus(x, y, z);
+	}
+
+	public final Matrix4 translationMatrix() {
 		return new Matrix4(
 				1.0f, 0.0f, 0.0f, this.position.x(),
 				0.0f, 1.0f, 0.0f, this.position.y(),

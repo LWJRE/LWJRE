@@ -1,9 +1,6 @@
 - # Bunny
-  - script: "io.github.view.core.Position3D"
-    position: !!io.github.view.math.Vector3 [ 0.0, 10.0, 0.0 ]
-  - script: "io.github.view.core.Rotation3D"
-  - script: "io.github.view.core.Scale3D"
   - script: "io.github.view.core.Transform3D"
+    position: !!io.github.view.math.Vector3 [ 0.0, 10.0, 0.0 ]
   - script: "io.github.view.core.ModelRenderer"
   - script: "io.github.view.core.KinematicBody3D"
 - # Camera
@@ -15,9 +12,6 @@
     position: !!io.github.view.math.Vector3 [ 0.0, -10.0, 0.0 ]
   - script: "io.github.view.core.PointLight3D"
 - # Cube
-  - script: "io.github.view.core.Position3D"
-  - script: "io.github.view.core.Rotation3D"
-  - script: "io.github.view.core.Scale3D"
-    scale: !!io.github.view.math.Vector3 [ 5.0, 1.0, 5.0 ]
   - script: "io.github.view.core.Transform3D"
+    scale: !!io.github.view.math.Vector3 [ 5.0, 1.0, 5.0 ]
   - script: "io.github.view.core.StaticBody3D"

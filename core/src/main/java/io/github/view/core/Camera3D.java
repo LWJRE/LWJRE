@@ -45,9 +45,9 @@ public class Camera3D extends Script {
 
 	public final Matrix4 viewMatrix() {
 		return new Matrix4(
-				1.0f, 0.0f, 0.0f, -this.position.get().x(),
-				0.0f, 1.0f, 0.0f, -this.position.get().y(),
-				0.0f, 0.0f, 1.0f, -this.position.get().z(),
+				1.0f, 0.0f, 0.0f, -this.position.getPosition().x(),
+				0.0f, 1.0f, 0.0f, -this.position.getPosition().y(),
+				0.0f, 0.0f, 1.0f, -this.position.getPosition().z(),
 				0.0f, 0.0f, 0.0f, 1.0f
 		);
 	}
