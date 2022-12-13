@@ -6,7 +6,7 @@
 - # Camera
   - script: "io.github.view.core.Position3D"
     position: !!io.github.view.math.Vector3 [ 0.0, 1.0, 6.0 ]
-  - script: "io.github.view.core.Camera3D"
+  - script: "io.github.view.demo.CameraController"
 - # Light
   - script: "io.github.view.core.Position3D"
     position: !!io.github.view.math.Vector3 [ 0.0, -10.0, 0.0 ]
