@@ -1,13 +1,14 @@
 package io.github.view.physics;
 
 import io.github.view.core.PhysicObject3D;
-import io.github.view.math.Vector3;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public final class PhysicsSystem3D {
 
 	private static final ArrayList<PhysicObject3D> BATCH = new ArrayList<>();
+	private static long previousTime = System.nanoTime();
 
 	public static void addObject(PhysicObject3D object) {
 		BATCH.add(object);
@@ -15,13 +16,17 @@ public final class PhysicsSystem3D {
 
 	public static void physicsProcess() {
 		// TODO: Use a tree instead of a list
-		BATCH.forEach(object -> BATCH.forEach(otherObject -> {
-			if(!object.equals(otherObject)) {
-				Vector3 overlap = object.worldSpaceBoundingBox().getIntersection(otherObject.worldSpaceBoundingBox());
-				if(overlap.x() != 0 || overlap.y() != 0 || overlap.z() != 0)
-					object.onCollision(overlap);
-			}
-		}));
+		long time = System.nanoTime();
+		BATCH.forEach(object -> {
+			object.onPhysicsUpdate((time - previousTime) / 1_000_000_000.0f);
+			BATCH.stream()
+					.filter(otherObject -> !otherObject.equals(object))
+					.map(object::computeCollision)
+					.filter(Objects::nonNull)
+					.findFirst()
+					.ifPresent(object::onCollision);
+		});
+		previousTime = time;
 	}
 
 	public static void removeObject(PhysicObject3D object) {
