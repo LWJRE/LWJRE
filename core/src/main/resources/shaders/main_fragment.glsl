@@ -13,6 +13,13 @@ struct PointLight {
     // TODO: Specular light
 };
 
+struct Material {
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+    float shininess;
+};
+
 // TODO: Material texture
 //uniform sampler2D texture_sampler;
 

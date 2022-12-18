@@ -1,0 +1,4 @@
+ambient: !!io.github.view.math.Color [ 1.0, 0.5, 0.25 ]
+diffuse: !!io.github.view.math.Color [ 0.25, 1.0, 0.5 ]
+specular: !!io.github.view.math.Color [ 0.5, 0.25, 1.0 ]
+shininess: 0.42

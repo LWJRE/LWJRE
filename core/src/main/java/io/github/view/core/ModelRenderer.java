@@ -10,7 +10,10 @@ import java.util.List;
 
 public class ModelRenderer extends Renderer3D {
 
-	private Mesh model;
+	// TODO: Editor variable
+	private String model;
+
+	private Mesh mesh;
 	private Shader shader;
 
 	public ModelRenderer(SceneObject object) {
@@ -19,7 +22,7 @@ public class ModelRenderer extends Renderer3D {
 
 	@Override
 	public void onStart() {
-		this.model = ModelLoader.getOrLoadObj("/models/bunny.obj");
+		this.mesh = ModelLoader.getOrLoadObj(this.model);
 		this.shader = Shader.main().createOrLoad();
 		RenderingSystem3D.addToBatch(this);
 		super.onStart();
@@ -42,7 +45,7 @@ public class ModelRenderer extends Renderer3D {
 
 	@Override
 	public Mesh getMesh() {
-		return this.model;
+		return this.mesh;
 	}
 
 	@Override
