@@ -1,7 +1,10 @@
 package io.github.view.core;
 
 import io.github.view.graphics.RenderingSystem3D;
+import io.github.view.math.Color;
+import io.github.view.math.Vector3;
 import io.github.view.resources.Mesh;
+import io.github.view.resources.Model;
 import io.github.view.resources.ModelLoader;
 import io.github.view.resources.Shader;
 import io.github.view.scene.SceneObject;
@@ -13,7 +16,6 @@ public class ModelRenderer extends Renderer3D {
 	// TODO: Editor variable
 	private String model;
 
-	private Mesh mesh;
 	private Shader shader;
 
 	public ModelRenderer(SceneObject object) {
@@ -22,9 +24,16 @@ public class ModelRenderer extends Renderer3D {
 
 	@Override
 	public void onStart() {
-		this.mesh = ModelLoader.getOrLoadObj(this.model);
+		Model modelInstance = Model.getOrLoad(model);
 		this.shader = Shader.main().createOrLoad();
-		RenderingSystem3D.addToBatch(this);
+		modelInstance.meshes.forEach(mesh -> RenderingSystem3D.addToBatch(mesh, () -> {
+			this.shader.start();
+			this.shader.loadUniform("transformation_matrix", this.transform.matrix());
+			this.shader.loadUniform("projection_matrix", Camera3D.currentProjectionMatrix());
+			this.shader.loadUniform("view_matrix", Camera3D.currentViewMatrix());
+			this.shader.loadUniform("light.color", Color.WHITE);
+			this.shader.loadUniform("light.position", new Vector3(2, -1, 0));
+		}));
 		super.onStart();
 	}
 
@@ -45,7 +54,7 @@ public class ModelRenderer extends Renderer3D {
 
 	@Override
 	public Mesh getMesh() {
-		return this.mesh;
+		return null;
 	}
 
 	@Override

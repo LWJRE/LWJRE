@@ -59,7 +59,12 @@ public class CubeRenderer extends Renderer3D {
 				15,13,14
 		}); // TODO: Cube normals
 		this.shader = Shader.main().createOrLoad();
-		RenderingSystem3D.addToBatch(this);
+		/*RenderingSystem3D.addToBatch(this.cubeMesh, () -> {
+			this.shader.start(); // TODO: Common rendering between 3D objects
+			this.shader.loadUniform("transformation_matrix", this.transform.matrix());
+			this.shader.loadUniform("projection_matrix", Camera3D.currentProjectionMatrix());
+			this.shader.loadUniform("view_matrix", Camera3D.currentViewMatrix());
+		});*/
 		super.onStart();
 	}
 

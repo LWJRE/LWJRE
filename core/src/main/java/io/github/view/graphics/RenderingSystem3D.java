@@ -3,22 +3,23 @@ package io.github.view.graphics;
 import io.github.view.core.Light;
 import io.github.view.core.Renderer3D;
 import io.github.view.resources.Mesh;
+import io.github.view.resources.Mesh3D;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public final class RenderingSystem3D {
 
-	private static final HashMap<Mesh, ArrayList<Renderer3D>> BATCH = new HashMap<>();
+	private static final HashMap<Mesh3D, ArrayList<Runnable>> BATCH = new HashMap<>();
 	private static final ArrayList<Light> LIGHTS = new ArrayList<>();
 
-	public static void addToBatch(Renderer3D renderer) {
-		if(BATCH.containsKey(renderer.getMesh())) {
-			BATCH.get(renderer.getMesh()).add(renderer);
+	public static void addToBatch(Mesh3D mesh, Runnable renderer) {
+		if(BATCH.containsKey(mesh)) {
+			BATCH.get(mesh).add(renderer);
 		} else {
-			ArrayList<Renderer3D> list = new ArrayList<>();
+			ArrayList<Runnable> list = new ArrayList<>();
 			list.add(renderer);
-			BATCH.put(renderer.getMesh(), list);
+			BATCH.put(mesh, list);
 		}
 	}
 
@@ -27,17 +28,17 @@ public final class RenderingSystem3D {
 	}
 
 	public static void renderingProcess() {
-		BATCH.keySet().forEach(mesh -> mesh.bind(drawableMesh -> BATCH.get(mesh).forEach(renderer -> renderer.render(drawableMesh, LIGHTS))));
+		BATCH.keySet().forEach(mesh -> BATCH.get(mesh).forEach(mesh::draw));
 	}
 
 	public static void removeFromBatch(Renderer3D renderer) {
-		if(BATCH.containsKey(renderer.getMesh())) {
+		/*if(BATCH.containsKey(renderer.getMesh())) {
 			ArrayList<Renderer3D> list = BATCH.get(renderer.getMesh());
 			list.remove(renderer);
 			if(list.isEmpty()) {
 				BATCH.remove(renderer.getMesh());
 			}
-		}
+		}*/
 	}
 
 	public static void removeLight(Light light) {
