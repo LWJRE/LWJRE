@@ -8,7 +8,7 @@ import io.github.view.physics.PhysicsSystem3D;
 import io.github.view.resources.Resource;
 import io.github.view.scene.Scene;
 import io.github.view.scene.SceneLoader;
-import io.github.view.utils.PropertiesFile;
+import io.github.view.resources.PropertiesFile;
 import org.lwjgl.glfw.GLFW;
 
 public final class Application {
@@ -29,8 +29,8 @@ public final class Application {
 	private Application() {
 		if(!GLFW.glfwInit())
 			throw new IllegalStateException("Unable to initialize GLFW");
-		PropertiesFile applicationProperties = PropertiesFile.loadFromFile("/application.properties");
-		this.window = new Window(PropertiesFile.loadFromFile("/window.properties"));
+		PropertiesFile applicationProperties = new PropertiesFile("/application.properties");
+		this.window = new Window(new PropertiesFile("/window.properties"));
 		this.window.setKeyCallback(((window1, key, scancode, action, mods) -> {
 			Keyboard.registerKeyEvent(key, action);
 		}));

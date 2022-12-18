@@ -12,82 +12,89 @@ import java.util.stream.Stream;
 
 public final class FileUtils {
 
-	public static void readFile(String file, IOConsumer ioConsumer) {
+	public static void readFile(String file, IOConsumer ioConsumer, Consumer<IOException> exceptionConsumer) {
 		try(InputStream inputStream = FileUtils.class.getResourceAsStream(file)) {
 			if(inputStream == null)
 				throw new FileNotFoundException("Could not find file " + file);
 			ioConsumer.accept(inputStream);
-		} catch(IOException e) {
-			System.err.println("Error loading file " + file);
-			e.printStackTrace();
+		} catch (IOException exception) {
+			exceptionConsumer.accept(exception);
 		}
 	}
 
-	public static <T> T readFile(String file, IOFunction<T> action) throws IOException {
+	public static void readFile(String file, IOConsumer ioConsumer) {
+		readFile(file, ioConsumer, exception -> {
+			System.err.println("Error loading file " + file);
+			exception.printStackTrace();
+		});
+	}
+
+	public static <T> T readFile(String file, IOFunction<T> ioFunction, Function<IOException, T> exceptionFunction) {
 		try(InputStream inputStream = FileUtils.class.getResourceAsStream(file)) {
 			if(inputStream == null)
 				throw new FileNotFoundException("Could not find file " + file);
-			return action.apply(inputStream);
+			return ioFunction.apply(inputStream);
+		} catch (IOException exception) {
+			return exceptionFunction.apply(exception);
 		}
 	}
 
-	public static void streamLines(String file, Consumer<Stream<String>> streamConsumer) {
+	public static void streamLines(String file, Consumer<Stream<String>> streamConsumer, Consumer<IOException> exceptionConsumer) {
 		readFile(file, inputStream -> {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 			streamConsumer.accept(reader.lines());
 			reader.close();
+		}, exceptionConsumer);
+	}
+
+	public static void streamLines(String file, Consumer<Stream<String>> streamConsumer) {
+		streamLines(file, streamConsumer, exception -> {
+			System.err.println("Error loading file " + file);
+			exception.printStackTrace();
 		});
 	}
 
-	public static <T> T streamLines(String file, Function<Stream<String>, T> streamFunction) throws IOException {
+	public static <T> T streamLines(String file, Function<Stream<String>, T> streamFunction, Function<IOException, T> exceptionFunction) {
 		return readFile(file, inputStream -> {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 			T result = streamFunction.apply(reader.lines());
 			reader.close();
 			return result;
+		}, exceptionFunction);
+	}
+
+	public static String readString(String file, Function<IOException, String> exceptionFunction) {
+		return streamLines(file, stringStream -> stringStream.collect(Collectors.joining("\n")), exceptionFunction);
+	}
+
+	public static void readImage(String file, Consumer<BufferedImage> imageConsumer, Consumer<IOException> exceptionConsumer) {
+		readFile(file, inputStream -> imageConsumer.accept(ImageIO.read(inputStream)), exceptionConsumer);
+	}
+
+	public static void readImage(String file, Consumer<BufferedImage> imageConsumer) {
+		readImage(file, imageConsumer, exception -> {
+			System.err.println("Error loading image file " + file);
+			exception.printStackTrace();
 		});
 	}
 
-	public static String readString(String file) throws IOException {
-		return streamLines(file, stringStream -> {
-			return stringStream.collect(Collectors.joining("\n"));
-		});
+	public static <T> T readImage(String file, Function<BufferedImage, T> imageFunction, Function<IOException, T> exceptionFunction) {
+		return readFile(file, inputStream -> imageFunction.apply(ImageIO.read(inputStream)), exceptionFunction);
 	}
 
-	public static BufferedImage readImage(String file) throws IOException {
-		return readFile(file, inputStream -> {
-			return ImageIO.read(inputStream);
-		});
-	}
-
-	public static PropertiesFile readProperties(String file) {
-		try {
-			return readFile(file, inputStream -> {
-				PropertiesFile propertiesFile = new PropertiesFile();
-				propertiesFile.load(inputStream);
-				return propertiesFile;
-			});
-		} catch (IOException e) {
-			System.err.println("Error loading file " + file);
-			e.printStackTrace();
-			return new PropertiesFile();
-		}
-	}
-
+	// TODO: Upgrade this
 	public static <T> T parseYaml(String file) throws IOException {
-		return readFile(file, inputStream -> {
-			return new Yaml().load(inputStream);
-		});
+		return readFile(file, inputStream -> new Yaml().load(inputStream), exception -> null);
 	}
 
 	@FunctionalInterface
-	private interface IOConsumer {
+	public interface IOConsumer {
 
 		void accept(InputStream inputStream) throws IOException;
 	}
 
 	@FunctionalInterface
-	private interface IOFunction<R> {
+	public interface IOFunction<R> {
 
 		R apply(InputStream inputStream) throws IOException;
 	}

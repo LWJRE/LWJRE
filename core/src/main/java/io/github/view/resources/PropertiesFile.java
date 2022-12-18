@@ -1,23 +1,29 @@
-package io.github.view.utils;
+package io.github.view.resources;
+
+import io.github.view.utils.FileUtils;
 
 import java.util.Properties;
 
 public class PropertiesFile extends Properties {
 
-	public static PropertiesFile loadFromFile(String file) {
-		return FileUtils.readProperties(file);
+	public PropertiesFile() {
+		super();
 	}
 
-	public PropertiesFile set(String key, Object value) {
+	public PropertiesFile(String filePath) {
+		FileUtils.readFile(filePath, this::load);
+	}
+
+	public final PropertiesFile set(String key, Object value) {
 		this.setProperty(key, String.valueOf(value));
 		return this;
 	}
 
-	public int getInt(String key) {
+	public final int getInt(String key) {
 		return this.get(key, 0);
 	}
 
-	public int get(String key, int defaultValue) {
+	public final int get(String key, int defaultValue) {
 		if(this.containsKey(key)) {
 			try {
 				return Integer.parseInt(this.getProperty(key));
@@ -28,19 +34,19 @@ public class PropertiesFile extends Properties {
 		return defaultValue;
 	}
 
-	public String getString(String key) {
+	public final String getString(String key) {
 		return this.get(key, "");
 	}
 
-	public String get(String key, String defaultValue) {
+	public final String get(String key, String defaultValue) {
 		return this.getProperty(key, defaultValue);
 	}
 
-	public boolean getBoolean(String key) {
+	public final boolean getBoolean(String key) {
 		return this.get(key, false);
 	}
 
-	public boolean get(String key, boolean defaultValue) {
+	public final boolean get(String key, boolean defaultValue) {
 		if(this.containsKey(key)) {
 			return Boolean.parseBoolean(this.getProperty(key));
 		}

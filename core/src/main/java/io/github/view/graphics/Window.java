@@ -1,6 +1,6 @@
 package io.github.view.graphics;
 
-import io.github.view.utils.PropertiesFile;
+import io.github.view.resources.PropertiesFile;
 import org.lwjgl.glfw.Callbacks;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWKeyCallbackI;

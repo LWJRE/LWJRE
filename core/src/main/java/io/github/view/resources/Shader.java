@@ -136,6 +136,8 @@ public final class Shader extends Resource {
 			}
 		}
 
+		// TODO: Better error handling
+
 		private static int createOrGetShader(String file, int type, boolean editCode) {
 			String shaderCode = getOrReadShaderCode(file);
 			if(editCode) {
@@ -162,12 +164,12 @@ public final class Shader extends Resource {
 		private static String getOrReadShaderCode(String file) {
 			if(SHADER_CODE.containsKey(file)) {
 				return SHADER_CODE.get(file);
-			} else try {
-				String shaderCode = FileUtils.readString(file);
+			} else {
+				String shaderCode = FileUtils.readString(file, exception -> {
+					throw new RuntimeException("Error loading shader code from file " + file, exception);
+				});
 				SHADER_CODE.put(file, shaderCode);
 				return shaderCode;
-			} catch (IOException e) {
-				throw new RuntimeException("Error loading shader code from file " + file, e);
 			}
 		}
 
