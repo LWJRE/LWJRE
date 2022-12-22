@@ -5,10 +5,7 @@ import io.github.view.math.Vector2;
 import io.github.view.math.Vector3;
 import io.github.view.utils.FileUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Stack;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
@@ -43,6 +40,8 @@ public class Model {
 		HashMap<String, Material> materials = new HashMap<>();
 		HashMap<Material, Mesh3D.Builder> model = new HashMap<>();
 		Stack<Mesh3D.Builder> currentMesh = new Stack<>();
+		TreeMap<Integer, Vector2> actualTextures = new TreeMap<>();
+		TreeMap<Integer, Vector3> actualNormals = new TreeMap<>();
 		FileUtils.streamLines(file, stringStream -> stringStream.map(string -> string.split(" ")).forEach(line -> {
 			if(line[0].equals("mtllib")) {
 				// Load mtl file when a line starts with 'mtllib'
@@ -52,7 +51,7 @@ public class Model {
 				vertices.add(new Vector3(Float.parseFloat(line[1]), Float.parseFloat(line[2]), Float.parseFloat(line[3])));
 			} else if(line[0].equals("vt")) {
 				// Add a texture coordinate in the list of all texture coordinates when a line starts with 'vt'
-				textures.add(new Vector2(Float.parseFloat(line[1]), Float.parseFloat(line[2])));
+				textures.add(new Vector2(Float.parseFloat(line[1]), 1 - Float.parseFloat(line[2])));
 			} else if(line[0].equals("vn")) {
 				// Add a normal in the list of all normals when a line starts with 'vn'
 				normals.add(new Vector3(Float.parseFloat(line[1]), Float.parseFloat(line[2]), Float.parseFloat(line[3])));
@@ -81,6 +80,14 @@ public class Model {
 					String[] vertex = line[i].split("/");
 					int vertexIndex = Integer.parseInt(vertex[0]) - 1;
 					currentMesh.peek().addIndex(vertexIndex);
+					if(!vertex[1].isEmpty()) {
+						int textureIndex = Integer.parseInt(vertex[1]) - 1;
+						actualTextures.put(vertexIndex, textures.get(textureIndex));
+					}
+					if(!vertex[2].isEmpty()) {
+						int normalIndex = Integer.parseInt(vertex[2]) - 1;
+						actualNormals.put(vertexIndex, normals.get(normalIndex));
+					}
 				}
 			}
 		}));
@@ -88,8 +95,8 @@ public class Model {
 				Map.Entry::getKey,
 				entry -> entry.getValue()
 						.addVertices(vertices)
-						.addTextureCoordinates(textures)
-						.addNormals(normals)
+						.addTextureCoordinates(actualTextures.values())
+						.addNormals(actualNormals.values())
 						.create()
 		)));
 	}

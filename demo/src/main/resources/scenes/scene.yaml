@@ -1,8 +1,8 @@
 - # Bunny
   - script: "io.github.view.core.Transform3D"
-    position: !!io.github.view.math.Vector3 [ 0.0, 15.0, 0.0 ]
+    position: !!io.github.view.math.Vector3 [ 0.0, 25.0, 0.0 ]
   - script: "io.github.view.core.ModelRenderer"
-    model: "/models/bunny.obj"
+    model: "/models/dragon.obj"
   - script: "io.github.view.core.KinematicBody3D"
 - # Camera
   - script: "io.github.view.core.Position3D"

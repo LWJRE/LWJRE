@@ -23,11 +23,17 @@ public class ModelRenderer extends Script {
 	public void onStart() {
 		this.shader = Shader.main().createOrLoad();
 		Model.getOrLoad(this.model).forEach((material, mesh) -> RenderingSystem3D.addToBatch(mesh, this, () -> {
-			System.out.println(material);
 			this.shader.start();
 			this.shader.loadUniform("transformation_matrix", this.transform.matrix());
 			this.shader.loadUniform("projection_matrix", Camera3D.currentProjectionMatrix());
 			this.shader.loadUniform("view_matrix", Camera3D.currentViewMatrix());
+			if(material != null) {
+				this.shader.loadUniform("material.ambient", material.getAmbient());
+				this.shader.loadUniform("material.diffuse", material.getDiffuse());
+				this.shader.loadUniform("material.specular", material.getSpecular());;
+			}
+			this.shader.loadUniform("light_position", 0.0f, 0.0f, 0.0f);
+			this.shader.loadUniform("light_color", 1.0f, 1.0f, 1.0f);
 		}));
 		super.onStart();
 	}
