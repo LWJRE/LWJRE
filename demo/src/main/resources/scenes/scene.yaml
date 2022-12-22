@@ -1,6 +1,6 @@
 - # Bunny
   - script: "io.github.view.core.Transform3D"
-    position: !!io.github.view.math.Vector3 [ 0.0, 10.0, 0.0 ]
+    position: !!io.github.view.math.Vector3 [ 0.0, 15.0, 0.0 ]
   - script: "io.github.view.core.ModelRenderer"
     model: "/models/bunny.obj"
   - script: "io.github.view.core.KinematicBody3D"

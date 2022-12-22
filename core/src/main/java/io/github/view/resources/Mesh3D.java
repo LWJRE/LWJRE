@@ -1,5 +1,7 @@
 package io.github.view.resources;
 
+import io.github.view.math.Vector2;
+import io.github.view.math.Vector3;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
@@ -12,23 +14,25 @@ import java.util.HashSet;
 public class Mesh3D extends Resource {
 
 	private final int vertexArray;
-	private final Runnable drawMethod;
 	private final ArrayList<Integer> vertexBuffers = new ArrayList<>();
 	private final HashSet<Integer> attributes = new HashSet<>();
 
-	private Mesh3D(Runnable drawMethod) {
+	private Runnable drawMethod;
+
+	private Mesh3D() {
 		this.vertexArray = GL30.glGenVertexArrays();
-		this.drawMethod = drawMethod;
 		GL30.glBindVertexArray(this.vertexArray);
 	}
 
 	public void draw(Runnable onDraw) {
-		GL30.glBindVertexArray(this.vertexArray);
-		this.attributes.forEach(GL20::glEnableVertexAttribArray);
-		onDraw.run();
-		this.drawMethod.run();
-		this.attributes.forEach(GL20::glDisableVertexAttribArray);
-		GL30.glBindVertexArray(0);
+		if(this.drawMethod != null) {
+			GL30.glBindVertexArray(this.vertexArray);
+			this.attributes.forEach(GL20::glEnableVertexAttribArray);
+			onDraw.run();
+			this.drawMethod.run();
+			this.attributes.forEach(GL20::glDisableVertexAttribArray);
+			GL30.glBindVertexArray(0);
+		}
 	}
 
 	@Override
@@ -53,47 +57,146 @@ public class Mesh3D extends Resource {
 		this.vertexBuffers.add(vertexBuffer);
 	}
 
-	public static Builder create(float[] vertices) {
-		return new Builder(vertices, null, () -> GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, vertices.length / 3));
-	}
-
-	public static Builder create(float[] vertices, int[] indices) {
-		return new Builder(vertices, indices, () -> GL11.glDrawElements(GL11.GL_TRIANGLES, indices.length, GL11.GL_UNSIGNED_INT, 0));
-	}
-
 	public static final class Builder {
 
-		private final float[] vertices;
-		private final int[] indices;
-		private final Runnable drawMethod;
-		private float[] textureCoordinates;
-		private float[] normals;
+		private final ArrayList<Float> vertices = new ArrayList<>();
+		private final ArrayList<Integer> indices = new ArrayList<>();
+		private final ArrayList<Float> textureCoordinates = new ArrayList<>();
+		private final ArrayList<Float> normals = new ArrayList<>();
 
-		public Builder(float[] vertices, int[] indices, Runnable drawMethod) {
-			this.vertices = vertices;
-			this.indices = indices;
-			this.drawMethod = drawMethod;
-		}
-
-		public Builder textureCoordinates(float[] textureCoordinates) {
-			this.textureCoordinates = textureCoordinates;
+		public Builder addVertex(float x, float y, float z) {
+			this.vertices.add(x);
+			this.vertices.add(y);
+			this.vertices.add(z);
 			return this;
 		}
 
-		public Builder normals(float[] normals) {
-			this.normals = normals;
+		public Builder addVertices(float... vertices) {
+			for(int i = 0; i < vertices.length; i += 3) {
+				this.addVertex(vertices[i], vertices[i + 1], vertices[i + 2]);
+			}
 			return this;
 		}
 
-		public Mesh3D finish() {
-			Mesh3D mesh = new Mesh3D(this.drawMethod);
-			mesh.storeData(this.vertices, 3, 0);
-			mesh.storeData(this.indices);
-			if(this.textureCoordinates != null)
-				mesh.storeData(this.textureCoordinates, 2, 1);
-			if(this.normals != null)
-				mesh.storeData(this.normals, 3, 1);
+		public Builder addVertex(Vector3 vertex) {
+			return this.addVertex(vertex.x(), vertex.y(), vertex.z());
+		}
+
+		public Builder addVertices(Vector3... vertices) {
+			for(Vector3 vertex : vertices) {
+				this.addVertex(vertex);
+			}
+			return this;
+		}
+
+		public Builder addVertices(Iterable<Vector3> vertices) {
+			vertices.forEach(this::addVertex);
+			return this;
+		}
+
+		public Builder addIndex(int index) {
+			this.indices.add(index);
+			return this;
+		}
+
+		public Builder addIndices(int... indices) {
+			for(int index : indices) {
+				this.indices.add(index);
+			}
+			return this;
+		}
+
+		public Builder addIndices(Iterable<Integer> indices) {
+			indices.forEach(this.indices::add);
+			return this;
+		}
+
+		public Builder addTextureCoordinate(float x, float y) {
+			this.textureCoordinates.add(x);
+			this.textureCoordinates.add(y);
+			return this;
+		}
+
+		public Builder addTextureCoordinates(float... textureCoordinates) {
+			for(int i = 0; i < textureCoordinates.length; i += 2) {
+				this.addTextureCoordinate(textureCoordinates[i], textureCoordinates[i + 1]);
+			}
+			return this;
+		}
+
+		public Builder addTextureCoordinate(Vector2 textureCoordinate) {
+			return this.addTextureCoordinate(textureCoordinate.x(), textureCoordinate.y());
+		}
+
+		public Builder addTextureCoordinates(Vector2... textureCoordinates) {
+			for(Vector2 textureCoordinate : textureCoordinates) {
+				this.addTextureCoordinate(textureCoordinate);
+			}
+			return this;
+		}
+
+		public Builder addTextureCoordinates(Iterable<Vector2> textureCoordinates) {
+			textureCoordinates.forEach(this::addTextureCoordinate);
+			return this;
+		}
+
+		public Builder addNormal(float x, float y, float z) {
+			this.normals.add(x);
+			this.normals.add(y);
+			this.normals.add(z);
+			return this;
+		}
+
+		public Builder addNormals(float... normals) {
+			for(int i = 0; i < normals.length; i += 3) {
+				this.addNormal(normals[i], normals[i + 1], normals[i + 2]);
+			}
+			return this;
+		}
+
+		public Builder addNormal(Vector3 normal) {
+			return this.addNormal(normal.x(), normal.y(), normal.z());
+		}
+
+		public Builder addNormals(Vector3... normals) {
+			for(Vector3 normal : normals) {
+				this.addNormal(normal);
+			}
+			return this;
+		}
+
+		public Builder addNormals(Iterable<Vector3> normals) {
+			normals.forEach(this::addNormal);
+			return this;
+		}
+
+		public Mesh3D create() {
+			Mesh3D mesh = new Mesh3D();
+			if(!this.vertices.isEmpty()) {
+				mesh.storeData(unboxFloat(this.vertices), 3, 0);
+				mesh.drawMethod = () -> GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, this.vertices.size() / 3);
+			}
+			if(!this.indices.isEmpty()) {
+				mesh.storeData(unboxInt(this.indices));
+				mesh.drawMethod = () -> GL11.glDrawElements(GL11.GL_TRIANGLES, this.indices.size(), GL11.GL_UNSIGNED_INT, 0);
+			}
+			if(!this.textureCoordinates.isEmpty())
+				mesh.storeData(unboxFloat(this.textureCoordinates), 2, 1);
+			if(!this.normals.isEmpty())
+				mesh.storeData(unboxFloat(this.normals), 3, 2);
 			return mesh;
+		}
+
+		private static float[] unboxFloat(ArrayList<Float> list) {
+			float[] array = new float[list.size()];
+			for(int i = 0; i < array.length; i++) {
+				array[i] = list.get(i);
+			}
+			return array;
+		}
+
+		private static int[] unboxInt(ArrayList<Integer> list) {
+			return list.stream().mapToInt(i -> i).toArray();
 		}
 	}
 }
