@@ -1,11 +1,16 @@
 package io.github.view.core;
 
 import io.github.view.math.Matrix4;
+import io.github.view.math.Vector3;
 import io.github.view.scene.SceneObject;
 
 public class Camera3D extends Script {
 
 	private static Camera3D current;
+
+	public static Camera3D current() {
+		return current;
+	}
 
 	public static Matrix4 currentProjectionMatrix() {
 		return current != null ? current.projectionMatrix() : Matrix4.IDENTITY;
@@ -28,6 +33,10 @@ public class Camera3D extends Script {
 
 	public final void makeCurrent() {
 		current = this;
+	}
+
+	public final Vector3 getPosition() {
+		return this.position.getPosition();
 	}
 
 	public final Matrix4 projectionMatrix() {

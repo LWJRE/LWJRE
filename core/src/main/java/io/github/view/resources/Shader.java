@@ -9,7 +9,6 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 
-import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,6 +44,10 @@ public final class Shader extends Resource {
 			this.uniformVariables.put(variable, location);
 			return location;
 		}
+	}
+
+	public void loadUniform(String name, float value) {
+		GL20.glUniform1f(this.getUniformLocation(name), value);
 	}
 
 	public void loadUniform(String name, Float2 vec2) {
@@ -128,8 +131,8 @@ public final class Shader extends Resource {
 				ArrayList<Integer> shaders = new ArrayList<>();
 				shaders.add(mainVertex);
 				shaders.add(mainFragment);
-				shaders.addAll(this.vertex.stream().map(file -> createOrGetShader(file, GL20.GL_VERTEX_SHADER, false)).toList());
-				shaders.addAll(this.fragment.stream().map(file -> createOrGetShader(file, GL20.GL_FRAGMENT_SHADER, false)).toList());
+				this.vertex.stream().map(file -> createOrGetShader(file, GL20.GL_VERTEX_SHADER, false)).forEach(shaders::add);
+				this.fragment.stream().map(file -> createOrGetShader(file, GL20.GL_FRAGMENT_SHADER, false)).forEach(shaders::add);
 				Shader shader = new Shader(shaders);
 				PROGRAMS.put(this, shader);
 				return shader;
@@ -154,7 +157,6 @@ public final class Shader extends Resource {
 				System.err.println("Could not compile shader");
 				System.out.println(GL20.glGetShaderInfoLog(shader));
 				GL20.glDeleteShader(shader);
-				// TODO: Give better compilation feedback
 				throw new RuntimeException("Shader compilation exception");
 			}
 			SHADERS.put(shaderCode, shader);

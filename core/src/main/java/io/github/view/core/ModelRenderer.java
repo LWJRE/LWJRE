@@ -31,8 +31,10 @@ public class ModelRenderer extends Script {
 				this.shader.loadUniform("material.ambient", material.getAmbient());
 				this.shader.loadUniform("material.diffuse", material.getDiffuse());
 				this.shader.loadUniform("material.specular", material.getSpecular());;
+				this.shader.loadUniform("material.shininess", 8.0f);
 			}
-			this.shader.loadUniform("light_position", 0.0f, 0.0f, 0.0f);
+			this.shader.loadUniform("camera_position", Camera3D.current().getPosition());
+			this.shader.loadUniform("light_position", 0.0f, 20.0f, 0.0f);
 			this.shader.loadUniform("light_color", 1.0f, 1.0f, 1.0f);
 		}));
 		super.onStart();
