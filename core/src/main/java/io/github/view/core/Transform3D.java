@@ -2,16 +2,47 @@ package io.github.view.core;
 
 import io.github.view.math.Matrix4;
 import io.github.view.math.Vector3;
-import io.github.view.scene.SceneObject;
 
-public class Transform3D extends Position3D {
+public class Transform3D extends Node {
 
+	private Vector3 position = Vector3.ZERO;
 	private Vector3 rotation = Vector3.ZERO;
 	private Vector3 scale = Vector3.ONE;
 
-	public Transform3D(SceneObject object) {
-		super(object);
+	// TODO: Use parent for transformations
+
+	public final Vector3 getPosition() {
+		return this.position;
 	}
+
+	public final void setPosition(Vector3 position) {
+		if(position == null) this.position = Vector3.ZERO;
+		else this.position = position;
+	}
+
+	public final void setPosition(float x, float y, float z) {
+		this.position = new Vector3(x, y, z);
+	}
+
+	public final void translate(Vector3 translation) {
+		if(translation != null)
+			this.position = this.position.plus(translation);
+	}
+
+	public final void translate(float x, float y, float z) {
+		this.position = this.position.plus(x, y, z);
+	}
+
+	public final Matrix4 translationMatrix() {
+		return new Matrix4(
+				1.0f, 0.0f, 0.0f, this.position.x(),
+				0.0f, 1.0f, 0.0f, this.position.y(),
+				0.0f, 0.0f, 1.0f, this.position.z(),
+				0.0f, 0.0f, 0.0f, 1.0f
+		);
+	}
+
+	// TODO: Make rotation better
 
 	public final Vector3 getRotationRadians() {
 		return this.rotation;
@@ -55,19 +86,6 @@ public class Transform3D extends Position3D {
 		this.rotateRadians((float) Math.toRadians(x), (float) Math.toRadians(y), (float) Math.toRadians(z));
 	}
 
-	public final Vector3 getScale() {
-		return this.scale;
-	}
-
-	public final void setScale(Vector3 scale) {
-		if(scale == null) this.scale = Vector3.ZERO;
-		else this.scale = scale;
-	}
-
-	public final void setScale(float x, float y, float z) {
-		this.scale = new Vector3(x, y, z);
-	}
-
 	public final Matrix4 rotationMatrixX() {
 		return new Matrix4(
 				1.0f, 0.0f, 0.0f, 0.0f,
@@ -97,6 +115,19 @@ public class Transform3D extends Position3D {
 
 	public final Matrix4 rotationMatrix() {
 		return this.rotationMatrixX().multiply(this.rotationMatrixY()).multiply(this.rotationMatrixZ());
+	}
+
+	public final Vector3 getScale() {
+		return this.scale;
+	}
+
+	public final void setScale(Vector3 scale) {
+		if(scale == null) this.scale = Vector3.ZERO;
+		else this.scale = scale;
+	}
+
+	public final void setScale(float x, float y, float z) {
+		this.scale = new Vector3(x, y, z);
 	}
 
 	public final Matrix4 scalingMatrix() {

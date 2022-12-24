@@ -1,6 +1,7 @@
 package io.github.view.utils;
 
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.introspector.BeanAccess;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -83,8 +84,10 @@ public final class FileUtils {
 	}
 
 	// TODO: Upgrade this
-	public static <T> T parseYaml(String file) throws IOException {
-		return readFile(file, inputStream -> new Yaml().load(inputStream), exception -> null);
+	public static <T> T parseYaml(String file) {
+		Yaml yaml = new Yaml();
+		yaml.setBeanAccess(BeanAccess.FIELD);
+		return readFile(file, yaml::load, exception -> null);
 	}
 
 	@FunctionalInterface

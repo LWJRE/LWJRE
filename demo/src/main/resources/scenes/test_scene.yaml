@@ -1,0 +1,17 @@
+!!io.github.view.core.Node
+children:
+  # Falling dragon
+  - !!io.github.view.core.KinematicBody3D
+    position: !!io.github.view.math.Vector3 [ 0.0, 25.0, 0.0 ]
+    children:
+      - !!io.github.view.core.ModelRenderer
+        model: "/models/dragon.obj"
+  # Static cube
+  - !!io.github.view.core.CollisionObject3D
+    scale: !!io.github.view.math.Vector3 [ 5.0, 1.0, 5.0 ]
+  # Light
+  - !!io.github.view.core.PointLight3D
+    position: !!io.github.view.math.Vector3 [ -2.0, 5.0, -2.0 ]
+  # Camera
+  - !!io.github.view.core.Camera3D
+    position: !!io.github.view.math.Vector3 [ 0.0, 1.0, 6.0 ]

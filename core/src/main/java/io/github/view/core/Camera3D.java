@@ -2,9 +2,8 @@ package io.github.view.core;
 
 import io.github.view.math.Matrix4;
 import io.github.view.math.Vector3;
-import io.github.view.scene.SceneObject;
 
-public class Camera3D extends Script {
+public class Camera3D extends Node {
 
 	private static Camera3D current;
 
@@ -20,23 +19,23 @@ public class Camera3D extends Script {
 		return current != null ? current.viewMatrix() : Matrix4.IDENTITY;
 	}
 
-	private final Position3D position;
+	private Vector3 position;
 
 	public float fov = 70.0f;
 	public float nearPlane = 0.1f;
 	public float farPlane = 1000.0f;
-
-	public Camera3D(SceneObject object) {
-		super(object);
-		this.position = this.object.getScript(Position3D.class);
-	}
 
 	public final void makeCurrent() {
 		current = this;
 	}
 
 	public final Vector3 getPosition() {
-		return this.position.getPosition();
+		return this.position;
+	}
+
+	public final void setPosition(Vector3 position) {
+		if(position == null) this.position = Vector3.ZERO;
+		else this.position = position;
 	}
 
 	public final Matrix4 projectionMatrix() {
@@ -54,9 +53,9 @@ public class Camera3D extends Script {
 
 	public final Matrix4 viewMatrix() {
 		return new Matrix4(
-				1.0f, 0.0f, 0.0f, -this.position.getPosition().x(),
-				0.0f, 1.0f, 0.0f, -this.position.getPosition().y(),
-				0.0f, 0.0f, 1.0f, -this.position.getPosition().z(),
+				1.0f, 0.0f, 0.0f, -this.position.x(),
+				0.0f, 1.0f, 0.0f, -this.position.y(),
+				0.0f, 0.0f, 1.0f, -this.position.z(),
 				0.0f, 0.0f, 0.0f, 1.0f
 		);
 	}

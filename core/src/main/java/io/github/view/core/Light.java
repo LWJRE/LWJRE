@@ -1,26 +1,17 @@
 package io.github.view.core;
 
-import io.github.view.graphics.RenderingSystem3D;
 import io.github.view.math.Color;
-import io.github.view.scene.SceneObject;
 
-public class Light extends Script {
+public class Light extends Node {
 
-	public Color color = new Color(1.0f, 1.0f, 1.0f);
+	private Color color = Color.WHITE;
 
-	public Light(SceneObject object) {
-		super(object);
+	public final Color getColor() {
+		return this.color;
 	}
 
-	@Override
-	public void onStart() {
-		RenderingSystem3D.addLight(this);
-		super.onStart();
-	}
-
-	@Override
-	public void onExit() {
-		RenderingSystem3D.removeLight(this);
-		super.onExit();
+	public final void setColor(Color color) {
+		if(color == null) this.color = Color.BLACK;
+		else this.color = color;
 	}
 }

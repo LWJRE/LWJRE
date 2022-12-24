@@ -4,11 +4,8 @@ import io.github.view.graphics.Graphics;
 import io.github.view.graphics.RenderingSystem3D;
 import io.github.view.graphics.Window;
 import io.github.view.input.Keyboard;
-import io.github.view.physics.PhysicsSystem3D;
-import io.github.view.resources.Resource;
-import io.github.view.scene.Scene;
-import io.github.view.scene.SceneLoader;
 import io.github.view.resources.PropertiesFile;
+import io.github.view.resources.Resource;
 import org.lwjgl.glfw.GLFW;
 
 public final class Application {
@@ -19,22 +16,15 @@ public final class Application {
 		return application.window;
 	}
 
-	public static void changeScene(String sceneFile) {
-		application.currentScene = SceneLoader.loadScene(sceneFile);
-	}
-
 	private final Window window;
-	private Scene currentScene;
 
 	private Application() {
 		if(!GLFW.glfwInit())
 			throw new IllegalStateException("Unable to initialize GLFW");
-		PropertiesFile applicationProperties = new PropertiesFile("/application.properties");
 		this.window = new Window(new PropertiesFile("/window.properties"));
 		this.window.setKeyCallback(((window1, key, scancode, action, mods) -> {
 			Keyboard.registerKeyEvent(key, action);
 		}));
-		this.currentScene = SceneLoader.loadScene(applicationProperties.getString("startScene"));
 	}
 
 	// TODO: GLFW Error callback
@@ -47,8 +37,6 @@ public final class Application {
 			Graphics.clearColor(0.0f, 0.5f, 1.0f, 0.0f);
 			while(!this.window.isCloseRequested()) {
 				Graphics.clearFramebuffer();
-				this.currentScene.process();
-				PhysicsSystem3D.physicsProcess();
 				RenderingSystem3D.renderingProcess();
 				this.window.update();
 				GLFW.glfwPollEvents();

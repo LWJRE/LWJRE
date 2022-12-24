@@ -1,24 +1,14 @@
 package io.github.view.core;
 
-import io.github.view.graphics.RenderingSystem3D;
-import io.github.view.resources.Model;
 import io.github.view.resources.Shader;
-import io.github.view.scene.SceneObject;
 
-public class ModelRenderer extends Script {
+public class ModelRenderer extends Transform3D {
 
 	// TODO: Editor variable
 	private String model;
 
-	private final Transform3D transform;
-
 	private Shader shader;
-
-	public ModelRenderer(SceneObject object) {
-		super(object);
-		this.transform = object.getScript(Transform3D.class);
-	}
-
+/*
 	@Override
 	public void onStart() {
 		this.shader = Shader.main().createOrLoad();
@@ -44,5 +34,5 @@ public class ModelRenderer extends Script {
 	public void onExit() {
 		RenderingSystem3D.removeFromBatch(this);
 		super.onExit();
-	}
+	}*/
 }
