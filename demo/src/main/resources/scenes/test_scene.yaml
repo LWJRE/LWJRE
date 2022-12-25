@@ -2,7 +2,7 @@
 children:
   # Falling dragon
   - !!io.github.view.core.KinematicBody3D
-    position: !!io.github.view.math.Vector3 [ 0.0, 25.0, 0.0 ]
+    position: !!io.github.view.math.Vector3 [ 0.0, 50.0, 0.0 ]
     children:
       - !!io.github.view.core.ModelRenderer
         model: "/models/dragon.obj"
