@@ -46,6 +46,15 @@ public record Vector2(float x, float y) implements Vector<Vector2>, Float2 {
 		return this.dotProduct(this);
 	}
 
+	public Vector2 multiply(float x, float y) {
+		return new Vector2(this.x() * x, this.y() * y);
+	}
+
+	@Override
+	public Vector2 multiply(Vector2 vector) {
+		return this.multiply(vector.x(), vector.y());
+	}
+
 	@Override
 	public Vector2 abs() {
 		return new Vector2(Math.abs(this.x()), Math.abs(this.y()));

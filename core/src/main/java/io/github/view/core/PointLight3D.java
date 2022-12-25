@@ -1,18 +1,17 @@
 package io.github.view.core;
 
-import io.github.view.math.Vector3;
+import io.github.view.math.Color;
 
-public class PointLight3D extends Light {
+public class PointLight3D extends Position3D {
 
-	private Vector3 position;
-	// TODO: Attenuation
+	private Color color = Color.WHITE;
 
-	public final Vector3 getPosition() {
-		return this.position;
+	public final Color getColor() {
+		return this.color;
 	}
 
-	public final void setPosition(Vector3 position) {
-		if(position == null) this.position = Vector3.ZERO;
-		else this.position = position;
+	public final void setColor(Color color) {
+		if(color == null) this.color = Color.BLACK;
+		else this.color = color;
 	}
 }

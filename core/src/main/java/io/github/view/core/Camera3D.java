@@ -1,9 +1,8 @@
 package io.github.view.core;
 
 import io.github.view.math.Matrix4;
-import io.github.view.math.Vector3;
 
-public class Camera3D extends Node {
+public class Camera3D extends Position3D {
 
 	private static Camera3D current;
 
@@ -19,8 +18,6 @@ public class Camera3D extends Node {
 		return current != null ? current.viewMatrix() : Matrix4.IDENTITY;
 	}
 
-	private Vector3 position;
-
 	public float fov = 70.0f;
 	public float nearPlane = 0.1f;
 	public float farPlane = 1000.0f;
@@ -31,15 +28,6 @@ public class Camera3D extends Node {
 
 	public final void makeCurrent() {
 		current = this;
-	}
-
-	public final Vector3 getPosition() {
-		return this.position;
-	}
-
-	public final void setPosition(Vector3 position) {
-		if(position == null) this.position = Vector3.ZERO;
-		else this.position = position;
 	}
 
 	public final Matrix4 projectionMatrix() {
@@ -57,9 +45,9 @@ public class Camera3D extends Node {
 
 	public final Matrix4 viewMatrix() {
 		return new Matrix4(
-				1.0f, 0.0f, 0.0f, -this.position.x(),
-				0.0f, 1.0f, 0.0f, -this.position.y(),
-				0.0f, 0.0f, 1.0f, -this.position.z(),
+				1.0f, 0.0f, 0.0f, -this.globalPosition().x(),
+				0.0f, 1.0f, 0.0f, -this.globalPosition().y(),
+				0.0f, 0.0f, 1.0f, -this.globalPosition().z(),
 				0.0f, 0.0f, 0.0f, 1.0f
 		);
 	}

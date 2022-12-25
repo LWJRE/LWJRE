@@ -28,6 +28,8 @@ public interface Vector<V extends Vector<V>> {
 		return this.dividedBy((float) this.length());
 	}
 
+	V multiply(V vector);
+
 	V abs();
 
 	default V project(V vector) {

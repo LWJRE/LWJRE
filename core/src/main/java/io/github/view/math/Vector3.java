@@ -64,6 +64,15 @@ public record Vector3(float x, float y, float z) implements Vector<Vector3>, Flo
 		return this.dotProduct(this);
 	}
 
+	public Vector3 multiply(float x, float y, float z) {
+		return new Vector3(this.x() * x, this.y() * y, this.z() * z);
+	}
+
+	@Override
+	public Vector3 multiply(Vector3 vector) {
+		return this.multiply(vector.x(), vector.y(), vector.z());
+	}
+
 	@Override
 	public Vector3 abs() {
 		return new Vector3(Math.abs(this.x()), Math.abs(this.y()), Math.abs(this.z()));

@@ -62,6 +62,15 @@ public record Vector4(float x, float y, float z, float w) implements Vector<Vect
 		return this.dotProduct(this);
 	}
 
+	public Vector4 multiply(float x, float y, float z, float w) {
+		return new Vector4(this.x() * x, this.y() * y, this.z() * z, this.w() * w);
+	}
+
+	@Override
+	public Vector4 multiply(Vector4 vector) {
+		return this.multiply(vector.x(), vector.y(), vector.z(), vector.w());
+	}
+
 	@Override
 	public Vector4 abs() {
 		return new Vector4(Math.abs(this.x()), Math.abs(this.y()), Math.abs(this.z()), Math.abs(this.w()));
