@@ -100,6 +100,34 @@ public final class Shader extends Resource {
 	private static final HashMap<String, Integer> SHADERS = new HashMap<>();
 	private static final HashMap<Builder, Shader> PROGRAMS = new HashMap<>();
 
+	public static void loadStaticUniform(String name, Float2 vec2) {
+		PROGRAMS.values().forEach(shader -> shader.loadUniform(name, vec2));
+	}
+
+	public static void loadStaticUniform(String name, float x, float y) {
+		PROGRAMS.values().forEach(shader -> shader.loadUniform(name, x, y));
+	}
+
+	public static void loadStaticUniform(String name, Float3 vec3) {
+		PROGRAMS.values().forEach(shader -> shader.loadUniform(name, vec3));
+	}
+
+	public static void loadStaticUniform(String name, float x, float y, float z) {
+		PROGRAMS.values().forEach(shader -> shader.loadUniform(name, x, y, z));
+	}
+
+	public static void loadStaticUniform(String name, Float4 vec4) {
+		PROGRAMS.values().forEach(shader -> shader.loadUniform(name, vec4));
+	}
+
+	public static void loadStaticUniform(String name, float x, float y, float z, float w) {
+		PROGRAMS.values().forEach(shader -> shader.loadUniform(name, x, y, z, w));
+	}
+
+	public static void loadStaticUniform(String name, Matrix4 matrix) {
+		PROGRAMS.values().forEach(shader -> shader.loadUniform(name, matrix));
+	}
+
 	public static class Builder {
 
 		private final String mainVertex;
