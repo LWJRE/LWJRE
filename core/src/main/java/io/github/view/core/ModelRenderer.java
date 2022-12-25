@@ -26,8 +26,6 @@ public class ModelRenderer extends Transform3D {
 				this.shader.loadUniform("material.shininess", 8.0f);
 			}
 			this.shader.loadUniform("camera_position", Camera3D.current().globalPosition());
-			this.shader.loadUniform("light_position", 0.0f, 20.0f, 0.0f);
-			this.shader.loadUniform("light_color", 1.0f, 1.0f, 1.0f);
 		}));
 		super.onStart();
 	}

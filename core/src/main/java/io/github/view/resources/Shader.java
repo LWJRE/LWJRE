@@ -46,13 +46,21 @@ public final class Shader extends Resource {
 		}
 	}
 
+	// TODO: Uniform variable cannot be loaded if the shader is not running
+
 	public void loadUniform(String name, float value) {
 		GL20.glUniform1f(this.getUniformLocation(name), value);
+	}
+
+	public void loadUniform(String name, int value) {
+		GL20.glUniform1i(this.getUniformLocation(name), value);
 	}
 
 	public void loadUniform(String name, Float2 vec2) {
 		this.loadUniform(name, vec2.x(), vec2.y());
 	}
+
+	// TODO: Load int values
 
 	public void loadUniform(String name, float x, float y) {
 		GL20.glUniform2f(this.getUniformLocation(name), x, y);
@@ -99,6 +107,14 @@ public final class Shader extends Resource {
 	private static final HashMap<String, String> SHADER_CODE = new HashMap<>();
 	private static final HashMap<String, Integer> SHADERS = new HashMap<>();
 	private static final HashMap<Builder, Shader> PROGRAMS = new HashMap<>();
+
+	public static void loadStaticUniform(String name, float value) {
+		PROGRAMS.values().forEach(shader -> shader.loadUniform(name, value));
+	}
+
+	public static void loadStaticUniform(String name, int value) {
+		PROGRAMS.values().forEach(shader -> shader.loadUniform(name, value));
+	}
 
 	public static void loadStaticUniform(String name, Float2 vec2) {
 		PROGRAMS.values().forEach(shader -> shader.loadUniform(name, vec2));
