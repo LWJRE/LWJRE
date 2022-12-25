@@ -15,6 +15,6 @@ public record Projection(float max, float min) {
 	}
 
 	public float getOverlap(float max, float min) {
-		return Math.max(0.0f, Math.min(this.max, max) - Math.max(this.min, min));
+		return Math.min(max - this.min(), this.max() - min);
 	}
 }
