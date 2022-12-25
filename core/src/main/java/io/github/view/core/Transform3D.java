@@ -9,7 +9,7 @@ public class Transform3D extends Node {
 	private Vector3 rotation = Vector3.ZERO;
 	private Vector3 scale = Vector3.ONE;
 
-	// TODO: Use parent for transformations
+	// TODO: Get local and global position
 
 	public final Vector3 getPosition() {
 		return this.position;
@@ -139,7 +139,11 @@ public class Transform3D extends Node {
 		);
 	}
 
-	public final Matrix4 matrix() {
+	public final Matrix4 localTransformation() {
 		return this.translationMatrix().multiply(this.rotationMatrix()).multiply(this.scalingMatrix());
+	}
+
+	public final Matrix4 globalTransformation() {
+		return this.getParent() instanceof Transform3D ? ((Transform3D) this.getParent()).globalTransformation().multiply(this.localTransformation()) : this.localTransformation();
 	}
 }

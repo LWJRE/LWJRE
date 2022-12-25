@@ -1,42 +1,58 @@
 package io.github.view.core;
 
-import java.util.Iterator;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.ArrayList;
 
-public class Node implements Iterable<Node> {
+public class Node {
 
-	private final CopyOnWriteArrayList<Node> children = new CopyOnWriteArrayList<>();
+	private final ArrayList<Node> children = new ArrayList<>();
 	private Node parent;
 
-	public final void addChild(Node child) {
-		if(child.parent == null) {
-			child.parent = this;
-			this.children.add(child);
-		} else {
-			throw new RuntimeException("Cannot add " + child + " as a child of " + this + " because it already has parent " + child.parent);
+	private State currentState = State.NEW;
+
+	public final void process(float delta) {
+		this.children.removeIf(child -> child.currentState == State.REMOVED);
+		this.children.forEach(child -> {
+			if(child.parent == null)
+				child.parent = this;
+			child.process(delta);
+		});
+		switch(this.currentState) {
+			case NEW -> {
+				this.onStart();
+				this.currentState = State.READY;
+			}
+			case READY -> this.onUpdate(delta);
+			case TO_BE_REMOVED -> {
+				this.onExit();
+				this.currentState = State.REMOVED;
+			}
 		}
 	}
 
-	public final Node removeChild(int index) {
-		this.children.get(index).parent = null;
-		return this.children.remove(index);
+	protected void onStart() {
+
 	}
 
-	public final void removeChild(Node child) {
-		if(child.parent == this) {
-			child.parent = null;
-			this.children.remove(child);
-		} else {
-			throw new RuntimeException("Node " + child + " is not a child of " + this);
-		}
+	protected void onUpdate(float delta) {
+
+	}
+
+	protected void onExit() {
+
 	}
 
 	public final Node getParent() {
 		return this.parent;
 	}
 
-	@Override
-	public final Iterator<Node> iterator() {
-		return this.children.iterator();
+	public final void markToRemove() {
+		this.currentState = State.TO_BE_REMOVED;
+	}
+
+	public enum State {
+		NEW,
+		READY,
+		TO_BE_REMOVED,
+		REMOVED
 	}
 }

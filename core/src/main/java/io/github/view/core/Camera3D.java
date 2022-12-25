@@ -25,6 +25,10 @@ public class Camera3D extends Node {
 	public float nearPlane = 0.1f;
 	public float farPlane = 1000.0f;
 
+	public Camera3D() {
+		this.makeCurrent();
+	}
+
 	public final void makeCurrent() {
 		current = this;
 	}

@@ -1,5 +1,7 @@
 package io.github.view.core;
 
+import io.github.view.graphics.RenderingSystem3D;
+import io.github.view.resources.Model;
 import io.github.view.resources.Shader;
 
 public class ModelRenderer extends Transform3D {
@@ -8,13 +10,13 @@ public class ModelRenderer extends Transform3D {
 	private String model;
 
 	private Shader shader;
-/*
+
 	@Override
-	public void onStart() {
+	protected void onStart() {
 		this.shader = Shader.main().createOrLoad();
 		Model.getOrLoad(this.model).forEach((material, mesh) -> RenderingSystem3D.addToBatch(mesh, this, () -> {
 			this.shader.start();
-			this.shader.loadUniform("transformation_matrix", this.transform.matrix());
+			this.shader.loadUniform("transformation_matrix", this.globalTransformation());
 			this.shader.loadUniform("projection_matrix", Camera3D.currentProjectionMatrix());
 			this.shader.loadUniform("view_matrix", Camera3D.currentViewMatrix());
 			if(material != null) {
@@ -34,5 +36,5 @@ public class ModelRenderer extends Transform3D {
 	public void onExit() {
 		RenderingSystem3D.removeFromBatch(this);
 		super.onExit();
-	}*/
+	}
 }

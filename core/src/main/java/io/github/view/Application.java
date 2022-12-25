@@ -1,11 +1,13 @@
 package io.github.view;
 
+import io.github.view.core.Node;
 import io.github.view.graphics.Graphics;
 import io.github.view.graphics.RenderingSystem3D;
 import io.github.view.graphics.Window;
 import io.github.view.input.Keyboard;
 import io.github.view.resources.PropertiesFile;
 import io.github.view.resources.Resource;
+import io.github.view.utils.FileUtils;
 import org.lwjgl.glfw.GLFW;
 
 public final class Application {
@@ -17,6 +19,7 @@ public final class Application {
 	}
 
 	private final Window window;
+	private Node treeRoot;
 
 	private Application() {
 		if(!GLFW.glfwInit())
@@ -35,11 +38,16 @@ public final class Application {
 			this.window.show();
 			Graphics.depthTest(true);
 			Graphics.clearColor(0.0f, 0.5f, 1.0f, 0.0f);
+			this.treeRoot = FileUtils.parseYaml("/scenes/test_scene.yaml");
+			long previousTime = System.nanoTime();
 			while(!this.window.isCloseRequested()) {
 				Graphics.clearFramebuffer();
+				long time = System.nanoTime();
+				this.treeRoot.process((time - previousTime) / 1_000_000_000.0f);
 				RenderingSystem3D.renderingProcess();
 				this.window.update();
 				GLFW.glfwPollEvents();
+				previousTime = time;
 			}
 			this.window.destroy();
 		} catch(Exception e) {
