@@ -14,19 +14,18 @@ public class ModelRenderer extends Transform3D {
 	@Override
 	protected void onStart() {
 		this.shader = Shader.main().createOrLoad();
-		Model.getOrLoad(this.model).forEach((material, mesh) -> RenderingSystem3D.addToBatch(mesh, this, () -> {
-			this.shader.start();
-			this.shader.loadUniform("transformation_matrix", this.globalTransformation());
-			this.shader.loadUniform("projection_matrix", Camera3D.currentProjectionMatrix());
-			this.shader.loadUniform("view_matrix", Camera3D.currentViewMatrix());
+		Model.getOrLoad(this.model).forEach((material, mesh) -> RenderingSystem3D.addToBatch(mesh, this, () -> this.shader.runProgram(shader -> {
+			shader.loadUniform("transformation_matrix", this.globalTransformation());
+			shader.loadUniform("projection_matrix", Camera3D.currentProjectionMatrix());
+			shader.loadUniform("view_matrix", Camera3D.currentViewMatrix());
 			if(material != null) {
-				this.shader.loadUniform("material.ambient", material.getAmbient());
-				this.shader.loadUniform("material.diffuse", material.getDiffuse());
-				this.shader.loadUniform("material.specular", material.getSpecular());;
-				this.shader.loadUniform("material.shininess", 8.0f);
+				shader.loadUniform("material.ambient", material.getAmbient());
+				shader.loadUniform("material.diffuse", material.getDiffuse());
+				shader.loadUniform("material.specular", material.getSpecular());;
+				shader.loadUniform("material.shininess", 8.0f);
 			}
-			this.shader.loadUniform("camera_position", Camera3D.current().globalPosition());
-		}));
+			shader.loadUniform("camera_position", Camera3D.current().globalPosition());
+		})));
 		super.onStart();
 	}
 

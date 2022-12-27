@@ -1,9 +1,6 @@
 package io.github.view.resources;
 
-import io.github.view.math.Float2;
-import io.github.view.math.Float3;
-import io.github.view.math.Float4;
-import io.github.view.math.Matrix4;
+import io.github.view.math.*;
 import io.github.view.utils.FileUtils;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
@@ -14,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 public final class Shader extends Resource {
 
@@ -32,63 +30,9 @@ public final class Shader extends Resource {
 		GL20.glValidateProgram(this.program);
 	}
 
-	public void start() {
+	public void runProgram(Consumer<RunningShader> shader) {
 		GL20.glUseProgram(this.program);
-	}
-
-	private int getUniformLocation(String variable) {
-		if(this.uniformVariables.containsKey(variable)) {
-			return this.uniformVariables.get(variable);
-		} else {
-			int location = GL20.glGetUniformLocation(this.program, variable);
-			this.uniformVariables.put(variable, location);
-			return location;
-		}
-	}
-
-	// TODO: Uniform variable cannot be loaded if the shader is not running
-
-	public void loadUniform(String name, float value) {
-		GL20.glUniform1f(this.getUniformLocation(name), value);
-	}
-
-	public void loadUniform(String name, int value) {
-		GL20.glUniform1i(this.getUniformLocation(name), value);
-	}
-
-	public void loadUniform(String name, Float2 vec2) {
-		this.loadUniform(name, vec2.x(), vec2.y());
-	}
-
-	// TODO: Load int values
-
-	public void loadUniform(String name, float x, float y) {
-		GL20.glUniform2f(this.getUniformLocation(name), x, y);
-	}
-
-	public void loadUniform(String name, Float3 vec3) {
-		this.loadUniform(name, vec3.x(), vec3.y(), vec3.z());
-	}
-
-	public void loadUniform(String name, float x, float y, float z) {
-		GL20.glUniform3f(this.getUniformLocation(name), x, y, z);
-	}
-
-	public void loadUniform(String name, Float4 vec4) {
-		this.loadUniform(name, vec4.x(), vec4.y(), vec4.z(), vec4.w());
-	}
-
-	public void loadUniform(String name, float x, float y, float z, float w) {
-		GL20.glUniform4f(this.getUniformLocation(name), x, y, z, w);
-	}
-
-	public void loadUniform(String name, Matrix4 matrix) {
-		FloatBuffer buffer = BufferUtils.createFloatBuffer(16);
-		buffer.put(matrix.m00()); buffer.put(matrix.m01()); buffer.put(matrix.m02()); buffer.put(matrix.m03());
-		buffer.put(matrix.m10()); buffer.put(matrix.m11()); buffer.put(matrix.m12()); buffer.put(matrix.m13());
-		buffer.put(matrix.m20()); buffer.put(matrix.m21()); buffer.put(matrix.m22()); buffer.put(matrix.m23());
-		buffer.put(matrix.m30()); buffer.put(matrix.m31()); buffer.put(matrix.m32()); buffer.put(matrix.m33());
-		GL20.glUniformMatrix4fv(this.getUniformLocation(name), true, buffer.flip());
+		shader.accept(new RunningShader());
 	}
 
 	@Override
@@ -100,6 +44,146 @@ public final class Shader extends Resource {
 		GL20.glDeleteShader(this.program);
 	}
 
+	public class RunningShader {
+
+		private RunningShader() {}
+
+		private int getUniformLocation(String variable) {
+			if(Shader.this.uniformVariables.containsKey(variable)) {
+				return Shader.this.uniformVariables.get(variable);
+			} else {
+				int location = GL20.glGetUniformLocation(Shader.this.program, variable);
+				Shader.this.uniformVariables.put(variable, location);
+				return location;
+			}
+		}
+
+		public void loadUniform(String name, float value) {
+			GL20.glUniform1f(this.getUniformLocation(name), value);
+		}
+
+		public void loadUniform(String name, int value) {
+			GL20.glUniform1i(this.getUniformLocation(name), value);
+		}
+
+		public void loadUniform(String name, float x, float y) {
+			GL20.glUniform2f(this.getUniformLocation(name), x, y);
+		}
+
+		public void loadUniform(String name, int x, int y) {
+			GL20.glUniform2i(this.getUniformLocation(name), x, y);
+		}
+
+		public void loadUniform(String name, Float2 vec2) {
+			this.loadUniform(name, vec2.x(), vec2.y());
+		}
+
+		public void loadUniform(String name, Int2 vec2) {
+			this.loadUniform(name, vec2.x(), vec2.y());
+		}
+
+		public void loadUniform(String name, float x, float y, float z) {
+			GL20.glUniform3f(this.getUniformLocation(name), x, y, z);
+		}
+
+		public void loadUniform(String name, int x, int y, int z) {
+			GL20.glUniform3i(this.getUniformLocation(name), x, y, z);
+		}
+
+		public void loadUniform(String name, Float3 vec3) {
+			this.loadUniform(name, vec3.x(), vec3.y(), vec3.z());
+		}
+
+		public void loadUniform(String name, Int3 vec3) {
+			this.loadUniform(name, vec3.x(), vec3.y(), vec3.z());
+		}
+
+		public void loadUniform(String name, float x, float y, float z, float w) {
+			GL20.glUniform4f(this.getUniformLocation(name), x, y, z, w);
+		}
+
+		public void loadUniform(String name, int x, int y, int z, int w) {
+			GL20.glUniform4i(this.getUniformLocation(name), x, y, z, w);
+		}
+
+		public void loadUniform(String name, Float4 vec4) {
+			this.loadUniform(name, vec4.x(), vec4.y(), vec4.z(), vec4.w());
+		}
+
+		public void loadUniform(String name, Int4 vec4) {
+			this.loadUniform(name, vec4.x(), vec4.y(), vec4.z(), vec4.w());
+		}
+
+		public void loadUniform(String name, Matrix4 matrix) {
+			FloatBuffer buffer = BufferUtils.createFloatBuffer(16);
+			buffer.put(matrix.m00()); buffer.put(matrix.m01()); buffer.put(matrix.m02()); buffer.put(matrix.m03());
+			buffer.put(matrix.m10()); buffer.put(matrix.m11()); buffer.put(matrix.m12()); buffer.put(matrix.m13());
+			buffer.put(matrix.m20()); buffer.put(matrix.m21()); buffer.put(matrix.m22()); buffer.put(matrix.m23());
+			buffer.put(matrix.m30()); buffer.put(matrix.m31()); buffer.put(matrix.m32()); buffer.put(matrix.m33());
+			GL20.glUniformMatrix4fv(this.getUniformLocation(name), true, buffer.flip());
+		}
+	}
+
+	public static void loadStaticUniform(String name, float value) {
+		PROGRAMS.values().forEach(shader -> shader.runProgram(runningShader -> runningShader.loadUniform(name, value)));
+	}
+
+	public static void loadStaticUniform(String name, int value) {
+		PROGRAMS.values().forEach(shader -> shader.runProgram(runningShader -> runningShader.loadUniform(name, value)));
+	}
+
+	public static void loadStaticUniform(String name, float x, float y) {
+		PROGRAMS.values().forEach(shader -> shader.runProgram(runningShader -> runningShader.loadUniform(name, x, y)));
+	}
+
+	public static void loadStaticUniform(String name, int x, int y) {
+		PROGRAMS.values().forEach(shader -> shader.runProgram(runningShader -> runningShader.loadUniform(name, x, y)));
+	}
+
+	public static void loadStaticUniform(String name, Float2 vec2) {
+		PROGRAMS.values().forEach(shader -> shader.runProgram(runningShader -> runningShader.loadUniform(name, vec2)));
+	}
+
+	public static void loadStaticUniform(String name, Int2 vec2) {
+		PROGRAMS.values().forEach(shader -> shader.runProgram(runningShader -> runningShader.loadUniform(name, vec2)));
+	}
+
+	public static void loadStaticUniform(String name, float x, float y, float z) {
+		PROGRAMS.values().forEach(shader -> shader.runProgram(runningShader -> runningShader.loadUniform(name, x, y, z)));
+	}
+
+	public static void loadStaticUniform(String name, int x, int y, int z) {
+		PROGRAMS.values().forEach(shader -> shader.runProgram(runningShader -> runningShader.loadUniform(name, x, y, z)));
+	}
+
+	public static void loadStaticUniform(String name, Float3 vec3) {
+		PROGRAMS.values().forEach(shader -> shader.runProgram(runningShader -> runningShader.loadUniform(name, vec3)));
+	}
+
+	public static void loadStaticUniform(String name, Int3 vec3) {
+		PROGRAMS.values().forEach(shader -> shader.runProgram(runningShader -> runningShader.loadUniform(name, vec3)));
+	}
+
+	public static void loadStaticUniform(String name, float x, float y, float z, float w) {
+		PROGRAMS.values().forEach(shader -> shader.runProgram(runningShader -> runningShader.loadUniform(name, x, y, z, w)));
+	}
+
+	public static void loadStaticUniform(String name, int x, int y, int z, int w) {
+		PROGRAMS.values().forEach(shader -> shader.runProgram(runningShader -> runningShader.loadUniform(name, x, y, z, w)));
+	}
+
+	public static void loadStaticUniform(String name, Float4 vec4) {
+		PROGRAMS.values().forEach(shader -> shader.runProgram(runningShader -> runningShader.loadUniform(name, vec4)));
+	}
+
+	public static void loadStaticUniform(String name, Int4 vec4) {
+		PROGRAMS.values().forEach(shader -> shader.runProgram(runningShader -> runningShader.loadUniform(name, vec4)));
+	}
+
+	public static void loadStaticUniform(String name, Matrix4 matrix) {
+		PROGRAMS.values().forEach(shader -> shader.runProgram(runningShader -> runningShader.loadUniform(name, matrix)));
+	}
+
 	public static Builder main() {
 		return new Builder("/shaders/main_vertex.glsl", "/shaders/main_fragment.glsl");
 	}
@@ -107,42 +191,6 @@ public final class Shader extends Resource {
 	private static final HashMap<String, String> SHADER_CODE = new HashMap<>();
 	private static final HashMap<String, Integer> SHADERS = new HashMap<>();
 	private static final HashMap<Builder, Shader> PROGRAMS = new HashMap<>();
-
-	public static void loadStaticUniform(String name, float value) {
-		PROGRAMS.values().forEach(shader -> shader.loadUniform(name, value));
-	}
-
-	public static void loadStaticUniform(String name, int value) {
-		PROGRAMS.values().forEach(shader -> shader.loadUniform(name, value));
-	}
-
-	public static void loadStaticUniform(String name, Float2 vec2) {
-		PROGRAMS.values().forEach(shader -> shader.loadUniform(name, vec2));
-	}
-
-	public static void loadStaticUniform(String name, float x, float y) {
-		PROGRAMS.values().forEach(shader -> shader.loadUniform(name, x, y));
-	}
-
-	public static void loadStaticUniform(String name, Float3 vec3) {
-		PROGRAMS.values().forEach(shader -> shader.loadUniform(name, vec3));
-	}
-
-	public static void loadStaticUniform(String name, float x, float y, float z) {
-		PROGRAMS.values().forEach(shader -> shader.loadUniform(name, x, y, z));
-	}
-
-	public static void loadStaticUniform(String name, Float4 vec4) {
-		PROGRAMS.values().forEach(shader -> shader.loadUniform(name, vec4));
-	}
-
-	public static void loadStaticUniform(String name, float x, float y, float z, float w) {
-		PROGRAMS.values().forEach(shader -> shader.loadUniform(name, x, y, z, w));
-	}
-
-	public static void loadStaticUniform(String name, Matrix4 matrix) {
-		PROGRAMS.values().forEach(shader -> shader.loadUniform(name, matrix));
-	}
 
 	public static class Builder {
 
