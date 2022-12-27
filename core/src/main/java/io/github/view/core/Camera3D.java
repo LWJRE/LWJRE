@@ -2,7 +2,9 @@ package io.github.view.core;
 
 import io.github.view.math.Matrix4;
 
-public class Camera3D extends Position3D {
+public class Camera3D extends Transform3D {
+
+	// TODO: Make better camera
 
 	private static Camera3D current;
 

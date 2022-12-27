@@ -3,7 +3,7 @@ package io.github.view.core;
 import io.github.view.graphics.RenderingSystem3D;
 import io.github.view.math.Color;
 
-public class PointLight3D extends Position3D {
+public class PointLight3D extends Transform3D {
 
 	private Color color = Color.WHITE;
 

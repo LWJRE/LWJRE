@@ -41,6 +41,13 @@ public class Node {
 
 	}
 
+	// TODO: Make a better add child
+
+	public final void addChild(Node node) {
+		this.children.add(node);
+		node.parent = this;
+	}
+
 	public final Node getParent() {
 		return this.parent;
 	}

@@ -72,11 +72,7 @@ public class CollisionObject3D extends Transform3D {
 	public final BoundingBox3D worldPositionBoundingBox() {
 		return new BoundingBox3D(
 				this.boundingBox.origin().plus(this.globalPosition()),
-				new Vector3(
-						this.boundingBox.extents().x() * this.globalScale().x(),
-						this.boundingBox.extents().y() * this.globalScale().y(),
-						this.boundingBox.extents().z() * this.globalScale().z()
-				)
+				this.boundingBox.extents().multiply(this.localScale())
 		);
 	}
 

@@ -2,12 +2,50 @@ package io.github.view.core;
 
 import io.github.view.math.Matrix4;
 import io.github.view.math.Vector3;
+import io.github.view.math.Vector4;
 
-public class Transform3D extends Position3D {
+import java.util.Objects;
 
-	// TODO: Add rotation
+public class Transform3D extends Node {
+
+	private Vector3 position = Vector3.ZERO;
 	private Vector3 rotation = Vector3.ZERO;
 	private Vector3 scale = Vector3.ONE;
+
+	public final Vector3 localPosition() {
+		return this.position;
+	}
+
+	public final Vector3 globalPosition() {
+		if(this.getParent() instanceof Transform3D parent)
+			return parent.globalTransformation().multiply(new Vector4(this.localPosition(), 1.0f)).xyz();
+		return this.localPosition();
+	}
+
+	public final void setPosition(float x, float y, float z) {
+		this.position = new Vector3(x, y, z);
+	}
+
+	public final void setPosition(Vector3 position) {
+		this.position = Objects.requireNonNull(position);
+	}
+
+	public final void translate(float x, float y, float z) {
+		this.position = this.position.plus(x, y, z);
+	}
+
+	public final void translate(Vector3 translation) {
+		this.position = this.position.plus(translation);
+	}
+
+	public final Matrix4 localTranslation() {
+		return new Matrix4(
+				1.0f, 0.0f, 0.0f, this.position.x(),
+				0.0f, 1.0f, 0.0f, this.position.y(),
+				0.0f, 0.0f, 1.0f, this.position.z(),
+				0.0f, 0.0f, 0.0f, 1.0f
+		);
+	}
 
 	public final Vector3 rotationRadians() {
 		return this.rotation;
@@ -18,8 +56,7 @@ public class Transform3D extends Position3D {
 	}
 
 	public final void setRotationRadians(Vector3 radians) {
-		if(radians != null) this.rotation = radians;
-		else this.rotation = Vector3.ZERO;
+		this.rotation = Objects.requireNonNull(radians);
 	}
 
 	public final void setRotationRadians(float x, float y, float z) {
@@ -27,8 +64,7 @@ public class Transform3D extends Position3D {
 	}
 
 	public final void setRotationDegrees(Vector3 degrees) {
-		if(degrees != null) this.setRotationDegrees(degrees.x(), degrees.y(), degrees.z());
-		else this.rotation = Vector3.ZERO;
+		this.setRotationDegrees(degrees.x(), degrees.y(), degrees.z());
 	}
 
 	public final void setRotationDegrees(float x, float y, float z) {
@@ -36,8 +72,7 @@ public class Transform3D extends Position3D {
 	}
 
 	public final void rotateRadians(Vector3 radians) {
-		if(radians != null)
-			this.rotation = this.rotation.plus(radians);
+		this.rotation = this.rotation.plus(radians);
 	}
 
 	public final void rotateRadians(float x, float y, float z) {
@@ -45,8 +80,7 @@ public class Transform3D extends Position3D {
 	}
 
 	public final void rotateDegrees(Vector3 degrees) {
-		if(degrees != null)
-			this.rotateDegrees(degrees.x(), degrees.y(), degrees.z());
+		this.rotateDegrees(degrees.x(), degrees.y(), degrees.z());
 	}
 
 	public final void rotateDegrees(float x, float y, float z) {
@@ -88,15 +122,8 @@ public class Transform3D extends Position3D {
 		return this.scale;
 	}
 
-	public final Vector3 globalScale() {
-		if(this.getParent() instanceof Transform3D parent)
-			return parent.globalScale().multiply(this.scale);
-		return this.scale;
-	}
-
 	public final void setScale(Vector3 scale) {
-		if(scale != null) this.scale = scale;
-		else this.scale = Vector3.ZERO;
+		this.scale = Objects.requireNonNull(scale);
 	}
 
 	public final void setScale(float x, float y, float z) {
@@ -119,8 +146,6 @@ public class Transform3D extends Position3D {
 	public final Matrix4 globalTransformation() {
 		if(this.getParent() instanceof Transform3D parent)
 			return parent.globalTransformation().multiply(this.localTransformation());
-		if(this.getParent() instanceof Position3D parent)
-			return parent.globalTranslation().multiply(this.localTransformation());
 		return this.localTransformation();
 	}
 }
