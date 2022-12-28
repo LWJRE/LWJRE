@@ -1,6 +1,8 @@
 package io.github.view.core;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public class Node {
 
@@ -46,6 +48,16 @@ public class Node {
 	public final void addChild(Node node) {
 		this.children.add(node);
 		node.parent = this;
+	}
+
+	// TODO: Make a better get children
+
+	public final <T extends Node> Optional<T> getChild(Class<T> type) {
+		return this.children.stream().filter(child -> child.getClass().isAssignableFrom(type)).findFirst().map(type::cast);
+	}
+
+	public final <T extends Node> List<T> getChildrenOfType(Class<T> type) {
+		return this.children.stream().filter(child -> child.getClass().isAssignableFrom(type)).map(type::cast).toList();
 	}
 
 	public final Node getParent() {

@@ -95,4 +95,11 @@ public record Vector2(float x, float y) implements Vector<Vector2>, Float2 {
 	public Vector2 sign() {
 		return new Vector2(Math.signum(this.x()), Math.signum(this.y()));
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof Vector2 vec)
+			return vec.x == this.x && vec.y ==  this.y;
+		return false;
+	}
 }

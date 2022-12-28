@@ -113,4 +113,11 @@ public record Vector3(float x, float y, float z) implements Vector<Vector3>, Flo
 	public Vector3 sign() {
 		return new Vector3(Math.signum(this.x()), Math.signum(this.y()), Math.signum(this.z()));
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof Vector3 vec)
+			return vec.x == this.x && vec.y ==  this.y && vec.z == this.z;
+		return false;
+	}
 }

@@ -111,4 +111,11 @@ public record Vector4(float x, float y, float z, float w) implements Vector<Vect
 	public Vector4 sign() {
 		return new Vector4(Math.signum(this.x()), Math.signum(this.y()), Math.signum(this.z()), Math.signum(this.w()));
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof Vector4 vec)
+			return vec.x == this.x && vec.y ==  this.y && vec.z == this.z && vec.w == this.w;
+		return false;
+	}
 }

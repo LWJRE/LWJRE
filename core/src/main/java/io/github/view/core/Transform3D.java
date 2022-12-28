@@ -114,12 +114,26 @@ public class Transform3D extends Node {
 		);
 	}
 
-	public final Matrix4 rotationMatrix() {
+	public final Matrix4 localRotation() {
 		return this.rotationMatrixX().multiply(this.rotationMatrixY()).multiply(this.rotationMatrixZ());
+	}
+
+	// TODO: Test global rotation and global scale
+
+	public final Matrix4 globalRotation() {
+		if(this.getParent() instanceof Transform3D parent)
+			return parent.globalRotation().multiply(this.localRotation());
+		return this.localRotation();
 	}
 
 	public final Vector3 localScale() {
 		return this.scale;
+	}
+
+	public final Vector3 globalScale() {
+		if(this.getParent() instanceof Transform3D parent)
+			return parent.globalScale().multiply(this.localScale());
+		return this.localScale();
 	}
 
 	public final void setScale(Vector3 scale) {
@@ -140,7 +154,7 @@ public class Transform3D extends Node {
 	}
 
 	public final Matrix4 localTransformation() {
-		return this.localTranslation().multiply(this.rotationMatrix()).multiply(this.scalingMatrix());
+		return this.localTranslation().multiply(this.localRotation()).multiply(this.scalingMatrix());
 	}
 
 	public final Matrix4 globalTransformation() {
