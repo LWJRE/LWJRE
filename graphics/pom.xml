@@ -17,19 +17,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
-	<repositories>
-		<repository>
-			<id>jitpack.io</id>
-			<url>https://jitpack.io</url>
-		</repository>
-	</repositories>
-
 	<dependencies>
-		<dependency>
-			<groupId>com.github.HexagonNico</groupId>
-			<artifactId>VecMatLib</artifactId>
-			<version>0.1</version>
-		</dependency>
 		<dependency>
 			<groupId>engine</groupId>
 			<artifactId>engine-core</artifactId>

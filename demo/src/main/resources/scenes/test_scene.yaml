@@ -1,0 +1,28 @@
+!!io.github.view.core.Node
+children:
+  # Falling dragon
+  - !!io.github.view.core.KinematicBody3D
+    position: !!io.github.view.math.Vector3 [ 0.0, 50.0, 0.0 ]
+    rotation: !!io.github.view.math.Vector3 [ 0.0, 0.0, 0.523333 ]
+    scale: !!io.github.view.math.Vector3 [ 1.5, 1.5, 1.5 ]
+    children:
+      - !!io.github.view.core.ModelRenderer
+        model: "/models/dragon.obj"
+      - !!io.github.view.core.BoundingBox3D
+        position: !!io.github.view.math.Vector3 [ 0.0, 3.0, -0.4 ]
+        extents: !!io.github.view.math.Vector3 [ 6.0, 5.0, 3.0 ]
+  # Static cube
+  - !!io.github.view.core.CollisionObject3D
+    children:
+      - !!io.github.view.core.BoundingBox3D
+        extents: !!io.github.view.math.Vector3 [ 7.5, 1.0, 7.5 ]
+  # Light
+  - !!io.github.view.core.PointLight3D
+    position: !!io.github.view.math.Vector3 [ -2.0, 7.5, 2.0 ]
+    children:
+      - !!io.github.view.core.ModelRenderer
+        model: "/models/bunny.obj"
+        scale: !!io.github.view.math.Vector3 [ 0.1, 0.1, 0.1 ]
+  # Camera
+  - !!io.github.view.core.Camera3D
+    position: !!io.github.view.math.Vector3 [ 0.0, 5.0, 18.0 ]
