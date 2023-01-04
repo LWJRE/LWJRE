@@ -14,7 +14,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-public final class Shader extends Resource {
+public final class Shader extends GLResource {
 
 	private final int program;
 	private final int[] shaders;

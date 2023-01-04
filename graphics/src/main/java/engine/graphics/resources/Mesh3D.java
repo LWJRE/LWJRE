@@ -11,7 +11,7 @@ import vecmatlib.vector.Vec3f;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-public class Mesh3D extends Resource {
+public class Mesh3D extends GLResource {
 
 	private final int vertexArray;
 	private final ArrayList<Integer> vertexBuffers = new ArrayList<>();

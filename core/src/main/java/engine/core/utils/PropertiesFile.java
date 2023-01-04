@@ -1,6 +1,4 @@
-package engine.graphics.resources;
-
-import engine.core.utils.FileUtils;
+package engine.core.utils;
 
 import java.util.Properties;
 

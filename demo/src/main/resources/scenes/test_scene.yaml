@@ -1,28 +1,28 @@
-!!io.github.view.core.Node
+!!engine.core.tree.Node
 children:
   # Falling dragon
-  - !!io.github.view.core.KinematicBody3D
-    position: !!io.github.view.math.Vector3 [ 0.0, 50.0, 0.0 ]
-    rotation: !!io.github.view.math.Vector3 [ 0.0, 0.0, 0.523333 ]
-    scale: !!io.github.view.math.Vector3 [ 1.5, 1.5, 1.5 ]
+  - !!engine.physics.tree.KinematicBody3D
+    position: !!vecmatlib.vector.Vec3f [ 0.0, 50.0, 0.0 ]
+    rotation: !!vecmatlib.vector.Vec3f [ 0.0, 0.0, 0.523333 ]
+    scale: !!vecmatlib.vector.Vec3f [ 1.5, 1.5, 1.5 ]
     children:
-      - !!io.github.view.core.ModelRenderer
+      - !!engine.graphics.tree.ModelRenderer
         model: "/models/dragon.obj"
-      - !!io.github.view.core.BoundingBox3D
-        position: !!io.github.view.math.Vector3 [ 0.0, 3.0, -0.4 ]
-        extents: !!io.github.view.math.Vector3 [ 6.0, 5.0, 3.0 ]
+      - !!engine.physics.tree.BoundingBox3D
+        position: !!vecmatlib.vector.Vec3f [ 0.0, 3.0, -0.4 ]
+        extents: !!vecmatlib.vector.Vec3f [ 6.0, 5.0, 3.0 ]
   # Static cube
-  - !!io.github.view.core.CollisionObject3D
+  - !!engine.physics.tree.CollisionObject3D
     children:
-      - !!io.github.view.core.BoundingBox3D
-        extents: !!io.github.view.math.Vector3 [ 7.5, 1.0, 7.5 ]
+      - !!engine.physics.tree.BoundingBox3D
+        extents: !!vecmatlib.vector.Vec3f [ 7.5, 1.0, 7.5 ]
   # Light
-  - !!io.github.view.core.PointLight3D
-    position: !!io.github.view.math.Vector3 [ -2.0, 7.5, 2.0 ]
+  - !!engine.graphics.tree.PointLight3D
+    position: !!vecmatlib.vector.Vec3f [ -2.0, 7.5, 2.0 ]
     children:
-      - !!io.github.view.core.ModelRenderer
+      - !!engine.graphics.tree.ModelRenderer
         model: "/models/bunny.obj"
-        scale: !!io.github.view.math.Vector3 [ 0.1, 0.1, 0.1 ]
+        scale: !!vecmatlib.vector.Vec3f [ 0.1, 0.1, 0.1 ]
   # Camera
-  - !!io.github.view.core.Camera3D
-    position: !!io.github.view.math.Vector3 [ 0.0, 5.0, 18.0 ]
+  - !!engine.core.tree.Camera3D
+    position: !!vecmatlib.vector.Vec3f [ 0.0, 5.0, 18.0 ]

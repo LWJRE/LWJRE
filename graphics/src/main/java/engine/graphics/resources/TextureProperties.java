@@ -1,5 +1,6 @@
 package engine.graphics.resources;
 
+import engine.core.utils.PropertiesFile;
 import org.lwjgl.opengl.GL11;
 
 public class TextureProperties extends PropertiesFile {

@@ -8,7 +8,7 @@ import org.lwjgl.opengl.GL15;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 
-public final class Texture extends Resource {
+public final class Texture extends GLResource {
 
 	private static final HashMap<String, Texture> TEXTURES = new HashMap<>();
 

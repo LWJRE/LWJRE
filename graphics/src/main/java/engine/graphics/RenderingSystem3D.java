@@ -3,6 +3,7 @@ package engine.graphics;
 import engine.graphics.resources.Mesh3D;
 import engine.graphics.resources.Shader;
 import engine.graphics.tree.PointLight3D;
+import org.lwjgl.opengl.GL;
 
 import java.util.ArrayList;
 import java.util.HashMap;
