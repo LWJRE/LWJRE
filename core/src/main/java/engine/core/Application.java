@@ -1,9 +1,11 @@
 package engine.core;
 
+import engine.core.resources.GLResource;
 import engine.core.tree.Node;
 import engine.core.utils.FileUtils;
 import engine.core.window.Window;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.opengl.GL;
 
 public final class Application {
 
@@ -28,15 +30,18 @@ public final class Application {
 		try {
 			this.window.makeContextCurrent();
 			this.window.show();
-//			Graphics.depthTest(true);
-//			Graphics.clearColor(0.0f, 0.5f, 1.0f, 0.0f);
-			this.sceneTree = FileUtils.parseYaml("/scenes/test_scene.yaml", Node.class); // TODO: Get from application properties
+			// TODO: Allow for multithreading ?
+			GL.createCapabilities();
+			// TODO: Get from application properties
+			Graphics.depthTest(true);
+			Graphics.clearColor(0.0f, 0.5f, 1.0f, 0.0f);
+			this.sceneTree = FileUtils.parseYaml("/scenes/test_scene.yaml", Node.class);
 			long previousTime = System.nanoTime();
 			while(!this.window.isCloseRequested()) {
-//				Graphics.clearFramebuffer();
+				Graphics.clearFramebuffer();
 				long time = System.nanoTime();
 				this.sceneTree.process((time - previousTime) / 1_000_000_000.0f);
-//				RenderingSystem3D.renderingProcess();
+				RenderingSystem3D.renderingProcess();
 				this.window.update();
 				GLFW.glfwPollEvents();
 				previousTime = time;
@@ -46,7 +51,7 @@ public final class Application {
 			System.err.println("Uncaught exception");
 			e.printStackTrace();
 		} finally {
-//			Resource.cleanUp(); // TODO: Clean Opengl resources
+			GLResource.cleanUp();
 			GLFW.glfwTerminate();
 		}
 	}

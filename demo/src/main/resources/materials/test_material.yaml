@@ -1,4 +1,4 @@
-!!engine.graphics.resources.Material
+!!engine.core.resources.Material
 ambient: !!engine.graphics.utils.Color [ 1.0, 1.0, 1.0 ]
 diffuse: !!engine.graphics.utils.Color [ 1.0, 1.0, 1.0 ]
 specular: !!engine.graphics.utils.Color [ 0.0, 0.0, 0.0 ]

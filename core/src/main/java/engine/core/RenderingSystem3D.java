@@ -1,9 +1,8 @@
-package engine.graphics;
+package engine.core;
 
-import engine.graphics.resources.Mesh3D;
-import engine.graphics.resources.Shader;
-import engine.graphics.tree.PointLight3D;
-import org.lwjgl.opengl.GL;
+import engine.core.resources.Mesh3D;
+import engine.core.resources.Shader;
+import engine.core.tree.PointLight3D;
 
 import java.util.ArrayList;
 import java.util.HashMap;

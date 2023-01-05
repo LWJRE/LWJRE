@@ -1,7 +1,7 @@
-package engine.graphics.resources;
+package engine.core.resources;
 
+import engine.core.utils.Color;
 import engine.core.utils.FileUtils;
-import engine.graphics.utils.Color;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 

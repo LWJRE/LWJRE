@@ -1,4 +1,4 @@
-package engine.graphics;
+package engine.core;
 
 import org.lwjgl.opengl.GL11;
 

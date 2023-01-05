@@ -1,10 +1,8 @@
-package engine.graphics.tree;
+package engine.core.tree;
 
-import engine.core.tree.Camera3D;
-import engine.core.tree.Transform3D;
-import engine.graphics.RenderingSystem3D;
-import engine.graphics.resources.Model;
-import engine.graphics.resources.Shader;
+import engine.core.RenderingSystem3D;
+import engine.core.resources.Model;
+import engine.core.resources.Shader;
 
 public class ModelRenderer extends Transform3D {
 

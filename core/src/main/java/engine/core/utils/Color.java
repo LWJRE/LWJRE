@@ -1,4 +1,4 @@
-package engine.graphics.utils;
+package engine.core.utils;
 
 import vecmatlib.Float3;
 

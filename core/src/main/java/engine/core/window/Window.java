@@ -32,7 +32,6 @@ public final class Window {
 
 	public void makeContextCurrent() {
 		GLFW.glfwMakeContextCurrent(this.handle);
-//		GL.createCapabilities(); // TODO: Context switching?
 	}
 
 	// TODO: Get window size

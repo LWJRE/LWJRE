@@ -1,8 +1,7 @@
-package engine.graphics.tree;
+package engine.core.tree;
 
-import engine.core.tree.Transform3D;
-import engine.graphics.RenderingSystem3D;
-import engine.graphics.utils.Color;
+import engine.core.RenderingSystem3D;
+import engine.core.utils.Color;
 
 public class PointLight3D extends Transform3D {
 
