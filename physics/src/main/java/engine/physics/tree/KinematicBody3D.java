@@ -5,8 +5,8 @@ import vecmatlib.vector.Vec3f;
 
 public class KinematicBody3D extends CollisionObject3D {
 
-	private Vec3f velocity = Vec3f.Zero();
-	private Vec3f acceleration = new Vec3f(0.0f, -9.81f, 0.0f);
+	public Vec3f velocity = Vec3f.Zero();
+	public Vec3f acceleration = new Vec3f(0.0f, -9.81f, 0.0f);
 
 	@Override
 	protected void onUpdate(float delta) {
@@ -20,6 +20,6 @@ public class KinematicBody3D extends CollisionObject3D {
 	@Override
 	protected void onCollision(Collision3D collision) {
 		this.position = this.position.plus(collision.normal().multipliedBy(collision.depth()));
-		this.velocity = Vec3f.Zero(); // TODO: Better velocity result
+		this.velocity = this.velocity.slide(collision.normal());
 	}
 }

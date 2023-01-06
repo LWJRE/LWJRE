@@ -20,20 +20,25 @@ public class CollisionObject3D extends Transform3D {
 	// TODO: Better shape detection
 
 	public final void moveAndCollide(Vec3f translation) {
-		this.position = this.position.plus(translation);
-		COLLIDERS.stream().filter(collider -> !collider.equals(this))
-				.map(this::computeCollision)
-				.filter(Optional::isPresent)
-				.map(Optional::get)
-				.forEach(this::onCollision);
+		if(translation.lengthSquared() > 0.0f) {
+			this.position = this.position.plus(translation);
+			COLLIDERS.stream().filter(collider -> !collider.equals(this))
+					.map(this::computeCollision)
+					.filter(Optional::isPresent)
+					.map(Optional::get)
+					.forEach(this::onCollision);
+		}
 	}
 
 	public final Optional<Collision3D> computeCollision(CollisionObject3D collisionObject) {
-		return this.getChild(BoundingBox3D.class).flatMap(boundingBox -> collisionObject.getChild(BoundingBox3D.class).map(boundingBox::computeCollision));
+		return this.getChild(BoundingBox3D.class)
+				.flatMap(boundingBox -> collisionObject.getChild(BoundingBox3D.class)
+						.map(boundingBox::computeCollision)
+						.map(collision -> new Collision3D(collisionObject, collision.normal(), collision.depth())));
 	}
 
 	protected void onCollision(Collision3D collision) {
-		System.out.println(collision);
+
 	}
 
 	@Override
