@@ -17,12 +17,12 @@ public class BoundingBox3D extends Transform3D {
 		Mat4f rotationA = this.globalRotation();
 		Mat4f rotationB = box.globalRotation();
 		Vec3f[] axes = new Vec3f[] {
-				rotationA.col0().xyz(),
-				rotationA.col1().xyz(),
-				rotationA.col2().xyz(),
-				rotationB.col0().xyz(),
-				rotationB.col1().xyz(),
-				rotationB.col2().xyz()
+				rotationA.col0().xyz().normalized(),
+				rotationA.col1().xyz().normalized(),
+				rotationA.col2().xyz().normalized(),
+				rotationB.col0().xyz().normalized(),
+				rotationB.col1().xyz().normalized(),
+				rotationB.col2().xyz().normalized()
 		};
 		for(Vec3f axis : axes) {
 			Projection projectionA = this.project(axis);
@@ -41,12 +41,12 @@ public class BoundingBox3D extends Transform3D {
 		Mat4f rotationA = this.globalRotation();
 		Mat4f rotationB = box.globalRotation();
 		Vec3f[] axes = new Vec3f[] {
-				rotationA.col0().xyz(),
-				rotationA.col1().xyz(),
-				rotationA.col2().xyz(),
-				rotationB.col0().xyz(),
-				rotationB.col1().xyz(),
-				rotationB.col2().xyz()
+				rotationA.col0().xyz().normalized(),
+				rotationA.col1().xyz().normalized(),
+				rotationA.col2().xyz().normalized(),
+				rotationB.col0().xyz().normalized(),
+				rotationB.col1().xyz().normalized(),
+				rotationB.col2().xyz().normalized()
 		};
 		for(Vec3f axis : axes) {
 			Projection projectionA = this.project(axis);

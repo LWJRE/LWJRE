@@ -35,7 +35,7 @@ public final class Application {
 			// TODO: Get from application properties
 			Graphics.depthTest(true);
 			Graphics.clearColor(0.0f, 0.5f, 1.0f, 0.0f);
-			this.sceneTree = FileUtils.parseYaml("/scenes/test_dynamics.yaml", Node.class);
+			this.sceneTree = FileUtils.parseYaml("/scenes/test_gravity.yaml", Node.class);
 			long previousTime = System.nanoTime();
 			while(!this.window.isCloseRequested()) {
 				Graphics.clearFramebuffer();

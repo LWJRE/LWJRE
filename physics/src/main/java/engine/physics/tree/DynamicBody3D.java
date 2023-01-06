@@ -18,6 +18,7 @@ public class DynamicBody3D extends KinematicBody3D {
 	@Override
 	protected void onCollision(Collision3D collision) {
 		if(collision.collider() instanceof DynamicBody3D other) {
+			this.position = this.position.plus(collision.normal().multipliedBy(collision.depth()));
 			Vec3f relativeVelocity = other.velocity.minus(this.velocity);
 			float restitution = 1.0f; // Max(a, b)
 			float j = -(1.0f + restitution) * relativeVelocity.dot(collision.normal());
