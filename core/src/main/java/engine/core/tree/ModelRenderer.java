@@ -12,7 +12,7 @@ public class ModelRenderer extends Transform3D {
 	private Shader shader;
 
 	@Override
-	protected void onStart() {
+	protected void onEnterTree() {
 		this.shader = Shader.main().createOrLoad();
 		Model.getOrLoad(this.model).forEach((material, mesh) -> RenderingSystem3D.addToBatch(mesh, this, () -> this.shader.runProgram(shader -> {
 			shader.loadUniform("transformation_matrix", this.globalTransformation());
@@ -26,12 +26,12 @@ public class ModelRenderer extends Transform3D {
 			}
 			shader.loadUniform("camera_position", Camera3D.current().globalPosition());
 		})));
-		super.onStart();
+		super.onEnterTree();
 	}
 
 	@Override
-	public void onExit() {
+	public void onExitTree() {
 		RenderingSystem3D.removeFromBatch(this);
-		super.onExit();
+		super.onExitTree();
 	}
 }

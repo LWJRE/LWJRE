@@ -1,8 +1,7 @@
 package engine.core;
 
 import engine.core.resources.GLResource;
-import engine.core.tree.Node;
-import engine.core.utils.FileUtils;
+import engine.core.tree.SceneTree;
 import engine.core.window.Window;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
@@ -16,8 +15,6 @@ public final class Application {
 	}
 
 	private final Window window;
-
-	private Node sceneTree;
 
 	private Application() {
 		if(!GLFW.glfwInit()) {
@@ -35,16 +32,13 @@ public final class Application {
 			// TODO: Get from application properties
 			Graphics.depthTest(true);
 			Graphics.clearColor(0.0f, 0.5f, 1.0f, 0.0f);
-			this.sceneTree = FileUtils.parseYaml("/scenes/test_scene.yaml", Node.class);
-			long previousTime = System.nanoTime();
+			SceneTree.loadScene("/scenes/test_scene.yaml");
 			while(!this.window.isCloseRequested()) {
 				Graphics.clearFramebuffer();
-				long time = System.nanoTime();
-				this.sceneTree.process((time - previousTime) / 1_000_000_000.0f);
+				SceneTree.process();
 				RenderingSystem3D.renderingProcess();
 				this.window.update();
 				GLFW.glfwPollEvents();
-				previousTime = time;
 			}
 			this.window.destroy();
 		} catch(Exception e) {

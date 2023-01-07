@@ -12,12 +12,10 @@ public class CollisionObject3D extends Transform3D {
 	private static final ArrayList<CollisionObject3D> COLLIDERS = new ArrayList<>();
 
 	@Override
-	protected void onStart() {
+	protected void onEnterTree() {
 		COLLIDERS.add(this);
-		super.onStart();
+		super.onEnterTree();
 	}
-
-	// TODO: Better shape detection
 
 	public final void moveAndCollide(Vec3f translation) {
 		this.position = this.position.plus(translation);
@@ -29,16 +27,17 @@ public class CollisionObject3D extends Transform3D {
 	}
 
 	public final Optional<Collision3D> computeCollision(CollisionObject3D collisionObject) {
-		return this.getChild(BoundingBox3D.class).flatMap(boundingBox -> collisionObject.getChild(BoundingBox3D.class).map(boundingBox::computeCollision));
+		// TODO: Detect collision with multiple shapes
+		return this.getChildOfType(BoundingBox3D.class).flatMap(boundingBox -> collisionObject.getChildOfType(BoundingBox3D.class).map(boundingBox::computeCollision));
 	}
 
 	protected void onCollision(Collision3D collision) {
-		System.out.println(collision);
+
 	}
 
 	@Override
-	protected void onExit() {
+	protected void onExitTree() {
 		COLLIDERS.remove(this);
-		super.onExit();
+		super.onExitTree();
 	}
 }
