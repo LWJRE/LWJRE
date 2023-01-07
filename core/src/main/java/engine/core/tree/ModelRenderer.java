@@ -1,6 +1,6 @@
 package engine.core.tree;
 
-import engine.core.RenderingSystem3D;
+import engine.core.graphics.RenderingSystem3D;
 import engine.core.resources.Model;
 import engine.core.resources.Shader;
 
@@ -14,7 +14,12 @@ public class ModelRenderer extends Transform3D {
 	@Override
 	protected void onEnterTree() {
 		this.shader = Shader.main().createOrLoad();
-		Model.getOrLoad(this.model).forEach((material, mesh) -> RenderingSystem3D.addToBatch(mesh, this, () -> this.shader.runProgram(shader -> {
+		super.onEnterTree();
+	}
+
+	@Override
+	protected void onUpdate(float delta) {
+		Model.getOrLoad(this.model).forEach((material, mesh) -> RenderingSystem3D.addToBatch(mesh, () -> this.shader.runProgram(shader -> {
 			shader.loadUniform("transformation_matrix", this.globalTransformation());
 			shader.loadUniform("projection_matrix", Camera3D.currentProjectionMatrix());
 			shader.loadUniform("view_matrix", Camera3D.currentViewMatrix());
@@ -26,12 +31,6 @@ public class ModelRenderer extends Transform3D {
 			}
 			shader.loadUniform("camera_position", Camera3D.current().globalPosition());
 		})));
-		super.onEnterTree();
-	}
-
-	@Override
-	public void onExitTree() {
-		RenderingSystem3D.removeFromBatch(this);
-		super.onExitTree();
+		super.onUpdate(delta);
 	}
 }

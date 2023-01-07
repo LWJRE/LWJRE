@@ -1,5 +1,7 @@
 package engine.core;
 
+import engine.core.graphics.Graphics;
+import engine.core.graphics.RenderingSystem3D;
 import engine.core.resources.GLResource;
 import engine.core.tree.SceneTree;
 import engine.core.window.Window;
@@ -31,10 +33,10 @@ public final class Application {
 			GL.createCapabilities();
 			// TODO: Get from application properties
 			Graphics.depthTest(true);
+			Graphics.backFaceCulling(true);
 			Graphics.clearColor(0.0f, 0.5f, 1.0f, 0.0f);
 			SceneTree.loadScene("/scenes/test_scene.yaml");
 			while(!this.window.isCloseRequested()) {
-				Graphics.clearFramebuffer();
 				SceneTree.process();
 				RenderingSystem3D.renderingProcess();
 				this.window.update();
@@ -49,8 +51,6 @@ public final class Application {
 			GLFW.glfwTerminate();
 		}
 	}
-
-	// TODO: Change scene
 
 	public static void main(String[] args) {
 		application = new Application();

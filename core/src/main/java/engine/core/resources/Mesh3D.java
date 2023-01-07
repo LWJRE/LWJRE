@@ -13,6 +13,8 @@ import java.util.HashSet;
 
 public class Mesh3D extends GLResource {
 
+	private static Mesh3D bound;
+
 	private final int vertexArray;
 	private final ArrayList<Integer> vertexBuffers = new ArrayList<>();
 	private final HashSet<Integer> attributes = new HashSet<>();
@@ -24,14 +26,25 @@ public class Mesh3D extends GLResource {
 		GL30.glBindVertexArray(this.vertexArray);
 	}
 
+	// TODO: Better binding and unbinding
+
+	public void bind() {
+		GL30.glBindVertexArray(this.vertexArray);
+		this.attributes.forEach(GL20::glEnableVertexAttribArray);
+		bound = this;
+	}
+
+	public void unbind() {
+		this.attributes.forEach(GL20::glDisableVertexAttribArray);
+		GL30.glBindVertexArray(0);
+		bound = null;
+	}
+
 	public void draw(Runnable onDraw) {
+		// TODO: Check if currently bound
 		if(this.drawMethod != null) {
-			GL30.glBindVertexArray(this.vertexArray);
-			this.attributes.forEach(GL20::glEnableVertexAttribArray);
 			onDraw.run();
 			this.drawMethod.run();
-			this.attributes.forEach(GL20::glDisableVertexAttribArray);
-			GL30.glBindVertexArray(0);
 		}
 	}
 
