@@ -1,7 +1,6 @@
 package engine.core.utils;
 
 import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.introspector.BeanAccess;
 
 import javax.imageio.ImageIO;
@@ -85,8 +84,8 @@ public final class FileUtils {
 	}
 
 	// TODO: Upgrade this
-	public static <T> T parseYaml(String file, Class<T> type) {
-		Yaml yaml = new Yaml(new Constructor(type));
+	public static <T> T parseYaml(String file) {
+		Yaml yaml = new Yaml();
 		yaml.setBeanAccess(BeanAccess.FIELD);
 		return readFile(file, yaml::load, exception -> null);
 	}

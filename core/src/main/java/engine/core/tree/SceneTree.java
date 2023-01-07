@@ -31,7 +31,7 @@ public final class SceneTree {
 	 * @param file File path to the scene to change to
 	 */
 	public static void loadScene(String file) {
-		Node node = FileUtils.parseYaml(file, Node.class);
+		Node node = FileUtils.parseYaml(file);
 		if(root.hasChild("")) root.removeChild("");
 		root.addChild("", node);
 	}

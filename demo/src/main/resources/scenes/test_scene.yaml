@@ -1,4 +1,4 @@
-!!engine.core.tree.Node
+!!engine.demo.tree.TestScene
 children:
   dragon:
     !!engine.physics.tree.KinematicBody3D
