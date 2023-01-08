@@ -1,6 +1,6 @@
 package engine.core.tree;
 
-import engine.core.RenderingSystem3D;
+import engine.core.graphics.RenderingSystem3D;
 import engine.core.utils.Color;
 
 public class PointLight3D extends Transform3D {
@@ -8,15 +8,15 @@ public class PointLight3D extends Transform3D {
 	private Color color = Color.WHITE;
 
 	@Override
-	protected void onStart() {
+	protected void onEnterTree() {
 		RenderingSystem3D.addLight(this);
-		super.onStart();
+		super.onEnterTree();
 	}
 
 	@Override
-	protected void onExit() {
+	protected void onExitTree() {
 		RenderingSystem3D.removeLight(this);
-		super.onExit();
+		super.onExitTree();
 	}
 
 	public final Color getColor() {

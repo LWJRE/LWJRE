@@ -1,26 +1,31 @@
-!!engine.core.tree.Node
+!!engine.demo.tree.TestScene
 children:
-  # Falling dragon
-  - !!engine.physics.tree.DynamicBody3D
+  dragon:
+    !!engine.physics.tree.KinematicBody3D
     position: !!vecmatlib.vector.Vec3f [ 0.0, 50.0, 0.0 ]
+    scale: !!vecmatlib.vector.Vec3f [ 1.5, 1.5, 1.5 ]
     children:
-      - !!engine.core.tree.ModelRenderer
+      model:
+        !!engine.core.tree.ModelRenderer
         model: "/models/dragon.obj"
-      - !!engine.physics.tree.BoundingBox3D
+      boundingBox:
+        !!engine.physics.tree.BoundingBox3D
         position: !!vecmatlib.vector.Vec3f [ 0.0, 3.0, -0.4 ]
         extents: !!vecmatlib.vector.Vec3f [ 6.0, 5.0, 3.0 ]
-  # Static cube
-  - !!engine.physics.tree.CollisionObject3D
+  cube:
+    !!engine.physics.tree.CollisionObject3D
     children:
-      - !!engine.physics.tree.BoundingBox3D
+      boundingBox:
+        !!engine.physics.tree.BoundingBox3D
         extents: !!vecmatlib.vector.Vec3f [ 7.5, 1.0, 7.5 ]
-  # Light
-  - !!engine.core.tree.PointLight3D
+  light:
+    !!engine.core.tree.PointLight3D
     position: !!vecmatlib.vector.Vec3f [ -2.0, 7.5, 2.0 ]
     children:
-      - !!engine.core.tree.ModelRenderer
+      bunny:
+        !!engine.core.tree.ModelRenderer
         model: "/models/bunny.obj"
         scale: !!vecmatlib.vector.Vec3f [ 0.1, 0.1, 0.1 ]
-  # Camera
-  - !!engine.core.tree.Camera3D
+  camera:
+    !!engine.core.tree.Camera3D
     position: !!vecmatlib.vector.Vec3f [ 0.0, 5.0, 18.0 ]
