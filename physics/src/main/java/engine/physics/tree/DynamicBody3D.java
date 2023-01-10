@@ -21,10 +21,10 @@ public class DynamicBody3D extends KinematicBody3D {
 			this.position = this.position.plus(collision.normal().multipliedBy(collision.depth()));
 			Vec3f relativeVelocity = other.velocity.minus(this.velocity);
 			float restitution = 1.0f; // Max(a, b)
-			float j = -(1.0f + restitution) * relativeVelocity.dot(collision.normal());
-			j /= (1.0f / this.mass + 1.0f / other.mass);
-			this.velocity = this.velocity.minus(collision.normal().multipliedBy(j / this.mass));
-			other.velocity = other.velocity.plus(collision.normal().multipliedBy(j / other.mass));
+			float impulse = -(1.0f + restitution) * relativeVelocity.dot(collision.normal());
+			impulse /= (1.0f / this.mass + 1.0f / other.mass);
+			this.velocity = this.velocity.minus(collision.normal().multipliedBy(impulse / this.mass));
+			other.velocity = other.velocity.plus(collision.normal().multipliedBy(impulse / other.mass));
 		} else {
 			super.onCollision(collision);
 		}

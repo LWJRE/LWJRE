@@ -3,8 +3,8 @@ children:
   # Dragon 1
   dragon1:
     !!engine.physics.tree.DynamicBody3D
-    position: !!vecmatlib.vector.Vec3f [ -50.0, 0.0, 0.0 ]
-    force: !!vecmatlib.vector.Vec3f [ 10.0, 0.0, 0.0 ]
+    position: !!vecmatlib.vector.Vec3f [ -50.0, 0.0, -50.0 ]
+    force: !!vecmatlib.vector.Vec3f [ 10.0, 0.0, 10.0 ]
     children:
       model:
         !!engine.core.tree.ModelRenderer
