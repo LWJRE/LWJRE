@@ -13,6 +13,25 @@ import java.util.stream.Stream;
 
 public final class FileUtils {
 
+	/**
+	 * Reads the content of a file as a string.
+	 *
+	 * @param file Path to the file to load
+	 * @return The whole content of the file as a string
+	 */
+	public static String readAsString(String file) {
+		try(InputStream inputStream = FileUtils.class.getResourceAsStream(file)) {
+			if(inputStream == null)
+				throw new FileNotFoundException("Could not find file " + file);
+			BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+			String result = reader.lines().collect(Collectors.joining("\n"));
+			reader.close();
+			return result;
+		} catch (IOException exception) {
+			throw new RuntimeException(exception);
+		}
+	}
+
 	public static void readFile(String file, IOConsumer ioConsumer, Consumer<IOException> exceptionConsumer) {
 		try(InputStream inputStream = FileUtils.class.getResourceAsStream(file)) {
 			if(inputStream == null)
