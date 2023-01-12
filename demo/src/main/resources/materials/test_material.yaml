@@ -1,5 +1,5 @@
-!!engine.core.resources.Material
-ambient: !!engine.graphics.utils.Color [ 1.0, 1.0, 1.0 ]
-diffuse: !!engine.graphics.utils.Color [ 1.0, 1.0, 1.0 ]
-specular: !!engine.graphics.utils.Color [ 0.0, 0.0, 0.0 ]
+!!gamma.engine.core.resources.Material
+ambient: !!gamma.engine.graphics.utils.Color [ 1.0, 1.0, 1.0 ]
+diffuse: !!gamma.engine.graphics.utils.Color [ 1.0, 1.0, 1.0 ]
+specular: !!gamma.engine.graphics.utils.Color [ 0.0, 0.0, 0.0 ]
 shininess: 0.0

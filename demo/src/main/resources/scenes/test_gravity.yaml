@@ -1,113 +1,113 @@
-!!engine.core.tree.Node
+!!gamma.engine.core.tree.Node
 children:
   # Falling dragon
   dragon1:
-    !!engine.physics.tree.DynamicBody3D
+    !!gamma.engine.physics.tree.DynamicBody3D
     position: !!vecmatlib.vector.Vec3f [ 0.0, 50.0, 0.0 ]
     force: !!vecmatlib.vector.Vec3f [ 0.0, -9.81, 0.0 ]
     children:
       model:
-        !!engine.core.tree.ModelRenderer
+        !!gamma.engine.core.tree.ModelRenderer
         model: "/models/dragon.obj"
       boundingBox:
-        !!engine.physics.tree.BoundingBox3D
+        !!gamma.engine.physics.tree.BoundingBox3D
         position: !!vecmatlib.vector.Vec3f [ 0.0, 3.0, -0.4 ]
         extents: !!vecmatlib.vector.Vec3f [ 6.0, 5.0, 3.0 ]
   # Falling dragon
   dragon2:
-    !!engine.physics.tree.DynamicBody3D
+    !!gamma.engine.physics.tree.DynamicBody3D
     position: !!vecmatlib.vector.Vec3f [ 0.0, 100.0, 0.0 ]
     force: !!vecmatlib.vector.Vec3f [ 0.0, -9.81, 0.0 ]
     children:
       model:
-        !!engine.core.tree.ModelRenderer
+        !!gamma.engine.core.tree.ModelRenderer
         model: "/models/dragon.obj"
       boundingBox:
-        !!engine.physics.tree.BoundingBox3D
+        !!gamma.engine.physics.tree.BoundingBox3D
         position: !!vecmatlib.vector.Vec3f [ 0.0, 3.0, -0.4 ]
         extents: !!vecmatlib.vector.Vec3f [ 6.0, 5.0, 3.0 ]
   # Falling dragon
   dragon3:
-    !!engine.physics.tree.DynamicBody3D
+    !!gamma.engine.physics.tree.DynamicBody3D
     position: !!vecmatlib.vector.Vec3f [ 0.0, 150.0, 0.0 ]
     force: !!vecmatlib.vector.Vec3f [ 0.0, -9.81, 0.0 ]
     children:
       model:
-        !!engine.core.tree.ModelRenderer
+        !!gamma.engine.core.tree.ModelRenderer
         model: "/models/dragon.obj"
       boundingBox:
-        !!engine.physics.tree.BoundingBox3D
+        !!gamma.engine.physics.tree.BoundingBox3D
         position: !!vecmatlib.vector.Vec3f [ 0.0, 3.0, -0.4 ]
         extents: !!vecmatlib.vector.Vec3f [ 6.0, 5.0, 3.0 ]
   # Falling dragon
   dragon4:
-    !!engine.physics.tree.DynamicBody3D
+    !!gamma.engine.physics.tree.DynamicBody3D
     position: !!vecmatlib.vector.Vec3f [ 0.0, 200.0, 0.0 ]
     force: !!vecmatlib.vector.Vec3f [ 0.0, -9.81, 0.0 ]
     children:
       model:
-        !!engine.core.tree.ModelRenderer
+        !!gamma.engine.core.tree.ModelRenderer
         model: "/models/dragon.obj"
       boundingBox:
-        !!engine.physics.tree.BoundingBox3D
+        !!gamma.engine.physics.tree.BoundingBox3D
         position: !!vecmatlib.vector.Vec3f [ 0.0, 3.0, -0.4 ]
         extents: !!vecmatlib.vector.Vec3f [ 6.0, 5.0, 3.0 ]
   # Falling dragon
   dragon5:
-    !!engine.physics.tree.DynamicBody3D
+    !!gamma.engine.physics.tree.DynamicBody3D
     position: !!vecmatlib.vector.Vec3f [ 0.0, 250.0, 0.0 ]
     force: !!vecmatlib.vector.Vec3f [ 0.0, -9.81, 0.0 ]
     children:
       model:
-        !!engine.core.tree.ModelRenderer
+        !!gamma.engine.core.tree.ModelRenderer
         model: "/models/dragon.obj"
       boundingBox:
-        !!engine.physics.tree.BoundingBox3D
+        !!gamma.engine.physics.tree.BoundingBox3D
         position: !!vecmatlib.vector.Vec3f [ 0.0, 3.0, -0.4 ]
         extents: !!vecmatlib.vector.Vec3f [ 6.0, 5.0, 3.0 ]
   # Falling dragon
   dragon6:
-    !!engine.physics.tree.DynamicBody3D
+    !!gamma.engine.physics.tree.DynamicBody3D
     position: !!vecmatlib.vector.Vec3f [ 0.0, 300.0, 0.0 ]
     force: !!vecmatlib.vector.Vec3f [ 0.0, -9.81, 0.0 ]
     children:
       model:
-        !!engine.core.tree.ModelRenderer
+        !!gamma.engine.core.tree.ModelRenderer
         model: "/models/dragon.obj"
       boundingBox:
-        !!engine.physics.tree.BoundingBox3D
+        !!gamma.engine.physics.tree.BoundingBox3D
         position: !!vecmatlib.vector.Vec3f [ 0.0, 3.0, -0.4 ]
         extents: !!vecmatlib.vector.Vec3f [ 6.0, 5.0, 3.0 ]
   # Falling dragon
   dragon7:
-    !!engine.physics.tree.DynamicBody3D
+    !!gamma.engine.physics.tree.DynamicBody3D
     position: !!vecmatlib.vector.Vec3f [ 0.0, 350.0, 0.0 ]
     force: !!vecmatlib.vector.Vec3f [ 0.0, -9.81, 0.0 ]
     children:
       model:
-        !!engine.core.tree.ModelRenderer
+        !!gamma.engine.core.tree.ModelRenderer
         model: "/models/dragon.obj"
       boundingBox:
-        !!engine.physics.tree.BoundingBox3D
+        !!gamma.engine.physics.tree.BoundingBox3D
         position: !!vecmatlib.vector.Vec3f [ 0.0, 3.0, -0.4 ]
         extents: !!vecmatlib.vector.Vec3f [ 6.0, 5.0, 3.0 ]
   # Static cube
   cube:
-    !!engine.physics.tree.CollisionObject3D
+    !!gamma.engine.physics.tree.CollisionObject3D
     children:
       boundingBox:
-        !!engine.physics.tree.BoundingBox3D
+        !!gamma.engine.physics.tree.BoundingBox3D
         extents: !!vecmatlib.vector.Vec3f [ 7.5, 1.0, 7.5 ]
   # Light
   light:
-    !!engine.core.tree.PointLight3D
+    !!gamma.engine.core.tree.PointLight3D
     position: !!vecmatlib.vector.Vec3f [ -2.0, 7.5, 2.0 ]
     children:
       bunny:
-        !!engine.core.tree.ModelRenderer
+        !!gamma.engine.core.tree.ModelRenderer
         model: "/models/bunny.obj"
         scale: !!vecmatlib.vector.Vec3f [ 0.1, 0.1, 0.1 ]
   # Camera
   camera:
-    !!engine.core.tree.Camera3D
+    !!gamma.engine.core.tree.Camera3D
     position: !!vecmatlib.vector.Vec3f [ 0.0, 7.5, 18.0 ]
