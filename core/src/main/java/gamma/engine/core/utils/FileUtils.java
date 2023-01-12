@@ -6,6 +6,7 @@ import org.yaml.snakeyaml.introspector.BeanAccess;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -29,6 +30,39 @@ public final class FileUtils {
 			return result;
 		} catch (IOException exception) {
 			throw new RuntimeException(exception);
+		}
+	}
+
+	/**
+	 * Reads an image file as a {@link BufferedImage}.
+	 *
+	 * @param file Path to the image file
+	 * @return The image as a {@code BufferedImage}
+	 */
+	public static BufferedImage readImage(String file) {
+		try(InputStream inputStream = FileUtils.class.getResourceAsStream(file)) {
+			if(inputStream == null)
+				throw new FileNotFoundException("Could not find file " + file);
+			return ImageIO.read(inputStream);
+		} catch (IOException exception) {
+			throw new RuntimeException(exception);
+		}
+	}
+
+	/**
+	 * Returns an {@link Optional} representing an image file as a {@link BufferedImage} or an empty {@code Optional} if an exception occurs while loading the image.
+	 *
+	 * @param file Path to the image file
+	 * @return An {@code Optional} representing an image file as a {@code BufferedImage} or an empty {@code Optional} if an exception occurs while loading the image
+	 */
+	public static Optional<BufferedImage> readImageOptional(String file) {
+		try(InputStream inputStream = FileUtils.class.getResourceAsStream(file)) {
+			if(inputStream == null)
+				throw new FileNotFoundException("Could not find file " + file);
+			return Optional.of(ImageIO.read(inputStream));
+		} catch (IOException exception) {
+			exception.printStackTrace();
+			return Optional.empty();
 		}
 	}
 
@@ -72,34 +106,6 @@ public final class FileUtils {
 			System.err.println("Error loading file " + file);
 			exception.printStackTrace();
 		});
-	}
-
-	public static <T> T streamLines(String file, Function<Stream<String>, T> streamFunction, Function<IOException, T> exceptionFunction) {
-		return readFile(file, inputStream -> {
-			BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-			T result = streamFunction.apply(reader.lines());
-			reader.close();
-			return result;
-		}, exceptionFunction);
-	}
-
-	public static String readString(String file, Function<IOException, String> exceptionFunction) {
-		return streamLines(file, stringStream -> stringStream.collect(Collectors.joining("\n")), exceptionFunction);
-	}
-
-	public static void readImage(String file, Consumer<BufferedImage> imageConsumer, Consumer<IOException> exceptionConsumer) {
-		readFile(file, inputStream -> imageConsumer.accept(ImageIO.read(inputStream)), exceptionConsumer);
-	}
-
-	public static void readImage(String file, Consumer<BufferedImage> imageConsumer) {
-		readImage(file, imageConsumer, exception -> {
-			System.err.println("Error loading image file " + file);
-			exception.printStackTrace();
-		});
-	}
-
-	public static <T> T readImage(String file, Function<BufferedImage, T> imageFunction, Function<IOException, T> exceptionFunction) {
-		return readFile(file, inputStream -> imageFunction.apply(ImageIO.read(inputStream)), exceptionFunction);
 	}
 
 	// TODO: Upgrade this

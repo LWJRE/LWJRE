@@ -19,9 +19,9 @@ public class ModelRenderer extends Transform3D {
 			this.shader.loadUniform("projection_matrix", Camera3D.currentProjectionMatrix());
 			this.shader.loadUniform("view_matrix", Camera3D.currentViewMatrix());
 			if(material != null) {
-				this.shader.loadUniform("material.ambient", material.getAmbient());
-				this.shader.loadUniform("material.diffuse", material.getDiffuse());
-				this.shader.loadUniform("material.specular", material.getSpecular());;
+				this.shader.loadUniform("material.ambient", material.ambient);
+				this.shader.loadUniform("material.diffuse", material.diffuse);
+				this.shader.loadUniform("material.specular", material.specular);;
 				this.shader.loadUniform("material.shininess", 8.0f);
 			}
 			this.shader.loadUniform("camera_position", Camera3D.current().globalPosition());

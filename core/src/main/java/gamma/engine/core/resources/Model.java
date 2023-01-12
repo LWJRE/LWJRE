@@ -122,14 +122,11 @@ public class Model {
 				materials.put(line[1], material);
 				current.push(material);
 			} else if(line[0].equals("Ka") && !current.isEmpty()) {
-				Color color = new Color(Float.parseFloat(line[1]), Float.parseFloat(line[2]), Float.parseFloat(line[3]));
-				current.peek().setAmbient(color);
+				current.peek().ambient = new Color(Float.parseFloat(line[1]), Float.parseFloat(line[2]), Float.parseFloat(line[3]));
 			} else if(line[0].equals("Kd") && !current.isEmpty()) {
-				Color color = new Color(Float.parseFloat(line[1]), Float.parseFloat(line[2]), Float.parseFloat(line[3]));
-				current.peek().setDiffuse(color);
+				current.peek().diffuse = new Color(Float.parseFloat(line[1]), Float.parseFloat(line[2]), Float.parseFloat(line[3]));
 			} else if(line[0].equals("Ks") && !current.isEmpty()) {
-				Color color = new Color(Float.parseFloat(line[1]), Float.parseFloat(line[2]), Float.parseFloat(line[3]));
-				current.peek().setSpecular(color);
+				current.peek().specular = new Color(Float.parseFloat(line[1]), Float.parseFloat(line[2]), Float.parseFloat(line[3]));
 			}
 		}));
 		return materials;
