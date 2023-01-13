@@ -35,7 +35,7 @@ public final class Application {
 			Graphics.depthTest(true);
 			Graphics.backFaceCulling(true);
 			Graphics.clearColor(0.0f, 0.5f, 1.0f, 0.0f);
-			SceneTree.loadScene("/scenes/test_dynamics.yaml");
+			SceneTree.loadScene("/branches/test_dynamics.yaml");
 			while(!this.window.isCloseRequested()) {
 				SceneTree.process();
 				RenderingSystem3D.renderingProcess();

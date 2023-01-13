@@ -31,7 +31,6 @@ public final class SceneTree {
 	 * @param file File path to the scene to change to
 	 */
 	public static void loadScene(String file) {
-		// TODO: Scene as a type of resource?
 		Node node = YamlParser.loadAs(file, Node.class);
 		if(root.hasChild("")) root.removeChild("");
 		root.addChild("", node);

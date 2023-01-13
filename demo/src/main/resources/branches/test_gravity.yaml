@@ -1,0 +1,71 @@
+!!gamma.engine.core.tree.Node
+children:
+  # Falling dragon
+  dragon1:
+    !subbranch
+    file: "/branches/dynamic_dragon.yaml"
+    overrides: |
+      position: !!vecmatlib.vector.Vec3f [ 0.0, 50.0, 0.0 ]
+      force: !!vecmatlib.vector.Vec3f [ 0.0, -9.81, 0.0 ]
+  # Falling dragon
+  dragon2:
+    !subbranch
+    file: "/branches/dynamic_dragon.yaml"
+    overrides: |
+      position: !!vecmatlib.vector.Vec3f [ 0.0, 100.0, 0.0 ]
+      force: !!vecmatlib.vector.Vec3f [ 0.0, -9.81, 0.0 ]
+  # Falling dragon
+  dragon3:
+    !subbranch
+    file: "/branches/dynamic_dragon.yaml"
+    overrides: |
+      position: !!vecmatlib.vector.Vec3f [ 0.0, 150.0, 0.0 ]
+      force: !!vecmatlib.vector.Vec3f [ 0.0, -9.81, 0.0 ]
+  # Falling dragon
+  dragon4:
+    !subbranch
+    file: "/branches/dynamic_dragon.yaml"
+    overrides: |
+      position: !!vecmatlib.vector.Vec3f [ 0.0, 200.0, 0.0 ]
+      force: !!vecmatlib.vector.Vec3f [ 0.0, -9.81, 0.0 ]
+  # Falling dragon
+  dragon5:
+    !subbranch
+    file: "/branches/dynamic_dragon.yaml"
+    overrides: |
+      position: !!vecmatlib.vector.Vec3f [ 0.0, 250.0, 0.0 ]
+      force: !!vecmatlib.vector.Vec3f [ 0.0, -9.81, 0.0 ]
+  # Falling dragon
+  dragon6:
+    !subbranch
+    file: "/branches/dynamic_dragon.yaml"
+    overrides: |
+      position: !!vecmatlib.vector.Vec3f [ 0.0, 300.0, 0.0 ]
+      force: !!vecmatlib.vector.Vec3f [ 0.0, -9.81, 0.0 ]
+  # Falling dragon
+  dragon7:
+    !subbranch
+    file: "/branches/dynamic_dragon.yaml"
+    overrides: |
+      position: !!vecmatlib.vector.Vec3f [ 0.0, 350.0, 0.0 ]
+      force: !!vecmatlib.vector.Vec3f [ 0.0, -9.81, 0.0 ]
+  # Static cube
+  cube:
+    !!gamma.engine.physics.tree.CollisionObject3D
+    children:
+      boundingBox:
+        !!gamma.engine.physics.tree.BoundingBox3D
+        extents: !!vecmatlib.vector.Vec3f [ 7.5, 1.0, 7.5 ]
+  # Light
+  light:
+    !!gamma.engine.core.tree.PointLight3D
+    position: !!vecmatlib.vector.Vec3f [ -2.0, 7.5, 2.0 ]
+    children:
+      bunny:
+        !!gamma.engine.core.tree.ModelRenderer
+        model: "/models/bunny.obj"
+        scale: !!vecmatlib.vector.Vec3f [ 0.1, 0.1, 0.1 ]
+  # Camera
+  camera:
+    !!gamma.engine.core.tree.Camera3D
+    position: !!vecmatlib.vector.Vec3f [ 0.0, 7.5, 18.0 ]
