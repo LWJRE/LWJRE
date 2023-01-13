@@ -1,8 +1,5 @@
 package gamma.engine.core.utils;
 
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.introspector.BeanAccess;
-
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -13,6 +10,24 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public final class FileUtils {
+
+	/**
+	 * Gets an input stream from a file in the classpath and applies the given function.
+	 *
+	 * @param file Path to the file in the classpath
+	 * @param function Function to apply to the input stream
+	 * @return The result of the given function
+	 * @param <T> Return type of the given function
+	 */
+	public static <T> T inputStream(String file, IOFunction<T> function) {
+		try(InputStream inputStream = FileUtils.class.getResourceAsStream(file)) {
+			if(inputStream == null)
+				throw new FileNotFoundException("Could not find file " + file);
+			return function.apply(inputStream);
+		} catch (IOException exception) {
+			throw new RuntimeException(exception);
+		}
+	}
 
 	/**
 	 * Reads the content of a file as a string.
@@ -106,13 +121,6 @@ public final class FileUtils {
 			System.err.println("Error loading file " + file);
 			exception.printStackTrace();
 		});
-	}
-
-	// TODO: Upgrade this
-	public static <T> T parseYaml(String file) {
-		Yaml yaml = new Yaml();
-		yaml.setBeanAccess(BeanAccess.FIELD);
-		return readFile(file, yaml::load, exception -> null);
 	}
 
 	@FunctionalInterface

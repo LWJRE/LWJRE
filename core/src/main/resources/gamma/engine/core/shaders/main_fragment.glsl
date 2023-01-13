@@ -29,9 +29,7 @@ uniform Material material;
 uniform int lights_count;
 uniform PointLight point_lights[MAX_POINT_LIGHTS];
 
-#ifdef FRAGMENT
 vec4 fragment_shader(vec4 frag_color);
-#endif
 
 vec3 point_light(PointLight light, vec3 view_direction) {
     vec3 light_direction = normalize(light.position - world_position);
@@ -59,7 +57,5 @@ void main() {
     }
 
     frag_color = vec4(color, 1.0);
-#ifdef FRAGMENT
     frag_color = fragment_shader(frag_color);
-#endif
 }

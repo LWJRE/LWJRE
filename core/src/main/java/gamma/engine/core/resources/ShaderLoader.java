@@ -1,25 +1,22 @@
 package gamma.engine.core.resources;
 
 import gamma.engine.core.utils.FileUtils;
+import gamma.engine.core.utils.YamlParser;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
-import org.yaml.snakeyaml.LoaderOptions;
-import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.AbstractConstruct;
-import org.yaml.snakeyaml.constructor.Constructor;
-import org.yaml.snakeyaml.introspector.BeanAccess;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.ScalarNode;
-import org.yaml.snakeyaml.nodes.Tag;
 
 import java.util.HashMap;
 
 /**
  * Utility class for loading shaders.
+ * Shaders are loaded with {@link ShaderLoader#getOrLoad(String)}.
  *
  * @author Nico
  */
-public final class ShaderLoader extends Constructor {
+public final class ShaderLoader extends AbstractConstruct {
 
 	/** Map of all loaded shader programs */
 	private static final HashMap<String, Shader> SHADER_PROGRAMS = new HashMap<>();
@@ -52,46 +49,29 @@ public final class ShaderLoader extends Constructor {
 	 * @return The requested shader program
 	 */
 	private static Shader load(String file) {
-		Yaml yaml = new Yaml(new ShaderLoader());
-		yaml.setBeanAccess(BeanAccess.FIELD);
-		return yaml.loadAs(ShaderLoader.class.getResourceAsStream(file), Shader.class);
+		return YamlParser.loadAs(file, Shader.class);
 	}
 
+	/** Shader type */
+	private final int type;
+
 	/**
-	 * Shader loader constructor.
+	 * Constructor used in {@link YamlParser} for loading shaders inside yaml files.
+	 *
+	 * @param type Shader type
 	 */
-	private ShaderLoader() {
-		super(new LoaderOptions());
-		this.yamlConstructors.put(new Tag("!vertex"), new ShaderConstructor(GL20.GL_VERTEX_SHADER));
-		this.yamlConstructors.put(new Tag("!fragment"), new ShaderConstructor(GL20.GL_FRAGMENT_SHADER));
+	public ShaderLoader(int type) {
+		this.type = type;
 	}
 
-	/**
-	 * Shader constructor.
-	 */
-	private class ShaderConstructor extends AbstractConstruct {
-
-		/** Shader type */
-		private final int type;
-
-		/**
-		 * Constructs a constructor (wat?).
-		 *
-		 * @param type Shader type
-		 */
-		private ShaderConstructor(int type) {
-			this.type = type;
-		}
-
-		@Override
-		public Object construct(Node node) {
-			String value = constructScalar((ScalarNode) node);
-			return switch(this.type) {
-				case GL20.GL_VERTEX_SHADER -> getOrLoad(value, this.type, VERTEX_SHADERS);
-				case GL20.GL_FRAGMENT_SHADER -> getOrLoad(value, this.type, FRAGMENT_SHADERS);
-				default -> throw new IllegalStateException("Unexpected value: " + this.type);
-			};
-		}
+	@Override
+	public Object construct(Node node) {
+		String value = ((ScalarNode) node).getValue();
+		return switch(this.type) {
+			case GL20.GL_VERTEX_SHADER -> getOrLoad(value, this.type, VERTEX_SHADERS);
+			case GL20.GL_FRAGMENT_SHADER -> getOrLoad(value, this.type, FRAGMENT_SHADERS);
+			default -> throw new IllegalStateException("Unexpected value: " + this.type);
+		};
 	}
 
 	/**
