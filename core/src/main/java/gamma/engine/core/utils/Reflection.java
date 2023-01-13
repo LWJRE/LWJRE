@@ -15,8 +15,9 @@ public final class Reflection {
 	}
 
 	public static <T> T instance(Class<T> type, Object... constructorParams) {
+		Class<?>[] parameters = Arrays.stream(constructorParams).map(Object::getClass).toArray(Class[]::new);
 		try {
-			return type.cast(type.getConstructor(Arrays.stream(constructorParams).map(Object::getClass).toArray(Class[]::new)).newInstance(constructorParams));
+			return type.cast(type.getConstructor(parameters).newInstance(constructorParams));
 		} catch (InstantiationException e) {
 			throw new RuntimeException("Cannot instantiate object of type" + type, e);
 		} catch (IllegalAccessException e) {
@@ -24,7 +25,7 @@ public final class Reflection {
 		} catch (InvocationTargetException e) {
 			throw new RuntimeException("Exception thrown when instantiating object of class " + type, e);
 		} catch (NoSuchMethodException e) {
-			throw new RuntimeException("Cannot find constructor with parameters " + Arrays.toString(constructorParams), e);
+			throw new RuntimeException("Cannot find constructor with parameters " + Arrays.toString(parameters), e);
 		}
 	}
 
