@@ -14,6 +14,20 @@ import org.yaml.snakeyaml.nodes.ScalarNode;
  */
 public class SubbranchLoader extends AbstractConstruct {
 
+	static {
+		YamlParser.addConstructor("!subbranch", new SubbranchLoader());
+	}
+
+	/**
+	 * Loads a subbranch file and returns the root node.
+	 *
+	 * @param file The file to load
+	 * @return The root node of the loaded branch
+	 */
+	public static gamma.engine.core.tree.Node load(String file) {
+		return YamlParser.loadAs(file, gamma.engine.core.tree.Node.class);
+	}
+
 	@Override
 	public Object construct(Node node) {
 		Object subbranchRoot = null;

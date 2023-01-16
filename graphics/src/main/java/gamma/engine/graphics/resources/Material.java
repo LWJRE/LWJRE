@@ -1,6 +1,6 @@
-package gamma.engine.core.resources;
+package gamma.engine.graphics.resources;
 
-import gamma.engine.core.utils.Color;
+import gamma.engine.graphics.utils.Color;
 import org.yaml.snakeyaml.Yaml;
 
 import java.util.HashMap;

@@ -1,4 +1,4 @@
-package gamma.engine.core.resources;
+package gamma.engine.graphics.resources;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL20;
@@ -15,7 +15,7 @@ import java.util.HashMap;
  *
  * @author Nico
  */
-public final class Shader {
+public final class Shader extends DeletableResource {
 
 	/** List of all the shaders created used to load static uniforms */
 	private static final ArrayList<Shader> SHADERS = new ArrayList<>();
@@ -49,6 +49,11 @@ public final class Shader {
 	public void start() {
 		GL20.glUseProgram(this.program);
 		this.uniformVariables.values().forEach(Runnable::run);
+	}
+
+	@Override
+	protected void delete() {
+		GL20.glDeleteProgram(this.program);
 	}
 
 	/**

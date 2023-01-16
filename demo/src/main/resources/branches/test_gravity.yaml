@@ -58,11 +58,11 @@ children:
         extents: !!vecmatlib.vector.Vec3f [ 7.5, 1.0, 7.5 ]
   # Light
   light:
-    !!gamma.engine.core.tree.PointLight3D
+    !!gamma.engine.graphics.tree.PointLight3D
     position: !!vecmatlib.vector.Vec3f [ -2.0, 7.5, 2.0 ]
     children:
       bunny:
-        !!gamma.engine.core.tree.ModelRenderer
+        !!gamma.engine.graphics.tree.ModelRenderer
         model: "/models/bunny.obj"
         scale: !!vecmatlib.vector.Vec3f [ 0.1, 0.1, 0.1 ]
   # Camera

@@ -1,4 +1,4 @@
-package gamma.engine.core.graphics;
+package gamma.engine.graphics;
 
 import org.lwjgl.opengl.GL11;
 

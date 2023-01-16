@@ -11,6 +11,7 @@
 		<module>core</module>
 		<module>physics</module>
 		<module>demo</module>
+		<module>graphics</module>
 	</modules>
 
 	<properties>

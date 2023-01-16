@@ -1,4 +1,4 @@
-package gamma.engine.core.resources;
+package gamma.engine.graphics.resources;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
@@ -11,7 +11,7 @@ import vecmatlib.vector.Vec3f;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-public class Mesh3D extends GLResource {
+public class Mesh3D extends DeletableResource {
 
 	private static Mesh3D bound;
 

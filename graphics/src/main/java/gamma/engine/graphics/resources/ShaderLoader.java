@@ -1,4 +1,4 @@
-package gamma.engine.core.resources;
+package gamma.engine.graphics.resources;
 
 import gamma.engine.core.utils.FileUtils;
 import gamma.engine.core.utils.YamlParser;
@@ -17,6 +17,11 @@ import java.util.HashMap;
  * @author Nico
  */
 public final class ShaderLoader extends AbstractConstruct {
+
+	static {
+		YamlParser.addConstructor("!vertex", new ShaderLoader(GL20.GL_VERTEX_SHADER));
+		YamlParser.addConstructor("!fragment", new ShaderLoader(GL20.GL_FRAGMENT_SHADER));
+	}
 
 	/** Map of all loaded shader programs */
 	private static final HashMap<String, Shader> SHADER_PROGRAMS = new HashMap<>();

@@ -1,10 +1,8 @@
 package gamma.engine.core.utils;
 
-import gamma.engine.core.resources.ShaderLoader;
-import gamma.engine.core.tree.SubbranchLoader;
-import org.lwjgl.opengl.GL20;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.AbstractConstruct;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.introspector.BeanAccess;
 import org.yaml.snakeyaml.nodes.Tag;
@@ -18,11 +16,24 @@ import java.util.Map;
  */
 public final class YamlParser extends Constructor {
 
+	/** Snakeyaml's constructor object */
+	private static final YamlParser PARSER = new YamlParser();
 	/** Snakeyaml's Yaml object */
-	private static final Yaml YAML = new Yaml(new YamlParser());
+	private static final Yaml YAML = new Yaml(PARSER);
 
 	static {
 		YAML.setBeanAccess(BeanAccess.FIELD);
+	}
+
+	/**
+	 * Adds a constructor for objects with the given tag.
+	 * The constructor will be run whenever a yaml file contains said tag.
+	 *
+	 * @param tag The yaml tag in the format "!tag"
+	 * @param construct The constructor to add
+	 */
+	public static void addConstructor(String tag, AbstractConstruct construct) {
+		PARSER.yamlConstructors.put(new Tag(tag), construct);
 	}
 
 	/**
@@ -70,12 +81,9 @@ public final class YamlParser extends Constructor {
 	}
 
 	/**
-	 * Adds constructors to the yaml constructor.
+	 * Constructs the constructor (don't ask).
 	 */
 	private YamlParser() {
 		super(new LoaderOptions());
-		this.yamlConstructors.put(new Tag("!subbranch"), new SubbranchLoader());
-		this.yamlConstructors.put(new Tag("!vertex"), new ShaderLoader(GL20.GL_VERTEX_SHADER));
-		this.yamlConstructors.put(new Tag("!fragment"), new ShaderLoader(GL20.GL_FRAGMENT_SHADER));
 	}
 }

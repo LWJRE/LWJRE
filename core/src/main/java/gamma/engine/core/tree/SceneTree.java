@@ -1,7 +1,5 @@
 package gamma.engine.core.tree;
 
-import gamma.engine.core.utils.YamlParser;
-
 /**
  * Static class that contains the scene tree.
  *
@@ -31,7 +29,7 @@ public final class SceneTree {
 	 * @param file File path to the scene to change to
 	 */
 	public static void loadScene(String file) {
-		Node node = YamlParser.loadAs(file, Node.class);
+		Node node = SubbranchLoader.load(file);
 		if(root.hasChild("")) root.removeChild("");
 		root.addChild("", node);
 	}

@@ -1,6 +1,0 @@
-!!gamma.engine.core.resources.Shader [ [
-  !vertex "/gamma/engine/core/shaders/main_vertex.glsl",
-  !vertex "/gamma/engine/core/shaders/empty_vertex.glsl",
-  !fragment "/gamma/engine/core/shaders/main_fragment.glsl",
-  !fragment "/gamma/engine/core/shaders/empty_fragment.glsl"
-] ]

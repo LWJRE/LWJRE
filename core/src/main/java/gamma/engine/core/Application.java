@@ -1,44 +1,58 @@
 package gamma.engine.core;
 
-import gamma.engine.core.graphics.Graphics;
-import gamma.engine.core.graphics.RenderingSystem3D;
-import gamma.engine.core.resources.GLResource;
 import gamma.engine.core.tree.SceneTree;
 import gamma.engine.core.window.Window;
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.opengl.GL;
 
+import java.util.ServiceLoader;
+
+/**
+ * Main application class.
+ *
+ * @author Nico
+ */
 public final class Application {
 
+	/** Application singleton instance */
 	private static Application application;
 
+	/**
+	 * Gets the application's main window.
+	 *
+	 * @return The application's main window
+	 */
 	public static Window window() {
 		return application.window;
 	}
 
+	/** Application window */
 	private final Window window;
+	/** Loaded modules */
+	private final ServiceLoader<Module> modules;
 
+	/**
+	 * Starts the application.
+	 */
 	private Application() {
 		if(!GLFW.glfwInit()) {
 			throw new IllegalStateException("Unable to initialize GLFW");
 		}
 		this.window = new Window();
+		this.modules = ServiceLoader.load(Module.class);
 	}
 
+	/**
+	 * Runs the application.
+	 */
 	private void run() {
 		try {
 			this.window.makeContextCurrent();
 			this.window.show();
-			// TODO: Allow for multithreading ?
-			GL.createCapabilities();
-			// TODO: Get from application properties
-			Graphics.depthTest(true);
-			Graphics.backFaceCulling(true);
-			Graphics.clearColor(0.0f, 0.5f, 1.0f, 0.0f);
+			this.modules.forEach(Module::onStart);
 			SceneTree.loadScene("/branches/test_dynamics.yaml");
 			while(!this.window.isCloseRequested()) {
 				SceneTree.process();
-				RenderingSystem3D.renderingProcess();
+				this.modules.forEach(Module::onUpdate);
 				this.window.update();
 				GLFW.glfwPollEvents();
 			}
@@ -47,7 +61,7 @@ public final class Application {
 			System.err.println("Uncaught exception");
 			e.printStackTrace();
 		} finally {
-			GLResource.cleanUp();
+			this.modules.forEach(Module::onTerminate);
 			GLFW.glfwTerminate();
 		}
 	}

@@ -1,16 +1,18 @@
-package gamma.engine.core.tree;
+package gamma.engine.graphics.tree;
 
-import gamma.engine.core.graphics.RenderingSystem3D;
-import gamma.engine.core.resources.Model;
-import gamma.engine.core.resources.Shader;
-import gamma.engine.core.resources.ShaderLoader;
+import gamma.engine.core.tree.Camera3D;
+import gamma.engine.graphics.RenderingSystem3D;
+import gamma.engine.graphics.resources.Model;
+import gamma.engine.graphics.resources.Shader;
+import gamma.engine.graphics.resources.ShaderLoader;
+import gamma.engine.core.tree.Transform3D;
 
 public class ModelRenderer extends Transform3D {
 
 	// TODO: Editor variables
 	private String model;
 
-	private final Shader shader = ShaderLoader.getOrLoad("/gamma/engine/core/shaders/main_shader.yaml");
+	private final Shader shader = ShaderLoader.getOrLoad("/gamma/engine/graphics/shaders/main_shader.yaml");
 
 	@Override
 	protected void onUpdate(float delta) {

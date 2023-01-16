@@ -1,4 +1,4 @@
-package gamma.engine.core.utils;
+package gamma.engine.graphics.utils;
 
 import vecmatlib.Float3;
 
