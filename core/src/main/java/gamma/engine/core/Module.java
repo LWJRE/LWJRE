@@ -2,7 +2,7 @@ package gamma.engine.core;
 
 /**
  * Interface to be used in modules that need to do something on start, update, or terminate.
- * Modules should declare a {@code META-INF/serices/gamma.engine.core.Module} file containing the name of all classes implementing this interface.
+ * Modules should declare a {@code META-INF/services/gamma.engine.core.Module} file containing the name of all classes implementing this interface.
  *
  * @author Nico
  */

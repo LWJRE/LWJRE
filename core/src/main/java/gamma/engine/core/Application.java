@@ -1,7 +1,6 @@
 package gamma.engine.core;
 
 import gamma.engine.core.tree.SceneTree;
-import gamma.engine.core.window.Window;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ServiceLoader;
@@ -13,6 +12,9 @@ import java.util.ServiceLoader;
  */
 public final class Application {
 
+	/** Main thread object used in {@link Application#isMainThread()} */
+	private static Thread mainThread;
+
 	/** Application singleton instance */
 	private static Application application;
 
@@ -23,6 +25,15 @@ public final class Application {
 	 */
 	public static Window window() {
 		return application.window;
+	}
+
+	/**
+	 * Checks if the calling thread is the main thread.
+	 *
+	 * @return True if the current thread is the main thread, otherwise false
+	 */
+	public static boolean isMainThread() {
+		return Thread.currentThread().equals(mainThread);
 	}
 
 	/** Application window */
@@ -49,7 +60,8 @@ public final class Application {
 			this.window.makeContextCurrent();
 			this.window.show();
 			this.modules.forEach(Module::onStart);
-			SceneTree.loadScene("/branches/test_dynamics.yaml");
+			// TODO: Default empty scene
+			SceneTree.loadScene(ApplicationSettings.get("startScene", ""));
 			while(!this.window.isCloseRequested()) {
 				SceneTree.process();
 				this.modules.forEach(Module::onUpdate);
@@ -67,6 +79,7 @@ public final class Application {
 	}
 
 	public static void main(String[] args) {
+		mainThread = Thread.currentThread();
 		application = new Application();
 		application.run();
 	}
