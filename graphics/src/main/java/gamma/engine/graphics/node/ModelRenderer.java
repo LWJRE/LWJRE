@@ -1,5 +1,6 @@
 package gamma.engine.graphics.node;
 
+import gamma.engine.core.annotation.EditorVariable;
 import gamma.engine.core.node.Camera3D;
 import gamma.engine.graphics.RenderingSystem3D;
 import gamma.engine.graphics.resources.Model;
@@ -9,7 +10,7 @@ import gamma.engine.core.node.Transform3D;
 
 public class ModelRenderer extends Transform3D {
 
-	// TODO: Editor variables
+	@EditorVariable
 	private String model;
 
 	private final Shader shader = ShaderLoader.getOrLoad("/gamma/engine/graphics/shaders/main_shader.yaml");

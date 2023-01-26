@@ -3,6 +3,9 @@ package gamma.engine.core.utils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 public class TestReflection {
 
 	@Test
@@ -40,8 +43,17 @@ public class TestReflection {
 		Assertions.assertEquals(0.1f, testObject.testFloat);
 	}
 
+	@Test
+	public void testGetAnnotatedFields() {
+		TestObject testObject = new TestObject("", 0);
+		String[] expected = {"testString"};
+		String[] actual = Reflection.getAnnotatedFields(testObject, TestAnnotation.class);
+		Assertions.assertArrayEquals(expected, actual);
+	}
+
 	private static class TestObject {
 
+		@TestAnnotation
 		public final String testString;
 		public final Integer testInt;
 
@@ -58,5 +70,10 @@ public class TestReflection {
 		public TestSubclass(String testString, Integer testInt) {
 			super(testString, testInt);
 		}
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	private @interface TestAnnotation {
+
 	}
 }

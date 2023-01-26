@@ -1,5 +1,6 @@
 package gamma.engine.physics.node;
 
+import gamma.engine.core.annotation.EditorVariable;
 import gamma.engine.core.node.Transform3D;
 import gamma.engine.physics.Collision3D;
 import gamma.engine.physics.geometry.Projection;
@@ -11,6 +12,7 @@ import java.util.Objects;
 
 public class BoundingBox3D extends Transform3D {
 
+	@EditorVariable
 	private Vec3f extents = Vec3f.One();
 
 	public final boolean intersects(BoundingBox3D box) {

@@ -1,5 +1,6 @@
 package gamma.engine.core.utils;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
@@ -45,5 +46,12 @@ public final class Reflection {
 		} catch (IllegalAccessException e) {
 			throw new RuntimeException("Cannot access field " + fieldName + " in object " + object, e);
 		}
+	}
+
+	public static String[] getAnnotatedFields(Object object, Class<? extends Annotation> annotation) {
+		return Arrays.stream(object.getClass().getDeclaredFields())
+				.filter(field -> field.isAnnotationPresent(annotation))
+				.map(Field::getName)
+				.toArray(String[]::new);
 	}
 }

@@ -1,5 +1,6 @@
 package gamma.engine.core.node;
 
+import gamma.engine.core.annotation.EditorVariable;
 import vecmatlib.matrix.Mat4f;
 import vecmatlib.vector.Vec3f;
 
@@ -24,10 +25,14 @@ public class Camera3D extends Transform3D {
 	}
 
 	/** Whether this camera should be current on start */
+	@EditorVariable
 	public boolean startAsCurrent = false;
 
+	@EditorVariable
 	public float fov = 70.0f;
+	@EditorVariable
 	public float nearPlane = 0.1f;
+	@EditorVariable
 	public float farPlane = 1000.0f;
 
 	@Override

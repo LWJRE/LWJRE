@@ -1,11 +1,13 @@
 package gamma.engine.graphics.node;
 
+import gamma.engine.core.annotation.EditorVariable;
 import gamma.engine.graphics.RenderingSystem3D;
 import gamma.engine.core.node.Transform3D;
 import gamma.engine.graphics.utils.Color;
 
 public class PointLight3D extends Transform3D {
 
+	@EditorVariable
 	private Color color = Color.WHITE;
 
 	@Override

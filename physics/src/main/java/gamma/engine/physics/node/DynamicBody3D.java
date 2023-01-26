@@ -1,12 +1,15 @@
 package gamma.engine.physics.node;
 
+import gamma.engine.core.annotation.EditorVariable;
 import gamma.engine.physics.Collision3D;
 import vecmatlib.vector.Vec3f;
 
 public class DynamicBody3D extends KinematicBody3D {
 
+	@EditorVariable
 	public float mass = 1.0f;
 
+	@EditorVariable
 	private Vec3f force = Vec3f.Zero();
 
 	@Override

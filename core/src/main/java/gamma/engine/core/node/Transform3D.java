@@ -1,5 +1,6 @@
 package gamma.engine.core.node;
 
+import gamma.engine.core.annotation.EditorVariable;
 import vecmatlib.matrix.Mat4f;
 import vecmatlib.vector.Vec3f;
 import vecmatlib.vector.Vec4f;
@@ -12,10 +13,15 @@ import vecmatlib.vector.Vec4f;
 public class Transform3D extends Node {
 
 	/** Position of this node in a 3D space */
+	@EditorVariable
 	public Vec3f position = Vec3f.Zero();
+
 	/** Rotation of this node in radians around the x, y, z axes */
+	@EditorVariable
 	public Vec3f rotation = Vec3f.Zero();
+
 	/** Scale of this node in a 3D space */
+	@EditorVariable
 	public Vec3f scale = Vec3f.One();
 
 	/**
