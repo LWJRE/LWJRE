@@ -1,6 +1,6 @@
-package gamma.engine.physics.tree;
+package gamma.engine.physics.node;
 
-import gamma.engine.core.tree.Transform3D;
+import gamma.engine.core.node.Transform3D;
 import gamma.engine.physics.Collision3D;
 import vecmatlib.vector.Vec3f;
 

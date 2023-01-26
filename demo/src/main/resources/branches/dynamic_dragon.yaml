@@ -1,9 +1,9 @@
-!!gamma.engine.physics.tree.DynamicBody3D
+!!gamma.engine.physics.node.DynamicBody3D
 children:
   model:
-    !!gamma.engine.graphics.tree.ModelRenderer
+    !!gamma.engine.graphics.node.ModelRenderer
     model: "/models/dragon.obj"
   boundingBox:
-    !!gamma.engine.physics.tree.BoundingBox3D
+    !!gamma.engine.physics.node.BoundingBox3D
     position: !!vecmatlib.vector.Vec3f [ 0.0, 3.0, -0.4 ]
     extents: !!vecmatlib.vector.Vec3f [ 6.0, 5.0, 3.0 ]

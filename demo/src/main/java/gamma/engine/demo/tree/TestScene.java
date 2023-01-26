@@ -1,7 +1,7 @@
 package gamma.engine.demo.tree;
 
 import gamma.engine.core.input.Input;
-import gamma.engine.core.tree.Transform3D;
+import gamma.engine.core.node.Transform3D;
 
 public class TestScene extends Transform3D {
 

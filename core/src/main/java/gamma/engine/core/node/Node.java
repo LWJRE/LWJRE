@@ -1,4 +1,4 @@
-package gamma.engine.core.tree;
+package gamma.engine.core.node;
 
 import java.util.HashMap;
 import java.util.Optional;
@@ -79,9 +79,17 @@ public class Node {
 	 *
 	 * @param delta Time since the previous update in seconds
 	 */
-	protected final void process(float delta) {
+	public final void process(float delta) {
 		this.children.forEach((key, node) -> node.process(delta));
 		this.onUpdate(delta);
+	}
+
+	/**
+	 * Updates this node and all of its children while in the editor.
+	 */
+	public final void editorProcess() {
+		this.children.forEach((key, node) -> node.editorProcess());
+		this.onUpdateInEditor();
 	}
 
 	/**
@@ -90,6 +98,13 @@ public class Node {
 	 * @param delta Time since the previous update in seconds
 	 */
 	protected void onUpdate(float delta) {
+
+	}
+
+	/**
+	 * Called every update frame while in the editor.
+	 */
+	protected void onUpdateInEditor() {
 
 	}
 

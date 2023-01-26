@@ -1,5 +1,6 @@
 package gamma.engine.core.tree;
 
+import gamma.engine.core.node.Transform3D;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import vecmatlib.vector.Vec3f;

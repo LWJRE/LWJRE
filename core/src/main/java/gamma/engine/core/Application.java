@@ -1,6 +1,6 @@
 package gamma.engine.core;
 
-import gamma.engine.core.tree.SceneTree;
+import gamma.engine.core.node.SceneTree;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ServiceLoader;
@@ -60,7 +60,6 @@ public final class Application {
 			this.window.makeContextCurrent();
 			this.window.show();
 			this.modules.forEach(Module::onStart);
-			// TODO: Default empty scene
 			SceneTree.loadScene(ApplicationSettings.get("startScene", ""));
 			while(!this.window.isCloseRequested()) {
 				SceneTree.process();

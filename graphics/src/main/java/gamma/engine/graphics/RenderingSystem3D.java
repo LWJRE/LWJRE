@@ -2,7 +2,7 @@ package gamma.engine.graphics;
 
 import gamma.engine.graphics.resources.Mesh3D;
 import gamma.engine.graphics.resources.Shader;
-import gamma.engine.graphics.tree.PointLight3D;
+import gamma.engine.graphics.node.PointLight3D;
 
 import java.util.ArrayList;
 import java.util.HashMap;

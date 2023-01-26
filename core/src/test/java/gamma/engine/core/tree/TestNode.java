@@ -1,5 +1,6 @@
 package gamma.engine.core.tree;
 
+import gamma.engine.core.node.Node;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

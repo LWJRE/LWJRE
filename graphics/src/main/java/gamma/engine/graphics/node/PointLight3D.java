@@ -1,7 +1,7 @@
-package gamma.engine.graphics.tree;
+package gamma.engine.graphics.node;
 
 import gamma.engine.graphics.RenderingSystem3D;
-import gamma.engine.core.tree.Transform3D;
+import gamma.engine.core.node.Transform3D;
 import gamma.engine.graphics.utils.Color;
 
 public class PointLight3D extends Transform3D {

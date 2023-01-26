@@ -1,4 +1,4 @@
-package gamma.engine.core.tree;
+package gamma.engine.core.node;
 
 import gamma.engine.core.utils.Reflection;
 import gamma.engine.core.utils.YamlParser;
@@ -12,7 +12,7 @@ import org.yaml.snakeyaml.nodes.ScalarNode;
  * Constructor used by snakeyaml to parse nodes tagged with {@code !subbranch}.
  * Used in {@link YamlParser}.
  */
-public class SubbranchLoader extends AbstractConstruct {
+public final class SubbranchLoader extends AbstractConstruct {
 
 	static {
 		YamlParser.addConstructor("!subbranch", new SubbranchLoader());
@@ -24,8 +24,15 @@ public class SubbranchLoader extends AbstractConstruct {
 	 * @param file The file to load
 	 * @return The root node of the loaded branch
 	 */
-	public static gamma.engine.core.tree.Node load(String file) {
-		return YamlParser.loadAs(file, gamma.engine.core.tree.Node.class);
+	public static gamma.engine.core.node.Node load(String file) {
+		return YamlParser.loadAs(file, gamma.engine.core.node.Node.class);
+	}
+
+	/**
+	 * Class should only be instantiated from here.
+	 */
+	private SubbranchLoader() {
+
 	}
 
 	@Override

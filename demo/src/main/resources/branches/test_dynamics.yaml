@@ -1,4 +1,4 @@
-!!gamma.engine.core.tree.Node
+!!gamma.engine.core.node.Node
 children:
   # Dragon 1
   dragon1:
@@ -15,14 +15,15 @@ children:
       acceleration: !!vecmatlib.vector.Vec3f [ 0.0, 0.0, 0.0 ]
   # Light
   light:
-    !!gamma.engine.graphics.tree.PointLight3D
+    !!gamma.engine.graphics.node.PointLight3D
     position: !!vecmatlib.vector.Vec3f [ -2.0, 7.5, 2.0 ]
     children:
       bunny:
-        !!gamma.engine.graphics.tree.ModelRenderer
+        !!gamma.engine.graphics.node.ModelRenderer
         model: "/models/bunny.obj"
         scale: !!vecmatlib.vector.Vec3f [ 0.1, 0.1, 0.1 ]
   # Camera
   camera:
-    !!gamma.engine.core.tree.Camera3D
+    !!gamma.engine.core.node.Camera3D
     position: !!vecmatlib.vector.Vec3f [ 0.0, 5.0, 18.0 ]
+    startAsCurrent: true
