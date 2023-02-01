@@ -60,7 +60,7 @@ public final class Application {
 			this.window.makeContextCurrent();
 			this.window.show();
 			this.modules.forEach(Module::onStart);
-			SceneTree.loadScene(ApplicationSettings.get("startScene", ""));
+			SceneTree.loadScene(ApplicationProperties.get("startScene", ""));
 			while(!this.window.isCloseRequested()) {
 				SceneTree.process();
 				this.modules.forEach(Module::onUpdate);

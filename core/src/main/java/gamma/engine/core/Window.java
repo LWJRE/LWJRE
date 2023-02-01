@@ -17,7 +17,7 @@ public final class Window {
 	// TODO: Make sure window was not destroyed before using it
 
 	/**
-	 * Creates a window with the given title. Uses window hints from the {@link ApplicationSettings}.
+	 * Creates a window with the given title. Uses window hints from the {@link ApplicationProperties}.
 	 * Note: Windows must be created from the main thread.
 	 *
 	 * @param title Window title
@@ -27,22 +27,22 @@ public final class Window {
 	public Window(String title, int width, int height) {
 		if(!Application.isMainThread())
 			throw new RuntimeException("Windows can only be created from the main thread");
-		GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, ApplicationSettings.get("window/hints/visible", false) ? GLFW.GLFW_TRUE : GLFW.GLFW_FALSE);
-		GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, ApplicationSettings.get("window/hints/resizable", false) ? GLFW.GLFW_TRUE : GLFW.GLFW_FALSE);
-		GLFW.glfwWindowHint(GLFW.GLFW_DECORATED, ApplicationSettings.get("window/hints/decorated", true) ? GLFW.GLFW_TRUE : GLFW.GLFW_FALSE);
-		GLFW.glfwWindowHint(GLFW.GLFW_FOCUSED, ApplicationSettings.get("window/hints/focused", false) ? GLFW.GLFW_TRUE : GLFW.GLFW_FALSE);
-		GLFW.glfwWindowHint(GLFW.GLFW_MAXIMIZED, ApplicationSettings.get("window/hints/maximized", false) ? GLFW.GLFW_TRUE : GLFW.GLFW_FALSE);
+		GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, ApplicationProperties.get("window/hints/visible", false) ? GLFW.GLFW_TRUE : GLFW.GLFW_FALSE);
+		GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, ApplicationProperties.get("window/hints/resizable", false) ? GLFW.GLFW_TRUE : GLFW.GLFW_FALSE);
+		GLFW.glfwWindowHint(GLFW.GLFW_DECORATED, ApplicationProperties.get("window/hints/decorated", true) ? GLFW.GLFW_TRUE : GLFW.GLFW_FALSE);
+		GLFW.glfwWindowHint(GLFW.GLFW_FOCUSED, ApplicationProperties.get("window/hints/focused", false) ? GLFW.GLFW_TRUE : GLFW.GLFW_FALSE);
+		GLFW.glfwWindowHint(GLFW.GLFW_MAXIMIZED, ApplicationProperties.get("window/hints/maximized", false) ? GLFW.GLFW_TRUE : GLFW.GLFW_FALSE);
 		this.handle = GLFW.glfwCreateWindow(width, height, title, MemoryUtil.NULL, MemoryUtil.NULL);
 		if(this.handle == MemoryUtil.NULL)
 			throw new RuntimeException("Failed to create the GLFW window");
 	}
 
 	/**
-	 * Creates a window with the properties from {@link ApplicationSettings}.
+	 * Creates a window with the properties from {@link ApplicationProperties}.
 	 * Note: Windows must be created from the main thread.
 	 */
 	public Window() {
-		this(ApplicationSettings.get("window/title", "untitled"), ApplicationSettings.get("window/size/width", 400), ApplicationSettings.get("window/size/height", 300));
+		this(ApplicationProperties.get("window/title", "untitled"), ApplicationProperties.get("window/size/width", 400), ApplicationProperties.get("window/size/height", 300));
 	}
 
 	/**

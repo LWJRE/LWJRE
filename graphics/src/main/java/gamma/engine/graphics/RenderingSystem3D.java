@@ -1,5 +1,6 @@
 package gamma.engine.graphics;
 
+import gamma.engine.core.ApplicationProperties;
 import gamma.engine.graphics.resources.Mesh3D;
 import gamma.engine.graphics.resources.Shader;
 import gamma.engine.graphics.node.PointLight3D;
@@ -47,8 +48,8 @@ public final class RenderingSystem3D {
 	 * Only called once per frame.
 	 */
 	public static void renderingProcess() {
-		Graphics.depthTest(true);
-		Graphics.backFaceCulling(true);
+		Graphics.depthTest(ApplicationProperties.getBoolean("graphics/depthTest"));
+		Graphics.backFaceCulling(ApplicationProperties.getBoolean("graphics/backFaceCulling"));
 		Shader.loadStaticUniform("lights_count", LIGHTS.size());
 		for(int i = 0; i < LIGHTS.size(); i++) {
 			Shader.loadStaticUniform("point_lights[" + i + "].position", LIGHTS.get(i).globalPosition());
