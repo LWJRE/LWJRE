@@ -40,4 +40,21 @@ public final class SceneTree {
 			exception.printStackTrace();
 		}
 	}
+
+	/**
+	 * Changes the current scene to the one with the given root.
+	 * If an error occurs while changing the scene, the scene will be empty and the error will be printed to the console.
+	 *
+	 * @param root Root of the scene to change to.
+	 */
+	public static void changeScene(Node root) {
+		try {
+			if(ROOT.hasChild(""))
+				ROOT.removeChild("");
+			ROOT.addChild("", root);
+		} catch (RuntimeException exception) {
+			System.err.println("Error changing scene");
+			exception.printStackTrace();
+		}
+	}
 }

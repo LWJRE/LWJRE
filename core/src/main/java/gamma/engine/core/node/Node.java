@@ -216,6 +216,15 @@ public class Node {
 		return this.children.values().stream().filter(node -> type.isAssignableFrom(node.getClass())).map(type::cast);
 	}
 
+	/**
+	 * Returns the number of children this node has.
+	 *
+	 * @return The number of children this node has
+	 */
+	public final int getChildCount() {
+		return this.children.size();
+	}
+
 	// TODO: Make sure this is usable
 	public final void removeFromTree() {
 		if(this.parent != null)
