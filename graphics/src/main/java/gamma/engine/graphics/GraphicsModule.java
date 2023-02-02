@@ -1,10 +1,16 @@
 package gamma.engine.graphics;
 
-import gamma.engine.core.Module;
+import gamma.engine.core.ApplicationListener;
+import gamma.engine.core.WindowListener;
 import gamma.engine.graphics.resources.DeletableResource;
 import org.lwjgl.opengl.GL;
 
-public final class GraphicsModule implements Module {
+/**
+ * Main class for the graphics module. Listens to application and window events.
+ *
+ * @author Nico
+ */
+public final class GraphicsModule implements ApplicationListener, WindowListener {
 
 	@Override
 	public void onStart() {
@@ -16,6 +22,12 @@ public final class GraphicsModule implements Module {
 	public void onUpdate() {
 		Graphics.clearFramebuffer();
 		RenderingSystem3D.renderingProcess();
+	}
+
+	@Override
+	public void onResize(int width, int height) {
+		// TODO: Give the user different options for resizing
+		Graphics.setViewport(width, height);
 	}
 
 	@Override

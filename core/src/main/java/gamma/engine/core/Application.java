@@ -38,8 +38,8 @@ public final class Application {
 
 	/** Application window */
 	private final Window window;
-	/** Loaded modules */
-	private final ServiceLoader<Module> modules;
+	/** Loaded application listeners */
+	private final ServiceLoader<ApplicationListener> listeners;
 
 	/**
 	 * Starts the application.
@@ -49,7 +49,7 @@ public final class Application {
 			throw new IllegalStateException("Unable to initialize GLFW");
 		}
 		this.window = new Window();
-		this.modules = ServiceLoader.load(Module.class);
+		this.listeners = ServiceLoader.load(ApplicationListener.class);
 	}
 
 	/**
@@ -59,11 +59,11 @@ public final class Application {
 		try {
 			this.window.makeContextCurrent();
 			this.window.show();
-			this.modules.forEach(Module::onStart);
+			this.listeners.forEach(ApplicationListener::onStart);
 			SceneTree.loadScene(ApplicationProperties.get("startScene", ""));
 			while(!this.window.isCloseRequested()) {
 				SceneTree.process();
-				this.modules.forEach(Module::onUpdate);
+				this.listeners.forEach(ApplicationListener::onUpdate);
 				this.window.update();
 				GLFW.glfwPollEvents();
 			}
@@ -72,7 +72,7 @@ public final class Application {
 			System.err.println("Uncaught exception");
 			e.printStackTrace();
 		} finally {
-			this.modules.forEach(Module::onTerminate);
+			this.listeners.forEach(ApplicationListener::onTerminate);
 			GLFW.glfwTerminate();
 		}
 	}

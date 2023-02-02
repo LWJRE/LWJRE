@@ -12,7 +12,7 @@ public final class Graphics {
 	// TODO: Make sure OpenGL context is current on the calling thread when GL* functions are called
 
 	/**
-	 * Sets the clear color.
+	 * Sets the clear color. See {@link GL11#glClearColor(float, float, float, float)}.
 	 *
 	 * @param red Red RGBA component
 	 * @param green Green RGBA component
@@ -24,7 +24,7 @@ public final class Graphics {
 	}
 
 	/**
-	 * Sets the clear color.
+	 * Sets the clear color. See {@link GL11#glClearColor(float, float, float, float)}.
 	 *
 	 * @param red Red RGB component
 	 * @param green Green RGB component
@@ -35,10 +35,20 @@ public final class Graphics {
 	}
 
 	/**
-	 * Clears the frame buffer.
+	 * Clears the frame buffer. See {@link GL11#glClear(int)}.
 	 */
 	public static void clearFramebuffer() {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+	}
+
+	/**
+	 * Sets the OpenGL viewport. See {@link GL11#glViewport(int, int, int, int)}.
+	 *
+	 * @param width Viewport width
+	 * @param height Viewport height
+	 */
+	public static void setViewport(int width, int height) {
+		GL11.glViewport(0, 0, width, height);
 	}
 
 	/**

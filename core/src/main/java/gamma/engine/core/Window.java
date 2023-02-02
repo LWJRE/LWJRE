@@ -2,7 +2,12 @@ package gamma.engine.core;
 
 import org.lwjgl.glfw.Callbacks;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
+import vecmatlib.vector.Vec2i;
+
+import java.nio.IntBuffer;
+import java.util.ServiceLoader;
 
 /**
  * Class that represents a GLFW Window.
@@ -13,6 +18,9 @@ public final class Window {
 
 	/** The window handle */
 	private final long handle;
+
+	/** Loaded window listeners */
+	private final ServiceLoader<WindowListener> listeners = ServiceLoader.load(WindowListener.class);
 
 	// TODO: Make sure window was not destroyed before using it
 
@@ -35,6 +43,7 @@ public final class Window {
 		this.handle = GLFW.glfwCreateWindow(width, height, title, MemoryUtil.NULL, MemoryUtil.NULL);
 		if(this.handle == MemoryUtil.NULL)
 			throw new RuntimeException("Failed to create the GLFW window");
+		GLFW.glfwSetWindowSizeCallback(this.handle, (l, w, h) -> this.listeners.forEach(listener -> listener.onResize(w, h)));
 	}
 
 	/**
@@ -52,14 +61,52 @@ public final class Window {
 		GLFW.glfwMakeContextCurrent(this.handle);
 	}
 
-	// TODO: Get window size
+	/**
+	 * Sets the size of the window. See {@link GLFW#glfwSetWindowSize(long, int, int)}.
+	 * This method must be called from the main thread.
+	 *
+	 * @param width Width of the window in pixels
+	 * @param height Height of the window in pixels
+	 */
+	public void setSize(int width, int height) {
+		if(!Application.isMainThread())
+			throw new RuntimeException("This function must be called from the main thread");
+		GLFW.glfwSetWindowSize(this.handle, width, height);
+	}
+
+	/**
+	 * Sets the size of the window. See {@link GLFW#glfwSetWindowSize(long, int, int)}.
+	 * This method must be called from the main thread.
+	 *
+	 * @param size Size of the window in pixels
+	 */
+	public void setSize(Vec2i size) {
+		this.setSize(size.x(), size.y());
+	}
+
+	/**
+	 * Gets the size of the window. See {@link GLFW#glfwGetWindowSize(long, IntBuffer, IntBuffer)}.
+	 * This method must be called from the main thread.
+	 *
+	 * @return A 2d integer vector containing the size of the window in pixels
+	 */
+	public Vec2i getSize() {
+		if(!Application.isMainThread())
+			throw new RuntimeException("This function must be called from the main thread");
+		try(MemoryStack stack = MemoryStack.stackPush()) {
+			IntBuffer w = stack.mallocInt(1);
+			IntBuffer h = stack.mallocInt(1);
+			GLFW.glfwGetWindowSize(this.handle, w, h);
+			return new Vec2i(w.get(), h.get());
+		}
+	}
 
 	/**
 	 * Sets the position of the window. See {@link GLFW#glfwSetWindowPos(long, int, int)}.
-	 * This function must be called from the main thread.
+	 * This method must be called from the main thread.
 	 *
-	 * @param x Position x
-	 * @param y Position y
+	 * @param x Position x in pixels
+	 * @param y Position y in pixels
 	 */
 	public void setPosition(int x, int y) {
 		if(!Application.isMainThread())
@@ -67,7 +114,32 @@ public final class Window {
 		GLFW.glfwSetWindowPos(this.handle, x, y);
 	}
 
-	// TODO: Get window position
+	/**
+	 * Sets the position of the window. See {@link GLFW#glfwSetWindowPos(long, int, int)}.
+	 * This method must be called from the main thread.
+	 *
+	 * @param position Position of the window in pixels on the screen
+	 */
+	public void setPosition(Vec2i position) {
+		this.setPosition(position.x(), position.y());
+	}
+
+	/**
+	 * Gets the position of the window. See {@link GLFW#glfwGetWindowPos(long, IntBuffer, IntBuffer)}.
+	 * This method must be called from the main thread.
+	 *
+	 * @return The position of the window in pixels on the screen
+	 */
+	public Vec2i getPosition() {
+		if(!Application.isMainThread())
+			throw new RuntimeException("This function must be called from the main thread");
+		try(MemoryStack stack = MemoryStack.stackPush()) {
+			IntBuffer x = stack.mallocInt(1);
+			IntBuffer y = stack.mallocInt(1);
+			GLFW.glfwGetWindowPos(this.handle, x, y);
+			return new Vec2i(x.get(), y.get());
+		}
+	}
 
 	/**
 	 * Makes this window visible after its creation. See {@link GLFW#glfwShowWindow(long)}.
