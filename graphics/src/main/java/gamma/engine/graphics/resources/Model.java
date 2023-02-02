@@ -1,7 +1,7 @@
 package gamma.engine.graphics.resources;
 
 import gamma.engine.core.utils.FileUtils;
-import gamma.engine.graphics.utils.Color;
+import vecmatlib.color.Color;
 import vecmatlib.vector.Vec2f;
 import vecmatlib.vector.Vec3f;
 

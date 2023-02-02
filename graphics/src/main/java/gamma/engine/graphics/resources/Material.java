@@ -1,7 +1,7 @@
 package gamma.engine.graphics.resources;
 
-import gamma.engine.graphics.utils.Color;
 import org.yaml.snakeyaml.Yaml;
+import vecmatlib.color.Color;
 
 import java.util.HashMap;
 
@@ -21,9 +21,9 @@ public class Material {
 
 	// TODO: Finish material
 
-	public Color ambient = Color.WHITE;
-	public Color diffuse = Color.WHITE;
-	public Color specular = Color.BLACK;
+	public Color ambient = Color.White();
+	public Color diffuse = Color.White();
+	public Color specular = Color.Black();
 	public float shininess = 0.0f;
 
 	@Override
