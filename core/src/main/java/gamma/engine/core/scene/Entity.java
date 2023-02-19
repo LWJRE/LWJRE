@@ -1,6 +1,7 @@
 package gamma.engine.core.scene;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -14,7 +15,7 @@ public final class Entity {
 	/** This entity's children */
 	private final HashMap<String, Entity> children = new HashMap<>();
 	/** Components attached to this entity */
-	private final ComponentsSet components = new ComponentsSet();
+	private final HashMap<Class<?>, Component> components = new HashMap<>();
 	/** This entity's parent */
 	private transient Entity parent;
 
@@ -68,7 +69,7 @@ public final class Entity {
 				entity.parent = this;
 			entity.process(delta);
 		});
-		this.components.forEach(component -> {
+		this.components.forEach((key, component) -> {
 			if(component.entity == null)
 				component.entity = this;
 			component.process(delta);
@@ -194,8 +195,8 @@ public final class Entity {
 	 */
 	public void addComponent(Component component) {
 		if(component.entity == null) {
-			// TODO: Remove entity from replaced component
-			this.components.add(component);
+			// TODO: What happens when a component is replaced?
+			this.components.put(getKey(component.getClass()), component);
 			component.entity = this;
 		} else {
 			throw new IllegalStateException("Component " + component + " already belongs to entity " + component.entity);
@@ -212,7 +213,7 @@ public final class Entity {
 	 * @param <C> Type of the component to get
 	 */
 	public <C extends Component> Optional<C> getComponent(Class<C> type) {
-		return Optional.ofNullable(type.cast(this.components.get(type)));
+		return Optional.ofNullable(type.cast(this.components.get(getKey(type))));
 	}
 
 	/**
@@ -221,7 +222,7 @@ public final class Entity {
 	 * @return A {@code Stream} containing all of this entity's components
 	 */
 	public Stream<Component> getComponents() {
-		return this.components.stream();
+		return this.components.values().stream();
 	}
 
 	/**
@@ -292,17 +293,16 @@ public final class Entity {
 	/**
 	 * Removes a component of the given type from this entity.
 	 *
-	 * @param type Type of the component to remove
-	 * @return The removed component
+	 * @param type The type of the component to remove
+	 * @return An {@link Optional} representing the component that was removed
+	 * or an empty {@code Optional} if this entity does not have a component of the given type
 	 * @param <C> Type of the component to remove
-	 * @throws IllegalStateException if this entity does not have a component of the given type
 	 */
-	public <C extends Component> C removeComponent(Class<C> type) {
-		C component = type.cast(this.components.remove(type));
-		if(component == null)
-			throw new IllegalStateException("Entity " + this + " does not have a component of type " + type);
-		component.entity = null;
-		return component;
+	public <C extends Component> Optional<C> removeComponent(Class<C> type) {
+		return Optional.ofNullable(type.cast(this.components.get(getKey(type)))).map(component -> {
+			component.entity = null;
+			return component;
+		});
 	}
 
 	/**
@@ -312,10 +312,35 @@ public final class Entity {
 	 * @return True if the component was removed, otherwise false
 	 */
 	public boolean removeComponent(Component component) {
-		if(this.components.remove(component)) {
+		if(this.components.values().remove(component)) {
 			component.entity = null;
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Returns a {@link Map} containing this entity's children and this entity's components.
+	 * Used to serialize entities.
+	 *
+	 * @return A {@code Map} containing this entity's children and this entity's components
+	 */
+	public Map<String, Object> serialize() {
+		return Map.of("children", new HashMap<>(this.children), "components", this.getComponents().toList());
+	}
+
+	/**
+	 * Gets the component key from a class.
+	 *
+	 * @param from Class to start from
+	 * @return Component key
+	 */
+	private static Class<?> getKey(Class<?> from) {
+		Class<?> superclass = from.getSuperclass();
+		if(superclass.equals(Object.class))
+			throw new IllegalArgumentException("The given class is not a subclass of Component");
+		if(superclass.equals(Component.class))
+			return from;
+		return getKey(superclass);
 	}
 }

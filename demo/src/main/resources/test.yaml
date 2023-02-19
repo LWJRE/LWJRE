@@ -1,0 +1,6 @@
+!!gamma.engine.core.scene.Scene
+root:
+  components:
+    - !!gamma.engine.core.components.Transform3D
+      position: !!vecmatlib.vector.Vec3f [1.0, 0.0, 1.0]
+    - !!gamma.engine.graphics.components.MeshRenderer {}

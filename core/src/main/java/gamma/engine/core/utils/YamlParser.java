@@ -1,73 +1,83 @@
 package gamma.engine.core.utils;
 
-import com.esotericsoftware.yamlbeans.YamlConfig;
-import com.esotericsoftware.yamlbeans.YamlReader;
-import com.esotericsoftware.yamlbeans.YamlWriter;
-import vecmatlib.vector.Vec2f;
+import gamma.engine.core.scene.Entity;
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.introspector.BeanAccess;
+import org.yaml.snakeyaml.nodes.Tag;
+import org.yaml.snakeyaml.representer.Representer;
 import vecmatlib.vector.Vec3f;
-import vecmatlib.vector.Vec4f;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
 /**
  * Utils class used to parse {@code .yaml} files.
  *
  * @author Nico
  */
-public final class YamlParser {
+public final class YamlParser extends Yaml {
 
-	/** Yaml config object */
-	private static final YamlConfig CONFIG = new YamlConfig();
+	private static final YamlRepresenter REPRESENTER = new YamlRepresenter();
+	private static final YamlParser PARSER = new YamlParser(REPRESENTER, new DefaultDumperOptions());
 
 	static {
-		CONFIG.setPrivateFields(true);
-		CONFIG.readConfig.setConstructorParameters(Vec2f.class, new Class[] {float.class, float.class}, new String[] {"x", "y"});
-		CONFIG.readConfig.setConstructorParameters(Vec3f.class, new Class[] {float.class, float.class, float.class}, new String[] {"x", "y", "z"});
-		CONFIG.readConfig.setConstructorParameters(Vec4f.class, new Class[] {float.class, float.class, float.class, float.class}, new String[] {"x", "y", "z", "w"});
+		addSequenceRepresent(Vec3f.class, vec -> List.of(vec.x(), vec.y(), vec.z()));
+		addMappingRepresent(Entity.class, Entity::serialize);
 	}
 
-	/**
-	 * Loads a {@code .yaml} file from the classpath.
-	 *
-	 * @param path Path to the file in the classpath
-	 * @return The content of the {@code .yaml} file deserialized into an object. See {@link YamlReader#read()}.
-	 */
-	public static Object readResource(String path) {
-		return Resources.readAs(path, inputStream -> {
-			YamlReader reader = new YamlReader(new InputStreamReader(inputStream), CONFIG);
-			Object result = reader.read();
-			reader.close();
-			return result;
-		});
+	public static <T> T loadResource(String path, Class<T> type) {
+		return Resources.readAs(path, inputStream -> PARSER.loadAs(inputStream, type));
 	}
 
-	/**
-	 * Loads a {@code .yaml} file from the classpath.
-	 *
-	 * @param path Path to the file in the classpath
-	 * @return The content of the {@code .yaml} file deserialized into an object of the given type. See {@link YamlReader#read()}.
-	 * @throws ClassCastException if the content of the {@code .yaml} file cannot be cast to the given type.
-	 */
-	public static <T> T readResource(String path, Class<T> type) {
-		return Resources.readAs(path, inputStream -> {
-			YamlReader reader = new YamlReader(new InputStreamReader(inputStream), CONFIG);
-			T result = type.cast(reader.read());
-			reader.close();
-			return result;
-		});
+	public static String serialize(Object object) {
+		return PARSER.dump(object);
 	}
 
-	public static void writeToFile(Object object, String path) {
-		try {
-			YamlWriter writer = new YamlWriter(new FileWriter(path), CONFIG);
-			writer.write(object);
-			writer.close();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
+	public static <T> void addScalarRepresent(Class<T> type, Function<T, String> represent) {
+		REPRESENTER.addScalarRepresent(type, represent);
+	}
+
+	public static <T> void addSequenceRepresent(Class<T> type, Function<T, Iterable<?>> represent) {
+		REPRESENTER.addSequenceRepresent(type, represent);
+	}
+
+	public static <T> void addMappingRepresent(Class<T> type, Function<T, Map<?, ?>> represent) {
+		REPRESENTER.addMappingRepresent(type, represent);
+	}
+
+	private static class YamlRepresenter extends Representer {
+
+		private YamlRepresenter() {
+			super(new DumperOptions());
+		}
+
+		private <T> void addScalarRepresent(Class<T> tag, Function<T, String> represent) {
+			this.representers.put(tag, data -> this.representScalar(new Tag("!!" + tag.getName()), represent.apply(tag.cast(data))));
+		}
+
+		private <T> void addSequenceRepresent(Class<T> tag, Function<T, Iterable<?>> represent) {
+			this.representers.put(tag, data -> this.representSequence(new Tag("!!" + tag.getName()), represent.apply(tag.cast(data)), DumperOptions.FlowStyle.FLOW));
+		}
+
+		private <T> void addMappingRepresent(Class<T> tag, Function<T, Map<?, ?>> represent) {
+			this.representers.put(tag, data -> this.representMapping(new Tag("!!" + tag.getName()), represent.apply(tag.cast(data)), DumperOptions.FlowStyle.BLOCK));
 		}
 	}
 
-	// TODO: Config options
+	private static class DefaultDumperOptions extends DumperOptions {
+
+		private DefaultDumperOptions() {
+			this.setIndent(2);
+			this.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+			this.setIndicatorIndent(1);
+			this.setIndentWithIndicator(true);
+		}
+	}
+
+	private YamlParser(Representer representer, DumperOptions dumperOptions) {
+		super(representer, dumperOptions);
+		this.setBeanAccess(BeanAccess.FIELD);
+	}
 }

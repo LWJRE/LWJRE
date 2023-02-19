@@ -30,9 +30,9 @@
 			<version>1.1</version>
 		</dependency>
 		<dependency>
-			<groupId>com.esotericsoftware.yamlbeans</groupId>
-			<artifactId>yamlbeans</artifactId>
-			<version>1.15</version>
+			<groupId>org.yaml</groupId>
+			<artifactId>snakeyaml</artifactId>
+			<version>1.33</version>
 		</dependency>
 		<dependency>
 			<groupId>org.lwjgl</groupId>

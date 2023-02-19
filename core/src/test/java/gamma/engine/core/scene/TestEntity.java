@@ -269,8 +269,7 @@ public class TestEntity {
 		Entity entity = new Entity();
 		TestComponent component = new TestComponent();
 		entity.addComponent(component);
-		TestComponent removed = entity.removeComponent(TestComponent.class);
-		Assertions.assertEquals(component, removed);
+		Assertions.assertEquals(Optional.of(component), entity.removeComponent(TestComponent.class));
 		Assertions.assertNull(component.entity);
 	}
 
@@ -279,7 +278,7 @@ public class TestEntity {
 		Entity entity = new Entity();
 		TestComponent component = new TestComponent();
 		entity.addComponent(component);
-		Assertions.assertThrows(IllegalStateException.class, () -> entity.removeComponent(AnotherComponent.class));
+		Assertions.assertTrue(entity.removeComponent(AnotherComponent.class).isEmpty());
 	}
 
 	@Test

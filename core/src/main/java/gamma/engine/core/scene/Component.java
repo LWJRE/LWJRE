@@ -12,7 +12,7 @@ public abstract class Component {
 	/** The entity to which this component is attached */
 	transient Entity entity;
 	/** Current state of this component */
-	private transient State currentState;
+	private transient State currentState = State.NEW;
 
 	/**
 	 * Processes this component.
