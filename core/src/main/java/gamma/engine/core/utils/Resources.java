@@ -1,10 +1,8 @@
 package gamma.engine.core.utils;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UncheckedIOException;
+import java.io.*;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 /**
  * Utils class to read resources from the classpath.
@@ -30,6 +28,21 @@ public final class Resources {
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
 		}
+	}
+
+	/**
+	 * Reads the content of a text file in the classpath to a string.
+	 *
+	 * @param path Path to the text file in the classpath
+	 * @return A string with the content of the whole text file
+	 */
+	public static String readAsString(String path) {
+		return readAs(path, inputStream -> {
+			BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+			String result = reader.lines().collect(Collectors.joining("\n"));
+			reader.close();
+			return result;
+		});
 	}
 
 	/**

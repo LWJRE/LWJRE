@@ -2,6 +2,7 @@ package gamma.engine.graphics.components;
 
 import gamma.engine.core.scene.Component;
 import gamma.engine.graphics.resources.Mesh;
+import gamma.engine.graphics.resources.Shader;
 
 /**
  * Component that can render a single mesh.
@@ -12,6 +13,7 @@ public class MeshRenderer extends Component {
 
 	// TODO: Extend the mesh class to CircleMesh, CubeMesh and so on...
 	public Mesh mesh;
+	private Shader shader;
 
 	@Override
 	protected void onStart() {
@@ -32,6 +34,7 @@ public class MeshRenderer extends Component {
 	protected void onUpdate(float delta) {
 		super.onUpdate(delta);
 		// TODO: Render stuff in batches
+		this.shader.start();
 		this.mesh.drawElements(6);
 	}
 }

@@ -3,9 +3,19 @@ root: !!gamma.engine.core.scene.Entity
   components:
     - !!gamma.engine.core.components.Transform3D
       position: !!vecmatlib.vector.Vec3f [1.0, 0.0, 1.0]
-    - !!gamma.engine.graphics.components.MeshRenderer {}
+    - !!gamma.engine.graphics.components.MeshRenderer
+      shader: !!gamma.engine.graphics.resources.Shader
+        vertex:
+          - "/test_vertex.glsl"
+        fragment:
+          - "/test_fragment.glsl"
   children:
     one: !!gamma.engine.core.scene.Entity
       components:
         - !!gamma.engine.core.components.Transform3D {}
-        - !!gamma.engine.graphics.components.MeshRenderer {}
+        - !!gamma.engine.graphics.components.MeshRenderer
+          shader: !!gamma.engine.graphics.resources.Shader
+            vertex:
+              - "/test_vertex.glsl"
+            fragment:
+              - "/test_fragment.glsl"
