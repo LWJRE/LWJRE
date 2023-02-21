@@ -2,11 +2,19 @@ package gamma.engine.core.utils;
 
 import gamma.engine.core.scene.Entity;
 import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.AbstractConstruct;
+import org.yaml.snakeyaml.constructor.BaseConstructor;
+import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.introspector.BeanAccess;
+import org.yaml.snakeyaml.nodes.MappingNode;
+import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.representer.Representer;
+import vecmatlib.vector.Vec2f;
 import vecmatlib.vector.Vec3f;
+import vecmatlib.vector.Vec4f;
 
 import java.util.List;
 import java.util.Map;
@@ -20,11 +28,16 @@ import java.util.function.Function;
 public final class YamlParser extends Yaml {
 
 	private static final YamlRepresenter REPRESENTER = new YamlRepresenter();
-	private static final YamlParser PARSER = new YamlParser(REPRESENTER, new DefaultDumperOptions());
+	private static final YamlConstructor CONSTRUCTOR = new YamlConstructor();
+	private static final YamlParser PARSER = new YamlParser(CONSTRUCTOR, REPRESENTER, new DefaultDumperOptions());
 
 	static {
+		addSequenceRepresent(Vec2f.class, vec -> List.of(vec.x(), vec.y()));
 		addSequenceRepresent(Vec3f.class, vec -> List.of(vec.x(), vec.y(), vec.z()));
+		addSequenceRepresent(Vec4f.class, vec -> List.of(vec.x(), vec.y(), vec.z(), vec.w()));
+		addClassTag(Entity.class, "!!gamma.engine.core.scene.Entity");
 		addMappingRepresent(Entity.class, Entity::serialize);
+		addMappingConstructor(Entity.class, Entity::deserialize);
 	}
 
 	public static <T> T loadResource(String path, Class<T> type) {
@@ -47,6 +60,15 @@ public final class YamlParser extends Yaml {
 		REPRESENTER.addMappingRepresent(type, represent);
 	}
 
+	public static void addMappingConstructor(Class<?> tag, Function<Map<Object, Object>, Object> construct) {
+		CONSTRUCTOR.addMappingConstructor(tag, construct);
+	}
+
+	// TODO: Figure out when this is needed and add it automatically
+	public static void addClassTag(Class<?> type, String tag) {
+		REPRESENTER.addClassTag(type, new Tag(tag));
+	}
+
 	private static class YamlRepresenter extends Representer {
 
 		private YamlRepresenter() {
@@ -66,6 +88,22 @@ public final class YamlParser extends Yaml {
 		}
 	}
 
+	private static class YamlConstructor extends Constructor {
+
+		private YamlConstructor() {
+			super(new LoaderOptions());
+		}
+
+		private void addMappingConstructor(Class<?> tag, Function<Map<Object, Object>, Object> construct) {
+			this.yamlConstructors.put(new Tag(tag), new AbstractConstruct() {
+				@Override
+				public Object construct(Node node) {
+					return construct.apply(constructMapping((MappingNode) node));
+				}
+			});
+		}
+	}
+
 	private static class DefaultDumperOptions extends DumperOptions {
 
 		private DefaultDumperOptions() {
@@ -76,8 +114,8 @@ public final class YamlParser extends Yaml {
 		}
 	}
 
-	private YamlParser(Representer representer, DumperOptions dumperOptions) {
-		super(representer, dumperOptions);
+	private YamlParser(BaseConstructor constructor, Representer representer, DumperOptions dumperOptions) {
+		super(constructor, representer, dumperOptions);
 		this.setBeanAccess(BeanAccess.FIELD);
 	}
 }

@@ -1,6 +1,7 @@
 package gamma.engine.core.scene;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -320,13 +321,33 @@ public final class Entity {
 	}
 
 	/**
-	 * Returns a {@link Map} containing this entity's children and this entity's components.
-	 * Used to serialize entities.
+	 * Serializes the given entity. Used to write entity to {@code .yaml} files.
 	 *
-	 * @return A {@code Map} containing this entity's children and this entity's components
+	 * @param entity The entity to serialize
+	 * @return An unmodifiable map with the key "children" mapping to a copy of this entity's children map
+	 * and a key "components" mapping to a copy of this entity's component list
 	 */
-	public Map<String, Object> serialize() {
-		return Map.of("children", new HashMap<>(this.children), "components", this.getComponents().toList());
+	public static Map<String, Object> serialize(Entity entity) {
+		return Map.of("children", new HashMap<>(entity.children), "components", entity.getComponents().toList());
+	}
+
+	/**
+	 * Deserializes an entity. Used to read entities from {@code .yaml} files.
+	 *
+	 * @param map A map containing the entity's children and components
+	 * @return The deserialized entity
+	 */
+	public static Entity deserialize(Map<Object, Object> map) {
+		Entity entity = new Entity();
+		Optional.ofNullable((List<?>) map.get("components")).ifPresent(components -> components.forEach(obj -> {
+			if(obj instanceof Component component)
+				entity.addComponent(component);
+		}));
+		Optional.ofNullable(((Map<?, ?>) map.get("children"))).ifPresent(children -> children.forEach((key, value) -> {
+			if(value instanceof Entity child && key instanceof String string)
+				entity.addChild(string, child);
+		}));
+		return entity;
 	}
 
 	/**
