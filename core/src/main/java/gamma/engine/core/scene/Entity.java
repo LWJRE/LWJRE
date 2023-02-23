@@ -1,9 +1,6 @@
 package gamma.engine.core.scene;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Stream;
 
 /**
@@ -216,6 +213,20 @@ public final class Entity {
 	public <C extends Component> Optional<C> getComponent(Class<C> type) {
 		return Optional.ofNullable(type.cast(this.components.get(getKey(type))));
 	}
+
+	/**
+	 * Gets a component from this entity.
+	 *
+	 * @param type Type of the requested component
+	 * @return A component of the requested type
+	 * @param <C> Type of the component to get
+	 * @throws NoSuchElementException if this entity does not have a component of the given type
+	 */
+	public <C extends Component> C requireComponent(Class<C> type) {
+		return this.getComponent(type).orElseThrow(() -> new NoSuchElementException("Entity " + this + " does not have a component of type " + type));
+	}
+
+	// TODO: Add other 'requireComponent' methods
 
 	/**
 	 * Returns a {@link Stream} with all of this entity's components.

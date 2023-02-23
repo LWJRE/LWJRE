@@ -1,5 +1,6 @@
 package gamma.engine.core.scene;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 /**
@@ -71,6 +72,19 @@ public abstract class Component {
 	 */
 	public final <C extends Component> Optional<C> getComponent(Class<C> type) {
 		return this.getEntity().flatMap(entity -> entity.getComponent(type));
+	}
+
+	/**
+	 * Gets a component attached to the same entity of the given type.
+	 *
+	 * @param type Type of the requested component
+	 * @return A component of the requested type
+	 * @param <C> Type of the component to get
+	 * @throws NoSuchElementException if this entity does not have a component of the given type
+	 * @throws RuntimeException if this component does not belong to any entity
+	 */
+	public final <C extends Component> C requireComponent(Class<C> type) {
+		return this.getEntity().map(entity -> entity.requireComponent(type)).orElseThrow(() -> new RuntimeException("Component " + this + " does not belong to any entity"));
 	}
 
 	/**

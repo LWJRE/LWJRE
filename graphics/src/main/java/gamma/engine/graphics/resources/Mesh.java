@@ -43,6 +43,10 @@ public class Mesh extends DeletableResource {
 		}
 	}
 
+	public void drawTriangles() {
+		this.drawTriangles(3);
+	}
+
 	public void drawTriangles(int count) {
 		this.bind();
 		this.vertexBuffers.keySet().forEach(attribute -> {
@@ -50,6 +54,10 @@ public class Mesh extends DeletableResource {
 				GL20.glEnableVertexAttribArray(attribute);
 		});
 		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, count);
+	}
+
+	public void drawElements() {
+		this.drawElements(3);
 	}
 
 	public void drawElements(int count) {

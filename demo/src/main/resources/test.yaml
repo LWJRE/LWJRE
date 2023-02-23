@@ -1,21 +1,21 @@
 !!gamma.engine.core.scene.Scene
 root: !!gamma.engine.core.scene.Entity
-  components:
-    - !!gamma.engine.core.components.Transform3D
-      position: !!vecmatlib.vector.Vec3f [1.0, 0.0, 1.0]
-    - !!gamma.engine.graphics.components.MeshRenderer
-      shader: !!gamma.engine.graphics.resources.Shader
-        vertex:
-          - "/test_vertex.glsl"
-        fragment:
-          - "/test_fragment.glsl"
   children:
-    one: !!gamma.engine.core.scene.Entity
+    cube: !!gamma.engine.core.scene.Entity
       components:
-        - !!gamma.engine.core.components.Transform3D {}
+        - !!gamma.engine.core.components.Transform3D
+          position: !!vecmatlib.vector.Vec3f [-0.75, 0.2, 0.0]
+          rotation: !!vecmatlib.vector.Vec3f [0.0, 0.785, 0.0]
         - !!gamma.engine.graphics.components.MeshRenderer
+          mesh: !!gamma.engine.graphics.resources.CubeMesh [1.0, 1.0, 1.0]
           shader: !!gamma.engine.graphics.resources.Shader
             vertex:
               - "/test_vertex.glsl"
             fragment:
               - "/test_fragment.glsl"
+    camera: !!gamma.engine.core.scene.Entity
+      components:
+        - !!gamma.engine.core.components.Transform3D
+          position: !!vecmatlib.vector.Vec3f [0.0, 0.0, 5.0]
+        - !!gamma.engine.core.components.Camera3D
+          current: true

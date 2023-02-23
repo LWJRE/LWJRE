@@ -16,6 +16,7 @@ public final class RenderingSystem implements ApplicationListener, WindowListene
 	public void onStart() {
 		GL.createCapabilities();
 		Graphics.clearColor(0.0f, 0.5f, 1.0f, 1.0f);
+		Graphics.depthTest(true);
 		YamlParser.addMappingConstructor(Shader.class, Shader::deserialize);
 		this.temp = YamlParser.loadResource("/test.yaml", Scene.class);
 	}

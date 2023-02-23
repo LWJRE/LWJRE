@@ -30,7 +30,6 @@ public abstract class DeletableResource {
 	 * Called when the application is terminated.
 	 */
 	public static void deleteAll() {
-		System.out.println(RESOURCES);
 		RESOURCES.forEach(DeletableResource::delete);
 	}
 }

@@ -3,6 +3,7 @@ package gamma.engine.core.scene;
 public final class Scene {
 
 	public Entity root;
+
 	private transient long previousTime = System.nanoTime();
 
 	public void process() {
