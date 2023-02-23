@@ -116,14 +116,4 @@ public class CubeMesh extends Mesh {
 				0.0f,-1.0f,0.0f
 		});
 	}
-
-	@Override
-	public void drawTriangles(int count) {
-		super.drawTriangles(36);
-	}
-
-	@Override
-	public void drawElements() {
-		super.drawElements(36);
-	}
 }

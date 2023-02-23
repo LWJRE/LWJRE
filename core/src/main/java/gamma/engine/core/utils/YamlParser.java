@@ -10,6 +10,7 @@ import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.introspector.BeanAccess;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Node;
+import org.yaml.snakeyaml.nodes.ScalarNode;
 import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.representer.Representer;
 import vecmatlib.vector.Vec2f;
@@ -60,6 +61,10 @@ public final class YamlParser extends Yaml {
 		REPRESENTER.addMappingRepresent(type, represent);
 	}
 
+	public static void addScalarConstructor(Class<?> tag, Function<String, Object> construct) {
+		CONSTRUCTOR.addScalarConstructor(tag, construct);
+	}
+
 	public static void addMappingConstructor(Class<?> tag, Function<Map<Object, Object>, Object> construct) {
 		CONSTRUCTOR.addMappingConstructor(tag, construct);
 	}
@@ -92,6 +97,15 @@ public final class YamlParser extends Yaml {
 
 		private YamlConstructor() {
 			super(new LoaderOptions());
+		}
+
+		private void addScalarConstructor(Class<?> tag, Function<String, Object> construct) {
+			this.yamlConstructors.put(new Tag(tag), new AbstractConstruct() {
+				@Override
+				public Object construct(Node node) {
+					return construct.apply(constructScalar((ScalarNode) node));
+				}
+			});
 		}
 
 		private void addMappingConstructor(Class<?> tag, Function<Map<Object, Object>, Object> construct) {

@@ -23,6 +23,11 @@ public class Mesh extends DeletableResource {
 	/** HashMap with attributes as keys and vertex buffer objects as values */
 	private transient final HashMap<Integer, Integer> vertexBuffers = new HashMap<>();
 
+	/** Number of vertices used to render this mesh with {@link Mesh#drawTriangles()}. */
+	private transient int vertexCount = 0;
+	/** Number of elements used to render this mesh with {@link Mesh#drawElements()}. */
+	private transient int elementCount = 0;
+
 	/**
 	 * Creates a mesh.
 	 */
@@ -44,7 +49,7 @@ public class Mesh extends DeletableResource {
 	}
 
 	public void drawTriangles() {
-		this.drawTriangles(3);
+		this.drawTriangles(this.vertexCount);
 	}
 
 	public void drawTriangles(int count) {
@@ -57,7 +62,7 @@ public class Mesh extends DeletableResource {
 	}
 
 	public void drawElements() {
-		this.drawElements(3);
+		this.drawElements(this.elementCount);
 	}
 
 	public void drawElements(int count) {
@@ -75,6 +80,7 @@ public class Mesh extends DeletableResource {
 	 * @param vertices Array of floats containing 3D vertices
 	 */
 	public void setVertices3D(float[] vertices) {
+		this.vertexCount = vertices.length / 3;
 		this.bind();
 		this.storeData(vertices, 0, 3);
 	}
@@ -85,6 +91,7 @@ public class Mesh extends DeletableResource {
 	 * @param vertices Array of floats containing 2D vertices
 	 */
 	public void setVertices2D(float[] vertices) {
+		this.vertexCount = vertices.length / 2;
 		this.bind();
 		this.storeData(vertices, 0, 2);
 	}
@@ -95,6 +102,7 @@ public class Mesh extends DeletableResource {
 	 * @param indices Int array with the indices
 	 */
 	public void setIndices(int[] indices) {
+		this.elementCount = indices.length;
 		this.bind();
 		this.storeData(indices);
 	}

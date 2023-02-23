@@ -5,6 +5,7 @@ import gamma.engine.core.WindowListener;
 import gamma.engine.core.scene.Scene;
 import gamma.engine.core.utils.YamlParser;
 import gamma.engine.graphics.resources.DeletableResource;
+import gamma.engine.graphics.resources.Model;
 import gamma.engine.graphics.resources.Shader;
 import org.lwjgl.opengl.GL;
 
@@ -17,6 +18,7 @@ public final class RenderingSystem implements ApplicationListener, WindowListene
 		GL.createCapabilities();
 		Graphics.clearColor(0.0f, 0.5f, 1.0f, 1.0f);
 		Graphics.depthTest(true);
+		YamlParser.addScalarConstructor(Model.class, Model::getOrLoad);
 		YamlParser.addMappingConstructor(Shader.class, Shader::deserialize);
 		this.temp = YamlParser.loadResource("/test.yaml", Scene.class);
 	}
