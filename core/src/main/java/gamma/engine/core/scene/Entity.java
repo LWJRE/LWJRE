@@ -74,6 +74,19 @@ public final class Entity {
 		});
 	}
 
+	public void editorProcess() {
+		this.children.forEach((key, entity) -> {
+			if(entity.parent == null)
+				entity.parent = this;
+			entity.editorProcess();
+		});
+		this.components.forEach((key, component) -> {
+			if(component.entity == null)
+				component.entity = this;
+			component.editorUpdate();
+		});
+	}
+
 	/**
 	 * Checks if this entity has a child with the given key.
 	 *
@@ -166,11 +179,11 @@ public final class Entity {
 		return Optional.ofNullable(this.children.get(key));
 	}
 
-	/**
-	 * Returns a {@link Stream} with all of this entity's children.
-	 *
-	 * @return A {@code Stream} containing all of this entity's children
-	 */
+	// TODO: Change tests for these two
+	public HashMap<String, Entity> childrenMap() {
+		return new HashMap<>(this.children);
+	}
+
 	public Stream<Entity> getChildren() {
 		return this.children.values().stream();
 	}
@@ -330,6 +343,8 @@ public final class Entity {
 		}
 		return false;
 	}
+
+	// TODO: Better serialize and deserialize
 
 	/**
 	 * Serializes the given entity. Used to write entity to {@code .yaml} files.

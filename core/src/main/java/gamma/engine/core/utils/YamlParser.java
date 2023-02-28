@@ -45,6 +45,11 @@ public final class YamlParser extends Yaml {
 		return Resources.readAs(path, inputStream -> PARSER.loadAs(inputStream, type));
 	}
 
+	// TODO: Write tests for this thing
+	public static <T> T loadFile(String path, Class<T> type) {
+		return FileUtils.readAs(path, reader -> PARSER.loadAs(reader, type));
+	}
+
 	public static String serialize(Object object) {
 		return PARSER.dump(object);
 	}

@@ -46,6 +46,10 @@ public abstract class Component {
 
 	}
 
+	protected void editorUpdate() {
+
+	}
+
 	// TODO: On Exit?
 
 	/**

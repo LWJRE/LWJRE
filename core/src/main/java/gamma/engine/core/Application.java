@@ -1,5 +1,6 @@
 package gamma.engine.core;
 
+import gamma.engine.core.scene.Scene;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ServiceLoader;
@@ -59,10 +60,10 @@ public final class Application {
 			this.window.makeContextCurrent();
 			this.window.show();
 			this.listeners.forEach(ApplicationListener::onStart);
-//			SceneTree.loadScene(ApplicationProperties.get("startScene", ""));
+			Scene.changeScene(ApplicationProperties.get("startScene", ""));
 			while(!this.window.isCloseRequested()) {
-//				SceneTree.process();
 				this.listeners.forEach(ApplicationListener::onUpdate);
+				Scene.getCurrent().process();
 				this.window.update();
 				GLFW.glfwPollEvents();
 			}

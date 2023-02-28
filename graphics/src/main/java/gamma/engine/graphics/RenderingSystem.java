@@ -2,7 +2,6 @@ package gamma.engine.graphics;
 
 import gamma.engine.core.ApplicationListener;
 import gamma.engine.core.WindowListener;
-import gamma.engine.core.scene.Scene;
 import gamma.engine.core.utils.YamlParser;
 import gamma.engine.graphics.resources.DeletableResource;
 import gamma.engine.graphics.resources.Model;
@@ -11,8 +10,6 @@ import org.lwjgl.opengl.GL;
 
 public final class RenderingSystem implements ApplicationListener, WindowListener {
 
-	private Scene temp;
-
 	@Override
 	public void onStart() {
 		GL.createCapabilities();
@@ -20,14 +17,11 @@ public final class RenderingSystem implements ApplicationListener, WindowListene
 		Graphics.depthTest(true);
 		YamlParser.addScalarConstructor(Model.class, Model::getOrLoad);
 		YamlParser.addMappingConstructor(Shader.class, Shader::deserialize);
-		this.temp = YamlParser.loadResource("/test.yaml", Scene.class);
 	}
 
 	@Override
 	public void onUpdate() {
 		Graphics.clearFramebuffer();
-		this.temp.process();
-//		RenderingSystem3D.renderingProcess();
 	}
 
 	@Override
@@ -38,7 +32,6 @@ public final class RenderingSystem implements ApplicationListener, WindowListene
 
 	@Override
 	public void onTerminate() {
-		System.out.println(YamlParser.serialize(this.temp));
 		DeletableResource.deleteAll();
 	}
 }

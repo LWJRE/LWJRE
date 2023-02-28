@@ -23,4 +23,17 @@ public class ModelRenderer extends Component {
 		this.shader.start();
 		this.model.draw();
 	}
+
+	@Override
+	protected void editorUpdate() {
+		super.editorUpdate();
+		// TODO: Render stuff in batches
+		this.getComponent(Transform3D.class)
+				.map(Transform3D::globalTransformation)
+				.ifPresent(matrix -> this.shader.setUniform("transformation_matrix", matrix));
+		this.shader.setUniform("projection_matrix", Camera3D.getCurrent().projectionMatrix());
+		this.shader.setUniform("view_matrix", Camera3D.getCurrent().viewMatrix());
+		this.shader.start();
+		this.model.draw();
+	}
 }
