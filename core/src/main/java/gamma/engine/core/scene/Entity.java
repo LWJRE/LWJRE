@@ -179,7 +179,7 @@ public final class Entity {
 		return Optional.ofNullable(this.children.get(key));
 	}
 
-	// TODO: Change tests for these two
+	@Deprecated // Use 'serialize' instead
 	public HashMap<String, Entity> childrenMap() {
 		return new HashMap<>(this.children);
 	}
@@ -344,8 +344,6 @@ public final class Entity {
 		return false;
 	}
 
-	// TODO: Better serialize and deserialize
-
 	/**
 	 * Serializes the given entity. Used to write entity to {@code .yaml} files.
 	 *
@@ -363,7 +361,7 @@ public final class Entity {
 	 * @param map A map containing the entity's children and components
 	 * @return The deserialized entity
 	 */
-	public static Entity deserialize(Map<Object, Object> map) {
+	public static Entity deserialize(Map<?, ?> map) {
 		Entity entity = new Entity();
 		Optional.ofNullable((List<?>) map.get("components")).ifPresent(components -> components.forEach(obj -> {
 			if(obj instanceof Component component)

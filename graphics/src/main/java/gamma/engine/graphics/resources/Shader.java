@@ -361,7 +361,7 @@ public final class Shader extends DeletableResource {
 		}
 	}
 
-	public static Shader deserialize(Map<Object, Object> map) {
+	public static Shader deserialize(Map<?, ?> map) {
 		Builder builder = new Builder();
 		Optional.ofNullable((List<?>) map.get("vertex")).ifPresent(list -> list.forEach(obj -> {
 			if(obj instanceof String str)

@@ -1,8 +1,12 @@
 package gamma.engine.graphics.resources;
 
 import de.javagl.obj.*;
+import gamma.engine.core.utils.EditorRepresent;
 import gamma.engine.core.utils.Resources;
 
+import javax.swing.*;
+import java.awt.*;
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +16,7 @@ import java.util.Map;
  *
  * @author Nico
  */
-public final class Model {
+public final class Model implements EditorRepresent {
 
 	/** All loaded models */
 	private static final HashMap<String, Model> MODELS = new HashMap<>();
@@ -25,6 +29,7 @@ public final class Model {
 	 */
 	public static Model getOrLoad(String path) {
 		if(MODELS.containsKey(path)) {
+			System.out.println("Model " + path + " was already loaded");
 			return MODELS.get(path);
 		} else {
 			Model model = loadModel(path);
@@ -35,6 +40,12 @@ public final class Model {
 
 	/** List of meshes that make up this model */
 	private final List<Mesh> meshes;
+	public final String path;
+
+	private Model(List<Mesh> meshes, String path) {
+		this.meshes = meshes;
+		this.path = path;
+	}
 
 	/**
 	 * Creates a model with the given meshes.
@@ -43,7 +54,7 @@ public final class Model {
 	 * @param meshes List of meshes
 	 */
 	public Model(List<Mesh> meshes) {
-		this.meshes = meshes;
+		this(meshes, "");
 	}
 
 	/**
@@ -51,6 +62,26 @@ public final class Model {
 	 */
 	public void draw() {
 		this.meshes.forEach(Mesh::drawElements);
+	}
+
+	@Override
+	public JComponent guiRepresent(Field field, Object owner) {
+		JTextField textField = new JTextField();
+		try {
+			field.setAccessible(true);
+			textField.setText(((Model) field.get(owner)).path);
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		textField.setMaximumSize(new Dimension(textField.getPreferredSize().width, 20));
+		textField.addActionListener(actionEvent -> {
+			try {
+				field.set(owner, Model.getOrLoad(textField.getText()));
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		});
+		return textField;
 	}
 
 	/**
@@ -72,6 +103,6 @@ public final class Model {
 					mesh.setNormals(ObjData.getNormalsArray(obj));
 					return mesh;
 				}).toList();
-		return new Model(model);
+		return new Model(model, path);
 	}
 }

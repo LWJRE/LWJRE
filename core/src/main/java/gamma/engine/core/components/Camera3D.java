@@ -1,6 +1,8 @@
 package gamma.engine.core.components;
 
 import gamma.engine.core.Application;
+import gamma.engine.core.annotations.EditorFloat;
+import gamma.engine.core.annotations.EditorVariable;
 import gamma.engine.core.scene.Component;
 import vecmatlib.matrix.Mat4f;
 import vecmatlib.vector.Vec2i;
@@ -29,13 +31,17 @@ public class Camera3D extends Component {
 	}
 
 	/** Weather this is the current camera or not */
+	@EditorVariable
 	private boolean current = false;
 
 	/** Field of view */
+	@EditorFloat(minValue = 0.0f)
 	public float fov = 1.22173f; // 70.0f deg
 	/** Near distance plane */
+	@EditorFloat(minValue = Float.MIN_VALUE)
 	public float nearPlane = 0.1f;
 	/** Far distance plane */
+	@EditorFloat(minValue = Float.MIN_VALUE)
 	public float farPlane = 1000.0f;
 
 	@Override
