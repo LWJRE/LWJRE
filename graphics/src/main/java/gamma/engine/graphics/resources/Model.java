@@ -1,12 +1,14 @@
 package gamma.engine.graphics.resources;
 
 import de.javagl.obj.*;
-import gamma.engine.core.utils.EditorRepresent;
+import gamma.engine.core.utils.EditorGuiField;
 import gamma.engine.core.utils.Resources;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.lang.reflect.Field;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +18,7 @@ import java.util.Map;
  *
  * @author Nico
  */
-public final class Model implements EditorRepresent {
+public final class Model implements EditorGuiField {
 
 	/** All loaded models */
 	private static final HashMap<String, Model> MODELS = new HashMap<>();
@@ -66,6 +68,7 @@ public final class Model implements EditorRepresent {
 
 	@Override
 	public JComponent guiRepresent(Field field, Object owner) {
+		JPanel panel = new JPanel(new BorderLayout());
 		JTextField textField = new JTextField();
 		try {
 			field.setAccessible(true);
@@ -81,7 +84,26 @@ public final class Model implements EditorRepresent {
 				e.printStackTrace();
 			}
 		});
-		return textField;
+		// TODO: Allow only this folder
+		JFileChooser fileChooser = new JFileChooser("src/main/resources");
+		fileChooser.setFileFilter(new FileNameExtensionFilter("Model", "obj"));
+		JButton selectFileButton = new JButton(UIManager.getIcon("FileView.directoryIcon"));
+		selectFileButton.setMaximumSize(new Dimension(2, 2));
+		selectFileButton.addActionListener(actionEvent -> {
+			if(fileChooser.showOpenDialog(panel) == JFileChooser.APPROVE_OPTION) {
+				Path absolutePath = fileChooser.getSelectedFile().toPath();
+				String model = "/" + Path.of("src/main/resources").toAbsolutePath().relativize(absolutePath);
+				textField.setText(model);
+				try {
+					field.set(owner, Model.getOrLoad(model));
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		panel.add(textField, BorderLayout.CENTER);
+		panel.add(selectFileButton, BorderLayout.EAST);
+		return panel;
 	}
 
 	/**

@@ -1,5 +1,6 @@
 package gamma.engine.graphics.resources;
 
+import gamma.engine.core.utils.EditorGuiField;
 import gamma.engine.core.utils.Resources;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
@@ -8,6 +9,8 @@ import vecmatlib.*;
 import vecmatlib.matrix.Mat3f;
 import vecmatlib.matrix.Mat4f;
 
+import javax.swing.*;
+import java.lang.reflect.Field;
 import java.nio.FloatBuffer;
 import java.util.*;
 import java.util.function.IntConsumer;
@@ -17,7 +20,7 @@ import java.util.function.IntConsumer;
  *
  * @author Nico
  */
-public final class Shader extends DeletableResource {
+public final class Shader extends DeletableResource implements EditorGuiField {
 
 	private static Shader current;
 
@@ -273,6 +276,11 @@ public final class Shader extends DeletableResource {
 			GL20.glDeleteShader(shader);
 		});
 		GL20.glDeleteProgram(this.program);
+	}
+
+	@Override
+	public JComponent guiRepresent(Field field, Object owner) {
+		return new JLabel("Not yet implemented");
 	}
 
 	/** Map of already loaded shaders */
