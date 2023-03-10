@@ -7,11 +7,11 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface EditorDouble {
+public @interface EditorRange {
 
-	double minValue() default Double.NEGATIVE_INFINITY;
+	double max() default Double.POSITIVE_INFINITY;
 
-	double maxValue() default Double.POSITIVE_INFINITY;
+	double min() default Double.NEGATIVE_INFINITY;
 
-	double stepSize() default 0.001;
+	double step() default 1.0;
 }

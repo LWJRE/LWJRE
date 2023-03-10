@@ -14,15 +14,15 @@ import vecmatlib.vector.Vec4f;
 public class Transform3D extends Component {
 
 	/** Position of the entity in a 3D space */
-	@EditorVariable
+	@EditorVariable("Position")
 	public Vec3f position = Vec3f.Zero();
 
 	/** Rotation of the entity in radians around the x, y, z axes */
-	@EditorVariable
+	@EditorVariable("Rotation")
 	public Vec3f rotation = Vec3f.Zero();
 
 	/** Scale of the entity in a 3D space */
-	@EditorVariable
+	@EditorVariable("Scale")
 	public Vec3f scale = Vec3f.One();
 
 	/**
