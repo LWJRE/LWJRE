@@ -17,7 +17,7 @@ public final class RenderingSystem implements ApplicationListener, WindowListene
 		Graphics.depthTest(true);
 		YamlUtils.addScalarRepresent(Model.class, model -> model.path);
 		YamlUtils.addScalarConstruct(Model.class, Model::getOrLoad);
-		YamlUtils.addMappingConstruct(Shader.class, Shader::deserialize);
+		YamlUtils.addScalarConstruct(Shader.class, Shader::getOrLoad);
 	}
 
 	@Override

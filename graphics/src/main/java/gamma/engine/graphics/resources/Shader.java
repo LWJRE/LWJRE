@@ -1,6 +1,5 @@
 package gamma.engine.graphics.resources;
 
-import gamma.engine.core.utils.EditorGuiField;
 import gamma.engine.core.utils.Resources;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
@@ -9,42 +8,68 @@ import vecmatlib.*;
 import vecmatlib.matrix.Mat3f;
 import vecmatlib.matrix.Mat4f;
 
-import javax.swing.*;
-import java.lang.reflect.Field;
 import java.nio.FloatBuffer;
-import java.util.*;
+import java.util.HashMap;
 import java.util.function.IntConsumer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Class that represents a shader resource.
  *
  * @author Nico
  */
-public final class Shader extends DeletableResource implements EditorGuiField {
+public final class Shader extends DeletableResource {
+
+	private static final String MAIN_FRAGMENT = Resources.readAsString("/shaders/main_fragment.glsl");
+	private static final String MAIN_VERTEX = Resources.readAsString("/shaders/main_vertex.glsl");
+
+	private static final HashMap<String, Shader> SHADERS = new HashMap<>();
+
+	public static Shader getOrLoad(String path) {
+		if(SHADERS.containsKey(path)) {
+			return SHADERS.get(path);
+		} else {
+			Shader shader = loadShader(path);
+			SHADERS.put(path, shader);
+			return shader;
+		}
+	}
 
 	private static Shader current;
 
 	/** Id of the shader program */
+	private transient final int vertex;
+	private transient final int fragment;
 	private transient final int program;
-	/* Ids of shaders */
-	private transient final ArrayList<Integer> shaders;
 
 	/** Map that contains the location of uniform variables */
 	private transient final HashMap<String, Integer> uniformLocations = new HashMap<>();
 	/** Map that contains uniform variables to be loaded once the program starts */
 	private transient final HashMap<Integer, Runnable> uniformCache = new HashMap<>();
 
-	/**
-	 * Creates a shader program. Called in {@link Builder#createOrGet()}.
-	 *
-	 * @param shaders List of shaders
-	 */
-	private Shader(ArrayList<Integer> shaders) {
+	public Shader(String vertexShader, String fragmentShader) throws ShaderCompilationException {
+		this.vertex = GL20.glCreateShader(GL20.GL_VERTEX_SHADER);
+		GL20.glShaderSource(this.vertex, vertexShader);
+		GL20.glCompileShader(this.vertex);
+		if(GL20.glGetShaderi(this.vertex, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
+			System.out.println(GL20.glGetShaderInfoLog(this.vertex));
+			GL20.glDeleteShader(this.vertex);
+			throw new ShaderCompilationException("Could not compile vertex shader");
+		}
+		this.fragment = GL20.glCreateShader(GL20.GL_FRAGMENT_SHADER);
+		GL20.glShaderSource(this.fragment, fragmentShader);
+		GL20.glCompileShader(this.fragment);
+		if(GL20.glGetShaderi(this.fragment, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
+			System.out.println(GL20.glGetShaderInfoLog(this.fragment));
+			GL20.glDeleteShader(this.fragment);
+			throw new ShaderCompilationException("Could not compile fragment shader");
+		}
 		this.program = GL20.glCreateProgram();
-		shaders.forEach(shader -> GL20.glAttachShader(this.program, shader));
+		GL20.glAttachShader(this.program, this.vertex);
+		GL20.glAttachShader(this.program, this.fragment);
 		GL20.glLinkProgram(this.program);
 		GL20.glValidateProgram(this.program);
-		this.shaders = shaders;
 	}
 
 	/**
@@ -271,116 +296,29 @@ public final class Shader extends DeletableResource implements EditorGuiField {
 
 	@Override
 	protected void delete() {
-		this.shaders.forEach(shader -> {
-			GL20.glDetachShader(this.program, shader);
-			GL20.glDeleteShader(shader);
-		});
+		GL20.glDetachShader(this.program, this.vertex);
+		GL20.glDetachShader(this.program, this.fragment);
+		GL20.glDeleteShader(this.vertex);
+		GL20.glDeleteShader(this.fragment);
 		GL20.glDeleteProgram(this.program);
 	}
 
-	@Override
-	public JComponent guiRepresent(Field field, Object owner) {
-		return new JLabel("Not yet implemented");
-	}
-
-	/** Map of already loaded shaders */
-	private static final HashMap<Builder, Shader> SHADERS = new HashMap<>();
-
-	/**
-	 * Builder class to create shaders.
-	 *
-	 * @author Nico
-	 */
-	public static final class Builder {
-
-		/** Map of lists of shader files divided by type */
-		private transient final HashMap<Integer, ArrayList<String>> shaders = new HashMap<>();
-
-		/**
-		 * Adds a shader file.
-		 *
-		 * @param type Type of the shader to add
-		 * @param file Path to the shader file
-		 */
-		private void addShader(int type, String file) {
-			if(!this.shaders.containsKey(type))
-				this.shaders.put(type, new ArrayList<>());
-			this.shaders.get(type).add(file);
-		}
-
-		/**
-		 * Adds a vertex shader file.
-		 *
-		 * @param file Path to the vertex shader file
-		 * @return {@code this}
-		 */
-		public Builder vertex(String file) {
-			this.addShader(GL20.GL_VERTEX_SHADER, file);
-			return this;
-		}
-
-		/**
-		 * Adds a fragment shader file.
-		 *
-		 * @param file Path to the fragment shader file
-		 * @return {@code this}
-		 */
-		public Builder fragment(String file) {
-			this.addShader(GL20.GL_FRAGMENT_SHADER, file);
-			return this;
-		}
-
-		/**
-		 * Creates or get the shader program.
-		 * If a program with the same shaders was already created, this method will return the same instance.
-		 * If the program does not exist yet, a new instance is created.
-		 *
-		 * @return A shader program with the requested shaders.
-		 */
-		public Shader createOrGet() {
-			if(SHADERS.containsKey(this))
-				return SHADERS.get(this);
-			ArrayList<Integer> result = new ArrayList<>();
-			this.shaders.forEach((type, list) -> list.forEach(file -> {
-				int shader = GL20.glCreateShader(type);
-				String code = Resources.readAsString(file);
-				GL20.glShaderSource(shader, code);
-				GL20.glCompileShader(shader);
-				if(GL20.glGetShaderi(shader, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
-					System.err.println(GL20.glGetShaderInfoLog(shader));
-					GL20.glDeleteShader(shader);
-				} else {
-					result.add(shader);
-				}
-			}));
-			Shader shader = new Shader(result);
-			SHADERS.put(this, shader);
-			return shader;
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			return obj instanceof Builder builder && builder.shaders.equals(this.shaders);
-		}
-
-		@Override
-		public int hashCode() {
-			return Objects.hash(shaders);
+	private static Shader loadShader(String path) {
+		try {
+			String shaderCode = Resources.readAsString(path);
+			Matcher vertexRegex = Pattern.compile("((#define\\s+VERTEX)(.|\\s)+?(#undef\\s+VERTEX|\\z))").matcher(shaderCode);
+			Matcher fragmentRegex = Pattern.compile("((#define\\s+FRAGMENT)(.|\\s)+?(#undef\\s+FRAGMENT|\\z))").matcher(shaderCode);
+			if(vertexRegex.find() && fragmentRegex.find()) {
+				String vertexCode = MAIN_VERTEX.replace("void vertex_shader();", vertexRegex.group(1));
+				String fragmentCode = MAIN_FRAGMENT.replace("vec4 fragment_shader();", fragmentRegex.group(1));
+				// TODO: Get version from settings
+				vertexCode = vertexCode.replaceAll("#version \\d+", "#version 450");
+				fragmentCode = fragmentCode.replaceAll("#version \\d+", "#version 450");
+				return new Shader(vertexCode, fragmentCode);
+			}
+			throw new RuntimeException("Incorrect format in shader " + path);
+		} catch (ShaderCompilationException e) {
+			throw new RuntimeException("Could not compile shader " + path, e);
 		}
 	}
-
-	public static Shader deserialize(Map<?, ?> map) {
-		Builder builder = new Builder();
-		Optional.ofNullable((List<?>) map.get("vertex")).ifPresent(list -> list.forEach(obj -> {
-			if(obj instanceof String str)
-				builder.vertex(str);
-		}));
-		Optional.ofNullable((List<?>) map.get("fragment")).ifPresent(list -> list.forEach(obj -> {
-			if(obj instanceof String str)
-				builder.fragment(str);
-		}));
-		return builder.createOrGet();
-	}
-
-	// TODO: Find a way to serialize the shader
 }

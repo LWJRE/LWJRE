@@ -81,7 +81,7 @@ public class Camera3D extends Component {
 		float aspect = ((float) windowSize.x() / windowSize.y());
 		return new Mat4f(
 				focalLength, 0.0f, 0.0f, 0.0f,
-				0.0f, focalLength / aspect, 0.0f, 0.0f,
+				0.0f, focalLength * aspect, 0.0f, 0.0f,
 				0.0f, 0.0f, -(this.farPlane + this.nearPlane) / (this.farPlane - this.nearPlane), -(2 * this.farPlane * this.nearPlane) / (this.farPlane - this.nearPlane),
 				0.0f, 0.0f, -1.0f, 0.0f
 		);

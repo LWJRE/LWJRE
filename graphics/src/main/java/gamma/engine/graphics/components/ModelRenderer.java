@@ -1,5 +1,6 @@
 package gamma.engine.graphics.components;
 
+import gamma.engine.core.annotations.EditorVariable;
 import gamma.engine.core.components.Camera3D;
 import gamma.engine.core.components.Transform3D;
 import gamma.engine.core.scene.Component;
@@ -8,7 +9,9 @@ import gamma.engine.graphics.resources.Shader;
 
 public class ModelRenderer extends Component {
 
+	@EditorVariable("Model")
 	public Model model;
+	@EditorVariable("Shader")
 	private Shader shader;
 
 	@Override
@@ -20,6 +23,7 @@ public class ModelRenderer extends Component {
 				.ifPresent(matrix -> this.shader.setUniform("transformation_matrix", matrix));
 		this.shader.setUniform("projection_matrix", Camera3D.getCurrent().projectionMatrix());
 		this.shader.setUniform("view_matrix", Camera3D.getCurrent().viewMatrix());
+		this.shader.setUniform("John", 3);
 		this.shader.start();
 		this.model.draw();
 	}
