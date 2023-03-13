@@ -23,8 +23,6 @@ public class Window {
 	private static final ServiceLoader<WindowListener> LISTENERS = ServiceLoader.load(WindowListener.class);
 
 	protected long handle;
-	protected int width = 0;
-	protected int height = 0;
 
 	public Window(String title, int width, int height) {
 		GLFWErrorCallback.createPrint(System.err).set();
@@ -36,13 +34,7 @@ public class Window {
 		this.handle = GLFW.glfwCreateWindow(width, height, title, MemoryUtil.NULL, MemoryUtil.NULL);
 		if(this.handle == MemoryUtil.NULL)
 			throw new RuntimeException("Failed to create the GLFW window");
-		this.width = width;
-		this.height = height;
-		GLFW.glfwSetWindowSizeCallback(this.handle, ((window, width1, height1) -> {
-			LISTENERS.forEach(windowListener -> windowListener.onResize(width1, height1));
-			this.width = width1;
-			this.height = height1;
-		}));
+		GLFW.glfwSetWindowSizeCallback(this.handle, ((window, width1, height1) -> LISTENERS.forEach(windowListener -> windowListener.onResize(width1, height1))));
 	}
 
 	public Window() {
@@ -75,32 +67,17 @@ public class Window {
 		GLFW.glfwSetWindowSize(this.handle, width, height);
 	}
 
-	public void setWidth(int width) {
-		this.setSize(width, this.height);
-	}
-
-	public void setHeight(int height) {
-		this.setSize(this.width, height);
-	}
-
 	public void setSize(Vec2i size) {
 		this.setSize(size.x(), size.y());
 	}
 
 	public Vec2i getSize() {
-		return new Vec2i(this.width, this.height);
-	}
-
-	public int getWidth() {
-		return this.width;
-	}
-
-	public int getHeight() {
-		return this.height;
-	}
-
-	public float getAspect() {
-		return (float) this.width / this.height;
+		try(MemoryStack stack = MemoryStack.stackPush()) {
+			IntBuffer w = stack.mallocInt(1);
+			IntBuffer h = stack.mallocInt(1);
+			GLFW.glfwGetWindowSize(handle, w, h);
+			return new Vec2i(w.get(), h.get());
+		}
 	}
 
 	public void setPosition(int x, int y) {
@@ -108,7 +85,6 @@ public class Window {
 		GLFW.glfwSetWindowPos(this.handle, x, y);
 	}
 
-	// TODO: Change this?
 	public Vec2i getPosition() {
 		try(MemoryStack stack = MemoryStack.stackPush()) {
 			IntBuffer x = stack.mallocInt(1);

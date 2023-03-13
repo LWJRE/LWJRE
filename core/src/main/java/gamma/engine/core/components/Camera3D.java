@@ -6,6 +6,7 @@ import gamma.engine.core.annotations.EditorVariable;
 import gamma.engine.core.scene.Component;
 import gamma.engine.core.window.Window;
 import vecmatlib.matrix.Mat4f;
+import vecmatlib.vector.Vec2i;
 import vecmatlib.vector.Vec3f;
 
 import java.util.NoSuchElementException;
@@ -76,7 +77,8 @@ public class Camera3D extends Component {
 
 	public Mat4f projectionMatrix() {
 		float focalLength = (float) (1.0f / Math.tan(this.fov / 2.0f));
-		float aspect = Window.getCurrent().getAspect();
+		Vec2i windowSize = Window.getCurrent().getSize();
+		float aspect = (float) windowSize.x() / windowSize.y();
 		return new Mat4f(
 				focalLength, 0.0f, 0.0f, 0.0f,
 				0.0f, focalLength * aspect, 0.0f, 0.0f,
