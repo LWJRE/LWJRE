@@ -1,4 +1,4 @@
-package gamma.engine.core;
+package gamma.engine.core.window;
 
 /**
  * Service interface to be implemented by classes that want to listen to window events.

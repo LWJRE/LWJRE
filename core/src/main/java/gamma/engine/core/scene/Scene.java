@@ -1,11 +1,10 @@
 package gamma.engine.core.scene;
 
-import gamma.engine.core.ApplicationProperties;
 import gamma.engine.core.utils.YamlUtils;
 
 public final class Scene {
 
-	private static Scene currentScene = YamlUtils.parseResource(ApplicationProperties.getString("startScene"), Scene.class);
+	private static Scene currentScene = new Scene();
 
 	public static Scene getCurrent() {
 		return currentScene;

@@ -1,12 +1,11 @@
 package gamma.engine.core.components;
 
-import gamma.engine.core.Application;
 import gamma.engine.core.annotations.EditorDegrees;
 import gamma.engine.core.annotations.EditorRange;
 import gamma.engine.core.annotations.EditorVariable;
 import gamma.engine.core.scene.Component;
+import gamma.engine.core.window.Window;
 import vecmatlib.matrix.Mat4f;
-import vecmatlib.vector.Vec2i;
 import vecmatlib.vector.Vec3f;
 
 import java.util.NoSuchElementException;
@@ -72,13 +71,12 @@ public class Camera3D extends Component {
 	 * @throws RuntimeException if this component does not belong to any entity
 	 */
 	public Vec3f globalPosition() {
-		return this.requireComponent(Transform3D.class).globalPosition();
+		return this.getComponent(Transform3D.class).map(Transform3D::globalPosition).orElse(Vec3f.Zero());
 	}
 
 	public Mat4f projectionMatrix() {
-		Vec2i windowSize = Application.window().getSize();
 		float focalLength = (float) (1.0f / Math.tan(this.fov / 2.0f));
-		float aspect = ((float) windowSize.x() / windowSize.y());
+		float aspect = Window.getCurrent().getAspect();
 		return new Mat4f(
 				focalLength, 0.0f, 0.0f, 0.0f,
 				0.0f, focalLength * aspect, 0.0f, 0.0f,
@@ -88,6 +86,6 @@ public class Camera3D extends Component {
 	}
 
 	public Mat4f viewMatrix() {
-		return Mat4f.translation(this.globalPosition().negated()).multiply(this.requireComponent(Transform3D.class).localRotation());
+		return Mat4f.translation(this.globalPosition().negated()).multiply(this.getComponent(Transform3D.class).map(Transform3D::localRotation).orElse(Mat4f.Identity()));
 	}
 }

@@ -1,21 +1,13 @@
 !!gamma.engine.core.scene.Scene
 root: !!gamma.engine.core.scene.Entity
   children:
-#    cube: !!gamma.engine.core.scene.Entity
-#      components:
-#        - !!gamma.engine.core.components.Transform3D
-#          position: !!vecmatlib.vector.Vec3f [-0.75, 0.2, 0.0]
-#          rotation: !!vecmatlib.vector.Vec3f [0.0, 0.785, 0.0]
-#        - !!gamma.engine.graphics.components.MeshRenderer
-#          mesh: !!gamma.engine.graphics.resources.CubeMesh [1.0, 1.0, 1.0]
-#          shader: !!gamma.engine.graphics.resources.Shader "/shaders/default_shader.glsl"
     dragon: !!gamma.engine.core.scene.Entity
       components:
         - !!gamma.engine.core.components.Transform3D
           position: !!vecmatlib.vector.Vec3f [0.0, -3.0, -5.0]
           rotation: !!vecmatlib.vector.Vec3f [0.0, -0.785, 0.0]
         - !!gamma.engine.graphics.components.ModelRenderer
-          model: !!gamma.engine.graphics.resources.Model "/dragon.obj"
+          model: !!gamma.engine.graphics.resources.Model "/models/dragon.obj"
           shader: !!gamma.engine.graphics.resources.Shader "/shaders/default_shader.glsl"
     camera: !!gamma.engine.core.scene.Entity
       components:

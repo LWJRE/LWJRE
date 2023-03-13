@@ -1,7 +1,7 @@
 package gamma.engine.graphics;
 
 import gamma.engine.core.ApplicationListener;
-import gamma.engine.core.WindowListener;
+import gamma.engine.core.window.WindowListener;
 import gamma.engine.core.utils.YamlUtils;
 import gamma.engine.graphics.resources.DeletableResource;
 import gamma.engine.graphics.resources.Model;
