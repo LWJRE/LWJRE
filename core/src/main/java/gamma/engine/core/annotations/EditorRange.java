@@ -9,9 +9,9 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface EditorRange {
 
-	double max() default Double.POSITIVE_INFINITY;
+	float max() default Float.POSITIVE_INFINITY;
 
-	double min() default Double.NEGATIVE_INFINITY;
+	float min() default Float.NEGATIVE_INFINITY;
 
-	double step() default 1.0;
+	float step() default 0.001f;
 }

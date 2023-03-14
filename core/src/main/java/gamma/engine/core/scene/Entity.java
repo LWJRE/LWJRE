@@ -1,6 +1,7 @@
 package gamma.engine.core.scene;
 
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.stream.Stream;
 
 /**
@@ -179,9 +180,8 @@ public final class Entity {
 		return Optional.ofNullable(this.children.get(key));
 	}
 
-	@Deprecated // Use 'serialize' instead
-	public HashMap<String, Entity> childrenMap() {
-		return new HashMap<>(this.children);
+	public void forEachChild(BiConsumer<String, Entity> action) {
+		this.children.forEach(action);
 	}
 
 	public Stream<Entity> getChildren() {

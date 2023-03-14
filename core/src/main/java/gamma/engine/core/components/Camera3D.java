@@ -37,15 +37,15 @@ public class Camera3D extends Component {
 
 	@EditorVariable("Fov")
 	@EditorDegrees
-	@EditorRange(min = 0.0f, max = 360.0f, step = 0.001f)
+	@EditorRange(min = 0.0f, max = 360.0f)
 	public float fov = 1.22173f;
 	/** Near distance plane */
 	@EditorVariable("Near plane")
-	@EditorRange(min = 0.001f, step = 0.001f)
+	@EditorRange(min = 0.001f)
 	public float nearPlane = 0.1f;
 	/** Far distance plane */
 	@EditorVariable("Far plane")
-	@EditorRange(min = 0.001f, step = 0.001f)
+	@EditorRange(min = 0.001f)
 	public float farPlane = 1000.0f;
 
 	@Override
