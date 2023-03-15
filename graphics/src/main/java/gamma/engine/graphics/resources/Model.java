@@ -1,9 +1,11 @@
 package gamma.engine.graphics.resources;
 
 import de.javagl.obj.*;
-import gamma.engine.core.utils.Resources;
+import gamma.engine.core.resources.Resource;
+import gamma.engine.core.resources.ResourceLoader;
+import gamma.engine.core.resources.Resources;
+import gamma.engine.core.utils.FileUtils;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,10 +14,7 @@ import java.util.Map;
  *
  * @author Nico
  */
-public final class Model {
-
-	/** All loaded models */
-	private static final HashMap<String, Model> MODELS = new HashMap<>();
+public final class Model implements Resource {
 
 	/**
 	 * Loads a model from the classpath or return the same instance if it was already loaded.
@@ -24,22 +23,24 @@ public final class Model {
 	 * @return The requested model
 	 */
 	public static Model getOrLoad(String path) {
-		if(MODELS.containsKey(path)) {
-			return MODELS.get(path);
-		} else {
-			Model model = loadModel(path);
-			MODELS.put(path, model);
+		Resource resource = Resources.getOrLoad(path);
+		if(resource instanceof Model model)
 			return model;
-		}
+		throw new RuntimeException("Resource " + path + " is not a model");
 	}
 
 	/** List of meshes that make up this model */
 	private final List<Mesh> meshes;
-	public final String path;
+	private final String path;
 
 	private Model(List<Mesh> meshes, String path) {
 		this.meshes = meshes;
 		this.path = path;
+	}
+
+	@Override
+	public String path() {
+		return this.path;
 	}
 
 	/**
@@ -49,55 +50,8 @@ public final class Model {
 		this.meshes.forEach(Mesh::drawElements);
 	}
 
-//	@Override
-//	public JComponent guiRepresent(Field field, Object owner) {
-//		JPanel panel = new JPanel(new BorderLayout());
-//		JTextField textField = new JTextField();
-//		try {
-//			field.setAccessible(true);
-//			textField.setText(((Model) field.get(owner)).path);
-//		} catch (IllegalAccessException e) {
-//			e.printStackTrace();
-//		}
-//		textField.setMaximumSize(new Dimension(textField.getPreferredSize().width, 20));
-//		textField.addActionListener(actionEvent -> {
-//			try {
-//				field.set(owner, Model.getOrLoad(textField.getText()));
-//			} catch (IllegalAccessException e) {
-//				e.printStackTrace();
-//			}
-//		});
-//		// TODO: Allow only this folder
-//		JFileChooser fileChooser = new JFileChooser("src/main/resources");
-//		fileChooser.setFileFilter(new FileNameExtensionFilter("Model", "obj"));
-//		JButton selectFileButton = new JButton(UIManager.getIcon("FileView.directoryIcon"));
-//		selectFileButton.setMaximumSize(new Dimension(2, 2));
-//		selectFileButton.addActionListener(actionEvent -> {
-//			if(fileChooser.showOpenDialog(panel) == JFileChooser.APPROVE_OPTION) {
-//				Path absolutePath = fileChooser.getSelectedFile().toPath();
-//				String model = "/" + Path.of("src/main/resources").toAbsolutePath().relativize(absolutePath);
-//				textField.setText(model);
-//				try {
-//					field.set(owner, Model.getOrLoad(model));
-//				} catch (IllegalAccessException e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		});
-//		panel.add(textField, BorderLayout.CENTER);
-//		panel.add(selectFileButton, BorderLayout.EAST);
-//		return panel;
-//	}
-
-	/**
-	 * Loads a new model.
-	 *
-	 * @param path Path to the model file
-	 * @return A newly loaded model
-	 */
-	private static Model loadModel(String path) {
-		// TODO: Load .mtl files
-		Map<String, Obj> modelData = ObjSplitting.splitByMaterialGroups(Resources.readAs(path, ObjReader::read));
+	public static final ResourceLoader<Model> MODEL_LOADER = path -> {
+		Map<String, Obj> modelData = ObjSplitting.splitByMaterialGroups(FileUtils.readResource(path, ObjReader::read));
 		List<Mesh> model = modelData.values().stream()
 				.map(ObjUtils::convertToRenderable)
 				.map(obj -> {
@@ -109,5 +63,5 @@ public final class Model {
 					return mesh;
 				}).toList();
 		return new Model(model, path);
-	}
+	};
 }

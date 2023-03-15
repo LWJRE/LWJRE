@@ -43,11 +43,11 @@ public class YamlUtils {
 	}
 
 	public static <T> T parseResource(String path, Class<T> type) {
-		return Resources.readAs(path, inputStream -> YAML.loadAs(inputStream, type));
+		return FileUtils.readResource(path, inputStream -> YAML.loadAs(inputStream, type));
 	}
 
 	public static <T> T parseFile(String path, Class<T> type) {
-		return FileUtils.readAs(path, reader -> YAML.loadAs(reader, type));
+		return FileUtils.readFile(path, reader -> YAML.loadAs(reader, type));
 	}
 
 	public static String serialize(Object object) {

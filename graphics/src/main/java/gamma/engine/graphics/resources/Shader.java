@@ -1,6 +1,9 @@
 package gamma.engine.graphics.resources;
 
-import gamma.engine.core.utils.Resources;
+import gamma.engine.core.resources.Resource;
+import gamma.engine.core.resources.ResourceLoader;
+import gamma.engine.core.resources.Resources;
+import gamma.engine.core.utils.FileUtils;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
@@ -19,21 +22,16 @@ import java.util.regex.Pattern;
  *
  * @author Nico
  */
-public final class Shader extends DeletableResource {
+public final class Shader extends DeletableResource implements Resource {
 
-	private static final String MAIN_FRAGMENT = Resources.readAsString("/shaders/main_fragment.glsl");
-	private static final String MAIN_VERTEX = Resources.readAsString("/shaders/main_vertex.glsl");
-
-	private static final HashMap<String, Shader> SHADERS = new HashMap<>();
+	private static final String MAIN_FRAGMENT = FileUtils.readResourceAsString("/shaders/main_fragment.glsl");
+	private static final String MAIN_VERTEX = FileUtils.readResourceAsString("/shaders/main_vertex.glsl");
 
 	public static Shader getOrLoad(String path) {
-		if(SHADERS.containsKey(path)) {
-			return SHADERS.get(path);
-		} else {
-			Shader shader = loadShader(path);
-			SHADERS.put(path, shader);
+		Resource resource = Resources.getOrLoad(path);
+		if(resource instanceof Shader shader)
 			return shader;
-		}
+		throw new RuntimeException("Resource " + path + " is not a shader");
 	}
 
 	private static Shader current;
@@ -43,12 +41,14 @@ public final class Shader extends DeletableResource {
 	private transient final int fragment;
 	private transient final int program;
 
+	private final String path;
+
 	/** Map that contains the location of uniform variables */
 	private transient final HashMap<String, Integer> uniformLocations = new HashMap<>();
 	/** Map that contains uniform variables to be loaded once the program starts */
 	private transient final HashMap<Integer, Runnable> uniformCache = new HashMap<>();
 
-	public Shader(String vertexShader, String fragmentShader) throws ShaderCompilationException {
+	private Shader(String path, String vertexShader, String fragmentShader) throws ShaderCompilationException {
 		this.vertex = GL20.glCreateShader(GL20.GL_VERTEX_SHADER);
 		GL20.glShaderSource(this.vertex, vertexShader);
 		GL20.glCompileShader(this.vertex);
@@ -70,6 +70,7 @@ public final class Shader extends DeletableResource {
 		GL20.glAttachShader(this.program, this.fragment);
 		GL20.glLinkProgram(this.program);
 		GL20.glValidateProgram(this.program);
+		this.path = path;
 	}
 
 	/**
@@ -295,6 +296,11 @@ public final class Shader extends DeletableResource {
 	}
 
 	@Override
+	public String path() {
+		return this.path;
+	}
+
+	@Override
 	protected void delete() {
 		GL20.glDetachShader(this.program, this.vertex);
 		GL20.glDetachShader(this.program, this.fragment);
@@ -303,9 +309,9 @@ public final class Shader extends DeletableResource {
 		GL20.glDeleteProgram(this.program);
 	}
 
-	private static Shader loadShader(String path) {
+	public static final ResourceLoader<Shader> SHADER_LOADER = path -> {
 		try {
-			String shaderCode = Resources.readAsString(path);
+			String shaderCode = FileUtils.readResourceAsString(path);
 			Matcher vertexRegex = Pattern.compile("((#define\\s+VERTEX)(.|\\s)+?(#undef\\s+VERTEX|\\z))").matcher(shaderCode);
 			Matcher fragmentRegex = Pattern.compile("((#define\\s+FRAGMENT)(.|\\s)+?(#undef\\s+FRAGMENT|\\z))").matcher(shaderCode);
 			if(vertexRegex.find() && fragmentRegex.find()) {
@@ -314,11 +320,11 @@ public final class Shader extends DeletableResource {
 				// TODO: Get version from settings
 				vertexCode = vertexCode.replaceAll("#version \\d+", "#version 450");
 				fragmentCode = fragmentCode.replaceAll("#version \\d+", "#version 450");
-				return new Shader(vertexCode, fragmentCode);
+				return new Shader(path, vertexCode, fragmentCode);
 			}
 			throw new RuntimeException("Incorrect format in shader " + path);
 		} catch (ShaderCompilationException e) {
 			throw new RuntimeException("Could not compile shader " + path, e);
 		}
-	}
+	};
 }

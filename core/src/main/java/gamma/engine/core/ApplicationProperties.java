@@ -1,12 +1,12 @@
 package gamma.engine.core;
 
-import gamma.engine.core.utils.Resources;
+import gamma.engine.core.utils.FileUtils;
 
 import java.util.Properties;
 
 public final class ApplicationProperties {
 
-	private static final Properties PROPERTIES = Resources.readProperties("/application.properties");
+	private static final Properties PROPERTIES = FileUtils.readPropertiesResource("/application.properties");
 
 	public static String getString(String key) {
 		return get(key, "");

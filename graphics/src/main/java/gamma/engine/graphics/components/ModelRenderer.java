@@ -1,5 +1,6 @@
 package gamma.engine.graphics.components;
 
+import gamma.engine.core.annotations.EditorResource;
 import gamma.engine.core.annotations.EditorVariable;
 import gamma.engine.core.components.Camera3D;
 import gamma.engine.core.components.Transform3D;
@@ -10,8 +11,10 @@ import gamma.engine.graphics.resources.Shader;
 public class ModelRenderer extends Component {
 
 	@EditorVariable("Model")
+	@EditorResource(".obj")
 	public Model model;
 	@EditorVariable("Shader")
+	@EditorResource(".glsl")
 	private Shader shader;
 
 	@Override
