@@ -41,8 +41,6 @@ public final class Shader extends DeletableResource implements Resource {
 	private transient final int fragment;
 	private transient final int program;
 
-	private final String path;
-
 	/** Map that contains the location of uniform variables */
 	private transient final HashMap<String, Integer> uniformLocations = new HashMap<>();
 	/** Map that contains uniform variables to be loaded once the program starts */
@@ -70,7 +68,6 @@ public final class Shader extends DeletableResource implements Resource {
 		GL20.glAttachShader(this.program, this.fragment);
 		GL20.glLinkProgram(this.program);
 		GL20.glValidateProgram(this.program);
-		this.path = path;
 	}
 
 	/**
@@ -293,11 +290,6 @@ public final class Shader extends DeletableResource implements Resource {
 		buffer.put(matrix.m20()); buffer.put(matrix.m21()); buffer.put(matrix.m22()); buffer.put(matrix.m23());
 		buffer.put(matrix.m30()); buffer.put(matrix.m31()); buffer.put(matrix.m32()); buffer.put(matrix.m33());
 		this.setUniform(variable, location -> GL20.glUniformMatrix4fv(location, true, buffer.flip()));
-	}
-
-	@Override
-	public String path() {
-		return this.path;
 	}
 
 	@Override

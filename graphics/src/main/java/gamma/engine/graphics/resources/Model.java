@@ -31,16 +31,9 @@ public final class Model implements Resource {
 
 	/** List of meshes that make up this model */
 	private final List<Mesh> meshes;
-	private final String path;
 
-	private Model(List<Mesh> meshes, String path) {
+	private Model(List<Mesh> meshes) {
 		this.meshes = meshes;
-		this.path = path;
-	}
-
-	@Override
-	public String path() {
-		return this.path;
 	}
 
 	/**
@@ -62,6 +55,6 @@ public final class Model implements Resource {
 					mesh.setNormals(ObjData.getNormalsArray(obj));
 					return mesh;
 				}).toList();
-		return new Model(model, path);
+		return new Model(model);
 	};
 }

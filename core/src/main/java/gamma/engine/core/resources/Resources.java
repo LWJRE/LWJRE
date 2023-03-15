@@ -1,8 +1,6 @@
 package gamma.engine.core.resources;
 
-import java.util.HashMap;
-import java.util.NoSuchElementException;
-import java.util.Set;
+import java.util.*;
 
 public class Resources {
 
@@ -25,20 +23,15 @@ public class Resources {
 		}
 	}
 
-	// TODO: Check if resources actually need to store their path 'cause it would be better if they didn't
-
-	public static void store(Resource resource) {
-		String path = resource.path();
-		if(RESOURCES.containsKey(path))
-			throw new RuntimeException("Resource " + RESOURCES.get(path) + " already exists at path " + path);
-		RESOURCES.put(path, resource);
+	public static String pathOf(Resource resource) {
+		return RESOURCES.entrySet().stream()
+				.filter(entry -> entry.getValue().equals(resource))
+				.findFirst()
+				.map(Map.Entry::getKey)
+				.orElseThrow(() -> new NoSuchElementException("Cannot get the path of " + resource));
 	}
 
 	public static void addLoader(ResourceLoader<?> loader, String... extensions) {
 		LOADERS.put(Set.of(extensions), loader);
-	}
-
-	public static Resource remove(String path) {
-		return RESOURCES.remove(path);
 	}
 }

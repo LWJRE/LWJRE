@@ -17,11 +17,11 @@ public final class RenderingSystem implements ApplicationListener, WindowListene
 		Graphics.clearColor(0.0f, 0.5f, 1.0f, 1.0f);
 		Graphics.depthTest(true);
 		Resources.addLoader(Shader.SHADER_LOADER, ".glsl");
-		YamlUtils.addScalarConstruct(Shader.class, Shader::getOrLoad);
-		YamlUtils.addScalarRepresent(Shader.class, Shader::path);
 		Resources.addLoader(Model.MODEL_LOADER, ".obj");
+		YamlUtils.addScalarConstruct(Shader.class, Shader::getOrLoad);
 		YamlUtils.addScalarConstruct(Model.class, Model::getOrLoad);
-		YamlUtils.addScalarRepresent(Model.class, Model::path);
+		YamlUtils.addScalarRepresent(Shader.class, Resources::pathOf);
+		YamlUtils.addScalarRepresent(Model.class, Resources::pathOf);
 	}
 
 	@Override
