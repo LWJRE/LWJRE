@@ -23,6 +23,13 @@ public class Resources {
 		}
 	}
 
+	public static void updatePath(String oldPath, String newPath) {
+		Resource resource = RESOURCES.remove(oldPath);
+		if(resource != null) {
+			RESOURCES.put(newPath, resource);
+		}
+	}
+
 	public static String pathOf(Resource resource) {
 		return RESOURCES.entrySet().stream()
 				.filter(entry -> entry.getValue().equals(resource))
