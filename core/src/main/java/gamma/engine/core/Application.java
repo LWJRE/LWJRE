@@ -19,6 +19,7 @@ public final class Application {
 			try {
 				System.out.println("Application started");
 				Window window = new Window();
+				window.setupCallbacks();
 				window.makeContextCurrent();
 				window.show();
 				listeners.forEach(ApplicationListener::onStart);

@@ -39,16 +39,6 @@ public class Window {
 		this.handle = GLFW.glfwCreateWindow(width, height, title, MemoryUtil.NULL, MemoryUtil.NULL);
 		if(this.handle == MemoryUtil.NULL)
 			throw new RuntimeException("Failed to create the GLFW window");
-		GLFW.glfwSetWindowSizeCallback(this.handle, ((window, width1, height1) -> LISTENERS.forEach(windowListener -> windowListener.onResize(width1, height1))));
-		GLFW.glfwSetKeyCallback(this.handle, (window, key, scancode, action, mods) -> {
-			Keyboard.keyCallback(key, scancode, action, mods);
-			Scene.getCurrent().processInput(new KeyInputEvent(key, scancode, action, mods));
-		});
-		GLFW.glfwSetMouseButtonCallback(this.handle, (window, button, action, mods) -> {
-			Mouse.buttonCallback(button, action, mods);
-			Scene.getCurrent().processInput(new MouseInputEvent(button, action, mods));
-		});
-		GLFW.glfwSetCursorPosCallback(this.handle, (window, x, y) -> Mouse.cursorPosCallback(x, y));
 	}
 
 	public Window() {
@@ -64,6 +54,19 @@ public class Window {
 	private void checkState() {
 		if(this.handle == MemoryUtil.NULL)
 			throw new IllegalStateException("Window was already destroyed");
+	}
+
+	public void setupCallbacks() {
+		GLFW.glfwSetWindowSizeCallback(this.handle, ((window, width1, height1) -> LISTENERS.forEach(windowListener -> windowListener.onResize(width1, height1))));
+		GLFW.glfwSetKeyCallback(this.handle, (window, key, scancode, action, mods) -> {
+			Keyboard.keyCallback(key, scancode, action, mods);
+			Scene.getCurrent().processInput(new KeyInputEvent(key, scancode, action, mods));
+		});
+		GLFW.glfwSetMouseButtonCallback(this.handle, (window, button, action, mods) -> {
+			Mouse.buttonCallback(button, action, mods);
+			Scene.getCurrent().processInput(new MouseInputEvent(button, action, mods));
+		});
+		GLFW.glfwSetCursorPosCallback(this.handle, (window, x, y) -> Mouse.cursorPosCallback(x, y));
 	}
 
 	public void makeContextCurrent() {
