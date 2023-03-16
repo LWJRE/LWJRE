@@ -1,5 +1,6 @@
 package gamma.engine.core.scene;
 
+import gamma.engine.core.input.InputEvent;
 import gamma.engine.core.utils.YamlUtils;
 
 public final class Scene {
@@ -28,5 +29,9 @@ public final class Scene {
 		float delta = (time - previousTime) / 1_000_000_000.0f;
 		this.root.process(delta);
 		previousTime = time;
+	}
+
+	public void processInput(InputEvent event) {
+		this.root.input(event);
 	}
 }

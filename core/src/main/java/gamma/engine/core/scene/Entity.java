@@ -1,5 +1,7 @@
 package gamma.engine.core.scene;
 
+import gamma.engine.core.input.InputEvent;
+
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.stream.Stream;
@@ -72,6 +74,19 @@ public final class Entity {
 			if(component.entity == null)
 				component.entity = this;
 			component.process(delta);
+		});
+	}
+
+	public void input(InputEvent event) {
+		this.children.forEach((key, entity) -> {
+			if(entity.parent == null)
+				entity.parent = this;
+			entity.input(event);
+		});
+		this.components.forEach((key, component) -> {
+			if(component.entity == null)
+				component.entity = this;
+			component.onInput(event);
 		});
 	}
 

@@ -1,5 +1,7 @@
 package gamma.engine.core.scene;
 
+import gamma.engine.core.input.InputEvent;
+
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -43,6 +45,10 @@ public abstract class Component {
 	 * @param delta Time elapsed since the previous update
 	 */
 	protected void onUpdate(float delta) {
+
+	}
+
+	protected void onInput(InputEvent event) {
 
 	}
 
