@@ -22,4 +22,24 @@ public class KeyInputEvent implements InputEvent {
 	public boolean isReleased() {
 		return this.action == GLFW.GLFW_RELEASE;
 	}
+
+	@Override
+	public boolean isKey() {
+		return true;
+	}
+
+	@Override
+	public boolean isKey(int key) {
+		return this.key == key;
+	}
+
+	@Override
+	public boolean isKeyPressed(int key) {
+		return this.isPressed() && this.isKey(key);
+	}
+
+	@Override
+	public boolean isKeyReleased(int key) {
+		return this.isReleased() && this.isKey(key);
+	}
 }

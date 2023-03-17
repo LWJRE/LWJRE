@@ -1,11 +1,8 @@
 package gamma.engine.core.window;
 
 import gamma.engine.core.ApplicationProperties;
-import gamma.engine.core.input.KeyInputEvent;
 import gamma.engine.core.input.Keyboard;
 import gamma.engine.core.input.Mouse;
-import gamma.engine.core.input.MouseInputEvent;
-import gamma.engine.core.scene.Scene;
 import org.lwjgl.glfw.Callbacks;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -57,16 +54,12 @@ public class Window {
 	}
 
 	public void setupCallbacks() {
+		this.checkState();
 		GLFW.glfwSetWindowSizeCallback(this.handle, ((window, width1, height1) -> LISTENERS.forEach(windowListener -> windowListener.onResize(width1, height1))));
-		GLFW.glfwSetKeyCallback(this.handle, (window, key, scancode, action, mods) -> {
-			Keyboard.keyCallback(key, scancode, action, mods);
-			Scene.getCurrent().processInput(new KeyInputEvent(key, scancode, action, mods));
-		});
-		GLFW.glfwSetMouseButtonCallback(this.handle, (window, button, action, mods) -> {
-			Mouse.buttonCallback(button, action, mods);
-			Scene.getCurrent().processInput(new MouseInputEvent(button, action, mods));
-		});
+		GLFW.glfwSetKeyCallback(this.handle, (window, key, scancode, action, mods) -> Keyboard.keyCallback(key, scancode, action, mods));
+		GLFW.glfwSetMouseButtonCallback(this.handle, (window, button, action, mods) -> Mouse.buttonCallback(button, action, mods));
 		GLFW.glfwSetCursorPosCallback(this.handle, (window, x, y) -> Mouse.cursorPosCallback(x, y));
+		GLFW.glfwSetScrollCallback(this.handle, (window, x, y) -> Mouse.scrollWheelCallback(x, y));
 	}
 
 	public void makeContextCurrent() {
