@@ -1,6 +1,5 @@
 package gamma.engine.graphics.components;
 
-import gamma.engine.core.annotations.EditorResource;
 import gamma.engine.core.annotations.EditorVariable;
 import gamma.engine.core.components.Camera3D;
 import gamma.engine.core.components.Transform3D;
@@ -27,7 +26,6 @@ public class ModelRenderer extends Component {
 		this.shader.setUniform("John", 3);
 		this.shader.start();
 		this.model.draw((mesh, material) -> {
-			System.out.println(material + " " + material.diffuse);
 			this.shader.setUniform("material.ambient", material.ambient);
 			this.shader.setUniform("material.diffuse", material.diffuse);
 			this.shader.setUniform("material.specular", material.specular);

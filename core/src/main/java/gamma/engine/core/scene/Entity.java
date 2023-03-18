@@ -21,21 +21,67 @@ public final class Entity {
 	private transient Entity parent;
 
 	/**
+	 * Processes this entity.
+	 * Children are processed first, then this entity's components are processed.
+	 *
+	 * @param delta Time elapsed since the previous frame
+	 */
+	public void process(float delta) {
+		this.children.forEach((key, entity) -> {
+			if(entity.parent == null)
+				entity.parent = this;
+			entity.process(delta);
+		});
+		this.components.forEach((key, component) -> {
+			if(component.entity == null) {
+				component.entity = this;
+				component.onStart();
+			}
+			component.onUpdate(delta);
+		});
+	}
+
+	public void input(InputEvent event) {
+		this.children.forEach((key, entity) -> {
+			if(entity.parent == null)
+				entity.parent = this;
+			entity.input(event);
+		});
+		this.components.forEach((key, component) -> {
+			if(component.entity == null) {
+				component.entity = this;
+				component.onStart();
+			}
+			component.onInput(event);
+		});
+	}
+
+	public void editorProcess() {
+		this.children.forEach((key, entity) -> {
+			if(entity.parent == null)
+				entity.parent = this;
+			entity.editorProcess();
+		});
+		this.components.forEach((key, component) -> {
+			if(component.entity == null) {
+				component.entity = this;
+				component.onStart();
+			}
+			component.editorUpdate();
+		});
+	}
+
+	/**
 	 * Adds a child to this entity.
 	 *
 	 * @param entity The child to add
 	 * @throws IllegalStateException if the given entity already has a parent
 	 */
 	public void addChild(Entity entity) {
-		if(entity.parent == null) {
-			int index = 0;
-			while(this.children.containsKey("Entity" + index))
-				index++;
-			this.children.put("Entity" + index, entity);
-			entity.parent = this;
-		} else {
-			throw new IllegalStateException("Cannot add entity " + entity + " as a child of " + this + " because it already has parent " + entity.parent);
-		}
+		int index = 0;
+		while(this.children.containsKey("Entity" + index))
+			index++;
+		this.addChild("Entity" + index, entity);
 	}
 
 	/**
@@ -50,57 +96,13 @@ public final class Entity {
 			if(!this.children.containsKey(key)) {
 				this.children.put(key, entity);
 				entity.parent = this;
+				entity.components.values().forEach(Component::onStart);
 			} else {
 				throw new IllegalStateException("Entity " + this + " already has a child with key " + key);
 			}
 		} else {
 			throw new IllegalStateException("Cannot add entity " + entity + " as a child of " + this + " because it already has parent " + entity.parent);
 		}
-	}
-
-	/**
-	 * Processes this entity.
-	 * Children are processed first, then this entity's components are processed.
-	 *
-	 * @param delta Time elapsed since the previous frame
-	 */
-	public void process(float delta) {
-		this.children.forEach((key, entity) -> {
-			if(entity.parent == null)
-				entity.parent = this;
-			entity.process(delta);
-		});
-		this.components.forEach((key, component) -> {
-			if(component.entity == null)
-				component.entity = this;
-			component.process(delta);
-		});
-	}
-
-	public void input(InputEvent event) {
-		this.children.forEach((key, entity) -> {
-			if(entity.parent == null)
-				entity.parent = this;
-			entity.input(event);
-		});
-		this.components.forEach((key, component) -> {
-			if(component.entity == null)
-				component.entity = this;
-			component.onInput(event);
-		});
-	}
-
-	public void editorProcess() {
-		this.children.forEach((key, entity) -> {
-			if(entity.parent == null)
-				entity.parent = this;
-			entity.editorProcess();
-		});
-		this.components.forEach((key, component) -> {
-			if(component.entity == null)
-				component.entity = this;
-			component.editorUpdate();
-		});
 	}
 
 	/**
@@ -153,6 +155,7 @@ public final class Entity {
 	public Entity removeChild(String key) {
 		if(this.children.containsKey(key)) {
 			Entity entity = this.children.remove(key);
+			entity.components.values().forEach(Component::onExit);
 			entity.parent = null;
 			return entity;
 		} else {
@@ -168,6 +171,7 @@ public final class Entity {
 	 */
 	public void removeChild(Entity entity) {
 		if(this.children.values().remove(entity)) {
+			entity.components.values().forEach(Component::onExit);
 			entity.parent = null;
 		} else {
 			throw new IllegalStateException("Entity " + entity + " is not a child of " + this);
@@ -221,9 +225,14 @@ public final class Entity {
 	 */
 	public void addComponent(Component component) {
 		if(component.entity == null) {
-			// TODO: What happens when a component is replaced?
-			this.components.put(getKey(component.getClass()), component);
-			component.entity = this;
+			Class<?> type = getKey(component.getClass());
+			if(!this.components.containsKey(type)) {
+				this.components.put(getKey(component.getClass()), component);
+				component.entity = this;
+				component.onStart();
+			} else {
+				throw new IllegalStateException("Entity " + this + " already has a component of type " + type);
+			}
 		} else {
 			throw new IllegalStateException("Component " + component + " already belongs to entity " + component.entity);
 		}
@@ -330,29 +339,19 @@ public final class Entity {
 		return this.parent != null ? this.parent.getComponents() : Stream.empty();
 	}
 
-	/**
-	 * Removes a component of the given type from this entity.
-	 *
-	 * @param type The type of the component to remove
-	 * @return An {@link Optional} representing the component that was removed
-	 * or an empty {@code Optional} if this entity does not have a component of the given type
-	 * @param <C> Type of the component to remove
-	 */
-	public <C extends Component> Optional<C> removeComponent(Class<C> type) {
-		return Optional.ofNullable(type.cast(this.components.get(getKey(type)))).map(component -> {
+	public boolean removeComponent(Class<? extends Component> type) {
+		Component component = this.components.remove(getKey(type));
+		if(component != null) {
+			component.onExit();
 			component.entity = null;
-			return component;
-		});
+			return true;
+		}
+		return false;
 	}
 
-	/**
-	 * Removes the given component from this entity.
-	 *
-	 * @param component The component to remove
-	 * @return True if the component was removed, otherwise false
-	 */
 	public boolean removeComponent(Component component) {
 		if(this.components.values().remove(component)) {
+			component.onExit();
 			component.entity = null;
 			return true;
 		}

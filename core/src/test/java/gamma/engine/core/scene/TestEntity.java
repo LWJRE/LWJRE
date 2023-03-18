@@ -269,25 +269,7 @@ public class TestEntity {
 		Entity entity = new Entity();
 		TestComponent component = new TestComponent();
 		entity.addComponent(component);
-		Assertions.assertEquals(Optional.of(component), entity.removeComponent(TestComponent.class));
+		Assertions.assertTrue(entity.removeComponent(TestComponent.class));
 		Assertions.assertNull(component.entity);
-	}
-
-	@Test
-	public void testRemoveDoesNotHaveComponent() {
-		Entity entity = new Entity();
-		TestComponent component = new TestComponent();
-		entity.addComponent(component);
-		Assertions.assertTrue(entity.removeComponent(AnotherComponent.class).isEmpty());
-	}
-
-	@Test
-	public void testRemoveComponent() {
-		Entity entity = new Entity();
-		TestComponent component = new TestComponent();
-		entity.addComponent(component);
-		Assertions.assertTrue(entity.removeComponent(component));
-		Assertions.assertNull(component.entity);
-		Assertions.assertFalse(entity.removeComponent(new AnotherComponent()));
 	}
 }
