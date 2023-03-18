@@ -5,9 +5,12 @@ import gamma.engine.core.resources.Resource;
 import gamma.engine.core.resources.ResourceLoader;
 import gamma.engine.core.resources.Resources;
 import gamma.engine.core.utils.FileUtils;
+import vecmatlib.color.Color;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
 /**
  * Class that represents a 3D model.
@@ -29,32 +32,43 @@ public final class Model implements Resource {
 		throw new RuntimeException("Resource " + path + " is not a model");
 	}
 
-	/** List of meshes that make up this model */
-	private final List<Mesh> meshes;
+	private final Map<Mesh, Material> modelData;
 
-	private Model(List<Mesh> meshes) {
-		this.meshes = meshes;
+	public Model(Map<Mesh, Material> modelData) {
+		this.modelData = modelData;
 	}
 
 	/**
 	 * Draws all the meshes that make up this model.
 	 */
 	public void draw() {
-		this.meshes.forEach(Mesh::drawElements);
+		this.modelData.keySet().forEach(Mesh::drawElements);
+	}
+
+	public void draw(BiConsumer<Mesh, Material> biConsumer) {
+		this.modelData.forEach(biConsumer);
 	}
 
 	public static final ResourceLoader<Model> MODEL_LOADER = path -> {
-		Map<String, Obj> modelData = ObjSplitting.splitByMaterialGroups(FileUtils.readResource(path, ObjReader::read));
-		List<Mesh> model = modelData.values().stream()
-				.map(ObjUtils::convertToRenderable)
-				.map(obj -> {
-					Mesh mesh = new Mesh();
-					mesh.setVertices3D(ObjData.getVerticesArray(obj));
-					mesh.setIndices(ObjData.getFaceVertexIndicesArray(obj));
-					mesh.setTextures(ObjData.getTexCoordsArray(obj, 2));
-					mesh.setNormals(ObjData.getNormalsArray(obj));
-					return mesh;
-				}).toList();
+		Obj obj = FileUtils.readResource(path, ObjReader::read);
+		Map<String, Mtl> mtls = obj.getMtlFileNames().stream()
+				.map(mtlFile -> FileUtils.readResource(path.substring(0, path.lastIndexOf('/') + 1) + mtlFile, MtlReader::read))
+				.flatMap(Collection::stream)
+				.collect(Collectors.toMap(Mtl::getName, mtl -> mtl));
+		Map<Mesh, Material> model = ObjSplitting.splitByMaterialGroups(obj).entrySet().stream().collect(Collectors.toMap(entry -> {
+			Mesh mesh = new Mesh();
+			mesh.setVertices3D(ObjData.getVerticesArray(entry.getValue()));
+			mesh.setIndices(ObjData.getFaceVertexIndicesArray(entry.getValue()));
+			mesh.setTextures(ObjData.getTexCoordsArray(entry.getValue(), 2));
+			mesh.setNormals(ObjData.getNormalsArray(entry.getValue()));
+			return mesh;
+		}, entry -> {
+			Mtl mtl = mtls.get(entry.getKey());
+			FloatTuple ka = mtl.getKa();
+			FloatTuple kd = mtl.getKd();
+			FloatTuple ks = mtl.getKs();
+			return new Material(new Color(ka.getX(), ka.getY(), ka.getZ()), new Color(kd.getX(), kd.getY(), kd.getZ()), new Color(ks.getX(), ks.getY(), ks.getZ()), 0.0f);
+		}));
 		return new Model(model);
 	};
 }

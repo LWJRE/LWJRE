@@ -11,10 +11,8 @@ import gamma.engine.graphics.resources.Shader;
 public class ModelRenderer extends Component {
 
 	@EditorVariable("Model")
-	@EditorResource(".obj")
 	public Model model;
 	@EditorVariable("Shader")
-	@EditorResource(".glsl")
 	private Shader shader;
 
 	@Override
@@ -28,7 +26,14 @@ public class ModelRenderer extends Component {
 		this.shader.setUniform("view_matrix", Camera3D.getCurrent().viewMatrix());
 		this.shader.setUniform("John", 3);
 		this.shader.start();
-		this.model.draw();
+		this.model.draw((mesh, material) -> {
+			System.out.println(material + " " + material.diffuse);
+			this.shader.setUniform("material.ambient", material.ambient);
+			this.shader.setUniform("material.diffuse", material.diffuse);
+			this.shader.setUniform("material.specular", material.specular);
+			this.shader.setUniform("material.shininess", material.shininess);
+			mesh.drawElements();
+		});
 	}
 
 	@Override
