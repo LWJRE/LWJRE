@@ -16,6 +16,45 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <profiles>
+        <profile>
+            <id>linux</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                    <arch>amd64</arch>
+                </os>
+            </activation>
+            <properties>
+                <natives>natives-linux</natives>
+            </properties>
+        </profile>
+        <profile>
+            <id>macos</id>
+            <activation>
+                <os>
+                    <family>mac</family>
+                    <arch>x86_64</arch>
+                </os>
+            </activation>
+            <properties>
+                <natives>natives-macos</natives>
+            </properties>
+        </profile>
+        <profile>
+            <id>windows</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                    <arch>amd64</arch>
+                </os>
+            </activation>
+            <properties>
+                <natives>natives-windows</natives>
+            </properties>
+        </profile>
+    </profiles>
+
     <build>
         <plugins>
             <plugin>
@@ -48,13 +87,13 @@
     <dependencies>
         <dependency>
             <groupId>gamma.engine</groupId>
-            <artifactId>gamma-engine-graphics</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <artifactId>gamma-engine-core</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>gamma.engine</groupId>
-            <artifactId>gamma-engine-physics</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <artifactId>gamma-engine-${natives}</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 
