@@ -26,7 +26,7 @@
                 </os>
             </activation>
             <properties>
-                <natives>natives-linux</natives>
+                <platform>linux</platform>
             </properties>
         </profile>
         <profile>
@@ -38,7 +38,7 @@
                 </os>
             </activation>
             <properties>
-                <natives>natives-macos</natives>
+                <platform>macos</platform>
             </properties>
         </profile>
         <profile>
@@ -50,12 +50,13 @@
                 </os>
             </activation>
             <properties>
-                <natives>natives-windows</natives>
+                <platform>windows</platform>
             </properties>
         </profile>
     </profiles>
 
     <build>
+        <finalName>${project.name}-${project.version}-${platform}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -70,6 +71,7 @@
                             <mainClass>gamma.engine.core.Application</mainClass>
                         </manifest>
                     </archive>
+                    <appendAssemblyId>false</appendAssemblyId>
                 </configuration>
                 <executions>
                     <execution>
@@ -92,7 +94,7 @@
         </dependency>
         <dependency>
             <groupId>gamma.engine</groupId>
-            <artifactId>gamma-engine-${natives}</artifactId>
+            <artifactId>gamma-engine-natives-${platform}</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
