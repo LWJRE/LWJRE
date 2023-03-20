@@ -1,11 +1,19 @@
 package gamma.engine.core.resources;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Set;
 
-public class Resources {
+public final class Resources {
 
 	private static final HashMap<String, Resource> RESOURCES = new HashMap<>();
 	private static final HashMap<Set<String>, ResourceLoader<?>> LOADERS = new HashMap<>();
+
+	static {
+		addLoader(Shader.SHADER_LOADER, ".glsl");
+		addLoader(Model.OBJ_LOADER, ".obj");
+	}
 
 	public static Resource getOrLoad(String path) {
 		if(RESOURCES.containsKey(path)) {

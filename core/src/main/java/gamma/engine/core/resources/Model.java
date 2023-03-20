@@ -46,7 +46,7 @@ public final class Model implements Resource {
 		this.modelData.forEach(biConsumer);
 	}
 
-	public static final ResourceLoader<Model> MODEL_LOADER = path -> {
+	public static final ResourceLoader<Model> OBJ_LOADER = path -> {
 		Obj obj = FileUtils.readResource(path, ObjReader::read);
 		Map<String, Mtl> mtls = obj.getMtlFileNames().stream()
 				.map(mtlFile -> FileUtils.readResource(path.substring(0, path.lastIndexOf('/') + 1) + mtlFile, MtlReader::read))

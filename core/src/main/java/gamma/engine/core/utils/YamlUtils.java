@@ -1,5 +1,8 @@
 package gamma.engine.core.utils;
 
+import gamma.engine.core.resources.Model;
+import gamma.engine.core.resources.Resources;
+import gamma.engine.core.resources.Shader;
 import gamma.engine.core.scene.Entity;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.LoaderOptions;
@@ -40,6 +43,10 @@ public class YamlUtils {
 		addSequenceRepresent(Vec4f.class, vec -> List.of(vec.x(), vec.y(), vec.z(), vec.w()));
 		addMappingRepresent(Entity.class, Entity::serialize);
 		addMappingConstruct(Entity.class, Entity::deserialize);
+		addScalarConstruct(Shader.class, Shader::getOrLoad);
+		addScalarConstruct(Model.class, Model::getOrLoad);
+		addScalarRepresent(Shader.class, Resources::pathOf);
+		addScalarRepresent(Model.class, Resources::pathOf);
 	}
 
 	public static <T> T parseResource(String path, Class<T> type) {

@@ -12,7 +12,6 @@ public final class Scene {
 	}
 
 	public static void changeScene(String path) {
-		// TODO: On exit and on enter?
 		currentScene = YamlUtils.parseResource(path, Scene.class);
 	}
 

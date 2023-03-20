@@ -8,7 +8,7 @@ root: !!gamma.engine.core.scene.Entity
           rotation: !!vecmatlib.vector.Vec3f [0.0, -0.785, 0.0]
         - !!gamma.engine.core.components.ModelRenderer
           model: !!gamma.engine.core.resources.Model "/models/dragon.obj"
-          shader: !!gamma.engine.core.resources.Shader "/shaders/default_shader.glsl"
+          shader: !!gamma.engine.core.resources.Shader "/gamma/engine/core/shaders/default_shader.glsl"
         - !!gamma.engine.core.components.KinematicBody3D {}
         - !!gamma.engine.core.components.BoundingBox3D {}
     camera: !!gamma.engine.core.scene.Entity
