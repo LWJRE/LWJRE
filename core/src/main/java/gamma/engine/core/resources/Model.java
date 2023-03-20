@@ -6,7 +6,6 @@ import vecmatlib.color.Color;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 /**
@@ -14,7 +13,7 @@ import java.util.stream.Collectors;
  *
  * @author Nico
  */
-public final class Model implements Resource {
+public record Model(Map<Mesh, Material> modelData) implements Resource {
 
 	/**
 	 * Loads a model from the classpath or return the same instance if it was already loaded.
@@ -27,23 +26,6 @@ public final class Model implements Resource {
 		if(resource instanceof Model model)
 			return model;
 		throw new RuntimeException("Resource " + path + " is not a model");
-	}
-
-	private final Map<Mesh, Material> modelData;
-
-	public Model(Map<Mesh, Material> modelData) {
-		this.modelData = modelData;
-	}
-
-	/**
-	 * Draws all the meshes that make up this model.
-	 */
-	public void draw() {
-		this.modelData.keySet().forEach(Mesh::drawElements);
-	}
-
-	public void draw(BiConsumer<Mesh, Material> biConsumer) {
-		this.modelData.forEach(biConsumer);
 	}
 
 	public static final ResourceLoader<Model> OBJ_LOADER = path -> {

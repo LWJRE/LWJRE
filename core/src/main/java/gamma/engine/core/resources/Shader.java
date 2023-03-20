@@ -43,7 +43,7 @@ public final class Shader extends DeletableResource implements Resource {
 	/** Map that contains uniform variables to be loaded once the program starts */
 	private transient final HashMap<Integer, Runnable> uniformCache = new HashMap<>();
 
-	private Shader(String path, String vertexShader, String fragmentShader) throws ShaderCompilationException {
+	private Shader(String vertexShader, String fragmentShader) throws ShaderCompilationException {
 		this.vertex = GL20.glCreateShader(GL20.GL_VERTEX_SHADER);
 		GL20.glShaderSource(this.vertex, vertexShader);
 		GL20.glCompileShader(this.vertex);
@@ -309,7 +309,7 @@ public final class Shader extends DeletableResource implements Resource {
 				// TODO: Get version from settings
 				vertexCode = vertexCode.replaceAll("#version \\d+", "#version 450");
 				fragmentCode = fragmentCode.replaceAll("#version \\d+", "#version 450");
-				return new Shader(path, vertexCode, fragmentCode);
+				return new Shader(vertexCode, fragmentCode);
 			}
 			throw new RuntimeException("Incorrect format in shader " + path);
 		} catch (ShaderCompilationException e) {
