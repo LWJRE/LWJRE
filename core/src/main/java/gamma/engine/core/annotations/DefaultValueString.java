@@ -7,9 +7,9 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface EditorVariable {
+public @interface DefaultValueString {
 
-	String value() default "";
+	String value();
 
-	String setter() default "";
+	boolean hide() default true;
 }

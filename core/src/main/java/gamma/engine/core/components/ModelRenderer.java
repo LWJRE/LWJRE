@@ -1,5 +1,6 @@
 package gamma.engine.core.components;
 
+import gamma.engine.core.annotations.DefaultValueString;
 import gamma.engine.core.annotations.EditorVariable;
 import gamma.engine.core.rendering.RenderingSystem;
 import gamma.engine.core.resources.Material;
@@ -8,17 +9,21 @@ import gamma.engine.core.resources.Model;
 import gamma.engine.core.resources.Shader;
 import gamma.engine.core.scene.Component;
 
+import java.util.Objects;
+
 public class ModelRenderer extends Component {
 
-	@EditorVariable("Model")
-	public Model model;
+	@EditorVariable(value = "Model", setter = "setModel")
+	private Model model;
 	@EditorVariable("Shader")
+	@DefaultValueString("/gamma/engine/core/shaders/default_shader.glsl")
 	private Shader shader;
 
 	@Override
 	protected void onStart() {
 		super.onStart();
-		this.model.modelData().forEach((mesh, material) -> RenderingSystem.addToBatch(this, mesh, () -> this.drawMesh(mesh, material)));
+		if(this.model != null)
+			this.model.modelData().forEach((mesh, material) -> RenderingSystem.addToBatch(this, mesh, () -> this.drawMesh(mesh, material)));
 	}
 
 	private void drawMesh(Mesh mesh, Material material) {
@@ -38,6 +43,35 @@ public class ModelRenderer extends Component {
 	@Override
 	protected void onExit() {
 		super.onExit();
-		this.model.modelData().forEach((mesh, material) -> RenderingSystem.removeFromBatch(this, mesh));
+		if(this.model != null)
+			this.model.modelData().forEach((mesh, material) -> RenderingSystem.removeFromBatch(this, mesh));
+	}
+
+	public void setModel(Model model) {
+		if(this.model != null)
+			this.model.modelData().forEach((mesh, material) -> RenderingSystem.removeFromBatch(this, mesh));
+		if(model != null)
+			model.modelData().forEach((mesh, material) -> RenderingSystem.addToBatch(this, mesh, () -> this.drawMesh(mesh, material)));
+		this.model = model;
+	}
+
+	public void setModel(String path) {
+		this.setModel(Model.getOrLoad(path));
+	}
+
+	public Model getModel() {
+		return this.model;
+	}
+
+	public void setShader(Shader shader) {
+		this.shader = Objects.requireNonNull(shader);
+	}
+
+	public void setShader(String path) {
+		this.shader = Shader.getOrLoad(path);
+	}
+
+	public Shader getShader() {
+		return this.shader;
 	}
 }
