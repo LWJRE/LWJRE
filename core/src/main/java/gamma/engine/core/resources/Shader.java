@@ -10,6 +10,7 @@ import vecmatlib.matrix.Mat4f;
 
 import java.nio.FloatBuffer;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.function.IntConsumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -23,6 +24,8 @@ public final class Shader extends DeletableResource implements Resource {
 
 	private static final String MAIN_FRAGMENT = FileUtils.readResourceAsString("/gamma/engine/core/shaders/main_fragment.glsl");
 	private static final String MAIN_VERTEX = FileUtils.readResourceAsString("/gamma/engine/core/shaders/main_vertex.glsl");
+
+	private static final HashSet<Shader> SHADERS = new HashSet<>();
 
 	public static Shader getOrLoad(String path) {
 		Resource resource = Resources.getOrLoad(path);
@@ -65,6 +68,7 @@ public final class Shader extends DeletableResource implements Resource {
 		GL20.glAttachShader(this.program, this.fragment);
 		GL20.glLinkProgram(this.program);
 		GL20.glValidateProgram(this.program);
+		SHADERS.add(this);
 	}
 
 	/**
@@ -118,6 +122,10 @@ public final class Shader extends DeletableResource implements Resource {
 		this.setUniform(variable, location -> GL20.glUniform1f(location, value));
 	}
 
+	public static void setUniformStatic(String variable, float value) {
+		SHADERS.forEach(shader -> shader.setUniform(variable, value));
+	}
+
 	/**
 	 * Sets the value of an {@code int} uniform variable.
 	 *
@@ -128,6 +136,10 @@ public final class Shader extends DeletableResource implements Resource {
 		this.setUniform(variable, location -> GL20.glUniform1i(location, value));
 	}
 
+	public static void setUniformStatic(String variable, int value) {
+		SHADERS.forEach(shader -> shader.setUniform(variable, value));
+	}
+
 	/**
 	 * Sets the value of a {@code vec2} uniform variable.
 	 *
@@ -136,6 +148,10 @@ public final class Shader extends DeletableResource implements Resource {
 	 */
 	public void setUniform(String variable, Float2 value) {
 		this.setUniform(variable, value.x(), value.y());
+	}
+
+	public static void setUniformStatic(String variable, Float2 value) {
+		SHADERS.forEach(shader -> shader.setUniform(variable, value));
 	}
 
 	/**
@@ -149,6 +165,10 @@ public final class Shader extends DeletableResource implements Resource {
 		this.setUniform(variable, location -> GL20.glUniform2f(location, x, y));
 	}
 
+	public static void setUniformStatic(String variable, float x, float y) {
+		SHADERS.forEach(shader -> shader.setUniform(variable, x, y));
+	}
+
 	/**
 	 * Sets the value of a {@code vec2i} uniform variable.
 	 *
@@ -157,6 +177,10 @@ public final class Shader extends DeletableResource implements Resource {
 	 */
 	public void setUniform(String variable, Int2 value) {
 		this.setUniform(variable, value.x(), value.y());
+	}
+
+	public static void setUniformStatic(String variable, Int2 value) {
+		SHADERS.forEach(shader -> shader.setUniform(variable, value));
 	}
 
 	/**
@@ -170,6 +194,10 @@ public final class Shader extends DeletableResource implements Resource {
 		this.setUniform(variable, location -> GL20.glUniform2i(location, x, y));
 	}
 
+	public static void setUniformStatic(String variable, int x, int y) {
+		SHADERS.forEach(shader -> shader.setUniform(variable, x, y));
+	}
+
 	/**
 	 * Sets the value of a {@code vec3} uniform variable.
 	 *
@@ -178,6 +206,10 @@ public final class Shader extends DeletableResource implements Resource {
 	 */
 	public void setUniform(String variable, Float3 value) {
 		this.setUniform(variable, value.x(), value.y(), value.z());
+	}
+
+	public static void setUniformStatic(String variable, Float3 value) {
+		SHADERS.forEach(shader -> shader.setUniform(variable, value));
 	}
 
 	/**
@@ -192,6 +224,10 @@ public final class Shader extends DeletableResource implements Resource {
 		this.setUniform(variable, location -> GL20.glUniform3f(location, x, y, z));
 	}
 
+	public static void setUniformStatic(String variable, float x, float y, float z) {
+		SHADERS.forEach(shader -> shader.setUniform(variable, x, y, z));
+	}
+
 	/**
 	 * Sets the value of a {@code vec3i} uniform variable.
 	 *
@@ -200,6 +236,10 @@ public final class Shader extends DeletableResource implements Resource {
 	 */
 	public void setUniform(String variable, Int3 value) {
 		this.setUniform(variable, value.x(), value.y(), value.z());
+	}
+
+	public static void setUniformStatic(String variable, Int3 value) {
+		SHADERS.forEach(shader -> shader.setUniform(variable, value));
 	}
 
 	/**
@@ -214,6 +254,10 @@ public final class Shader extends DeletableResource implements Resource {
 		this.setUniform(variable, location -> GL20.glUniform3i(location, x, y, z));
 	}
 
+	public static void setUniformStatic(String variable, int x, int y, int z) {
+		SHADERS.forEach(shader -> shader.setUniform(variable, x, y, z));
+	}
+
 	/**
 	 * Sets the value of a {@code vec4} uniform variable.
 	 *
@@ -222,6 +266,10 @@ public final class Shader extends DeletableResource implements Resource {
 	 */
 	public void setUniform(String variable, Float4 value) {
 		this.setUniform(variable, value.x(), value.y(), value.z(), value.w());
+	}
+
+	public static void setUniformStatic(String variable, Float4 value) {
+		SHADERS.forEach(shader -> shader.setUniform(variable, value));
 	}
 
 	/**
@@ -237,6 +285,10 @@ public final class Shader extends DeletableResource implements Resource {
 		this.setUniform(variable, location -> GL20.glUniform4f(location, x, y, z, w));
 	}
 
+	public static void setUniformStatic(String variable, float x, float y, float z, float w) {
+		SHADERS.forEach(shader -> shader.setUniform(variable, x, y, z, w));
+	}
+
 	/**
 	 * Sets the value of a {@code vec4i} uniform variable.
 	 *
@@ -245,6 +297,10 @@ public final class Shader extends DeletableResource implements Resource {
 	 */
 	public void setUniform(String variable, Int4 value) {
 		this.setUniform(variable, value.x(), value.y(), value.z(), value.w());
+	}
+
+	public static void setUniformStatic(String variable, Int4 value) {
+		SHADERS.forEach(shader -> shader.setUniform(variable, value));
 	}
 
 	/**
@@ -258,6 +314,10 @@ public final class Shader extends DeletableResource implements Resource {
 	 */
 	public void setUniform(String variable, int x, int y, int z, int w) {
 		this.setUniform(variable, location -> GL20.glUniform4i(location, x, y, z, w));
+	}
+
+	public static void setUniformStatic(String variable, int x, int y, int z, int w) {
+		SHADERS.forEach(shader -> shader.setUniform(variable, x, y, z, w));
 	}
 
 	/**
@@ -274,6 +334,10 @@ public final class Shader extends DeletableResource implements Resource {
 		this.setUniform(variable, location -> GL20.glUniformMatrix3fv(location, true, buffer.flip()));
 	}
 
+	public static void setUniformStatic(String variable, Mat3f value) {
+		SHADERS.forEach(shader -> shader.setUniform(variable, value));
+	}
+
 	/**
 	 * Sets the value of a {@code mat4} uniform variable.
 	 *
@@ -287,6 +351,10 @@ public final class Shader extends DeletableResource implements Resource {
 		buffer.put(matrix.m20()); buffer.put(matrix.m21()); buffer.put(matrix.m22()); buffer.put(matrix.m23());
 		buffer.put(matrix.m30()); buffer.put(matrix.m31()); buffer.put(matrix.m32()); buffer.put(matrix.m33());
 		this.setUniform(variable, location -> GL20.glUniformMatrix4fv(location, true, buffer.flip()));
+	}
+
+	public static void setUniformStatic(String variable, Mat4f value) {
+		SHADERS.forEach(shader -> shader.setUniform(variable, value));
 	}
 
 	@Override

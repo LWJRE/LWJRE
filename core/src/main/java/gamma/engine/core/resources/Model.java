@@ -29,11 +29,13 @@ public record Model(Map<Mesh, Material> modelData) implements Resource {
 	}
 
 	public static final ResourceLoader<Model> OBJ_LOADER = path -> {
-		Obj obj = FileUtils.readResource(path, ObjReader::read);
+		Obj obj = FileUtils.readResource(path, ObjReader::read); // TODO: Takes about 350ms for the dragon
+		//obj = ObjUtils.convertToRenderable(obj); // TODO: Takes about 360ms for the dragon
+		obj = ObjUtils.makeVertexIndexed(obj); // TODO: Takes about 90ms for the dragon
 		Map<String, Mtl> mtls = obj.getMtlFileNames().stream()
 				.map(mtlFile -> FileUtils.readResource(path.substring(0, path.lastIndexOf('/') + 1) + mtlFile, MtlReader::read))
 				.flatMap(Collection::stream)
-				.collect(Collectors.toMap(Mtl::getName, mtl -> mtl));
+				.collect(Collectors.toMap(Mtl::getName, mtl -> mtl)); // TODO: Takes about 3ms for the dragon
 		Map<Mesh, Material> model = ObjSplitting.splitByMaterialGroups(obj).entrySet().stream().collect(Collectors.toMap(entry -> {
 			Mesh mesh = new Mesh();
 			mesh.setVertices3D(ObjData.getVerticesArray(entry.getValue()));
@@ -47,7 +49,7 @@ public record Model(Map<Mesh, Material> modelData) implements Resource {
 			FloatTuple kd = mtl.getKd();
 			FloatTuple ks = mtl.getKs();
 			return new Material(new Color(ka.getX(), ka.getY(), ka.getZ()), new Color(kd.getX(), kd.getY(), kd.getZ()), new Color(ks.getX(), ks.getY(), ks.getZ()), 0.0f);
-		}));
+		})); // TODO: Takes about 140ms for the dragon
 		return new Model(model);
 	};
 }

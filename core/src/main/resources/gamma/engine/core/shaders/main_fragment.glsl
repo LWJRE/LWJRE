@@ -43,7 +43,8 @@ vec4 point_light(PointLight light, vec3 view_direction) {
     vec4 ambient = light.ambient * material.ambient;
     vec4 diffuse = light.diffuse * diffuse_value * material.diffuse;
     vec4 specular = light.specular * specular_value * material.specular;
-    return (ambient + diffuse + specular) * attenuation;
+//    return (ambient + diffuse + specular) * attenuation;
+    return (ambient + diffuse + specular);
 }
 
 vec4 fragment_shader();

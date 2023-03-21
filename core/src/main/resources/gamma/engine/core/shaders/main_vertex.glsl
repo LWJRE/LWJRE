@@ -15,7 +15,7 @@ void vertex_shader();
 
 void main() {
     gl_Position = projection_matrix * view_matrix * transformation_matrix * vec4(vertex, 1.0);
-    world_position = vec3(transformation_matrix * vec4(vertex, 1.0));
-    surface_normal = normalize(vec3(transformation_matrix * vec4(normal, 1.0)));
+    world_position = (transformation_matrix * vec4(vertex, 1.0)).xyz;
+    surface_normal = normalize(transformation_matrix * vec4(normal, 0.0)).xyz;
     vertex_shader();
 }
