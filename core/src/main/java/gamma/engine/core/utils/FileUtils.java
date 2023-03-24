@@ -1,6 +1,8 @@
 package gamma.engine.core.utils;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
@@ -109,6 +111,30 @@ public class FileUtils {
 			properties.load(inputStream);
 			return properties;
 		});
+	}
+
+	/**
+	 * Reads the content of a file to a byte array.
+	 *
+	 * @param path Path to the file to read
+	 * @return A byte array containing the bytes read from the file
+	 */
+	public static byte[] readFileBytes(String path) {
+		try {
+			return Files.readAllBytes(Path.of(path));
+		} catch (IOException e) {
+			throw new UncheckedIOException("Error reading file " + path, e);
+		}
+	}
+
+	/**
+	 * Reads the content of a file in the classpath to a byte array.
+	 *
+	 * @param path Path to the file to read in the classpath
+	 * @return A byte array containing the bytes read from the file
+	 */
+	public static byte[] readResourceBytes(String path) {
+		return readResource(path, InputStream::readAllBytes);
 	}
 
 	/**
