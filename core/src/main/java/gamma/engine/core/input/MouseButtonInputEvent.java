@@ -2,15 +2,16 @@ package gamma.engine.core.input;
 
 import org.lwjgl.glfw.GLFW;
 
-public class MouseButtonInputEvent implements InputEvent {
-
-	private final int button, action, mods;
-
-	public MouseButtonInputEvent(int button, int action, int mods) {
-		this.button = button;
-		this.action = action;
-		this.mods = mods;
-	}
+/**
+ * Input event that represents a mouse button event.
+ *
+ * @see Mouse#buttonCallback(int, int, int)
+ *
+ * @param button Mouse button code
+ * @param action Either {@link GLFW#GLFW_PRESS}, {@link GLFW#GLFW_RELEASE}, or {@link GLFW#GLFW_REPEAT}
+ * @param mods Flags to determine which modifier keys were pressed
+ */
+public record MouseButtonInputEvent(int button, int action, int mods) implements InputEvent {
 
 	@Override
 	public boolean isPressed() {
@@ -41,4 +42,6 @@ public class MouseButtonInputEvent implements InputEvent {
 	public boolean isMouseButtonReleased(int button) {
 		return this.isReleased() && this.isMouseButton(button);
 	}
+
+	// TODO: Add methods for mods
 }

@@ -13,16 +13,19 @@ import java.util.stream.Collectors;
  *
  * @author Nico
  */
-public record Model(Map<Mesh, Material> modelData) implements Resource {
+public record Model(Map<Mesh, Material> modelData) {
 
 	/**
 	 * Loads a model from the classpath or return the same instance if it was already loaded.
 	 *
+	 * @see Resources#getOrLoad(String)
+	 *
 	 * @param path Path to the model file
 	 * @return The requested model
+	 * @throws RuntimeException if the resource at the given path is not a model
 	 */
 	public static Model getOrLoad(String path) {
-		Resource resource = Resources.getOrLoad(path);
+		Object resource = Resources.getOrLoad(path);
 		if(resource instanceof Model model)
 			return model;
 		throw new RuntimeException("Resource " + path + " is not a model");

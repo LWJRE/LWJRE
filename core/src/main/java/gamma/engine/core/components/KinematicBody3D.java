@@ -1,14 +1,27 @@
 package gamma.engine.core.components;
 
+import gamma.engine.core.annotations.EditorRange;
 import gamma.engine.core.annotations.EditorVariable;
 import gamma.engine.core.physics.Collision3D;
 import vecmatlib.vector.Vec3f;
 
+/**
+ * Controls an entity's movement through kinematic equations.
+ * The entity needs a {@link Transform3D} component to move.
+ *
+ * @see CollisionObject3D
+ *
+ * @author Nico
+ */
 public class KinematicBody3D extends CollisionObject3D {
 
-	@EditorVariable
+	/** The entity's current velocity */
+	@EditorVariable("Velocity")
+	@EditorRange
 	public Vec3f velocity = Vec3f.Zero();
-	@EditorVariable
+	/** The entity's current acceleration */
+	@EditorVariable("Acceleration")
+	@EditorRange
 	public Vec3f acceleration = new Vec3f(0.0f, -9.81f, 0.0f);
 
 	@Override

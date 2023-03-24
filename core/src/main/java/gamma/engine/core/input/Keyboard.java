@@ -5,6 +5,11 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.HashSet;
 
+/**
+ * Class that represents the main keyboard.
+ *
+ * @author Nico
+ */
 public final class Keyboard {
 
 	public static final int KEY_SPACE = GLFW.GLFW_KEY_SPACE;
@@ -128,8 +133,20 @@ public final class Keyboard {
 	public static final int KEY_RIGHT_SUPER = GLFW.GLFW_KEY_RIGHT_SUPER;
 	public static final int KEY_MENU = GLFW.GLFW_KEY_MENU;
 
+	/** Set of keys currently held down */
 	private static final HashSet<Integer> KEYS = new HashSet<>();
 
+	/**
+	 * Method used to record a keyboard key event.
+	 * Stores the given key's state and fires a {@link KeyInputEvent}.
+	 *
+	 * @see org.lwjgl.glfw.GLFWKeyCallbackI#invoke(long, int, int, int, int)
+	 *
+	 * @param key Key code
+	 * @param scancode Scancode
+	 * @param action Either {@link GLFW#GLFW_PRESS}, {@link GLFW#GLFW_RELEASE}, or {@link GLFW#GLFW_REPEAT}
+	 * @param mods Flags to determine which modifier keys were pressed
+	 */
 	public static void keyCallback(int key, int scancode, int action, int mods) {
 		if(action == GLFW.GLFW_PRESS)
 			KEYS.add(key);
@@ -138,10 +155,24 @@ public final class Keyboard {
 		Scene.getCurrent().processInput(new KeyInputEvent(key, scancode, action, mods));
 	}
 
+	/**
+	 * Returns true if the given key is being held down, otherwise false.
+	 *
+	 * @param key The key's code
+	 * @return True if the given key is being held down, otherwise false
+	 */
 	public static boolean isKeyDown(int key) {
 		return KEYS.contains(key);
 	}
 
+	/**
+	 * Returns either 0, 1, or -1 according to which of the given buttons are pressed.
+	 * Returns 1 if the positive key is pressed, -1 if the negative key is pressed, 0 if none or both are pressed.
+	 *
+	 * @param negative Code of the key representing the negative axis
+	 * @param positive Code of the key representing the positive axis
+	 * @return Either 0, 1, or -1 according to which keys are pressed
+	 */
 	public static int getAxis(int negative, int positive) {
 		boolean isNegative = isKeyDown(negative);
 		boolean isPositive = isKeyDown(positive);

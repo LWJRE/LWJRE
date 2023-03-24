@@ -6,7 +6,8 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 /**
- * Base component class.
+ * Base class for all components.
+ * The direct subclass of this class is the key used in the entity's components hash map.
  *
  * @author Nico
  */
@@ -18,7 +19,7 @@ public abstract class Component {
 	transient Entity entity = null;
 
 	/**
-	 * Called on the first frame that this component spends in the scene tree.
+	 * Called when this component is added to an entity or when the entity enters the scene.
 	 */
 	protected void onStart() {
 
@@ -33,14 +34,27 @@ public abstract class Component {
 
 	}
 
+	/**
+	 * Called when an input event occurs, such as a key press or a mouse click.
+	 *
+	 * @see InputEvent
+	 *
+	 * @param event The input event
+	 */
 	protected void onInput(InputEvent event) {
 
 	}
 
+	/**
+	 * Called every frame when this component is in the editor.
+	 */
 	protected void editorUpdate() {
 
 	}
 
+	/**
+	 * Called when this component is removed from the entity it is attached to or when that entity is removed from the scene.
+	 */
 	protected void onExit() {
 
 	}

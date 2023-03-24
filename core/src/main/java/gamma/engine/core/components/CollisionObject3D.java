@@ -1,17 +1,26 @@
 package gamma.engine.core.components;
 
-import gamma.engine.core.scene.Component;
 import gamma.engine.core.physics.Collision3D;
 import gamma.engine.core.physics.Projection;
+import gamma.engine.core.scene.Component;
 import vecmatlib.matrix.Mat4f;
 import vecmatlib.vector.Vec3f;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Optional;
 
+/**
+ * Controls an entity's collisions while moving.
+ * The entity needs a {@link BoundingBox3D} component to collide with other objects.
+ *
+ * @see BoundingBox3D
+ *
+ * @author Nico
+ */
 public class CollisionObject3D extends Component {
 
-	private static final ArrayList<CollisionObject3D> COLLIDERS = new ArrayList<>();
+	/** Set of all the colliders in the scene */
+	private static final HashSet<CollisionObject3D> COLLIDERS = new HashSet<>();
 
 	@Override
 	protected void onStart() {
@@ -19,6 +28,13 @@ public class CollisionObject3D extends Component {
 		COLLIDERS.add(this);
 	}
 
+	/**
+	 * Moves this collider by the given movement and handles possible collisions.
+	 * The entity needs a {@link Transform3D} component to move.
+	 * Calls {@link CollisionObject3D#onCollision(Collision3D)} if a collision happened.
+	 *
+	 * @param movement The translation to apply to this collider
+	 */
 	public final void moveAndCollide(Vec3f movement) {
 		if(movement.lengthSquared() > 0.0f) {
 			this.getComponent(Transform3D.class).ifPresent(transform -> {
@@ -32,6 +48,19 @@ public class CollisionObject3D extends Component {
 		}
 	}
 
+	@Override
+	protected void onExit() {
+		super.onExit();
+		COLLIDERS.remove(this);
+	}
+
+	/**
+	 * Checks if this collider collided with the given one and computes the collision.
+	 *
+	 * @param with The other collider to check
+	 *
+	 * @return An {@link Optional} containing the result of the collision or an empty {@code Optional} if no collision happened.
+	 */
 	private Optional<Collision3D> computeCollision(CollisionObject3D with) {
 		return this.getComponent(BoundingBox3D.class).map(boxA -> with.getComponent(BoundingBox3D.class).map(boxB -> {
 			Vec3f normal = Vec3f.Zero();
@@ -64,6 +93,12 @@ public class CollisionObject3D extends Component {
 		})).filter(Optional::isPresent).map(Optional::get);
 	}
 
+	/**
+	 * Handles a collision happened after a movement.
+	 * Called by {@link CollisionObject3D#moveAndCollide(Vec3f)} when a collision happens.
+	 *
+	 * @param collision The collision data
+	 */
 	protected void onCollision(Collision3D collision) {
 
 	}

@@ -2,16 +2,17 @@ package gamma.engine.core.input;
 
 import org.lwjgl.glfw.GLFW;
 
-public class KeyInputEvent implements InputEvent {
-
-	private final int key, scancode, action, mods;
-
-	public KeyInputEvent(int key, int scancode, int action, int mods) {
-		this.key = key;
-		this.scancode = scancode;
-		this.action = action;
-		this.mods = mods;
-	}
+/**
+ * Input event that represents a keyboard key event.
+ *
+ * @see Keyboard#keyCallback(int, int, int, int)
+ *
+ * @param key Key code
+ * @param scancode Scancode
+ * @param action Either {@link GLFW#GLFW_PRESS}, {@link GLFW#GLFW_RELEASE}, or {@link GLFW#GLFW_REPEAT}
+ * @param mods Flags to determine which modifier keys were pressed
+ */
+public record KeyInputEvent(int key, int scancode, int action, int mods) implements InputEvent {
 
 	@Override
 	public boolean isPressed() {
@@ -42,4 +43,6 @@ public class KeyInputEvent implements InputEvent {
 	public boolean isKeyReleased(int key) {
 		return this.isReleased() && this.isKey(key);
 	}
+
+	// TODO: Add methods for mods
 }

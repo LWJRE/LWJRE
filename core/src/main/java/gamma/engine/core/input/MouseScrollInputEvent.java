@@ -1,21 +1,23 @@
 package gamma.engine.core.input;
 
-import vecmatlib.vector.Vec2d;
 import vecmatlib.vector.Vec2f;
 
-public class MouseScrollInputEvent implements InputEvent {
+/**
+ * Input event that represents a mouse scroll event.
+ * 
+ * @see Mouse#scrollCallback(double, double) 
+ * 
+ * @param horizontal
+ * @param vertical
+ */
+public record MouseScrollInputEvent(float horizontal, float vertical) implements InputEvent {
 
-	public final Vec2f scroll;
-
-	public MouseScrollInputEvent(double x, double y) {
-		this.scroll = new Vec2d(x, y).toFloat();
-	}
-
-	public float horizontal() {
-		return this.scroll.x();
-	}
-
-	public float vertical() {
-		return this.scroll.y();
+	/**
+	 * Returns a float vector containing the mouse's horizontal and vertical scroll.
+	 *
+	 * @return A {@link Vec2f} containing the mouse's scroll on the x and y axis
+	 */
+	public Vec2f scroll() {
+		return new Vec2f(this.horizontal(), this.vertical());
 	}
 }

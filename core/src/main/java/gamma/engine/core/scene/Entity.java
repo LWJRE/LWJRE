@@ -41,6 +41,12 @@ public final class Entity {
 		});
 	}
 
+	/**
+	 * Called when there is an input event.
+	 * The event is first passed down to the children, then to all this entity's components.
+	 *
+	 * @param event The input event.
+	 */
 	public void input(InputEvent event) {
 		this.children.forEach((key, entity) -> {
 			if(entity.parent == null)
@@ -56,6 +62,9 @@ public final class Entity {
 		});
 	}
 
+	/**
+	 * Called from the editor.
+	 */
 	public void editorProcess() {
 		this.children.forEach((key, entity) -> {
 			if(entity.parent == null)
@@ -73,6 +82,7 @@ public final class Entity {
 
 	/**
 	 * Adds a child to this entity.
+	 * Calls {@link Component#onStart()} on all the entity's components.
 	 *
 	 * @param entity The child to add
 	 * @throws IllegalStateException if the given entity already has a parent
@@ -86,6 +96,7 @@ public final class Entity {
 
 	/**
 	 * Adds a child to this entity with the given key.
+	 * Calls {@link Component#onStart()} on all the entity's components.
 	 *
 	 * @param key The child's key
 	 * @param entity The child to add
@@ -147,6 +158,7 @@ public final class Entity {
 
 	/**
 	 * Removes a child with the given key from this entity.
+	 * Calls {@link Component#onExit()} on all the entity's components.
 	 *
 	 * @param key The child's key
 	 * @return The child entity that was removed
@@ -165,6 +177,7 @@ public final class Entity {
 
 	/**
 	 * Removes the given child from this entity.
+	 * Calls {@link Component#onExit()} on all the entity's components.
 	 *
 	 * @param entity The child to remove
 	 * @throws IllegalStateException if the given entity is not a child of this entity
@@ -199,10 +212,21 @@ public final class Entity {
 		return Optional.ofNullable(this.children.get(key));
 	}
 
+	/**
+	 * Performs the given action on all this entity's children.
+	 *
+	 * @param action A {@link BiConsumer} taking the child's key and the child.
+	 */
 	public void forEachChild(BiConsumer<String, Entity> action) {
 		this.children.forEach(action);
 	}
 
+	/**
+	 * Returns this entity's children as a {@link Stream} for easy iteration.
+	 * To get an unmodifiable list of the children use {@link Stream#toList()}.
+	 *
+	 * @return A {@code Stream} of this entity's children
+	 */
 	public Stream<Entity> getChildren() {
 		return this.children.values().stream();
 	}
@@ -218,10 +242,11 @@ public final class Entity {
 
 	/**
 	 * Adds the given component to this entity.
-	 * If this entity already has a component of that type, the old component will be replaced.
+	 * Calls {@link Component#onStart()} on the added component.
+	 * If this entity already has a component of the same type, it must be removed first.
 	 *
 	 * @param component The component to add.
-	 * @throws IllegalStateException if the given component already belongs to an entity
+	 * @throws IllegalStateException if the given component already belongs to an entity or if this entity already has a component of the given type
 	 */
 	public void addComponent(Component component) {
 		if(component.entity == null) {
@@ -339,6 +364,14 @@ public final class Entity {
 		return this.parent != null ? this.parent.getComponents() : Stream.empty();
 	}
 
+	/**
+	 * Removes a component of the given type from this entity.
+	 * Calls {@link Component#onExit()} on the removed component.
+	 * This method does nothing if this entity does not have a component of the given type.
+	 *
+	 * @param type The type of the component to remove
+	 * @return True if a component was removed, otherwise false
+	 */
 	public boolean removeComponent(Class<? extends Component> type) {
 		Component component = this.components.remove(getKey(type));
 		if(component != null) {
@@ -349,6 +382,14 @@ public final class Entity {
 		return false;
 	}
 
+	/**
+	 * Removes the given component from this entity.
+	 * Calls {@link Component#onExit()} if the component was removed.
+	 * This method does nothing if the given component is not attached to this entity.
+	 *
+	 * @param component The component to remove
+	 * @return True if the component was removed, otherwise false
+	 */
 	public boolean removeComponent(Component component) {
 		if(this.components.values().remove(component)) {
 			component.onExit();
