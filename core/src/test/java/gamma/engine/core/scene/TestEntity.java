@@ -87,39 +87,30 @@ public class TestEntity {
 		Assertions.assertFalse(parent.hasParent(new Entity()));
 	}
 
-	@Test
-	public void testRemoveChildWithKey() {
-		Entity parent = new Entity();
+	 @Test
+	 public void testSetParent() {
+		Entity parent1 = new Entity();
+		Entity parent2 = new Entity();
 		Entity child = new Entity();
-		parent.addChild("givenKey", child);
-		Entity removed = parent.removeChild("givenKey");
-		Assertions.assertEquals(child, removed);
-		Assertions.assertNull(child.getParent());
-	}
+		parent1.addChild(child);
+		Assertions.assertTrue(child.hasParent(parent1));
+		Assertions.assertFalse(child.hasParent(parent2));
+		child.setParent(parent2);
+		 Assertions.assertFalse(child.hasParent(parent1));
+		 Assertions.assertTrue(child.hasParent(parent2));
+	 }
 
-	@Test
-	public void testRemoveChildWithoutKey() {
-		Entity parent = new Entity();
-		Entity child = new Entity();
-		parent.addChild("givenKey", child);
-		Assertions.assertThrows(IllegalStateException.class, () -> parent.removeChild("anotherKey"));
-	}
-
-	@Test
-	public void testRemoveChild() {
-		Entity parent = new Entity();
-		Entity child = new Entity();
-		parent.addChild(child);
-		parent.removeChild(child);
-		Assertions.assertNull(child.getParent());
-	}
-
-	@Test
-	public void testRemoveIsNotChild() {
-		Entity parent = new Entity();
-		Entity child = new Entity();
-		Assertions.assertThrows(IllegalStateException.class, () -> parent.removeChild(child));
-	}
+	 @Test
+	 public void testSetParentWithKey() {
+		 Entity parent1 = new Entity();
+		 Entity parent2 = new Entity();
+		 Entity child = new Entity();
+		 parent1.addChild("key", child);
+		 Assertions.assertTrue(parent1.hasChild("key"));
+		 child.setParent("newKey", parent2);
+		 Assertions.assertFalse(parent1.hasChild("key"));
+		 Assertions.assertTrue(parent2.hasChild("newKey"));
+	 }
 
 	@Test
 	public void testGetChildren() {
@@ -270,6 +261,61 @@ public class TestEntity {
 		TestComponent component = new TestComponent();
 		entity.addComponent(component);
 		Assertions.assertTrue(entity.removeComponent(TestComponent.class));
+		entity.process(0.0f);
 		Assertions.assertNull(component.entity);
+	}
+
+	@Test
+	public void testRemoveComponentOfTypeThatEntityDoesNotHave() {
+		Entity entity = new Entity();
+		TestComponent component = new TestComponent();
+		entity.addComponent(component);
+		Assertions.assertFalse(entity.removeComponent(AnotherComponent.class));
+		entity.process(0.0f);
+		Assertions.assertNotNull(component.entity);
+	}
+
+	@Test
+	public void testRemoveComponent() {
+		Entity entity = new Entity();
+		TestComponent component = new TestComponent();
+		entity.addComponent(component);
+		Assertions.assertTrue(entity.removeComponent(component));
+		entity.process(0.0f);
+		Assertions.assertNull(component.entity);
+	}
+
+	@Test
+	public void testRemoveComponentDoesNotBelongToEntity() {
+		Entity entity = new Entity();
+		TestComponent component = new TestComponent();
+		Assertions.assertFalse(entity.removeComponent(component));
+	}
+
+	@Test
+	public void testRemoveFromScene() {
+		Entity entity = new Entity();
+		Entity child1 = new Entity();
+		Entity child2 = new Entity();
+		TestComponent component = new TestComponent();
+		TestComponent component1 = new TestComponent();
+		TestComponent component2 = new TestComponent();
+		entity.addChild(child1);
+		entity.addChild(child2);
+		entity.addComponent(component);
+		child1.addComponent(component1);
+		child2.addComponent(component2);
+		Assertions.assertFalse(entity.getComponent(TestComponent.class).isEmpty());
+		Assertions.assertFalse(child1.getComponent(TestComponent.class).isEmpty());
+		Assertions.assertFalse(child2.getComponent(TestComponent.class).isEmpty());
+		Assertions.assertNotNull(child1.getParent());
+		Assertions.assertNotNull(child2.getParent());
+		entity.removeFromScene();
+		entity.process(0.0f);
+		Assertions.assertTrue(entity.getComponent(TestComponent.class).isEmpty());
+		Assertions.assertTrue(child1.getComponent(TestComponent.class).isEmpty());
+		Assertions.assertTrue(child2.getComponent(TestComponent.class).isEmpty());
+		Assertions.assertNull(child1.getParent());
+		Assertions.assertNull(child2.getParent());
 	}
 }

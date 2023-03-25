@@ -13,13 +13,43 @@ import java.util.Optional;
  */
 public abstract class Component {
 
-	/**
-	 * The entity to which this component is attached
-	 */
+	/** The entity to which this component is attached */
 	transient Entity entity = null;
+	/** Current state of this component */
+	private transient State state = State.NEW;
 
 	/**
-	 * Called when this component is added to an entity or when the entity enters the scene.
+	 * Processes this component.
+	 * Called from {@link Entity#process(float)}.
+	 *
+	 * @param delta Time elapsed since the previous frame
+	 * @return True if this component has been removed from its entity, otherwise false
+	 */
+	protected final boolean process(float delta) {
+		// First frame the component spends in the scene
+		if(this.state == State.NEW) {
+			this.onStart();
+			// Register that the component is ready
+			this.state = State.READY;
+		}
+		// Process the component
+		this.onUpdate(delta);
+		// If the component was removed this frame
+		if(this.state == State.REMOVED) {
+			this.onExit();
+			// Register that the component has exited the scene
+			this.entity = null;
+			// Set the component's state back to new for it to be added again
+			this.state = State.NEW;
+			// Return true to remove the component from its entity
+			return true;
+		}
+		// Return false because the component has not been removed
+		return false;
+	}
+
+	/**
+	 * Called on the first frame that this component spends in the scene.
 	 */
 	protected void onStart() {
 
@@ -53,10 +83,17 @@ public abstract class Component {
 	}
 
 	/**
-	 * Called when this component is removed from the entity it is attached to or when that entity is removed from the scene.
+	 * Called on the last frame that this component spends in the scene before it is removed.
 	 */
 	protected void onExit() {
 
+	}
+
+	/**
+	 * Marks this component to be removed from its entity as soon as it is safe to do so.
+	 */
+	public final void removeComponent() {
+		this.state = State.REMOVED;
 	}
 
 	/**
@@ -113,5 +150,17 @@ public abstract class Component {
 	 */
 	public final <C extends Component> Optional<C> getComponentInParent(Class<C> type) {
 		return this.getEntity().flatMap(entity -> entity.getComponentInParent(type));
+	}
+
+	/**
+	 * Used to keep track of the component's state.
+	 */
+	private enum State {
+		/** The component just entered the scene */
+		NEW,
+		/** The component is in the scene and can be processed */
+		READY,
+		/** The component is being removed from the scene */
+		REMOVED
 	}
 }

@@ -19,6 +19,8 @@ public final class Entity {
 	private final HashMap<Class<?>, Component> components = new HashMap<>();
 	/** This entity's parent */
 	private transient Entity parent;
+	/** Set to true when this entity is being removed from the scene */
+	private transient boolean removed = false;
 
 	/**
 	 * Processes this entity.
@@ -27,18 +29,26 @@ public final class Entity {
 	 * @param delta Time elapsed since the previous frame
 	 */
 	public void process(float delta) {
-		this.children.forEach((key, entity) -> {
-			if(entity.parent == null)
-				entity.parent = this;
+		// Process children first
+		this.children.values().removeIf(entity -> {
+			// Process child entity
 			entity.process(delta);
-		});
-		this.components.forEach((key, component) -> {
-			if(component.entity == null) {
-				component.entity = this;
-				component.onStart();
+			// Remove the child if it was removed in this frame
+			if(entity.removed) {
+				entity.parent = null;
+				return true;
 			}
-			component.onUpdate(delta);
+			return false;
 		});
+		// Process this entity's components
+		this.components.values().removeIf(component -> component.process(delta));
+		// Remove all the components if the entity has been removed in this frame
+		if(this.removed) {
+			this.components.values().removeIf(component -> {
+				component.onExit();
+				return true;
+			});
+		}
 	}
 
 	/**
@@ -48,41 +58,19 @@ public final class Entity {
 	 * @param event The input event.
 	 */
 	public void input(InputEvent event) {
-		this.children.forEach((key, entity) -> {
-			if(entity.parent == null)
-				entity.parent = this;
-			entity.input(event);
-		});
-		this.components.forEach((key, component) -> {
-			if(component.entity == null) {
-				component.entity = this;
-				component.onStart();
-			}
-			component.onInput(event);
-		});
+		this.children.forEach((key, entity) -> entity.input(event));
+		this.components.forEach((key, component) -> component.onInput(event));
 	}
 
 	/**
 	 * Called from the editor.
 	 */
 	public void editorProcess() {
-		this.children.forEach((key, entity) -> {
-			if(entity.parent == null)
-				entity.parent = this;
-			entity.editorProcess();
-		});
-		this.components.forEach((key, component) -> {
-			if(component.entity == null) {
-				component.entity = this;
-				component.onStart();
-			}
-			component.editorUpdate();
-		});
+		// TODO: Change editor process
 	}
 
 	/**
 	 * Adds a child to this entity.
-	 * Calls {@link Component#onStart()} on all the entity's components.
 	 *
 	 * @param entity The child to add
 	 * @throws IllegalStateException if the given entity already has a parent
@@ -96,7 +84,6 @@ public final class Entity {
 
 	/**
 	 * Adds a child to this entity with the given key.
-	 * Calls {@link Component#onStart()} on all the entity's components.
 	 *
 	 * @param key The child's key
 	 * @param entity The child to add
@@ -107,7 +94,6 @@ public final class Entity {
 			if(!this.children.containsKey(key)) {
 				this.children.put(key, entity);
 				entity.parent = this;
-				entity.components.values().forEach(Component::onStart);
 			} else {
 				throw new IllegalStateException("Entity " + this + " already has a child with key " + key);
 			}
@@ -157,47 +143,28 @@ public final class Entity {
 	}
 
 	/**
-	 * Removes a child with the given key from this entity.
-	 * Calls {@link Component#onExit()} on all the entity's components.
-	 *
-	 * @param key The child's key
-	 * @return The child entity that was removed
-	 * @throws IllegalStateException if this entity does not have a child with the given key
-	 */
-	public Entity removeChild(String key) {
-		if(this.children.containsKey(key)) {
-			Entity entity = this.children.remove(key);
-			entity.components.values().forEach(Component::onExit);
-			entity.parent = null;
-			return entity;
-		} else {
-			throw new IllegalStateException("Entity " + this + " does not have a child with key " + key);
-		}
-	}
-
-	/**
-	 * Removes the given child from this entity.
-	 * Calls {@link Component#onExit()} on all the entity's components.
-	 *
-	 * @param entity The child to remove
-	 * @throws IllegalStateException if the given entity is not a child of this entity
-	 */
-	public void removeChild(Entity entity) {
-		if(this.children.values().remove(entity)) {
-			entity.components.values().forEach(Component::onExit);
-			entity.parent = null;
-		} else {
-			throw new IllegalStateException("Entity " + entity + " is not a child of " + this);
-		}
-	}
-
-	/**
 	 * Gets this entity's parent or null if it does not have one.
 	 *
 	 * @return This entity's parent or null if it does not have one
 	 */
 	public Entity getParent() {
 		return this.parent;
+	}
+
+	// TODO: Test for concurrent modification exception
+
+	public void setParent(Entity parent) {
+		if(this.parent != null)
+			this.parent.children.values().remove(this);
+		this.parent = null;
+		parent.addChild(this);
+	}
+
+	public void setParent(String key, Entity parent) {
+		if(this.parent != null)
+			this.parent.children.values().remove(this);
+		this.parent = null;
+		parent.addChild(key, this);
 	}
 
 	/**
@@ -242,7 +209,7 @@ public final class Entity {
 
 	/**
 	 * Adds the given component to this entity.
-	 * Calls {@link Component#onStart()} on the added component.
+	 * The component's {@link Component#onStart()} method will be called on the first frame that the component spends in the scene.
 	 * If this entity already has a component of the same type, it must be removed first.
 	 *
 	 * @param component The component to add.
@@ -252,9 +219,8 @@ public final class Entity {
 		if(component.entity == null) {
 			Class<?> type = getKey(component.getClass());
 			if(!this.components.containsKey(type)) {
-				this.components.put(getKey(component.getClass()), component);
+				this.components.put(type, component);
 				component.entity = this;
-				component.onStart();
 			} else {
 				throw new IllegalStateException("Entity " + this + " already has a component of type " + type);
 			}
@@ -365,38 +331,46 @@ public final class Entity {
 	}
 
 	/**
-	 * Removes a component of the given type from this entity.
-	 * Calls {@link Component#onExit()} on the removed component.
+	 * Marks a component of the given type to be removed from this entity.
+	 * The component's {@link Component#onExit()} method will be called on the last frame that the component spends in the scene.
 	 * This method does nothing if this entity does not have a component of the given type.
 	 *
 	 * @param type The type of the component to remove
-	 * @return True if a component was removed, otherwise false
+	 * @return True if a component was removed, false if this entity does not have a component of the given type
 	 */
 	public boolean removeComponent(Class<? extends Component> type) {
-		Component component = this.components.remove(getKey(type));
-		if(component != null) {
-			component.onExit();
-			component.entity = null;
+		return this.getComponent(type).map(component -> {
+			component.removeComponent();
+			return true;
+		}).orElse(false);
+	}
+
+	/**
+	 * Marks the given component to be removed from this entity.
+	 * Calling this method is equivalent to calling {@link Component#removeComponent()}.
+	 * The component's {@link Component#onExit()} method will be called on the last frame that the component spends in the scene.
+	 * This method does nothing if the given component is not attached to this entity.
+	 *
+	 * @param component The component to remove
+	 * @return True if the component was removed, false if the given component is not attached to this entity
+	 */
+	public boolean removeComponent(Component component) {
+		if(this.components.containsValue(component)) {
+			component.removeComponent();
 			return true;
 		}
 		return false;
 	}
 
 	/**
-	 * Removes the given component from this entity.
-	 * Calls {@link Component#onExit()} if the component was removed.
-	 * This method does nothing if the given component is not attached to this entity.
-	 *
-	 * @param component The component to remove
-	 * @return True if the component was removed, otherwise false
+	 * Marks this entity and all of its children to be removed from the scene tree at the end of the process frame.
+	 * When an entity is removed, its parent is set to null and {@link Component#onExit()} is called on all its components.
+	 * Note that an entity that is removed from the scene tree it is not meant to be added again.
+	 * Use {@link Entity#setParent(Entity)} to change the entity's parent.
 	 */
-	public boolean removeComponent(Component component) {
-		if(this.components.values().remove(component)) {
-			component.onExit();
-			component.entity = null;
-			return true;
-		}
-		return false;
+	public void removeFromScene() {
+		this.children.values().forEach(Entity::removeFromScene);
+		this.removed = true;
 	}
 
 	/**
