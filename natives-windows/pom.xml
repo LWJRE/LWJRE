@@ -32,5 +32,10 @@
 			<artifactId>lwjgl-opengl</artifactId>
 			<classifier>natives-windows</classifier>
 		</dependency>
+		<dependency>
+			<groupId>org.lwjgl</groupId>
+			<artifactId>lwjgl-assimp</artifactId>
+			<classifier>natives-windows</classifier>
+		</dependency>
 	</dependencies>
 </project>

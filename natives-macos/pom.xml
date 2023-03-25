@@ -32,5 +32,10 @@
             <artifactId>lwjgl-opengl</artifactId>
             <classifier>natives-macos</classifier>
         </dependency>
+        <dependency>
+            <groupId>org.lwjgl</groupId>
+            <artifactId>lwjgl-assimp</artifactId>
+            <classifier>natives-macos</classifier>
+        </dependency>
     </dependencies>
 </project>

@@ -31,5 +31,10 @@
 			<artifactId>lwjgl-opengl</artifactId>
 			<classifier>natives-linux</classifier>
 		</dependency>
+		<dependency>
+			<groupId>org.lwjgl</groupId>
+			<artifactId>lwjgl-assimp</artifactId>
+			<classifier>natives-linux</classifier>
+		</dependency>
 	</dependencies>
 </project>

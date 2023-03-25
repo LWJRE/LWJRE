@@ -36,12 +36,6 @@
 			<artifactId>snakeyaml</artifactId>
 			<version>1.33</version>
 		</dependency>
-		<!-- Obj models loading -->
-		<dependency>
-			<groupId>de.javagl</groupId>
-			<artifactId>obj</artifactId>
-			<version>0.4.0</version>
-		</dependency>
 		<!-- LWJGL -->
 		<dependency>
 			<groupId>org.lwjgl</groupId>
@@ -54,6 +48,10 @@
 		<dependency>
 			<groupId>org.lwjgl</groupId>
 			<artifactId>lwjgl-opengl</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.lwjgl</groupId>
+			<artifactId>lwjgl-assimp</artifactId>
 		</dependency>
 	</dependencies>
 

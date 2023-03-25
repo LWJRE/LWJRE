@@ -19,7 +19,8 @@ public final class Resources {
 
 	static {
 		addLoader(Shader.SHADER_LOADER, ".glsl");
-		addLoader(Model.OBJ_LOADER, ".obj");
+		addLoader(Model.ASSIMP_LOADER, ".obj");
+		addLoader(Model.ASSIMP_LOADER, ".dae");
 	}
 
 	/**

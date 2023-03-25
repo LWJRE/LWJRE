@@ -6,6 +6,7 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
+import java.nio.IntBuffer;
 import java.util.HashMap;
 
 /**
@@ -107,6 +108,12 @@ public class Mesh extends DeletableResource {
 		this.storeData(indices);
 	}
 
+	public void setIndices(IntBuffer indices) {
+		this.elementCount = indices.capacity();
+		this.bind();
+		this.storeData(indices);
+	}
+
 	/**
 	 * Stores texture coordinates (UVs) in a buffer object.
 	 *
@@ -151,6 +158,13 @@ public class Mesh extends DeletableResource {
 		int vbo = this.vertexBuffers.containsKey(-1) ? this.vertexBuffers.get(-1) : GL15.glGenBuffers();
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, vbo);
 		GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, BufferUtils.createIntBuffer(indices.length).put(indices).flip(), GL15.GL_DYNAMIC_DRAW);
+		this.vertexBuffers.put(-1, vbo);
+	}
+
+	private void storeData(IntBuffer indices) {
+		int vbo = this.vertexBuffers.containsKey(-1) ? this.vertexBuffers.get(-1) : GL15.glGenBuffers();
+		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, vbo);
+		GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, indices, GL15.GL_DYNAMIC_DRAW);
 		this.vertexBuffers.put(-1, vbo);
 	}
 
