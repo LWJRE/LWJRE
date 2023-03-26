@@ -13,7 +13,7 @@ import java.util.NoSuchElementException;
 public final class Resources {
 
 	/** Map of all the loaded resources */
-	private static final HashMap<String, Object> RESOURCES = new HashMap<>();
+	private static final HashMap<String, Resource> RESOURCES = new HashMap<>();
 	/** Stores all the resource loaders */
 	private static final HashMap<String, ResourceLoader<?>> LOADERS = new HashMap<>();
 
@@ -33,13 +33,13 @@ public final class Resources {
 	 * @return The requested resource
 	 * @throws RuntimeException if there is no loader associated with the file's extension
 	 */
-	public static Object getOrLoad(String path) {
+	public static Resource getOrLoad(String path) {
 		if(RESOURCES.containsKey(path)) {
 			return RESOURCES.get(path);
 		} else {
 			String extension = path.substring(path.lastIndexOf('.'));
 			if(LOADERS.containsKey(extension)) {
-				Object resource = LOADERS.get(extension).load(path);
+				Resource resource = LOADERS.get(extension).load(path);
 				RESOURCES.put(path, resource);
 				return resource;
 			}
@@ -56,7 +56,7 @@ public final class Resources {
 	 * @param newPath New path to which the resource has been moved
 	 */
 	public static void updatePath(String oldPath, String newPath) {
-		Object resource = RESOURCES.remove(oldPath);
+		Resource resource = RESOURCES.remove(oldPath);
 		if(resource != null) {
 			RESOURCES.put(newPath, resource);
 		}
@@ -71,7 +71,7 @@ public final class Resources {
 	 * @return The path at which the resource is stored
 	 * @throws NoSuchElementException if the given resource was not loaded from any path
 	 */
-	public static String pathOf(Object resource) {
+	public static String pathOf(Resource resource) {
 		return RESOURCES.entrySet().stream()
 				.filter(entry -> entry.getValue().equals(resource))
 				.findFirst()

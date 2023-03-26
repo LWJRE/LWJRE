@@ -66,7 +66,8 @@ public final class Entity {
 	 * Called from the editor.
 	 */
 	public void editorProcess() {
-		// TODO: Change editor process
+		this.children.values().forEach(Entity::editorProcess);
+		this.components.values().forEach(Component::editorUpdate);
 	}
 
 	/**

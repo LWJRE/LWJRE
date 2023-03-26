@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
  *
  * @author Nico
  */
-public final class Shader extends DeletableResource {
+public final class Shader extends DeletableResource implements Resource {
 
 	/** The main fragment shader's code */
 	private static final String MAIN_FRAGMENT = FileUtils.readResourceAsString("/gamma/engine/core/shaders/main_fragment.glsl");

@@ -22,6 +22,11 @@ public class PointLight3D extends Component {
 	}
 
 	@Override
+	protected void editorUpdate() {
+		super.editorUpdate();
+	}
+
+	@Override
 	protected void onExit() {
 		super.onExit();
 		RenderingSystem.removeFromBatch(this);

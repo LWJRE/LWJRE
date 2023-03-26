@@ -18,7 +18,7 @@ import java.util.Map;
  *
  * @author Nico
  */
-public record Model(Map<Mesh, Material> modelData) {
+public record Model(Map<Mesh, Material> modelData) implements Resource {
 
 	/**
 	 * Loads a model from the classpath or return the same instance if it was already loaded.

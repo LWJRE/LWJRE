@@ -33,6 +33,14 @@ public class ModelRenderer extends Component {
 			this.model.modelData().forEach((mesh, material) -> RenderingSystem.addToBatch(this, mesh, () -> this.drawMesh(mesh, material)));
 	}
 
+	@Override
+	protected void editorUpdate() {
+		super.editorUpdate();
+		if(this.model != null) {
+			this.model.modelData().forEach(this::drawMesh);
+		}
+	}
+
 	/**
 	 * Renders one of the meshes that make up this model.
 	 * Used as a runnable in {@link RenderingSystem#addToBatch(Component, Mesh, Runnable)}.
