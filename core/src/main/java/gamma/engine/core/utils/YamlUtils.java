@@ -44,7 +44,9 @@ public class YamlUtils {
 		dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
 		dumperOptions.setIndicatorIndent(1);
 		dumperOptions.setIndentWithIndicator(true);
-		YAML = new Yaml(PARSER, SERIALIZER, dumperOptions);
+		LoaderOptions loaderOptions = new LoaderOptions();
+		loaderOptions.setTagInspector(tag -> true);
+		YAML = new Yaml(PARSER, SERIALIZER, dumperOptions, loaderOptions);
 		YAML.setBeanAccess(BeanAccess.FIELD);
 		addSequenceRepresent(Vec2f.class, vec -> List.of(vec.x(), vec.y()));
 		addSequenceRepresent(Vec3f.class, vec -> List.of(vec.x(), vec.y(), vec.z()));
