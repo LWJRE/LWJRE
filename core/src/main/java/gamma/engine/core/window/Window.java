@@ -6,12 +6,13 @@ import gamma.engine.core.input.Mouse;
 import org.lwjgl.glfw.Callbacks;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 import vecmatlib.vector.Vec2i;
 
 import java.nio.IntBuffer;
-import java.util.ServiceLoader;
 
 /**
  * Class that represents a GLFW window.
@@ -35,16 +36,11 @@ public class Window {
 		return new Window(handle);
 	}
 
-	/** Window listeners */
-	private static final ServiceLoader<WindowListener> LISTENERS = ServiceLoader.load(WindowListener.class);
-
 	/** Window handle */
 	protected long handle;
 
 	/**
-	 * Creates a window with the given title and size.
-	 * Reads window hints from {@link ApplicationProperties}.
-	 * Windows must be created from the main thread.
+	 * TODO: Write docs
 	 *
 	 * @param title Title of the window
 	 * @param width Window width
@@ -60,6 +56,7 @@ public class Window {
 		this.handle = GLFW.glfwCreateWindow(width, height, title, MemoryUtil.NULL, MemoryUtil.NULL);
 		if(this.handle == MemoryUtil.NULL)
 			throw new RuntimeException("Failed to create the GLFW window");
+		GLFW.glfwShowWindow(this.handle);
 	}
 
 	/**
@@ -79,12 +76,8 @@ public class Window {
 		this.handle = handle;
 	}
 
-	// TODO: Check for main thread
-
 	/**
-	 * Checks if the window was not already destroyed.
-	 *
-	 * @throws IllegalStateException if it was
+	 * TODO: Change this
 	 */
 	private void checkState() {
 		if(this.handle == MemoryUtil.NULL)
@@ -98,7 +91,7 @@ public class Window {
 	 */
 	public void setupCallbacks() {
 		this.checkState();
-		GLFW.glfwSetWindowSizeCallback(this.handle, ((window, width1, height1) -> LISTENERS.forEach(windowListener -> windowListener.onResize(width1, height1))));
+		GLFW.glfwSetWindowSizeCallback(this.handle, (window, width, height) -> GL11.glViewport(0, 0, width, height));
 		GLFW.glfwSetKeyCallback(this.handle, (window, key, scancode, action, mods) -> Keyboard.keyCallback(key, scancode, action, mods));
 		GLFW.glfwSetMouseButtonCallback(this.handle, (window, button, action, mods) -> Mouse.buttonCallback(button, action, mods));
 		GLFW.glfwSetCursorPosCallback(this.handle, (window, x, y) -> Mouse.cursorPosCallback(x, y));
@@ -106,28 +99,12 @@ public class Window {
 	}
 
 	/**
-	 * Makes the window's context current in the calling thread.
-	 *
-	 * @see GLFW#glfwMakeContextCurrent(long)
-	 *
-	 * @throws IllegalStateException if the window was already destroyed
+	 * TODO: Write docs
 	 */
 	public void makeContextCurrent() {
 		this.checkState();
 		GLFW.glfwMakeContextCurrent(this.handle);
-	}
-
-	/**
-	 * Makes this window visible.
-	 * This method must be called from the main thread.
-	 *
-	 * @see GLFW#glfwShowWindow(long)
-	 *
-	 * @throws IllegalStateException if the window was already destroyed
-	 */
-	public void show() {
-		this.checkState();
-		GLFW.glfwShowWindow(this.handle);
+		GL.createCapabilities();
 	}
 
 	/**

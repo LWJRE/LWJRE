@@ -1,10 +1,10 @@
 package gamma.engine.core;
 
+import gamma.engine.core.rendering.RenderingSystem;
+import gamma.engine.core.resources.DeletableResource;
 import gamma.engine.core.scene.Scene;
 import gamma.engine.core.window.Window;
 import org.lwjgl.glfw.GLFW;
-
-import java.util.ServiceLoader;
 
 /**
  * Main application class.
@@ -15,18 +15,15 @@ public final class Application {
 
 	public static void main(String[] args) {
 		if(GLFW.glfwInit()) {
-			ServiceLoader<ApplicationListener> listeners = ServiceLoader.load(ApplicationListener.class);
 			try {
 				System.out.println("Application started");
 				Window window = new Window();
 				window.setupCallbacks();
 				window.makeContextCurrent();
-				window.show();
-				listeners.forEach(ApplicationListener::onStart);
 				Scene.changeScene(ApplicationProperties.getString("startScene"));
 				while(!window.isCloseRequested()) {
-					listeners.forEach(ApplicationListener::onUpdate);
 					Scene.getCurrent().process();
+					RenderingSystem.render();
 					window.update();
 					GLFW.glfwPollEvents();
 				}
@@ -36,7 +33,7 @@ public final class Application {
 				e.printStackTrace();
 			} finally {
 				System.out.println("Terminating");
-				listeners.forEach(ApplicationListener::onTerminate);
+				DeletableResource.deleteAll();
 				GLFW.glfwTerminate();
 			}
 		} else {

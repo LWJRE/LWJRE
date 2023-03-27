@@ -1,19 +1,15 @@
 package gamma.engine.core.rendering;
 
-import gamma.engine.core.ApplicationListener;
 import gamma.engine.core.components.PointLight3D;
-import gamma.engine.core.resources.DeletableResource;
 import gamma.engine.core.resources.Mesh;
 import gamma.engine.core.resources.Shader;
 import gamma.engine.core.scene.Component;
-import gamma.engine.core.window.WindowListener;
-import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 
 import java.util.HashMap;
 import java.util.HashSet;
 
-public final class RenderingSystem implements ApplicationListener, WindowListener {
+public final class RenderingSystem {
 
 	private static final HashMap<Mesh, HashMap<Component, Runnable>> RENDER_BATCH = new HashMap<>();
 
@@ -43,13 +39,7 @@ public final class RenderingSystem implements ApplicationListener, WindowListene
 		LIGHTS.remove(light);
 	}
 
-	@Override
-	public void onStart() {
-		GL.createCapabilities();
-	}
-
-	@Override
-	public void onUpdate() {
+	public static void render() {
 		// TODO: Give option for depth test and backface culling
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glEnable(GL11.GL_CULL_FACE);
@@ -69,16 +59,5 @@ public final class RenderingSystem implements ApplicationListener, WindowListene
 			mesh.bind();
 			batch.values().forEach(Runnable::run);
 		});
-	}
-
-	@Override
-	public void onResize(int width, int height) {
-		// TODO: Give the user different options for resizing
-		GL11.glViewport(0, 0, width, height);
-	}
-
-	@Override
-	public void onTerminate() {
-		DeletableResource.deleteAll();
 	}
 }

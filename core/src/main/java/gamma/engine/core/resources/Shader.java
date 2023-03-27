@@ -68,7 +68,7 @@ public final class Shader extends DeletableResource implements Resource {
 	 * @param fragmentShader Already processed fragment shader code
 	 * @throws ShaderCompilationException if there is a compilation error in the given shader code
 	 */
-	private Shader(String vertexShader, String fragmentShader) throws ShaderCompilationException {
+	public Shader(String vertexShader, String fragmentShader) throws ShaderCompilationException {
 		this.vertex = GL20.glCreateShader(GL20.GL_VERTEX_SHADER);
 		GL20.glShaderSource(this.vertex, vertexShader);
 		GL20.glCompileShader(this.vertex);

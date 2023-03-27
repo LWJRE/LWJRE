@@ -2,8 +2,9 @@ package gamma.engine.core.components;
 
 import gamma.engine.core.annotations.EditorRange;
 import gamma.engine.core.annotations.EditorVariable;
-import gamma.engine.core.scene.Component;
 import gamma.engine.core.physics.Projection;
+import gamma.engine.core.rendering.DebugRenderer;
+import gamma.engine.core.scene.Component;
 import vecmatlib.matrix.Mat4f;
 import vecmatlib.vector.Vec3f;
 import vecmatlib.vector.Vec4f;
@@ -27,6 +28,12 @@ public class BoundingBox3D extends Component {
 	@EditorVariable("Extents")
 	@EditorRange
 	public Vec3f extents = Vec3f.One();
+
+	@Override
+	protected void editorUpdate() {
+		super.editorUpdate();
+		this.getComponent(Transform3D.class).ifPresent(transform -> DebugRenderer.addToBatch(this, transform.globalTransformation()));
+	}
 
 	/**
 	 * Projects this bounding box on the given axis.
