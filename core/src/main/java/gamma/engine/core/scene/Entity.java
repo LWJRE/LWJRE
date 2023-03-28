@@ -67,7 +67,7 @@ public final class Entity {
 	 */
 	public void editorProcess() {
 		this.children.values().forEach(Entity::editorProcess);
-		this.components.values().forEach(Component::editorUpdate);
+		this.components.values().removeIf(Component::editorProcess);
 	}
 
 	/**
