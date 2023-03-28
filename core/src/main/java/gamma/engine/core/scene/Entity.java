@@ -378,11 +378,16 @@ public final class Entity {
 	 * Serializes the given entity. Used to write entity to {@code .yaml} files.
 	 *
 	 * @param entity The entity to serialize
-	 * @return An unmodifiable map with the key "children" mapping to a copy of this entity's children map
+	 * @return A map with the key "children" mapping to a copy of this entity's children map
 	 * and a key "components" mapping to a copy of this entity's component list
 	 */
 	public static Map<String, Object> serialize(Entity entity) {
-		return Map.of("children", new HashMap<>(entity.children), "components", entity.getComponents().toList());
+		HashMap<String, Object> result = new HashMap<>();
+		if(!entity.children.isEmpty())
+			result.put("children", new HashMap<>(entity.children));
+		if(!entity.components.isEmpty())
+			result.put("components", entity.getComponents().toList());
+		return result;
 	}
 
 	/**

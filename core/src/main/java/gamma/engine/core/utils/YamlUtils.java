@@ -14,6 +14,7 @@ import org.yaml.snakeyaml.introspector.BeanAccess;
 import org.yaml.snakeyaml.nodes.*;
 import org.yaml.snakeyaml.representer.Represent;
 import org.yaml.snakeyaml.representer.Representer;
+import vecmatlib.color.Color;
 import vecmatlib.vector.Vec2f;
 import vecmatlib.vector.Vec3f;
 import vecmatlib.vector.Vec4f;
@@ -51,6 +52,7 @@ public class YamlUtils {
 		addSequenceRepresent(Vec2f.class, vec -> List.of(vec.x(), vec.y()));
 		addSequenceRepresent(Vec3f.class, vec -> List.of(vec.x(), vec.y(), vec.z()));
 		addSequenceRepresent(Vec4f.class, vec -> List.of(vec.x(), vec.y(), vec.z(), vec.w()));
+		addSequenceRepresent(Color.class, color -> List.of(color.r(), color.g(), color.b(), color.a()));
 		addMappingRepresent(Entity.class, Entity::serialize);
 		addMappingConstruct(Entity.class, Entity::deserialize);
 		addScalarConstruct(Shader.class, Shader::getOrLoad);
