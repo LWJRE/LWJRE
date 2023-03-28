@@ -28,4 +28,4 @@ root: !!gamma.engine.core.scene.Entity
         - !!gamma.engine.core.components.Transform3D
           position: !!vecmatlib.vector.Vec3f [10.0, 10.0, 0.0]
         - !!gamma.engine.core.components.PointLight3D
-          color: !!vecmatlib.color.Color [1.0, 1.0, 1.0, 1.0]
+          color: !!vecmatlib.color.Color3f [1.0, 1.0, 1.0]
