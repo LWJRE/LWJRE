@@ -32,7 +32,7 @@ public class BoundingBox3D extends Component {
 	@Override
 	protected void editorUpdate() {
 		super.editorUpdate();
-		this.getComponent(Transform3D.class).ifPresent(transform -> DebugRenderer.addToBatch(this, this.localTransform().multiply(transform.globalTransformation())));
+		this.getComponent(Transform3D.class).ifPresent(transform -> DebugRenderer.addToBatch(this, Mat4f.translation(this.offset).multiply(transform.globalTransformation()).multiply(Mat4f.scaling(this.extents))));
 	}
 
 	/**
