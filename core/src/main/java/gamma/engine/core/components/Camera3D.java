@@ -1,6 +1,7 @@
 package gamma.engine.core.components;
 
 import gamma.engine.core.annotations.EditorDegrees;
+import gamma.engine.core.annotations.EditorIndex;
 import gamma.engine.core.annotations.EditorRange;
 import gamma.engine.core.annotations.EditorVariable;
 import gamma.engine.core.scene.Component;
@@ -16,6 +17,7 @@ import java.util.NoSuchElementException;
  *
  * @author Nico
  */
+@EditorIndex(1)
 public class Camera3D extends Component {
 
 	/** Reference to the current camera */

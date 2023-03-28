@@ -1,6 +1,7 @@
 package gamma.engine.core.components;
 
 import gamma.engine.core.annotations.DefaultValueString;
+import gamma.engine.core.annotations.EditorIndex;
 import gamma.engine.core.annotations.EditorVariable;
 import gamma.engine.core.rendering.RenderingSystem;
 import gamma.engine.core.resources.Material;
@@ -16,6 +17,7 @@ import gamma.engine.core.scene.Component;
  *
  * @author Nico
  */
+@EditorIndex(1)
 public class ModelRenderer extends Component {
 
 	/** The model to render */

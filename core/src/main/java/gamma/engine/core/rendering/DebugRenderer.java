@@ -7,7 +7,7 @@ import gamma.engine.core.resources.ShaderCompilationException;
 import gamma.engine.core.scene.Component;
 import gamma.engine.core.utils.FileUtils;
 import org.lwjgl.opengl.GL11;
-import vecmatlib.color.Color;
+import vecmatlib.color.Color4f;
 import vecmatlib.matrix.Mat4f;
 
 import java.util.HashMap;
@@ -31,7 +31,7 @@ public final class DebugRenderer {
 		SHADER.setUniform("view_matrix", Camera3D.getCurrent().viewMatrix());
 		BATCH.values().forEach(transform -> {
 			SHADER.setUniform("transformation_matrix", transform);
-			SHADER.setUniform("color", Color.Green());
+			SHADER.setUniform("color", Color4f.Green());
 			CUBE.drawElements();
 		});
 		GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);

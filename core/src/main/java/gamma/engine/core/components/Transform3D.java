@@ -1,6 +1,7 @@
 package gamma.engine.core.components;
 
 import gamma.engine.core.annotations.EditorDegrees;
+import gamma.engine.core.annotations.EditorIndex;
 import gamma.engine.core.annotations.EditorRange;
 import gamma.engine.core.annotations.EditorVariable;
 import gamma.engine.core.scene.Component;
@@ -13,6 +14,7 @@ import vecmatlib.vector.Vec4f;
  *
  * @author Nico
  */
+@EditorIndex(0)
 public class Transform3D extends Component {
 
 	/** Position of the entity in a 3D space */

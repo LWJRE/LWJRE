@@ -5,7 +5,7 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.*;
 import org.lwjgl.system.MemoryUtil;
-import vecmatlib.color.Color;
+import vecmatlib.color.Color4f;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
@@ -43,7 +43,7 @@ public record Model(Map<Mesh, Material> modelData) implements Resource {
 	 */
 	public static final ResourceLoader<Model> ASSIMP_LOADER = path -> {
 		AIFileIO fileIO = AIFileIO.create().OpenProc((pFileIO, fileName, openMode) -> {
-			String fileNameStr = MemoryUtil.memUTF8(fileName);
+			String fileNameStr = MemoryUtil.memUTF8(fileName); // TODO: Throw an exception if the file does not exist because at the moment it just causes a fatal error of the JVM
 			byte[] bytes = FileUtils.readResourceBytes(fileNameStr);
 			ByteBuffer buffer = BufferUtils.createByteBuffer(bytes.length).put(bytes).flip();
 			return AIFile.create().ReadProc((pFile, pBuffer, size, count) -> {
@@ -84,9 +84,9 @@ public record Model(Map<Mesh, Material> modelData) implements Resource {
 				AIColor4D specular = AIColor4D.create();
 				Assimp.aiGetMaterialColor(aiMaterial, Assimp.AI_MATKEY_COLOR_SPECULAR, Assimp.aiTextureType_NONE, 0, specular);
 				materials.add(new Material(
-						new Color(ambient.r(), ambient.g(), ambient.b(), ambient.a()),
-						new Color(diffuse.r(), diffuse.g(), diffuse.b(), diffuse.a()),
-						new Color(specular.r(), specular.g(), specular.b(), specular.a()),
+						new Color4f(ambient.r(), ambient.g(), ambient.b(), ambient.a()),
+						new Color4f(diffuse.r(), diffuse.g(), diffuse.b(), diffuse.a()),
+						new Color4f(specular.r(), specular.g(), specular.b(), specular.a()),
 						0.0f
 				));
 			}

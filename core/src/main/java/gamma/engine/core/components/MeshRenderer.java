@@ -1,13 +1,14 @@
 package gamma.engine.core.components;
 
 import gamma.engine.core.annotations.DefaultValueString;
+import gamma.engine.core.annotations.EditorIndex;
 import gamma.engine.core.annotations.EditorVariable;
 import gamma.engine.core.rendering.RenderingSystem;
 import gamma.engine.core.resources.Material;
-import gamma.engine.core.scene.Component;
 import gamma.engine.core.resources.Mesh;
 import gamma.engine.core.resources.Shader;
-import vecmatlib.color.Color;
+import gamma.engine.core.scene.Component;
+import vecmatlib.color.Color4f;
 
 import java.util.Objects;
 
@@ -16,11 +17,12 @@ import java.util.Objects;
  *
  * @author Nico
  */
+@EditorIndex(1)
 public class MeshRenderer extends Component {
 
 	// TODO: Find a way to expose this for the editor
 	public Mesh mesh;
-	public Material material = new Material(Color.White(), Color.White(), Color.White(), 0.0f);
+	public Material material = new Material(Color4f.White(), Color4f.White(), Color4f.White(), 0.0f);
 	@EditorVariable("Shader")
 	@DefaultValueString("/gamma/engine/core/shaders/default_shader.glsl")
 	private Shader shader;
