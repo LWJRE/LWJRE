@@ -28,7 +28,7 @@ public class TestFileUtils {
 
 	@Test
 	public void testReadResource() {
-		String firstLine = FileUtils.readResource("/test.txt", inputStream -> {
+		String firstLine = FileUtils.readResource("test.txt", inputStream -> {
 			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
 			String line = bufferedReader.readLine();
 			bufferedReader.close();
@@ -50,7 +50,7 @@ public class TestFileUtils {
 
 	@Test
 	public void testResourceToString() {
-		String fileContent = FileUtils.readResourceAsString("/test.txt");
+		String fileContent = FileUtils.readResourceAsString("test.txt");
 		Assertions.assertEquals("This is a test file.\nYou're welcome.", fileContent);
 	}
 
@@ -62,7 +62,7 @@ public class TestFileUtils {
 
 	@Test
 	public void testReadPropertiesResource() {
-		Properties properties = FileUtils.readPropertiesResource("/test.properties");
+		Properties properties = FileUtils.readPropertiesResource("test.properties");
 		Assertions.assertEquals("Test successful", properties.getProperty("testProperties"));
 	}
 
@@ -80,7 +80,7 @@ public class TestFileUtils {
 
 	@Test
 	public void testReadResourceBytes() {
-		byte[] bytes = FileUtils.readResourceBytes("/test.txt");
+		byte[] bytes = FileUtils.readResourceBytes("test.txt");
 		String fileContent = new String(bytes);
 		Assertions.assertEquals("This is a test file.\nYou're welcome.", fileContent);
 	}

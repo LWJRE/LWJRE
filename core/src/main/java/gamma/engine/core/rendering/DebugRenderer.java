@@ -86,8 +86,8 @@ public final class DebugRenderer {
 		});
 		try {
 			SHADER = new Shader(
-					FileUtils.readResourceAsString("/gamma/engine/core/shaders/debug_vertex.glsl"),
-					FileUtils.readResourceAsString("/gamma/engine/core/shaders/debug_fragment.glsl")
+					FileUtils.readResourceAsString("gamma/engine/core/shaders/debug_vertex.glsl"),
+					FileUtils.readResourceAsString("gamma/engine/core/shaders/debug_fragment.glsl")
 			);
 		} catch (ShaderCompilationException e) {
 			throw new RuntimeException(e);

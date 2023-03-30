@@ -13,7 +13,7 @@ import java.util.Properties;
 public final class ApplicationProperties {
 
 	/** Application properties */
-	private static final Properties PROPERTIES = FileUtils.readPropertiesResource("/application.properties");
+	private static final Properties PROPERTIES = FileUtils.readPropertiesResource("application.properties");
 
 	/**
 	 * Gets a string from application properties.

@@ -23,9 +23,9 @@ import java.util.regex.Pattern;
 public final class Shader extends DeletableResource implements Resource {
 
 	/** The main fragment shader's code */
-	private static final String MAIN_FRAGMENT = FileUtils.readResourceAsString("/gamma/engine/core/shaders/main_fragment.glsl");
+	private static final String MAIN_FRAGMENT = FileUtils.readResourceAsString("gamma/engine/core/shaders/main_fragment.glsl");
 	/** The main vertex shader's code */
-	private static final String MAIN_VERTEX = FileUtils.readResourceAsString("/gamma/engine/core/shaders/main_vertex.glsl");
+	private static final String MAIN_VERTEX = FileUtils.readResourceAsString("gamma/engine/core/shaders/main_vertex.glsl");
 
 	/** Set of all shaders needed by {@code setUniformStatic} methods */
 	private static final HashSet<Shader> SHADERS = new HashSet<>();

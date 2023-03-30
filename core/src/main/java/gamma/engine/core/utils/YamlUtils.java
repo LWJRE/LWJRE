@@ -44,7 +44,7 @@ public class YamlUtils {
 		DumperOptions dumperOptions = new DumperOptions();
 		dumperOptions.setIndent(2);
 		dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-		dumperOptions.setIndicatorIndent(1);
+		dumperOptions.setIndicatorIndent(2);
 		dumperOptions.setIndentWithIndicator(true);
 		LoaderOptions loaderOptions = new LoaderOptions();
 		loaderOptions.setTagInspector(tag -> true);

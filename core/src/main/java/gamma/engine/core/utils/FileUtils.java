@@ -44,7 +44,7 @@ public class FileUtils {
 	 * @throws UncheckedIOException if an {@link IOException} occurs when reading the file
 	 */
 	public static <T> T readResource(String path, InputStreamFunction<T> inputStreamFunction) {
-		try(InputStream inputStream = FileUtils.class.getResourceAsStream(path)) {
+		try(InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(path)) {
 			if(inputStream == null)
 				throw new FileNotFoundException("Could not find file " + path + " in classpath");
 			return inputStreamFunction.apply(inputStream);
