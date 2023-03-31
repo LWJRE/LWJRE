@@ -4,6 +4,9 @@ import gamma.engine.input.InputEvent;
 
 import java.util.*;
 import java.util.function.BiConsumer;
+import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 /**
@@ -23,16 +26,16 @@ public final class Entity {
 	private transient boolean removed = false;
 
 	/**
-	 * Processes this entity.
-	 * Children are processed first, then this entity's components are processed.
+	 * Processes this entity. Used to avoid duplication between {@code process} and {@code editorProcess}.
 	 *
-	 * @param delta Time elapsed since the previous frame
+	 * @param entityProcess Either process or editorProcess
+	 * @param componentProcess Either process or editorProcess
 	 */
-	public void process(float delta) {
+	private void process(Consumer<Entity> entityProcess, Function<Component, Boolean> componentProcess) {
 		// Process children first
 		this.children.values().removeIf(entity -> {
 			// Process child entity
-			entity.process(delta);
+			entityProcess.accept(entity);
 			// Remove the child if it was removed in this frame
 			if(entity.removed) {
 				entity.parent = null;
@@ -41,7 +44,7 @@ public final class Entity {
 			return false;
 		});
 		// Process this entity's components
-		this.components.values().removeIf(component -> component.process(delta));
+		this.components.values().removeIf(componentProcess::apply);
 		// Remove all the components if the entity has been removed in this frame
 		if(this.removed) {
 			this.components.values().removeIf(component -> {
@@ -49,6 +52,16 @@ public final class Entity {
 				return true;
 			});
 		}
+	}
+
+	/**
+	 * Processes this entity.
+	 * Children are processed first, then this entity's components are processed.
+	 *
+	 * @param delta Time elapsed since the previous frame
+	 */
+	public void process(float delta) {
+		this.process(entity -> entity.process(delta), component -> component.process(delta));
 	}
 
 	/**
@@ -66,8 +79,7 @@ public final class Entity {
 	 * Called from the editor.
 	 */
 	public void editorProcess() {
-		this.children.values().forEach(Entity::editorProcess);
-		this.components.values().removeIf(Component::editorProcess);
+		this.process(Entity::editorProcess, Component::editorProcess);
 	}
 
 	/**
