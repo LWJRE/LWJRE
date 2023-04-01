@@ -96,20 +96,24 @@ public class TestEntity {
 		Assertions.assertTrue(child.hasParent(parent1));
 		Assertions.assertFalse(child.hasParent(parent2));
 		child.setParent(parent2);
-		 Assertions.assertFalse(child.hasParent(parent1));
-		 Assertions.assertTrue(child.hasParent(parent2));
+		Assertions.assertFalse(child.hasParent(parent1));
+		Assertions.assertTrue(child.hasParent(parent2));
 	 }
 
 	 @Test
 	 public void testSetParentWithKey() {
-		 Entity parent1 = new Entity();
-		 Entity parent2 = new Entity();
-		 Entity child = new Entity();
-		 parent1.addChild("key", child);
-		 Assertions.assertTrue(parent1.hasChild("key"));
-		 child.setParent("newKey", parent2);
-		 Assertions.assertFalse(parent1.hasChild("key"));
-		 Assertions.assertTrue(parent2.hasChild("newKey"));
+		Entity root = new Entity();
+		Entity parent1 = new Entity();
+		Entity parent2 = new Entity();
+		root.addChild(parent1);
+		root.addChild(parent2);
+		Entity child = new Entity();
+		parent1.addChild("key", child);
+		Assertions.assertTrue(parent1.hasChild("key"));
+		child.setParent("newKey", parent2);
+		root.process(0.0f);
+		Assertions.assertFalse(parent1.hasChild("key"));
+		Assertions.assertTrue(parent2.hasChild("newKey"));
 	 }
 
 	@Test

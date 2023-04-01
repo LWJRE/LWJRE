@@ -4,7 +4,6 @@ import gamma.engine.input.InputEvent;
 
 import java.util.*;
 import java.util.function.BiConsumer;
-import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -41,7 +40,7 @@ public final class Entity {
 				entity.parent = null;
 				return true;
 			}
-			return false;
+			return entity.parent != this;
 		});
 		// Process this entity's components
 		this.components.values().removeIf(componentProcess::apply);
@@ -164,18 +163,19 @@ public final class Entity {
 		return this.parent;
 	}
 
-	// TODO: Test for concurrent modification exception
-
+	/**
+	 * Changes this entity's parent to the given entity.
+	 * This entity is immediately added as a child of the given one,
+	 * but it is only removed from its parent's children after it is processed to avoid {@link ConcurrentModificationException}.
+	 *
+	 * @param parent The new parent
+	 */
 	public void setParent(Entity parent) {
-		if(this.parent != null)
-			this.parent.children.values().remove(this);
 		this.parent = null;
 		parent.addChild(this);
 	}
 
 	public void setParent(String key, Entity parent) {
-		if(this.parent != null)
-			this.parent.children.values().remove(this);
 		this.parent = null;
 		parent.addChild(key, this);
 	}
@@ -218,6 +218,15 @@ public final class Entity {
 	 */
 	public int getChildCount() {
 		return this.children.size();
+	}
+
+	public boolean renameChild(Entity entity, String newName) {
+		if(this.children.values().remove(entity)) {
+			entity.parent = null;
+			this.addChild(newName, entity);
+			return true;
+		}
+		return false;
 	}
 
 	/**
