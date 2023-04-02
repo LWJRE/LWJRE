@@ -11,12 +11,13 @@ public class FrameBuffer extends DeletableResource {
 	}
 
 	public static void unbind() {
-		GL30.glBindRenderbuffer(GL30.GL_FRAMEBUFFER, 0);
+		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
 	}
 
-	private final int frameBuffer;
-	private final int texture;
-	private final int renderBuffer;
+	// TODO: Better encapsulation
+	public final int frameBuffer;
+	public final int texture;
+	public final int renderBuffer;
 
 	public FrameBuffer(int width, int height) {
 		this.frameBuffer = GL30.glGenFramebuffers();
@@ -25,6 +26,8 @@ public class FrameBuffer extends DeletableResource {
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.texture);
 		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB, width, height, 0, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, 0);
 		GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, GL11.GL_TEXTURE_2D, this.texture, 0);
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
 		this.renderBuffer = GL30.glGenRenderbuffers();
 		GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, this.renderBuffer);
 		GL30.glRenderbufferStorage(GL30.GL_RENDERBUFFER, GL14.GL_DEPTH_COMPONENT32, width, height);
