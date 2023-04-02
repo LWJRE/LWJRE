@@ -51,7 +51,7 @@ public final class Mouse {
 			BUTTONS.add(button);
 		else if(action == GLFW.GLFW_RELEASE)
 			BUTTONS.remove(button);
-		Scene.getCurrent().processInput(new MouseButtonInputEvent(button, action, mods));
+		Scene.processInput(new MouseButtonInputEvent(button, action, mods));
 	}
 
 	/**
@@ -76,7 +76,7 @@ public final class Mouse {
 	 * @param y The scroll offset along the y axis
 	 */
 	public static void scrollCallback(double x, double y) {
-		Scene.getCurrent().processInput(new MouseScrollInputEvent((float) x, (float) y));
+		Scene.processInput(new MouseScrollInputEvent((float) x, (float) y));
 	}
 
 	/**

@@ -152,7 +152,7 @@ public final class Keyboard {
 			KEYS.add(key);
 		else if(action == GLFW.GLFW_RELEASE)
 			KEYS.remove(key);
-		Scene.getCurrent().processInput(new KeyInputEvent(key, scancode, action, mods));
+		Scene.processInput(new KeyInputEvent(key, scancode, action, mods));
 	}
 
 	/**

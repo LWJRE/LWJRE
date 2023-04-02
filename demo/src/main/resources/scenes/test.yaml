@@ -1,31 +1,30 @@
-!!gamma.engine.scene.Scene
-root: !!gamma.engine.scene.Entity
-  children:
-    dragon: !!gamma.engine.scene.Entity
-      components:
-        - !!gamma.engine.components.Transform3D
-          position: !!vecmatlib.vector.Vec3f [0.0, 5.0, -5.0]
-        - !!gamma.engine.components.ModelRenderer
-          model: !!gamma.engine.resources.Model "models/dragon.obj"
-          shader: !!gamma.engine.resources.Shader "gamma/engine/shaders/default_shader.glsl"
-        - !!gamma.engine.components.KinematicBody3D {}
-        - !!gamma.engine.components.BoundingBox3D {}
-    camera: !!gamma.engine.scene.Entity
-      components:
-        - !!gamma.engine.components.Transform3D
-          position: !!vecmatlib.vector.Vec3f [0.0, 3.0, 5.0]
-        - !!gamma.engine.components.Camera3D
-          current: true
-    floor: !!gamma.engine.scene.Entity
-      components:
-        - !!gamma.engine.components.Transform3D
-          scale: !!vecmatlib.vector.Vec3f [10.0, 1.0, 10.0]
-        - !!gamma.engine.components.KinematicBody3D
-          acceleration: !!vecmatlib.vector.Vec3f [0.0, 0.0, 0.0]
-        - !!gamma.engine.components.BoundingBox3D {}
-    light: !!gamma.engine.scene.Entity
-      components:
-        - !!gamma.engine.components.Transform3D
-          position: !!vecmatlib.vector.Vec3f [10.0, 10.0, 0.0]
-        - !!gamma.engine.components.PointLight3D
-          color: !!vecmatlib.color.Color3f [1.0, 1.0, 1.0]
+!!gamma.engine.scene.Entity
+children:
+  dragon: !!gamma.engine.scene.Entity
+    components:
+      - !!gamma.engine.components.Transform3D
+        position: !!vecmatlib.vector.Vec3f [0.0, 5.0, -5.0]
+      - !!gamma.engine.components.ModelRenderer
+        model: !!gamma.engine.resources.Model "models/dragon.obj"
+        shader: !!gamma.engine.resources.Shader "gamma/engine/shaders/default_shader.glsl"
+      - !!gamma.engine.components.KinematicBody3D {}
+      - !!gamma.engine.components.BoundingBox3D {}
+  camera: !!gamma.engine.scene.Entity
+    components:
+      - !!gamma.engine.components.Transform3D
+        position: !!vecmatlib.vector.Vec3f [0.0, 3.0, 5.0]
+      - !!gamma.engine.components.Camera3D
+        current: true
+  floor: !!gamma.engine.scene.Entity
+    components:
+      - !!gamma.engine.components.Transform3D
+        scale: !!vecmatlib.vector.Vec3f [10.0, 1.0, 10.0]
+      - !!gamma.engine.components.KinematicBody3D
+        acceleration: !!vecmatlib.vector.Vec3f [0.0, 0.0, 0.0]
+      - !!gamma.engine.components.BoundingBox3D {}
+  light: !!gamma.engine.scene.Entity
+    components:
+      - !!gamma.engine.components.Transform3D
+        position: !!vecmatlib.vector.Vec3f [10.0, 10.0, 0.0]
+      - !!gamma.engine.components.PointLight3D
+        color: !!vecmatlib.color.Color3f [1.0, 1.0, 1.0]

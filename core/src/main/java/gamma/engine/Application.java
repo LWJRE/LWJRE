@@ -20,9 +20,9 @@ public final class Application {
 				Window window = new Window();
 				window.setupCallbacks();
 				window.makeContextCurrent();
-				Scene.changeScene(ApplicationProperties.getString("startScene"));
+				Scene.changeSceneTo(ApplicationProperties.getString("startScene"));
 				while(!window.isCloseRequested()) {
-					Scene.getCurrent().process();
+					Scene.process();
 					RenderingSystem.render();
 					window.update();
 					GLFW.glfwPollEvents();
