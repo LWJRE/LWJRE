@@ -1,14 +1,13 @@
 package gamma.engine.components;
 
+import gamma.engine.ApplicationProperties;
 import gamma.engine.annotations.EditorDegrees;
 import gamma.engine.annotations.EditorIndex;
 import gamma.engine.annotations.EditorRange;
 import gamma.engine.annotations.EditorVariable;
 import gamma.engine.resources.Shader;
 import gamma.engine.scene.Component;
-import gamma.engine.window.Window;
 import vecmatlib.matrix.Mat4f;
-import vecmatlib.vector.Vec2i;
 import vecmatlib.vector.Vec3f;
 
 /**
@@ -109,8 +108,7 @@ public class Camera3D extends Component {
 
 	public Mat4f projectionMatrix() {
 		float focalLength = (float) (1.0f / Math.tan(this.fov / 2.0f));
-		Vec2i windowSize = Window.getCurrent().getSize(); // TODO: Set viewport scaling
-		float aspect = (float) windowSize.x() / windowSize.y();
+		float aspect = ApplicationProperties.get("window/viewport/x", 16.0f) / ApplicationProperties.get("window/viewport/y", 9.0f);
 		return new Mat4f(
 				focalLength, 0.0f, 0.0f, 0.0f,
 				0.0f, focalLength * aspect, 0.0f, 0.0f,

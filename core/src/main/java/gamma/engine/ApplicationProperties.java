@@ -90,4 +90,20 @@ public final class ApplicationProperties {
 		}
 		return defaultValue;
 	}
+
+	public static float get(String key, float defaultValue) {
+		String property = PROPERTIES.getProperty(key);
+		if(property != null) {
+			try {
+				return Float.parseFloat(property);
+			} catch (NumberFormatException e) {
+				return defaultValue;
+			}
+		}
+		return defaultValue;
+	}
+
+	public static float getFloat(String key) {
+		return get(key, 0.0f);
+	}
 }

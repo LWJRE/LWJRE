@@ -10,6 +10,7 @@ import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
+import vecmatlib.vector.Vec2f;
 import vecmatlib.vector.Vec2i;
 
 import java.nio.IntBuffer;
@@ -64,7 +65,7 @@ public class Window {
 	 * Windows must be created from the main thread.
 	 */
 	public Window() {
-		this(ApplicationProperties.get("window/title", "untitled"), ApplicationProperties.get("window/size/width", 400), ApplicationProperties.get("window/size/height", 300));
+		this(ApplicationProperties.get("window/title", "untitled"), ApplicationProperties.get("window/viewport/width", 400), ApplicationProperties.get("window/viewport/height", 300));
 	}
 
 	/**
@@ -91,11 +92,25 @@ public class Window {
 	 */
 	public void setupCallbacks() {
 		this.checkState();
-		GLFW.glfwSetWindowSizeCallback(this.handle, (window, width, height) -> GL11.glViewport(0, 0, width, height));
+		GLFW.glfwSetWindowSizeCallback(this.handle, (window, width, height) -> this.onResize(width, height));
 		GLFW.glfwSetKeyCallback(this.handle, (window, key, scancode, action, mods) -> Keyboard.keyCallback(key, scancode, action, mods));
 		GLFW.glfwSetMouseButtonCallback(this.handle, (window, button, action, mods) -> Mouse.buttonCallback(button, action, mods));
 		GLFW.glfwSetCursorPosCallback(this.handle, (window, x, y) -> Mouse.cursorPosCallback(x, y));
 		GLFW.glfwSetScrollCallback(this.handle, (window, x, y) -> Mouse.scrollCallback(x, y));
+	}
+
+	private void onResize(int width, int height) {
+		Vec2i windowSize = new Vec2i(width, height);
+		float aspectWidth = windowSize.x();
+		float aspectHeight = aspectWidth / (16.0f / 9.0f);
+		if(aspectHeight > windowSize.y()) {
+			aspectHeight = windowSize.y();
+			aspectWidth = aspectHeight * (16.0f / 9.0f);
+		}
+		Vec2f viewportSize = new Vec2f(aspectWidth, aspectHeight);
+		float viewportX = (windowSize.x() / 2.0f) - (viewportSize.x() / 2.0f);
+		float viewportY = (windowSize.y() / 2.0f) - (viewportSize.y() / 2.0f);
+		GL11.glViewport((int) viewportX, (int) viewportY, (int) viewportSize.x(), (int) viewportSize.y());
 	}
 
 	/**
