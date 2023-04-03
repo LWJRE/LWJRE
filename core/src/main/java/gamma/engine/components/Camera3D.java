@@ -4,13 +4,12 @@ import gamma.engine.annotations.EditorDegrees;
 import gamma.engine.annotations.EditorIndex;
 import gamma.engine.annotations.EditorRange;
 import gamma.engine.annotations.EditorVariable;
+import gamma.engine.resources.Shader;
 import gamma.engine.scene.Component;
 import gamma.engine.window.Window;
 import vecmatlib.matrix.Mat4f;
 import vecmatlib.vector.Vec2i;
 import vecmatlib.vector.Vec3f;
-
-import java.util.NoSuchElementException;
 
 /**
  * Component representing a 3D camera.
@@ -23,14 +22,8 @@ public class Camera3D extends Component {
 	/** Reference to the current camera */
 	private static Camera3D currentCamera;
 
-	/**
-	 * Gets the current camera.
-	 * If no camera is current, return a default camera.
-	 *
-	 * @return The current camera or a default camera if no camera is current
-	 */
 	public static Camera3D getCurrent() {
-		return currentCamera != null ? currentCamera : new Camera3D();
+		return currentCamera;
 	}
 
 	/** Weather this is the current camera or not */
@@ -57,29 +50,66 @@ public class Camera3D extends Component {
 			this.makeCurrent();
 	}
 
+	@Override
+	protected void onUpdate(float delta) {
+		super.onUpdate(delta);
+		if(this.current) {
+			Shader.setUniformStatic("projection_matrix", this.projectionMatrix());
+			Shader.setUniformStatic("view_matrix", this.viewMatrix());
+		}
+	}
+
 	/**
 	 * Sets this as the current camera.
 	 */
 	public final void makeCurrent() {
-		getCurrent().current = false;
+		if(currentCamera != null)
+			currentCamera.current = false;
 		currentCamera = this;
 		this.current = true;
 	}
 
-	/**
-	 * Gets the global position of the camera.
-	 * Same as {@link Transform3D#globalPosition()}.
-	 * @return The global position of the camera
-	 * @throws NoSuchElementException if this entity does not have a transform component
-	 * @throws RuntimeException if this component does not belong to any entity
-	 */
-	public Vec3f globalPosition() {
+	public final Vec3f globalPosition() {
 		return this.getComponent(Transform3D.class).map(Transform3D::globalPosition).orElse(Vec3f.Zero());
+	}
+
+	// TODO: Add setters
+
+	public final Vec3f rotation() {
+		return this.getComponent(Transform3D.class).map(transform -> transform.rotation).orElse(Vec3f.Zero());
+	}
+
+	public final Vec3f rotationDegrees() {
+		return this.getComponent(Transform3D.class).map(Transform3D::rotationDegrees).orElse(Vec3f.Zero());
+	}
+
+	public final float pitch() {
+		return this.getComponent(Transform3D.class).map(transform -> transform.rotation.x()).orElse(0.0f);
+	}
+
+	public final float pitchDegrees() {
+		return (float) Math.toDegrees(this.pitch());
+	}
+
+	public final float yaw() {
+		return this.getComponent(Transform3D.class).map(transform -> transform.rotation.y()).orElse(0.0f);
+	}
+
+	public final float yawDegrees() {
+		return (float) Math.toDegrees(this.yaw());
+	}
+
+	public final float roll() {
+		return this.getComponent(Transform3D.class).map(transform -> transform.rotation.z()).orElse(0.0f);
+	}
+
+	public final float rollDegrees() {
+		return (float) Math.toDegrees(this.roll());
 	}
 
 	public Mat4f projectionMatrix() {
 		float focalLength = (float) (1.0f / Math.tan(this.fov / 2.0f));
-		Vec2i windowSize = Window.getCurrent().getSize();
+		Vec2i windowSize = Window.getCurrent().getSize(); // TODO: Set viewport scaling
 		float aspect = (float) windowSize.x() / windowSize.y();
 		return new Mat4f(
 				focalLength, 0.0f, 0.0f, 0.0f,

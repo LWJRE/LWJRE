@@ -15,6 +15,10 @@ public final class Scene {
 		root = entity;
 	}
 
+	public static Entity getRoot() {
+		return root;
+	}
+
 	private static long previousTime = System.nanoTime();
 
 	public static void process() {

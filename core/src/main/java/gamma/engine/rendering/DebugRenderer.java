@@ -27,14 +27,13 @@ public final class DebugRenderer {
 		GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
 		GL11.glDisable(GL11.GL_CULL_FACE);
 		SHADER.start();
-		SHADER.setUniform("projection_matrix", Camera3D.getCurrent().projectionMatrix());
-		SHADER.setUniform("view_matrix", Camera3D.getCurrent().viewMatrix());
 		BATCH.values().forEach(transform -> {
 			SHADER.setUniform("transformation_matrix", transform);
 			SHADER.setUniform("color", Color4f.Green());
 			CUBE.drawElements();
 		});
 		GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
+		BATCH.clear();
 	}
 	
 	static {

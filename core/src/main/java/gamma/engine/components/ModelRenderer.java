@@ -55,8 +55,6 @@ public class ModelRenderer extends Component {
 		this.getComponent(Transform3D.class)
 				.map(Transform3D::globalTransformation)
 				.ifPresent(matrix -> this.shader.setUniform("transformation_matrix", matrix));
-		this.shader.setUniform("projection_matrix", Camera3D.getCurrent().projectionMatrix());
-		this.shader.setUniform("view_matrix", Camera3D.getCurrent().viewMatrix());
 		this.shader.setUniform("material.ambient", material.ambient);
 		this.shader.setUniform("material.diffuse", material.diffuse);
 		this.shader.setUniform("material.specular", material.specular);
