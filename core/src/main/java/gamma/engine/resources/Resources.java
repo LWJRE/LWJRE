@@ -88,4 +88,8 @@ public final class Resources {
 	public static void addLoader(ResourceLoader<?> loader, String extension) {
 		LOADERS.put(extension, loader);
 	}
+
+	public static boolean hasLoader(String file) {
+		return LOADERS.containsKey(file.substring(file.lastIndexOf('.')));
+	}
 }

@@ -4,7 +4,6 @@ import gamma.engine.utils.FileUtils;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.*;
-import org.lwjgl.system.MemoryUtil;
 import vecmatlib.color.Color4f;
 
 import java.nio.ByteBuffer;
@@ -42,34 +41,11 @@ public record Model(Map<Mesh, Material> modelData) implements Resource {
 	 * for getting models normally it is better to use {@link Model#getOrLoad(String)}.
 	 */
 	public static final ResourceLoader<Model> ASSIMP_LOADER = path -> {
-		AIFileIO fileIO = AIFileIO.create().OpenProc((pFileIO, fileName, openMode) -> {
-			String fileNameStr = MemoryUtil.memUTF8(fileName); // TODO: Throw an exception if the file does not exist because at the moment it just causes a fatal error of the JVM
-			byte[] bytes = FileUtils.readResourceBytes(fileNameStr);
+		AIScene aiScene = FileUtils.readResource(path, inputStream -> {
+			byte[] bytes = inputStream.readAllBytes();
 			ByteBuffer buffer = BufferUtils.createByteBuffer(bytes.length).put(bytes).flip();
-			return AIFile.create().ReadProc((pFile, pBuffer, size, count) -> {
-				long max = Math.min(buffer.remaining() / size, count);
-				MemoryUtil.memCopy(MemoryUtil.memAddress(buffer), pBuffer, max * size);
-				buffer.position(buffer.position() + (int) (max * size));
-				return max;
-			}).SeekProc((pFile, offset, origin) -> {
-				if(origin == Assimp.aiOrigin_CUR) {
-					buffer.position(buffer.position() + (int) offset);
-				} else if(origin == Assimp.aiOrigin_SET) {
-					buffer.position((int) offset);
-				} else if(origin == Assimp.aiOrigin_END) {
-					buffer.position(buffer.limit() + (int) offset);
-				}
-				return 0;
-			}).FileSizeProc(pFile -> buffer.limit()).address();
-		}).CloseProc((pFileIO, pFile) -> {
-			AIFile aiFile = AIFile.create(pFile);
-			aiFile.ReadProc().free();
-			aiFile.SeekProc().free();
-			aiFile.FileSizeProc().free();
+			return Assimp.aiImportFileFromMemory(buffer, 0, ""); // TODO: Add flags in a .properties file
 		});
-		AIScene aiScene = Assimp.aiImportFileEx(path, 0, fileIO); // TODO: Add flags in a .properties file
-		fileIO.OpenProc().free();
-		fileIO.CloseProc().free();
 		if(aiScene == null)
 			throw new RuntimeException("Failed to load model " + path + ": " + Assimp.aiGetErrorString());
 		ArrayList<Material> materials = new ArrayList<>(aiScene.mNumMaterials());

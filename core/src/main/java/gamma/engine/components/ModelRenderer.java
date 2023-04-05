@@ -24,23 +24,15 @@ public class ModelRenderer extends Component {
 	@EditorVariable(value = "Model", setter = "setModel")
 	private Model model;
 	/** The shader used by this renderer */
-	@EditorVariable("Shader")
-	@DefaultValueString("/gamma/engine/shaders/default_shader.glsl")
-	private Shader shader;
+	@EditorVariable(value = "Shader", setter = "setShader")
+	@DefaultValueString("gamma/engine/shaders/default_shader.glsl")
+	private Shader shader = Shader.getOrLoad("gamma/engine/shaders/default_shader.glsl");
 
 	@Override
 	protected void onStart() {
 		super.onStart();
 		if(this.model != null)
 			this.model.modelData().forEach((mesh, material) -> RenderingSystem.addToBatch(this, mesh, () -> this.drawMesh(mesh, material)));
-	}
-
-	@Override
-	protected void editorUpdate() {
-		super.editorUpdate();
-		if(this.model != null) {
-			this.model.modelData().forEach(this::drawMesh);
-		}
 	}
 
 	/**
