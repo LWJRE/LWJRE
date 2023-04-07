@@ -19,20 +19,21 @@ import java.util.Map;
  */
 public record Model(Map<Mesh, Material> modelData) implements Resource {
 
-	/**
-	 * Loads a model from the classpath or return the same instance if it was already loaded.
-	 *
-	 * @see Resources#getOrLoad(String)
-	 *
-	 * @param path Path to the model file
-	 * @return The requested model
-	 * @throws RuntimeException if the resource at the given path is not a model
-	 */
 	public static Model getOrLoad(String path) {
-		Object resource = Resources.getOrLoad(path);
-		if(resource instanceof Model model)
-			return model;
-		throw new RuntimeException("Resource " + path + " is not a model");
+		if(path == null || path.isEmpty() || path.isBlank()) {
+			return new Model();
+		} else try {
+			Object resource = Resources.getOrLoad(path);
+			if(resource instanceof Model model)
+				return model;
+		} catch (RuntimeException e) {
+			e.printStackTrace();
+		}
+		return new Model();
+	}
+
+	public Model() {
+		this(new HashMap<>());
 	}
 
 	/**

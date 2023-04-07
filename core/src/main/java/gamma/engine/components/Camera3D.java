@@ -26,19 +26,19 @@ public class Camera3D extends Component {
 	}
 
 	/** Weather this is the current camera or not */
-	@EditorVariable("Current")
+	@EditorVariable(name = "Current")
 	private boolean current = false;
 
-	@EditorVariable("Fov")
+	@EditorVariable(name = "Fov")
 	@EditorDegrees
 	@EditorRange(min = 0.0f, max = 360.0f)
 	public float fov = 1.22173f;
 	/** Near distance plane */
-	@EditorVariable("Near plane")
+	@EditorVariable(name = "Near plane")
 	@EditorRange(min = 0.001f)
 	public float nearPlane = 0.1f;
 	/** Far distance plane */
-	@EditorVariable("Far plane")
+	@EditorVariable(name = "Far plane")
 	@EditorRange(min = 0.001f)
 	public float farPlane = 1000.0f;
 

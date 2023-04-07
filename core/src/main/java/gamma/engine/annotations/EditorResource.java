@@ -1,5 +1,7 @@
 package gamma.engine.annotations;
 
+import gamma.engine.resources.Resource;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -7,9 +9,9 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface DefaultValueString {
+public @interface EditorResource {
 
-	String value();
+	Class<? extends Resource> type();
 
-	boolean hide() default true;
+	String defaultValue() default "";
 }

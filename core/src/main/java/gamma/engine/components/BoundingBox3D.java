@@ -23,11 +23,11 @@ import vecmatlib.vector.Vec4f;
 public class BoundingBox3D extends Component {
 
 	/** The bounding box's offset from the origin */
-	@EditorVariable("Offset")
+	@EditorVariable(name = "Offset")
 	@EditorRange
 	public Vec3f offset = Vec3f.Zero();
 	/** The bounding box's extents */
-	@EditorVariable("Extents")
+	@EditorVariable(name = "Extents")
 	@EditorRange
 	public Vec3f extents = Vec3f.One();
 

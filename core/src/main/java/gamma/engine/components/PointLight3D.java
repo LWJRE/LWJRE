@@ -11,10 +11,10 @@ import vecmatlib.vector.Vec3f;
 @EditorIndex(1)
 public class PointLight3D extends Component {
 
-	@EditorVariable("Offset")
+	@EditorVariable(name = "Offset")
 	@EditorRange
 	public Vec3f offset = Vec3f.Zero();
-	@EditorVariable("Color")
+	@EditorVariable(name = "Color")
 	public Color3f color = Color3f.White();
 
 	@Override

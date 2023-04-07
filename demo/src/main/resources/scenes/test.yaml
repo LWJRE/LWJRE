@@ -5,8 +5,8 @@ children:
       - !!gamma.engine.components.Transform3D
         position: !!vecmatlib.vector.Vec3f [0.0, 5.0, -5.0]
       - !!gamma.engine.components.ModelRenderer
-        model: !!gamma.engine.resources.Model "models/dragon.obj"
-        shader: !!gamma.engine.resources.Shader "gamma/engine/shaders/default_shader.glsl"
+        modelPath: "models/dragon.obj"
+        shaderPath: "gamma/engine/shaders/default_shader.glsl"
       - !!gamma.engine.components.KinematicBody3D {}
       - !!gamma.engine.components.BoundingBox3D {}
   camera: !!gamma.engine.scene.Entity

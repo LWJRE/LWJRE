@@ -1,8 +1,5 @@
 package gamma.engine.utils;
 
-import gamma.engine.resources.Model;
-import gamma.engine.resources.Resources;
-import gamma.engine.resources.Shader;
 import gamma.engine.scene.Entity;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.LoaderOptions;
@@ -57,10 +54,6 @@ public class YamlUtils {
 		addSequenceRepresent(Color4f.class, color -> List.of(color.r(), color.g(), color.b(), color.a()));
 		addMappingRepresent(Entity.class, Entity::serialize);
 		addMappingConstruct(Entity.class, Entity::deserialize);
-		addScalarConstruct(Shader.class, Shader::getOrLoad);
-		addScalarConstruct(Model.class, Model::getOrLoad);
-		addScalarRepresent(Shader.class, Resources::pathOf);
-		addScalarRepresent(Model.class, Resources::pathOf);
 	}
 
 	/**

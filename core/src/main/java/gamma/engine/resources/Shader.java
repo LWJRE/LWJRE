@@ -43,7 +43,12 @@ public final class Shader extends DeletableResource implements Resource {
 		Object resource = Resources.getOrLoad(path);
 		if(resource instanceof Shader shader)
 			return shader;
+		// TODO: Use default shader instead
 		throw new RuntimeException("Resource " + path + " is not a shader");
+	}
+
+	public static Shader defaultShader() {
+		return getOrLoad("gamma/engine/shaders/default_shader.glsl");
 	}
 
 	/** The shader that is currently running, needed to load or store uniform variables */

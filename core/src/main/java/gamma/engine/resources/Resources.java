@@ -37,13 +37,17 @@ public final class Resources {
 		if(RESOURCES.containsKey(path)) {
 			return RESOURCES.get(path);
 		} else {
-			String extension = path.substring(path.lastIndexOf('.'));
-			if(LOADERS.containsKey(extension)) {
-				Resource resource = LOADERS.get(extension).load(path);
-				RESOURCES.put(path, resource);
-				return resource;
+			int index = path.lastIndexOf('.');
+			if(index != -1) {
+				String extension = path.substring(index);
+				if(LOADERS.containsKey(extension)) {
+					Resource resource = LOADERS.get(extension).load(path);
+					RESOURCES.put(path, resource);
+					return resource;
+				}
+				throw new RuntimeException("There is no loader associated with " + extension + " files");
 			}
-			throw new RuntimeException("There is no loader associated with " + extension + " files");
+			throw new RuntimeException("Cannot get type of file " + path);
 		}
 	}
 
@@ -90,6 +94,7 @@ public final class Resources {
 	}
 
 	public static boolean hasLoader(String file) {
-		return LOADERS.containsKey(file.substring(file.lastIndexOf('.')));
+		int index = file.lastIndexOf('.');
+		return index != -1 && LOADERS.containsKey(file.substring(index));
 	}
 }

@@ -35,6 +35,10 @@ public final class RenderingSystem {
 		}
 	}
 
+	public static void removeFromBatch(Component key) {
+		RENDER_BATCH.values().forEach(batch -> batch.remove(key));
+	}
+
 	public static void removeFromBatch(PointLight3D light) {
 		LIGHTS.remove(light);
 	}

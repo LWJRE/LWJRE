@@ -1,8 +1,6 @@
 package gamma.engine.components;
 
-import gamma.engine.annotations.DefaultValueString;
 import gamma.engine.annotations.EditorIndex;
-import gamma.engine.annotations.EditorVariable;
 import gamma.engine.rendering.RenderingSystem;
 import gamma.engine.resources.Material;
 import gamma.engine.resources.Mesh;
@@ -23,8 +21,7 @@ public class MeshRenderer extends Component {
 	// TODO: Find a way to expose this for the editor
 	public Mesh mesh;
 	public Material material = new Material(Color4f.White(), Color4f.White(), Color4f.White(), 0.0f);
-	@EditorVariable("Shader")
-	@DefaultValueString("gamma/engine/shaders/default_shader.glsl")
+
 	private Shader shader = Shader.getOrLoad("gamma/engine/shaders/default_shader.glsl");
 
 	@Override

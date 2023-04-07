@@ -20,14 +20,5 @@ public @interface EditorVariable {
 	 *
 	 * @return The name that this field should have in the inspector or an empty string
 	 */
-	String value() default "";
-
-	/**
-	 * The name of the setter method that the inspector should use when setting this field.
-	 * The setter method must have only one argument of the same type of this field.
-	 * If this value is an empty string the inspector will set the field directly.
-	 *
-	 * @return The name of the setter method that the inspector should use or an empty string
-	 */
-	String setter() default "";
+	String name() default "";
 }

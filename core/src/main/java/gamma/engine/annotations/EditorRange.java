@@ -10,8 +10,6 @@ import java.lang.annotation.Target;
  * If this annotation is present, the inspector will show this field as a "draggable" number input.
  * This annotation is applicable to integer types, real types, and vector types.
  *
- * @see EditorSlider
- *
  * @author Nico
  */
 @Retention(RetentionPolicy.RUNTIME)
@@ -41,4 +39,6 @@ public @interface EditorRange {
 	 * @return The amount by which the field's value should for every pixel in the inspector.
 	 */
 	float step() default 0.001f;
+
+	boolean slider() default false;
 }
