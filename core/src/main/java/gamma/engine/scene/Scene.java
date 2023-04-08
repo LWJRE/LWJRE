@@ -6,13 +6,15 @@ import gamma.engine.utils.YamlUtils;
 public final class Scene {
 
 	private static Entity root = new Entity();
+	private static Entity next = null;
 
 	public static void changeSceneTo(String path) {
-		root = YamlUtils.parseResource(path, Entity.class);
+		changeSceneTo(YamlUtils.parseResource(path, Entity.class));
 	}
 
 	public static void changeSceneTo(Entity entity) {
-		root = entity;
+		root.removeFromScene();
+		next = entity;
 	}
 
 	public static Entity getRoot() {
@@ -25,6 +27,10 @@ public final class Scene {
 		long time = System.nanoTime();
 		float delta = (time - previousTime) / 1_000_000_000.0f;
 		root.process(delta);
+		if(next != null) {
+			root = next;
+			next = null;
+		}
 		previousTime = time;
 	}
 
@@ -34,5 +40,9 @@ public final class Scene {
 
 	public static void editorProcess() {
 		root.editorProcess();
+		if(next != null) {
+			root = next;
+			next = null;
+		}
 	}
 }
