@@ -45,6 +45,7 @@ public class YamlUtils {
 		dumperOptions.setIndentWithIndicator(true);
 		LoaderOptions loaderOptions = new LoaderOptions();
 		loaderOptions.setTagInspector(tag -> true);
+		loaderOptions.setAllowDuplicateKeys(false);
 		YAML = new Yaml(PARSER, SERIALIZER, dumperOptions, loaderOptions);
 		YAML.setBeanAccess(BeanAccess.FIELD);
 		addSequenceRepresent(Vec2f.class, vec -> List.of(vec.x(), vec.y()));
