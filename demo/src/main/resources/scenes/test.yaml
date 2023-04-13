@@ -7,7 +7,7 @@ children:
       - !!gamma.engine.components.ModelRenderer
         modelPath: "models/dragon.obj"
         shaderPath: "gamma/engine/shaders/default_shader.glsl"
-      - !!gamma.engine.components.KinematicBody3D {}
+      - !!gamma.engine.components.DynamicBody3D {}
       - !!gamma.engine.components.BoundingBox3D {}
   camera: !!gamma.engine.scene.Entity
     components:

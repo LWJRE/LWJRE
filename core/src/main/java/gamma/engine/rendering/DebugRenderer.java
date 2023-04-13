@@ -1,6 +1,5 @@
 package gamma.engine.rendering;
 
-import gamma.engine.components.Camera3D;
 import gamma.engine.resources.Mesh;
 import gamma.engine.resources.Shader;
 import gamma.engine.resources.ShaderCompilationException;
