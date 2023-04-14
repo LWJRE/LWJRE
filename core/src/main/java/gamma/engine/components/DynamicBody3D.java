@@ -18,34 +18,49 @@ public class DynamicBody3D extends KinematicBody3D {
 	@EditorRange(min = 0.0f, max = 1.0f, slider = true)
 	public float restitution = 0.0f;
 
+	@EditorVariable(name = "Is immovable")
+	public boolean immovable = false;
+
 	private transient Vec3f force = Vec3f.Zero();
 
 	private transient final ArrayList<Impulse> impulses = new ArrayList<>();
 
 	@Override
 	protected void onUpdate(float delta) {
-		Vec3f resultantForce = this.impulses.stream().map(impulse -> {
-			impulse.delta -= delta;
-			return impulse.force;
-		}).reduce(Vec3f::plus).orElse(Vec3f.Zero()).plus(this.force);
-		Vec3f deltaAcceleration = resultantForce.dividedBy(this.mass);
+		if(this.immovable) {
+			this.acceleration = Vec3f.Zero();
+			this.velocity = Vec3f.Zero();
+		}
+		Vec3f deltaAcceleration = this.resultantForce().dividedBy(this.mass);
 		this.acceleration = this.acceleration.plus(deltaAcceleration);
-		this.impulses.removeIf(impulse -> impulse.delta <= 0.0f);
+		this.impulses.removeIf(impulse -> {
+			impulse.delta -= delta;
+			return impulse.delta <= 0.0f;
+		});
 		super.onUpdate(delta);
 	}
 
 	@Override
 	protected void onCollision(Collision3D collision) {
 		if(collision.collider() instanceof DynamicBody3D collider) {
-			float mass = 1.0f / (1.0f / this.mass + 1.0f / collider.mass);
+			Vec3f relativeVelocity = collider.velocity.minus(this.velocity);
 			float restitution = Math.min(this.restitution, collider.restitution);
-			float impact = collision.normal().dot(this.velocity.minus(collider.velocity));
-			float impulse = (1 + restitution) * mass * impact;
+			float impulse = -(1 + restitution) * relativeVelocity.dot(collision.normal()) / (1.0f / this.mass + 1.0f / collider.mass);
+			if(collider.immovable) {
+				this.getComponent(Transform3D.class).ifPresent(transform -> {
+					Vec3f penetration = collision.normal().multipliedBy(collision.depth());
+					transform.position = transform.position.plus(penetration);
+				});
+			}
 			this.velocity = this.velocity.minus(collision.normal().multipliedBy(impulse / this.mass));
 			collider.velocity = collider.velocity.plus(collision.normal().multipliedBy(impulse / collider.mass));
 		} else {
 			super.onCollision(collision);
 		}
+	}
+
+	public final Vec3f resultantForce() {
+		return this.impulses.stream().map(impulse -> impulse.force).reduce(Vec3f::plus).orElse(Vec3f.Zero()).plus(this.force);
 	}
 
 	public void applyForce(Vec3f force) {

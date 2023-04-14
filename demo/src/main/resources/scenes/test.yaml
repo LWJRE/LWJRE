@@ -3,11 +3,13 @@ children:
   dragon: !!gamma.engine.scene.Entity
     components:
       - !!gamma.engine.components.Transform3D
-        position: !!vecmatlib.vector.Vec3f [0.0, 5.0, -5.0]
+        position: !!vecmatlib.vector.Vec3f [0.0, 15.0, -5.0]
       - !!gamma.engine.components.ModelRenderer
         modelPath: "models/dragon.obj"
         shaderPath: "gamma/engine/shaders/default_shader.glsl"
-      - !!gamma.engine.components.DynamicBody3D {}
+      - !!gamma.engine.components.DynamicBody3D
+        velocity: !!vecmatlib.vector.Vec3f [0.0, -10.0, 0.0]
+        restitution: 0.25
       - !!gamma.engine.components.BoundingBox3D {}
   camera: !!gamma.engine.scene.Entity
     components:
@@ -19,8 +21,10 @@ children:
     components:
       - !!gamma.engine.components.Transform3D
         scale: !!vecmatlib.vector.Vec3f [10.0, 1.0, 10.0]
-      - !!gamma.engine.components.KinematicBody3D
-        acceleration: !!vecmatlib.vector.Vec3f [0.0, 0.0, 0.0]
+      - !!gamma.engine.components.DynamicBody3D
+        mass: .inf
+        restitution: 1.0
+        immovable: true
       - !!gamma.engine.components.BoundingBox3D {}
   light: !!gamma.engine.scene.Entity
     components:
