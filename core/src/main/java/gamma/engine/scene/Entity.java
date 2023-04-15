@@ -1,6 +1,7 @@
 package gamma.engine.scene;
 
 import gamma.engine.input.InputEvent;
+import gamma.engine.utils.YamlUtils;
 
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -395,6 +396,8 @@ public final class Entity {
 		this.removed = true;
 	}
 
+	// TODO: Implement serialization of an entity that references entities in other files
+
 	/**
 	 * Serializes the given entity. Used to write entity to {@code .yaml} files.
 	 *
@@ -418,14 +421,19 @@ public final class Entity {
 	 * @return The deserialized entity
 	 */
 	public static Entity deserialize(Map<?, ?> map) {
-		Entity entity = new Entity();
+		Entity entity = map.containsKey("load") ? YamlUtils.parseResource((String) map.get("load"), Entity.class) : new Entity();
 		Optional.ofNullable((List<?>) map.get("components")).ifPresent(components -> components.forEach(obj -> {
-			if(obj instanceof Component component)
-				entity.addComponent(component);
+			if(obj instanceof Component component) {
+				Class<?> key = getKey(component.getClass());
+				entity.components.put(key, component);
+				component.entity = entity;
+			}
 		}));
+		// TODO: Allow children overrides when entity is loaded from another file
 		Optional.ofNullable(((Map<?, ?>) map.get("children"))).ifPresent(children -> children.forEach((key, value) -> {
-			if(value instanceof Entity child && key instanceof String string)
+			if(value instanceof Entity child && key instanceof String string) {
 				entity.addChild(string, child);
+			}
 		}));
 		return entity;
 	}
