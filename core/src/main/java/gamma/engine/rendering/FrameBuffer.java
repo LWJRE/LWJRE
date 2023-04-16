@@ -1,4 +1,4 @@
-package gamma.engine.resources;
+package gamma.engine.rendering;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;

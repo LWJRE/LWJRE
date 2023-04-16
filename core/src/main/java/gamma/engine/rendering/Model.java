@@ -1,6 +1,9 @@
-package gamma.engine.resources;
+package gamma.engine.rendering;
 
-import gamma.engine.utils.FileUtils;
+import gamma.engine.resources.Resource;
+import gamma.engine.resources.ResourceLoader;
+import gamma.engine.resources.Resources;
+import gamma.engine.resources.FileUtils;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.*;
@@ -108,4 +111,9 @@ public record Model(Map<Mesh, Material> modelData) implements Resource {
 		Assimp.aiReleaseImport(aiScene);
 		return new Model(modelData);
 	};
+
+	static {
+		Resources.addLoader(Model.ASSIMP_LOADER, ".obj");
+		Resources.addLoader(Model.ASSIMP_LOADER, ".dae");
+	}
 }

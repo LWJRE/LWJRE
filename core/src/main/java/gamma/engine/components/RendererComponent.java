@@ -2,7 +2,7 @@ package gamma.engine.components;
 
 import gamma.engine.annotations.EditorResource;
 import gamma.engine.annotations.EditorVariable;
-import gamma.engine.resources.Shader;
+import gamma.engine.rendering.Shader;
 import gamma.engine.scene.Component;
 
 public class RendererComponent extends Component {

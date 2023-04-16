@@ -5,7 +5,7 @@ import gamma.engine.annotations.EditorDegrees;
 import gamma.engine.annotations.EditorIndex;
 import gamma.engine.annotations.EditorRange;
 import gamma.engine.annotations.EditorVariable;
-import gamma.engine.resources.Shader;
+import gamma.engine.rendering.Shader;
 import gamma.engine.scene.Component;
 import vecmatlib.matrix.Mat4f;
 import vecmatlib.vector.Vec3f;

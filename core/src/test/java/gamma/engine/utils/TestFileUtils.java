@@ -1,5 +1,6 @@
 package gamma.engine.utils;
 
+import gamma.engine.resources.FileUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

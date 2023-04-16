@@ -1,14 +1,16 @@
-package gamma.engine.resources;
+package gamma.engine.scene;
 
-import gamma.engine.scene.Component;
-import gamma.engine.scene.Entity;
-import gamma.engine.utils.YamlUtils;
+import gamma.engine.resources.YamlUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class EntityResource {
+
+	static {
+		YamlUtils.addMappingRepresent(EntityResource.class, EntityResource::serialize);
+	}
 
 	public String base = "";
 	private final ArrayList<Component> components = new ArrayList<>();

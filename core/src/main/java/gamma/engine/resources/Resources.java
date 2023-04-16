@@ -17,12 +17,6 @@ public final class Resources {
 	/** Stores all the resource loaders */
 	private static final HashMap<String, ResourceLoader<?>> LOADERS = new HashMap<>();
 
-	static {
-		addLoader(Shader.SHADER_LOADER, ".glsl");
-		addLoader(Model.ASSIMP_LOADER, ".obj");
-		addLoader(Model.ASSIMP_LOADER, ".dae");
-	}
-
 	/**
 	 * Gets the resource at the given path if it was already loaded.
 	 * If it was not already loaded, finds a suitable {@link ResourceLoader} and loads it.

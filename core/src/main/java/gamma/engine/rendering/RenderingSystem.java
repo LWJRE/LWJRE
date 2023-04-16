@@ -1,8 +1,6 @@
 package gamma.engine.rendering;
 
 import gamma.engine.components.PointLight3D;
-import gamma.engine.resources.Mesh;
-import gamma.engine.resources.Shader;
 import gamma.engine.scene.Component;
 import org.lwjgl.opengl.GL11;
 

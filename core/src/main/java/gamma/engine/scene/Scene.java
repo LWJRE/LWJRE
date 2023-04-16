@@ -1,8 +1,7 @@
 package gamma.engine.scene;
 
 import gamma.engine.input.InputEvent;
-import gamma.engine.resources.EntityResource;
-import gamma.engine.utils.YamlUtils;
+import gamma.engine.resources.YamlUtils;
 
 public final class Scene {
 

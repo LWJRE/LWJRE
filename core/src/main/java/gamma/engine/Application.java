@@ -1,7 +1,7 @@
 package gamma.engine;
 
 import gamma.engine.rendering.RenderingSystem;
-import gamma.engine.resources.DeletableResource;
+import gamma.engine.rendering.DeletableResource;
 import gamma.engine.scene.Scene;
 import gamma.engine.window.Window;
 import org.lwjgl.glfw.GLFW;

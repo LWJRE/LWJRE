@@ -4,9 +4,9 @@ import gamma.engine.annotations.EditorIndex;
 import gamma.engine.annotations.EditorResource;
 import gamma.engine.annotations.EditorVariable;
 import gamma.engine.rendering.RenderingSystem;
-import gamma.engine.resources.Material;
-import gamma.engine.resources.Mesh;
-import gamma.engine.resources.Model;
+import gamma.engine.rendering.Material;
+import gamma.engine.rendering.Mesh;
+import gamma.engine.rendering.Model;
 
 @EditorIndex(1)
 public class ModelRenderer extends RendererComponent {

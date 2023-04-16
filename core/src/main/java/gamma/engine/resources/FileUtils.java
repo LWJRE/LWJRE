@@ -1,4 +1,4 @@
-package gamma.engine.utils;
+package gamma.engine.resources;
 
 import java.io.*;
 import java.nio.file.Files;

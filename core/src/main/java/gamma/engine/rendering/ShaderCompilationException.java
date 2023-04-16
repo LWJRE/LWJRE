@@ -1,4 +1,4 @@
-package gamma.engine.resources;
+package gamma.engine.rendering;
 
 /**
  * Signals that there was a compilation error in a shader.

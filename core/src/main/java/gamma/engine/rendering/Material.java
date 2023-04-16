@@ -1,4 +1,4 @@
-package gamma.engine.resources;
+package gamma.engine.rendering;
 
 import vecmatlib.color.Color4f;
 

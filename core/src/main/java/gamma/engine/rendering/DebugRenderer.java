@@ -1,10 +1,7 @@
 package gamma.engine.rendering;
 
-import gamma.engine.resources.Mesh;
-import gamma.engine.resources.Shader;
-import gamma.engine.resources.ShaderCompilationException;
 import gamma.engine.scene.Component;
-import gamma.engine.utils.FileUtils;
+import gamma.engine.resources.FileUtils;
 import org.lwjgl.opengl.GL11;
 import vecmatlib.color.Color4f;
 import vecmatlib.matrix.Mat4f;

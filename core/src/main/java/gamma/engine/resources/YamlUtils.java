@@ -1,6 +1,5 @@
-package gamma.engine.utils;
+package gamma.engine.resources;
 
-import gamma.engine.resources.EntityResource;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
@@ -53,7 +52,6 @@ public class YamlUtils {
 		addSequenceRepresent(Vec4f.class, vec -> List.of(vec.x(), vec.y(), vec.z(), vec.w()));
 		addSequenceRepresent(Color3f.class, color -> List.of(color.r(), color.g(), color.b()));
 		addSequenceRepresent(Color4f.class, color -> List.of(color.r(), color.g(), color.b(), color.a()));
-		addMappingRepresent(EntityResource.class, EntityResource::serialize);
 	}
 
 	/**

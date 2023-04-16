@@ -1,4 +1,4 @@
-package gamma.engine.resources;
+package gamma.engine.rendering;
 
 import java.util.ArrayList;
 

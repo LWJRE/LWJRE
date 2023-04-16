@@ -1,6 +1,6 @@
 package gamma.engine;
 
-import gamma.engine.utils.FileUtils;
+import gamma.engine.resources.FileUtils;
 
 import java.util.Properties;
 

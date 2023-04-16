@@ -1,6 +1,9 @@
-package gamma.engine.resources;
+package gamma.engine.rendering;
 
-import gamma.engine.utils.FileUtils;
+import gamma.engine.resources.Resource;
+import gamma.engine.resources.ResourceLoader;
+import gamma.engine.resources.Resources;
+import gamma.engine.resources.FileUtils;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
@@ -543,4 +546,8 @@ public final class Shader extends DeletableResource implements Resource {
 			throw new RuntimeException("Could not compile shader " + path, e);
 		}
 	};
+
+	static {
+		Resources.addLoader(SHADER_LOADER, ".glsl");
+	}
 }

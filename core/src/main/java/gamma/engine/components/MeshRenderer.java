@@ -2,9 +2,9 @@ package gamma.engine.components;
 
 import gamma.engine.annotations.EditorIndex;
 import gamma.engine.rendering.RenderingSystem;
-import gamma.engine.resources.Material;
-import gamma.engine.resources.Mesh;
-import gamma.engine.resources.Shader;
+import gamma.engine.rendering.Material;
+import gamma.engine.rendering.Mesh;
+import gamma.engine.rendering.Shader;
 import gamma.engine.scene.Component;
 import vecmatlib.color.Color4f;
 
