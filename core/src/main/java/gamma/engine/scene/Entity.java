@@ -1,9 +1,11 @@
 package gamma.engine.scene;
 
 import gamma.engine.input.InputEvent;
-import gamma.engine.utils.YamlUtils;
 
-import java.util.*;
+import java.util.ConcurrentModificationException;
+import java.util.HashMap;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -240,7 +242,7 @@ public final class Entity {
 	 */
 	public void addComponent(Component component) {
 		if(component.entity == null) {
-			Class<?> type = getKey(component.getClass());
+			Class<?> type = Component.getDirectSubclass(component.getClass());
 			if(!this.components.containsKey(type)) {
 				this.components.put(type, component);
 				component.entity = this;
@@ -262,7 +264,7 @@ public final class Entity {
 	 * @param <C> Type of the component to get
 	 */
 	public <C extends Component> Optional<C> getComponent(Class<C> type) {
-		return Optional.ofNullable(type.cast(this.components.get(getKey(type))));
+		return Optional.ofNullable(type.cast(this.components.get(Component.getDirectSubclass(type))));
 	}
 
 	/**
@@ -394,62 +396,5 @@ public final class Entity {
 	public void removeFromScene() {
 		this.children.values().forEach(Entity::removeFromScene);
 		this.removed = true;
-	}
-
-	// TODO: Implement serialization of an entity that references entities in other files
-
-	/**
-	 * Serializes the given entity. Used to write entity to {@code .yaml} files.
-	 *
-	 * @param entity The entity to serialize
-	 * @return A map with the key "children" mapping to a copy of this entity's children map
-	 * and a key "components" mapping to a copy of this entity's component list
-	 */
-	public static Map<String, Object> serialize(Entity entity) {
-		HashMap<String, Object> result = new HashMap<>();
-		if(!entity.children.isEmpty())
-			result.put("children", new HashMap<>(entity.children));
-		if(!entity.components.isEmpty())
-			result.put("components", entity.getComponents().toList());
-		return result;
-	}
-
-	/**
-	 * Deserializes an entity. Used to read entities from {@code .yaml} files.
-	 *
-	 * @param map A map containing the entity's children and components
-	 * @return The deserialized entity
-	 */
-	public static Entity deserialize(Map<?, ?> map) {
-		Entity entity = map.containsKey("load") ? YamlUtils.parseResource((String) map.get("load"), Entity.class) : new Entity();
-		Optional.ofNullable((List<?>) map.get("components")).ifPresent(components -> components.forEach(obj -> {
-			if(obj instanceof Component component) {
-				Class<?> key = getKey(component.getClass());
-				entity.components.put(key, component);
-				component.entity = entity;
-			}
-		}));
-		// TODO: Allow children overrides when entity is loaded from another file
-		Optional.ofNullable(((Map<?, ?>) map.get("children"))).ifPresent(children -> children.forEach((key, value) -> {
-			if(value instanceof Entity child && key instanceof String string) {
-				entity.addChild(string, child);
-			}
-		}));
-		return entity;
-	}
-
-	/**
-	 * Gets the component key from a class.
-	 *
-	 * @param from Class to start from
-	 * @return Component key
-	 */
-	private static Class<?> getKey(Class<?> from) {
-		Class<?> superclass = from.getSuperclass();
-		if(superclass.equals(Object.class))
-			throw new IllegalArgumentException("The given class is not a subclass of Component");
-		if(superclass.equals(Component.class))
-			return from;
-		return getKey(superclass);
 	}
 }

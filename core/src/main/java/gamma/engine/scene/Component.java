@@ -172,6 +172,15 @@ public abstract class Component {
 		return this.getEntity().flatMap(entity -> entity.getComponentInParent(type));
 	}
 
+	public static Class<?> getDirectSubclass(Class<?> fromClass) {
+		Class<?> superclass = fromClass.getSuperclass();
+		if(superclass.equals(Object.class))
+			throw new IllegalArgumentException("The given class is not a subclass of Component");
+		if(superclass.equals(Component.class))
+			return fromClass;
+		return getDirectSubclass(superclass);
+	}
+
 	/**
 	 * Used to keep track of the component's state.
 	 */

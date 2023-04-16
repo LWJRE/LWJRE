@@ -1,4 +1,4 @@
-!!gamma.engine.scene.Entity
+!!gamma.engine.resources.EntityResource
 components:
   - !!gamma.engine.components.Transform3D {}
   - !!gamma.engine.components.ModelRenderer

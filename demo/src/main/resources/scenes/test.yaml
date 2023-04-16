@@ -1,17 +1,17 @@
-!!gamma.engine.scene.Entity
+!!gamma.engine.resources.EntityResource
 children:
-  dragon: !!gamma.engine.scene.Entity
-    load: "scenes/dragon.yaml"
+  dragon:
+    base: "scenes/dragon.yaml"
     components:
       - !!gamma.engine.components.Transform3D
         position: !!vecmatlib.vector.Vec3f [0.0, 5.0, -1.0]
-  camera: !!gamma.engine.scene.Entity
+  camera:
     components:
       - !!gamma.engine.components.Transform3D
         position: !!vecmatlib.vector.Vec3f [0.0, 3.0, 5.0]
       - !!gamma.engine.components.Camera3D
         current: true
-  floor: !!gamma.engine.scene.Entity
+  floor:
     components:
       - !!gamma.engine.components.Transform3D
         position: !!vecmatlib.vector.Vec3f [0.0, -2.0, 0.0]
@@ -21,7 +21,7 @@ children:
         restitution: 1.0
         immovable: true
       - !!gamma.engine.components.BoundingBox3D {}
-  light: !!gamma.engine.scene.Entity
+  light:
     components:
       - !!gamma.engine.components.Transform3D
         position: !!vecmatlib.vector.Vec3f [10.0, 10.0, 0.0]

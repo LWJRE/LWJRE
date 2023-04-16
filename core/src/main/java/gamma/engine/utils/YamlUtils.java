@@ -1,6 +1,6 @@
 package gamma.engine.utils;
 
-import gamma.engine.scene.Entity;
+import gamma.engine.resources.EntityResource;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
@@ -53,8 +53,7 @@ public class YamlUtils {
 		addSequenceRepresent(Vec4f.class, vec -> List.of(vec.x(), vec.y(), vec.z(), vec.w()));
 		addSequenceRepresent(Color3f.class, color -> List.of(color.r(), color.g(), color.b()));
 		addSequenceRepresent(Color4f.class, color -> List.of(color.r(), color.g(), color.b(), color.a()));
-		addMappingRepresent(Entity.class, Entity::serialize);
-		addMappingConstruct(Entity.class, Entity::deserialize);
+		addMappingRepresent(EntityResource.class, EntityResource::serialize);
 	}
 
 	/**
@@ -233,11 +232,6 @@ public class YamlUtils {
 		public Map<Class<?>, Represent> getRepresents() {
 			return this.representers;
 		}
-
-//		@Override
-//		protected Set<Property> getProperties(Class<?> type) {
-//			return super.getProperties(type);
-//		}
 
 		@Override
 		public Node representScalar(Tag tag, String value) {
