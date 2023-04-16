@@ -1,7 +1,6 @@
 package gamma.engine.scene;
 
 import gamma.engine.input.InputEvent;
-import gamma.engine.resources.YamlUtils;
 
 public final class Scene {
 
@@ -9,7 +8,7 @@ public final class Scene {
 	private static Entity next = null;
 
 	public static void changeSceneTo(String path) {
-		changeSceneTo(YamlUtils.parseResource(path, EntityResource.class));
+		changeSceneTo(EntityResource.getOrLoad(path));
 	}
 
 	public static void changeSceneTo(EntityResource resource) {

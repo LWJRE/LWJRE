@@ -1,18 +1,32 @@
 package gamma.engine.scene;
 
+import gamma.engine.resources.Resource;
+import gamma.engine.resources.Resources;
 import gamma.engine.resources.YamlUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class EntityResource {
+public class EntityResource implements Resource {
 
 	static {
+		Resources.addLoader(EntityResource::load, ".yaml"); // TODO: Different .yaml resources?
 		YamlUtils.addMappingRepresent(EntityResource.class, EntityResource::serialize);
 	}
 
-	public String base = "";
+	public static EntityResource getOrLoad(String path) {
+		Object resource = Resources.getOrLoad(path);
+		if(resource instanceof EntityResource entityResource)
+			return entityResource;
+		throw new RuntimeException("Resource at path " + path + " is not an EntityResource");
+	}
+
+	public static EntityResource load(String path) {
+		return YamlUtils.parseResource(path, EntityResource.class);
+	}
+
+	private String base = "";
 	private final ArrayList<Component> components = new ArrayList<>();
 	private final HashMap<String, EntityResource> children = new HashMap<>();
 
@@ -21,7 +35,7 @@ public class EntityResource {
 		HashMap<Class<?>, Component> components = new HashMap<>();
 		HashMap<String, EntityResource> children = new HashMap<>(this.children);
 		if(!this.base.isEmpty()) {
-			EntityResource base = YamlUtils.parseResource(this.base, EntityResource.class);
+			EntityResource base = getOrLoad(this.base);
 			base.components.forEach(component -> {
 				Class<?> key = Component.getDirectSubclass(component.getClass());
 				components.put(key, component);
