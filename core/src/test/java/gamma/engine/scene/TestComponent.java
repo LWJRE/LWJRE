@@ -12,13 +12,7 @@ public class TestComponent {
 		Entity entity = new Entity();
 		Component1 component = new Component1();
 		entity.addComponent(component);
-		Assertions.assertEquals(Optional.of(entity), component.getEntity());
-	}
-
-	@Test
-	public void testGetEntityEmpty() {
-		Component1 component = new Component1();
-		Assertions.assertTrue(component.getEntity().isEmpty());
+		Assertions.assertEquals(entity, component.entity());
 	}
 
 	@Test

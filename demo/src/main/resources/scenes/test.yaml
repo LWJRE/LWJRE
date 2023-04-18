@@ -1,29 +1,30 @@
-!!gamma.engine.resources.EntityResource
+!!gamma.engine.scene.EntityResource
 children:
-  dragon:
+  dragon: !!gamma.engine.scene.EntityResource
     base: "scenes/dragon.yaml"
     components:
-      - !!gamma.engine.components.Transform3D
+      gamma.engine.components.Transform3D:
         position: !!vecmatlib.vector.Vec3f [0.0, 5.0, -1.0]
-  camera:
+  camera: !!gamma.engine.scene.EntityResource
     components:
-      - !!gamma.engine.components.Transform3D
+      gamma.engine.components.Transform3D:
         position: !!vecmatlib.vector.Vec3f [0.0, 3.0, 5.0]
-      - !!gamma.engine.components.Camera3D
+      gamma.engine.components.Camera3D:
         current: true
-  floor:
+  floor: !!gamma.engine.scene.EntityResource
     components:
-      - !!gamma.engine.components.Transform3D
+      gamma.engine.components.Transform3D:
         position: !!vecmatlib.vector.Vec3f [0.0, -2.0, 0.0]
         scale: !!vecmatlib.vector.Vec3f [10.0, 1.0, 10.0]
-      - !!gamma.engine.components.DynamicBody3D
-        mass: .inf
-        restitution: 1.0
+      gamma.engine.components.DynamicBody3D:
+        mass: !!float 10000.0
+        restitution: 1
         immovable: true
-      - !!gamma.engine.components.BoundingBox3D {}
-  light:
+      gamma.engine.components.BoundingBox3D:
+        offset: !!vecmatlib.vector.Vec3f [0.0, 0.0, 0.0]
+  light: !!gamma.engine.scene.EntityResource
     components:
-      - !!gamma.engine.components.Transform3D
+      gamma.engine.components.Transform3D:
         position: !!vecmatlib.vector.Vec3f [10.0, 10.0, 0.0]
-      - !!gamma.engine.components.PointLight3D
+      gamma.engine.components.PointLight3D:
         color: !!vecmatlib.color.Color3f [1.0, 1.0, 1.0]

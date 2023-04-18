@@ -14,9 +14,9 @@ import java.util.Optional;
 public abstract class Component {
 
 	/** The entity to which this component is attached */
-	transient Entity entity = null;
+	Entity entity = null;
 	/** Current state of this component */
-	private transient State state = State.NEW;
+	private State state = State.NEW;
 
 	/**
 	 * Processes this component.
@@ -116,15 +116,8 @@ public abstract class Component {
 		this.state = State.REMOVED;
 	}
 
-	/**
-	 * Gets an {@link Optional} representing the entity to which this component is attached
-	 * or an empty {@code Optional} if this component is not attached to any entity.
-	 *
-	 * @return An {@code Optional} representing the entity to which this component is attached
-	 * or an empty {@code Optional} if this component is not attached to any entity
-	 */
-	public final Optional<Entity> getEntity() {
-		return Optional.ofNullable(this.entity);
+	public final Entity entity() {
+		return this.entity;
 	}
 
 	/**
@@ -139,7 +132,7 @@ public abstract class Component {
 	 * or if this component is not attached to any entity.
 	 */
 	public final <C extends Component> Optional<C> getComponent(Class<C> type) {
-		return this.getEntity().flatMap(entity -> entity.getComponent(type));
+		return this.entity != null ? this.entity.getComponent(type) : Optional.empty();
 	}
 
 	/**
@@ -152,7 +145,9 @@ public abstract class Component {
 	 * @throws RuntimeException       if this component does not belong to any entity
 	 */
 	public final <C extends Component> C requireComponent(Class<C> type) {
-		return this.getEntity().map(entity -> entity.requireComponent(type)).orElseThrow(() -> new RuntimeException("Component " + this + " does not belong to any entity"));
+		if(this.entity == null)
+			throw new RuntimeException("Component " + this + " does not belong to any entity");
+		return this.entity.requireComponent(type);
 	}
 
 	/**
@@ -169,8 +164,10 @@ public abstract class Component {
 	 * or if the entity does not have a parent.
 	 */
 	public final <C extends Component> Optional<C> getComponentInParent(Class<C> type) {
-		return this.getEntity().flatMap(entity -> entity.getComponentInParent(type));
+		return this.entity != null ? this.entity.getComponentInParent(type) : Optional.empty();
 	}
+
+	// TODO: Finish "get component" methods
 
 	public static Class<?> getDirectSubclass(Class<?> fromClass) {
 		Class<?> superclass = fromClass.getSuperclass();

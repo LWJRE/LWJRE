@@ -14,6 +14,7 @@ public class TestEntity {
 		Entity child = new Entity();
 		parent.addChild(child);
 		Assertions.assertEquals(Optional.of(child), parent.getChild("Entity0"));
+		Assertions.assertEquals(child, parent.requireChild("Entity0"));
 		Assertions.assertEquals(parent, child.getParent());
 	}
 
@@ -31,6 +32,7 @@ public class TestEntity {
 		Entity child = new Entity();
 		parent.addChild("givenKey", child);
 		Assertions.assertEquals(Optional.of(child), parent.getChild("givenKey"));
+		Assertions.assertEquals(child, parent.requireChild("givenKey"));
 	}
 
 	@Test

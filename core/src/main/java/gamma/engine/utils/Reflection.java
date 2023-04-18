@@ -51,7 +51,23 @@ public class Reflection {
 		try {
 			Field field = fieldClass.getDeclaredField(fieldName);
 			field.setAccessible(true);
-			field.set(object, value);
+			if(value instanceof Number number) {
+				Class<?> fieldType = field.getType();
+				if(fieldType.equals(byte.class) || fieldType.equals(Byte.class))
+					field.set(object, number.byteValue());
+				else if(fieldType.equals(short.class) || fieldType.equals(Short.class))
+					field.set(object, number.shortValue());
+				else if(fieldType.equals(int.class) || fieldType.equals(Integer.class))
+					field.set(object, number.intValue());
+				else if(fieldType.equals(long.class) || fieldType.equals(Long.class))
+					field.set(object, number.longValue());
+				else if(fieldType.equals(float.class) || fieldType.equals(Float.class))
+					field.set(object, number.floatValue());
+				else if(fieldType.equals(double.class) || fieldType.equals(Double.class))
+					field.set(object, number.doubleValue());
+			} else {
+				field.set(object, value);
+			}
 		} catch (NoSuchFieldException e) {
 			if(fieldClass.getSuperclass().equals(Object.class))
 				throw new ReflectionException("Cannot find field with name " + fieldName, e);

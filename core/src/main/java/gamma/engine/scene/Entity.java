@@ -2,11 +2,9 @@ package gamma.engine.scene;
 
 import gamma.engine.input.InputEvent;
 
-import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -23,9 +21,11 @@ public final class Entity {
 	/** Components attached to this entity */
 	private final HashMap<Class<?>, Component> components = new HashMap<>();
 	/** This entity's parent */
-	private transient Entity parent;
+	private Entity parent;
 	/** Set to true when this entity is being removed from the scene */
-	private transient boolean removed = false;
+	private boolean removed = false;
+
+	// TODO: onStart and onExit should not be called in the editor
 
 	/**
 	 * Processes this entity. Used to avoid duplication between {@code process} and {@code editorProcess}.
@@ -127,14 +127,8 @@ public final class Entity {
 		return this.children.containsKey(key);
 	}
 
-	/**
-	 * Checks if the given entity is a child of this one.
-	 *
-	 * @param entity The child entity
-	 * @return True if this entity is the given entity's parent, otherwise false
-	 */
 	public boolean hasChild(Entity entity) {
-		return entity.parent == this;
+		return this.children.containsValue(entity);
 	}
 
 	/**
@@ -169,7 +163,7 @@ public final class Entity {
 	/**
 	 * Changes this entity's parent to the given entity.
 	 * This entity is immediately added as a child of the given one,
-	 * but it is only removed from its parent's children after it is processed to avoid {@link ConcurrentModificationException}.
+	 * but it is only removed from its parent's children after it is processed to avoid concurrent modification.
 	 *
 	 * @param parent The new parent
 	 */
@@ -178,6 +172,14 @@ public final class Entity {
 		parent.addChild(this);
 	}
 
+	/**
+	 * Adds this entity as a child of the given one with the given key.
+	 * This entity is immediately added as a child of the given one,
+	 * but it is only removed from its parent's children after it is processed to avoid concurrent modification.
+	 *
+	 * @param key The new key
+	 * @param parent The new parent
+	 */
 	public void setParent(String key, Entity parent) {
 		this.parent = null;
 		parent.addChild(key, this);
@@ -196,12 +198,14 @@ public final class Entity {
 	}
 
 	/**
-	 * Performs the given action on all this entity's children.
+	 * Gets a child of this entity with the given key.
 	 *
-	 * @param action A {@link BiConsumer} taking the child's key and the child.
+	 * @param key The child's key
+	 * @return The requested child
+	 * @throws NoSuchElementException If this entity does not have a child with the given key
 	 */
-	public void forEachChild(BiConsumer<String, Entity> action) {
-		this.children.forEach(action);
+	public Entity requireChild(String key) {
+		return this.getChild(key).orElseThrow(() -> new NoSuchElementException("Entity " + this + " does not have a child with key " + key));
 	}
 
 	/**
@@ -221,15 +225,6 @@ public final class Entity {
 	 */
 	public int getChildCount() {
 		return this.children.size();
-	}
-
-	public boolean renameChild(Entity entity, String newName) {
-		if(this.children.values().remove(entity)) {
-			entity.parent = null;
-			this.addChild(newName, entity);
-			return true;
-		}
-		return false;
 	}
 
 	/**
@@ -268,6 +263,16 @@ public final class Entity {
 	}
 
 	/**
+	 * Checks if this entity has a component of the given type.
+	 *
+	 * @param type Type of the component
+	 * @return True if this entity has a component of the given type, otherwise false
+	 */
+	public boolean hasComponent(Class<? extends Component> type) {
+		return this.components.containsKey(type);
+	}
+
+	/**
 	 * Gets a component from this entity.
 	 *
 	 * @param type Type of the requested component
@@ -303,9 +308,9 @@ public final class Entity {
 	 */
 	public <C extends Component> Optional<C> getComponentInChildren(Class<C> type) {
 		return this.getChildren()
-				.map(entity -> entity.getComponent(type))
-				.findFirst()
-				.flatMap(c -> c);
+				.filter(entity -> entity.hasComponent(type))
+				.map(entity -> entity.requireComponent(type))
+				.findFirst();
 	}
 
 	/**
@@ -326,9 +331,8 @@ public final class Entity {
 	 */
 	public <C extends Component> Stream<C> getComponentsInChildren(Class<C> type) {
 		return this.getChildren()
-				.map(entity -> entity.getComponent(type))
-				.filter(Optional::isPresent)
-				.map(Optional::get);
+				.filter(entity -> entity.hasComponent(type))
+				.map(entity -> entity.requireComponent(type));
 	}
 
 	/**

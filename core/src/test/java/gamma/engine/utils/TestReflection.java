@@ -118,8 +118,9 @@ public class TestReflection {
 	public static class TestClass {
 
 		public String arg1;
-		public Float arg2;
+		public float arg2;
 
+		// TODO: Allow to use plain float here
 		private TestClass(String arg1, Float arg2) {
 			this.arg1 = arg1;
 			this.arg2 = arg2;
