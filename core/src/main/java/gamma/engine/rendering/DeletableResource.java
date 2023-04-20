@@ -9,6 +9,8 @@ import java.util.ArrayList;
  */
 public abstract class DeletableResource {
 
+	// TODO: Rename this class
+
 	/** List of all the created resources */
 	private static final ArrayList<DeletableResource> RESOURCES = new ArrayList<>();
 

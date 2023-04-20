@@ -2,12 +2,12 @@ package gamma.engine.resources;
 
 /**
  * Interface used to implement a loader that can load a certain type of resource.
+ * Loaders are loaded with a {@link java.util.ServiceLoader} when the {@link Resources} class is initialized.
+ * Loaders must be added to {@code META-INF/services/gamma.engine.resources.ResourceLoader}.
  *
- * @see Resources#addLoader(ResourceLoader, String)
- *
- * @param <R> The resource loaded by this loader
+ * @author Nico
  */
-public interface ResourceLoader<R> {
+public interface ResourceLoader {
 
 	/**
 	 * Loads a resource at the given path.
@@ -15,5 +15,12 @@ public interface ResourceLoader<R> {
 	 * @param path Path of the resource to load
 	 * @return The loaded resource
 	 */
-	R load(String path);
+	Object load(String path);
+
+	/**
+	 * Gets an array containing the extensions of the files that this loader can load, starting with a dot.
+	 *
+	 * @return An array containing the extensions of the files that this loader can load, starting with a dot
+	 */
+	String[] getExtensions();
 }

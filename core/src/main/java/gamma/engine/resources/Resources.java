@@ -1,10 +1,7 @@
 package gamma.engine.resources;
 
-import gamma.engine.rendering.Model;
-import gamma.engine.rendering.Shader;
-
 import java.util.HashMap;
-import java.util.Map;
+import java.util.ServiceLoader;
 
 /**
  * Static class responsible for loading and storing resources.
@@ -17,15 +14,24 @@ public final class Resources {
 	/** Map of all the loaded resources */
 	private static final HashMap<String, Object> RESOURCES = new HashMap<>();
 	/** Stores all the resource loaders */
-	private static final HashMap<String, ResourceLoader<?>> LOADERS = new HashMap<>();
+	private static final HashMap<String, ResourceLoader> LOADERS = new HashMap<>();
 
 	static {
-		Resources.addLoader(YamlParser::parseResource, ".yaml");
-		Resources.addLoader(Model.ASSIMP_LOADER, ".obj");
-		Resources.addLoader(Model.ASSIMP_LOADER, ".dae");
-		Resources.addLoader(Shader.SHADER_LOADER, ".glsl");
+		ServiceLoader.load(ResourceLoader.class).forEach(loader -> {
+			for(String extension : loader.getExtensions()) {
+				LOADERS.put(extension, loader);
+			}
+		});
 	}
 
+	/**
+	 * Loads the resource at the given path in the classpath or returns the same instance if it was already loaded.
+	 * Reads file extension of the given path and gets a suitable {@link ResourceLoader}.
+	 * Loaded resources are stored in a hash map for immediate access after they were loaded for the first time.
+	 *
+	 * @param path Path of the resource to load
+	 * @return The loaded resource
+	 */
 	public static Object getOrLoad(String path) {
 		if(RESOURCES.containsKey(path)) {
 			return RESOURCES.get(path);
@@ -38,11 +44,9 @@ public final class Resources {
 					RESOURCES.put(path, resource);
 					return resource;
 				}
-				System.err.println("There is no loader associated with " + extension + " files");
-				return null;
+				throw new RuntimeException("There is no loader associated with " + extension + " files");
 			}
-			System.err.println("Cannot get type of file " + path);
-			return null;
+			throw new RuntimeException("Cannot get type of file " + path);
 		}
 	}
 
@@ -59,27 +63,6 @@ public final class Resources {
 		if(resource != null) {
 			RESOURCES.put(newPath, resource);
 		}
-	}
-
-	public static String pathOf(Object resource) {
-		return RESOURCES.entrySet().stream()
-				.filter(entry -> entry.getValue().equals(resource))
-				.findFirst()
-				.map(Map.Entry::getKey)
-				.orElseGet(() -> {
-					System.err.println("Cannot get the path of " + resource);
-					return "";
-				});
-	}
-
-	/**
-	 * Adds the given {@link ResourceLoader} for the given file extension.
-	 *
-	 * @param loader The loader to add
-	 * @param extension Extension of files that this loader can load, starting with a dot
-	 */
-	public static void addLoader(ResourceLoader<?> loader, String extension) {
-		LOADERS.put(extension, loader);
 	}
 
 	public static boolean hasLoader(String file) {

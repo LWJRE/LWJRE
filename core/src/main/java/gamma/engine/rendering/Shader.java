@@ -1,7 +1,5 @@
 package gamma.engine.rendering;
 
-import gamma.engine.resources.FileUtils;
-import gamma.engine.resources.ResourceLoader;
 import gamma.engine.resources.Resources;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
@@ -14,8 +12,6 @@ import java.nio.FloatBuffer;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.function.IntConsumer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Class that represents an OpenGL shader program object.
@@ -24,24 +20,32 @@ import java.util.regex.Pattern;
  */
 public final class Shader extends DeletableResource {
 
-	/** The main fragment shader's code */
-	private static final String MAIN_FRAGMENT = FileUtils.readResourceAsString("gamma/engine/shaders/main_fragment.glsl");
-	/** The main vertex shader's code */
-	private static final String MAIN_VERTEX = FileUtils.readResourceAsString("gamma/engine/shaders/main_vertex.glsl");
-
 	/** Set of all shaders needed by {@code setUniformStatic} methods */
 	private static final HashSet<Shader> SHADERS = new HashSet<>();
 
+	/**
+	 * Loads the shader at the given path in the classpath or returns the same instance if it was already loaded.
+	 * Loaded shaders are stored in a hash map for immediate access after they were loaded for the first time.
+	 * If the given path is null or an empty string, or if the resource at the given path is not a shader, the shader returned will be the {@link Shader#defaultShader()}.
+	 *
+	 * @param path Path of the shader to load
+	 * @return The requested shader
+	 */
 	public static Shader getOrLoad(String path) {
-		Object resource = Resources.getOrLoad(path);
-		if(resource != null) {
-			if(resource instanceof Shader shader)
+		if(path != null && !(path.isEmpty() || path.isBlank())) {
+			Object resource = Resources.getOrLoad(path);
+			if(resource instanceof Shader shader) {
 				return shader;
-			System.err.println("Resource " + path + " is not a shader");
+			}
 		}
 		return defaultShader();
 	}
 
+	/**
+	 * Gets or loads the default shader: {@code gamma/engine/shaders/default_shader.glsl}.
+	 *
+	 * @return The default shader
+	 */
 	public static Shader defaultShader() {
 		return getOrLoad("gamma/engine/shaders/default_shader.glsl");
 	}
@@ -513,29 +517,4 @@ public final class Shader extends DeletableResource {
 		GL20.glDeleteShader(this.fragment);
 		GL20.glDeleteProgram(this.program);
 	}
-
-	/**
-	 * Implementation of a {@link ResourceLoader} to load {@code .glsl} files.
-	 * The loader is added to the {@link Resources} class in a static initializer.
-	 * {@code Shader.SHADER_LOADER.load(String)} should generally not be called directly,
-	 * shaders are supposed to be loaded with {@link Shader#getOrLoad(String)}.
-	 */
-	public static final ResourceLoader<Shader> SHADER_LOADER = path -> {
-		try {
-			String shaderCode = FileUtils.readResourceAsString(path);
-			Matcher vertexRegex = Pattern.compile("((#define\\s+VERTEX)(.|\\s)+?(#undef\\s+VERTEX|\\z))").matcher(shaderCode);
-			Matcher fragmentRegex = Pattern.compile("((#define\\s+FRAGMENT)(.|\\s)+?(#undef\\s+FRAGMENT|\\z))").matcher(shaderCode);
-			if(vertexRegex.find() && fragmentRegex.find()) {
-				String vertexCode = MAIN_VERTEX.replace("void vertex_shader();", vertexRegex.group(1));
-				String fragmentCode = MAIN_FRAGMENT.replace("vec4 fragment_shader();", fragmentRegex.group(1));
-				// TODO: Get version from settings
-				vertexCode = vertexCode.replaceAll("#version \\d+", "#version 450");
-				fragmentCode = fragmentCode.replaceAll("#version \\d+", "#version 450");
-				return new Shader(vertexCode, fragmentCode);
-			}
-			throw new RuntimeException("Incorrect format in shader " + path);
-		} catch (ShaderCompilationException e) {
-			throw new RuntimeException("Could not compile shader " + path, e);
-		}
-	};
 }
