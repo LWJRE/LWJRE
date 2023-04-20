@@ -1,6 +1,5 @@
 package gamma.engine.components;
 
-import gamma.engine.annotations.EditorIndex;
 import gamma.engine.annotations.EditorRange;
 import gamma.engine.annotations.EditorVariable;
 import gamma.engine.physics.Projection;
@@ -19,7 +18,6 @@ import vecmatlib.vector.Vec4f;
  *
  * @author Nico
  */
-@EditorIndex(3)
 public class BoundingBox3D extends Component {
 
 	/** The bounding box's offset from the origin */

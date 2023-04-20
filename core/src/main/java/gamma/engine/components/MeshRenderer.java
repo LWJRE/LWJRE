@@ -1,6 +1,5 @@
 package gamma.engine.components;
 
-import gamma.engine.annotations.EditorIndex;
 import gamma.engine.rendering.RenderingSystem;
 import gamma.engine.rendering.Material;
 import gamma.engine.rendering.Mesh;
@@ -15,10 +14,10 @@ import java.util.Objects;
  *
  * @author Nico
  */
-@EditorIndex(1)
 public class MeshRenderer extends Component {
 
-	// TODO: Find a way to expose this for the editor
+	// TODO: Find a way to make this work in the editor
+
 	public Mesh mesh;
 	public Material material = new Material(Color4f.White(), Color4f.White(), Color4f.White(), 0.0f);
 

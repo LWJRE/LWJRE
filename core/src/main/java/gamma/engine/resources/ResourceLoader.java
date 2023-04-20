@@ -7,7 +7,7 @@ package gamma.engine.resources;
  *
  * @param <R> The resource loaded by this loader
  */
-public interface ResourceLoader<R extends Resource> {
+public interface ResourceLoader<R> {
 
 	/**
 	 * Loads a resource at the given path.

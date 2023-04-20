@@ -5,8 +5,6 @@ import gamma.engine.input.InputEvent;
 import java.util.HashMap;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 /**
@@ -25,19 +23,17 @@ public final class Entity {
 	/** Set to true when this entity is being removed from the scene */
 	private boolean removed = false;
 
-	// TODO: onStart and onExit should not be called in the editor
-
 	/**
-	 * Processes this entity. Used to avoid duplication between {@code process} and {@code editorProcess}.
+	 * Processes this entity.
+	 * Children are processed first, then this entity's components are processed.
 	 *
-	 * @param entityProcess Either process or editorProcess
-	 * @param componentProcess Either process or editorProcess
+	 * @param delta Time elapsed since the previous frame
 	 */
-	private void process(Consumer<Entity> entityProcess, Function<Component, Boolean> componentProcess) {
+	public void process(float delta) {
 		// Process children first
 		this.children.values().removeIf(entity -> {
 			// Process child entity
-			entityProcess.accept(entity);
+			entity.process(delta);
 			// Remove the child if it was removed in this frame
 			if(entity.removed) {
 				entity.parent = null;
@@ -46,7 +42,7 @@ public final class Entity {
 			return entity.parent != this;
 		});
 		// Process this entity's components
-		this.components.values().removeIf(componentProcess::apply);
+		this.components.values().removeIf(component -> component.process(delta));
 		// Remove all the components if the entity has been removed in this frame
 		if(this.removed) {
 			this.components.values().removeIf(component -> {
@@ -54,16 +50,6 @@ public final class Entity {
 				return true;
 			});
 		}
-	}
-
-	/**
-	 * Processes this entity.
-	 * Children are processed first, then this entity's components are processed.
-	 *
-	 * @param delta Time elapsed since the previous frame
-	 */
-	public void process(float delta) {
-		this.process(entity -> entity.process(delta), component -> component.process(delta));
 	}
 
 	/**
@@ -81,7 +67,19 @@ public final class Entity {
 	 * Called from the editor.
 	 */
 	public void editorProcess() {
-		this.process(Entity::editorProcess, Component::editorProcess);
+		// Process children first
+		this.children.values().removeIf(entity -> {
+			// Process child entity
+			entity.editorProcess();
+			// Remove the child if it was removed in this frame
+			if(entity.removed) {
+				entity.parent = null;
+				return true;
+			}
+			return entity.parent != this;
+		});
+		// Process this entity's components
+		this.components.values().removeIf(Component::editorProcess);
 	}
 
 	/**

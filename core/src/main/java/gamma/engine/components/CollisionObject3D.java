@@ -1,6 +1,5 @@
 package gamma.engine.components;
 
-import gamma.engine.annotations.EditorIndex;
 import gamma.engine.physics.Collision3D;
 import gamma.engine.physics.Projection;
 import gamma.engine.scene.Component;
@@ -18,7 +17,6 @@ import java.util.Optional;
  *
  * @author Nico
  */
-@EditorIndex(2)
 public class CollisionObject3D extends Component {
 
 	/** Set of all the colliders in the scene */

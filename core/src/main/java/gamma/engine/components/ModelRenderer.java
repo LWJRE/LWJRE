@@ -1,32 +1,28 @@
 package gamma.engine.components;
 
-import gamma.engine.annotations.EditorIndex;
 import gamma.engine.annotations.EditorResource;
 import gamma.engine.annotations.EditorVariable;
-import gamma.engine.rendering.RenderingSystem;
 import gamma.engine.rendering.Material;
 import gamma.engine.rendering.Mesh;
 import gamma.engine.rendering.Model;
+import gamma.engine.rendering.RenderingSystem;
 
-@EditorIndex(1)
 public class ModelRenderer extends RendererComponent {
 
 	@EditorVariable(name = "Model")
-	@EditorResource(type = Model.class)
-	private String modelPath = ""; // TODO: Does not work if final
-
-	private transient Model model = new Model();
+	@EditorResource
+	private Model model = new Model();
 
 	@Override
 	protected void onStart() {
 		super.onStart();
-		this.setModel(this.modelPath);
+		this.addModelToBatch();
 	}
 
 	@Override
 	protected void editorUpdate() {
 		super.editorUpdate();
-		this.setModel(this.modelPath);
+		this.addModelToBatch();
 	}
 
 	private void drawMesh(Mesh mesh, Material material) {
@@ -44,13 +40,13 @@ public class ModelRenderer extends RendererComponent {
 	@Override
 	protected void onExit() {
 		super.onExit();
-		this.model.modelData().forEach((mesh, material) -> RenderingSystem.removeFromBatch(this, mesh));
+		this.removeModelFromBatch();
 	}
 
 	public void setModel(Model model) {
-		this.model.modelData().forEach((mesh, material) -> RenderingSystem.removeFromBatch(this, mesh));
+		this.removeModelFromBatch();
 		this.model = model != null ? model : new Model();
-		this.model.modelData().forEach((mesh, material) -> RenderingSystem.addToBatch(this, mesh, () -> this.drawMesh(mesh, material)));
+		this.addModelToBatch();
 	}
 
 	public void setModel(String path) {
@@ -59,5 +55,13 @@ public class ModelRenderer extends RendererComponent {
 
 	public Model getModel() {
 		return this.model;
+	}
+
+	private void addModelToBatch() {
+		this.model.modelData().forEach((mesh, material) -> RenderingSystem.addToBatch(this, mesh, () -> this.drawMesh(mesh, material)));
+	}
+
+	private void removeModelFromBatch() {
+		this.model.modelData().forEach((mesh, material) -> RenderingSystem.removeFromBatch(this, mesh));
 	}
 }

@@ -11,19 +11,19 @@ import java.util.ArrayList;
 public class DynamicBody3D extends KinematicBody3D {
 
 	@EditorVariable(name = "Mass")
-	@EditorRange(min = Float.MIN_VALUE)
+	@EditorRange(min = 0.0f)
 	public float mass = 1.0f;
 
 	@EditorVariable(name = "Restitution")
-	@EditorRange(min = 0.0f, max = 1.0f, slider = true)
+	@EditorRange(min = 0.0f, max = 1.0f)
 	public float restitution = 0.0f;
 
 	@EditorVariable(name = "Is immovable")
 	public boolean immovable = false;
 
-	private transient Vec3f force = Vec3f.Zero();
+	private Vec3f force = Vec3f.Zero();
 
-	private transient final ArrayList<Impulse> impulses = new ArrayList<>();
+	private final ArrayList<Impulse> impulses = new ArrayList<>();
 
 	@Override
 	protected void onUpdate(float delta) {

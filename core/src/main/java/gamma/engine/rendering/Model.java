@@ -1,9 +1,8 @@
 package gamma.engine.rendering;
 
-import gamma.engine.resources.Resource;
+import gamma.engine.resources.FileUtils;
 import gamma.engine.resources.ResourceLoader;
 import gamma.engine.resources.Resources;
-import gamma.engine.resources.FileUtils;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.*;
@@ -20,17 +19,17 @@ import java.util.Map;
  *
  * @author Nico
  */
-public record Model(Map<Mesh, Material> modelData) implements Resource {
+public record Model(Map<Mesh, Material> modelData) {
 
 	public static Model getOrLoad(String path) {
-		if(path == null || path.isEmpty() || path.isBlank()) {
-			return new Model();
-		} else try {
+		if(path != null && !(path.isEmpty() || path.isBlank())) {
 			Object resource = Resources.getOrLoad(path);
-			if(resource instanceof Model model)
-				return model;
-		} catch (RuntimeException e) {
-			e.printStackTrace();
+			if(resource != null) {
+				if(resource instanceof Model model) {
+					return model;
+				}
+				System.err.println("Resource " + path + " is not a model");
+			}
 		}
 		return new Model();
 	}
@@ -111,9 +110,4 @@ public record Model(Map<Mesh, Material> modelData) implements Resource {
 		Assimp.aiReleaseImport(aiScene);
 		return new Model(modelData);
 	};
-
-	static {
-		Resources.addLoader(Model.ASSIMP_LOADER, ".obj");
-		Resources.addLoader(Model.ASSIMP_LOADER, ".dae");
-	}
 }

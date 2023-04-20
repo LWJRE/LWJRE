@@ -17,7 +17,7 @@ children:
         position: !!vecmatlib.vector.Vec3f [0.0, -2.0, 0.0]
         scale: !!vecmatlib.vector.Vec3f [10.0, 1.0, 10.0]
       gamma.engine.components.DynamicBody3D:
-        mass: !!float 10000.0
+        mass: 10000.0
         restitution: 1
         immovable: true
       gamma.engine.components.BoundingBox3D:

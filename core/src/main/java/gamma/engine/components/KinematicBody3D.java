@@ -1,6 +1,5 @@
 package gamma.engine.components;
 
-import gamma.engine.annotations.EditorIndex;
 import gamma.engine.annotations.EditorRange;
 import gamma.engine.annotations.EditorVariable;
 import gamma.engine.physics.Collision3D;
@@ -14,7 +13,6 @@ import vecmatlib.vector.Vec3f;
  *
  * @author Nico
  */
-@EditorIndex(2)
 public class KinematicBody3D extends CollisionObject3D {
 
 	/** The entity's current velocity */

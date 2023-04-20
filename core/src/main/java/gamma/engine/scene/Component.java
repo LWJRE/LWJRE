@@ -26,26 +26,6 @@ public abstract class Component {
 	 * @return True if this component has been removed from its entity, otherwise false
 	 */
 	protected final boolean process(float delta) {
-		return this.process(() -> this.onUpdate(delta));
-	}
-
-	/**
-	 * Processes this component while in the editor.
-	 * Used for debugging.
-	 *
-	 * @return True if this component has been removed from its entity, otherwise false
-	 */
-	protected final boolean editorProcess() {
-		return this.process(this::editorUpdate);
-	}
-
-	/**
-	 * Processes this component.
-	 *
-	 * @param processFunction Either {@code () -> this.onUpdate(delta)} or {@code this::editorUpdate} to update the component
-	 * @return True if this component has been removed from its entity, otherwise false
-	 */
-	private boolean process(Runnable processFunction) {
 		// First frame the component spends in the scene
 		if(this.state == State.NEW) {
 			this.onStart();
@@ -53,7 +33,7 @@ public abstract class Component {
 			this.state = State.READY;
 		}
 		// Process the component
-		processFunction.run();
+		this.onUpdate(delta);
 		// If the component was removed this frame
 		if(this.state == State.REMOVED) {
 			this.onExit();
@@ -66,6 +46,23 @@ public abstract class Component {
 		}
 		// Return false because the component has not been removed
 		return false;
+	}
+
+	/**
+	 * Processes this component while in the editor.
+	 * Used for debugging.
+	 *
+	 * @return True if this component has been removed from its entity, otherwise false
+	 */
+	protected final boolean editorProcess() {
+		if(this.state == State.REMOVED) {
+			this.entity = null;
+			return true;
+		} else {
+			this.state = State.READY;
+			this.editorUpdate();
+			return false;
+		}
 	}
 
 	/**

@@ -1,9 +1,8 @@
 package gamma.engine.rendering;
 
-import gamma.engine.resources.Resource;
+import gamma.engine.resources.FileUtils;
 import gamma.engine.resources.ResourceLoader;
 import gamma.engine.resources.Resources;
-import gamma.engine.resources.FileUtils;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
@@ -23,7 +22,7 @@ import java.util.regex.Pattern;
  *
  * @author Nico
  */
-public final class Shader extends DeletableResource implements Resource {
+public final class Shader extends DeletableResource {
 
 	/** The main fragment shader's code */
 	private static final String MAIN_FRAGMENT = FileUtils.readResourceAsString("gamma/engine/shaders/main_fragment.glsl");
@@ -33,21 +32,14 @@ public final class Shader extends DeletableResource implements Resource {
 	/** Set of all shaders needed by {@code setUniformStatic} methods */
 	private static final HashSet<Shader> SHADERS = new HashSet<>();
 
-	/**
-	 * Loads a shader from the classpath or returns the same instance if it was already loaded.
-	 *
-	 * @see Resources#getOrLoad(String)
-	 *
-	 * @param path Path to the shader file
-	 * @return The requested shader
-	 * @throws RuntimeException if the resource at the given path is not a shader
-	 */
 	public static Shader getOrLoad(String path) {
 		Object resource = Resources.getOrLoad(path);
-		if(resource instanceof Shader shader)
-			return shader;
-		// TODO: Use default shader instead
-		throw new RuntimeException("Resource " + path + " is not a shader");
+		if(resource != null) {
+			if(resource instanceof Shader shader)
+				return shader;
+			System.err.println("Resource " + path + " is not a shader");
+		}
+		return defaultShader();
 	}
 
 	public static Shader defaultShader() {
@@ -546,8 +538,4 @@ public final class Shader extends DeletableResource implements Resource {
 			throw new RuntimeException("Could not compile shader " + path, e);
 		}
 	};
-
-	static {
-		Resources.addLoader(SHADER_LOADER, ".glsl");
-	}
 }

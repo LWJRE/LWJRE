@@ -2,7 +2,6 @@ package gamma.engine.components;
 
 import gamma.engine.ApplicationProperties;
 import gamma.engine.annotations.EditorDegrees;
-import gamma.engine.annotations.EditorIndex;
 import gamma.engine.annotations.EditorRange;
 import gamma.engine.annotations.EditorVariable;
 import gamma.engine.rendering.Shader;
@@ -15,7 +14,6 @@ import vecmatlib.vector.Vec3f;
  *
  * @author Nico
  */
-@EditorIndex(1)
 public class Camera3D extends Component {
 
 	/** Reference to the current camera */

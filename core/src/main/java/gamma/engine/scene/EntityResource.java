@@ -1,52 +1,21 @@
 package gamma.engine.scene;
 
-import gamma.engine.resources.Resource;
 import gamma.engine.resources.Resources;
-import gamma.engine.resources.YamlUtils;
 import gamma.engine.utils.Reflection;
 
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Used for deserialization of entities. Entities are loaded from {@code .yaml} files as instances of {@code EntityResource}
- * and are then instantiated with {@link EntityResource#instance()}.
- *
- * @author Nico
- */
-public class EntityResource implements Resource {
+public class EntityResource {
 
 	// TODO: Write tests
 
-	static {
-		Resources.addLoader(EntityResource::load, ".yaml"); // TODO: Different .yaml resources?
-		YamlUtils.addMappingRepresent(EntityResource.class, EntityResource::serialize);
-	}
-
-	/**
-	 * Loads an entity from the classpath or returns the same instance if it was already loaded.
-	 *
-	 * @see Resources#getOrLoad(String)
-	 *
-	 * @param path Path to the entity resource file
-	 * @return The requested entity resource
-	 * @throws RuntimeException if the resource at the given path is not an entity resource
-	 */
 	public static EntityResource getOrLoad(String path) {
 		Object resource = Resources.getOrLoad(path);
 		if(resource instanceof EntityResource entityResource)
 			return entityResource;
-		throw new RuntimeException("Resource at path " + path + " is not an EntityResource");
-	}
-
-	/**
-	 * Loads an entity resource from the classpath.
-	 *
-	 * @param path Path to the entity resource file
-	 * @return The requested entity resource
-	 */
-	public static EntityResource load(String path) {
-		return YamlUtils.parseResource(path, EntityResource.class);
+		System.err.println("Resource at path " + path + " is not an EntityResource");
+		return new EntityResource();
 	}
 
 	/** Path to the base entity resource file if this entity uses another one as a base */
@@ -98,14 +67,14 @@ public class EntityResource implements Resource {
 		return component;
 	}
 
-	private static Map<?, ?> serialize(EntityResource entityResource) {
+	public Map<?, ?> serialize() {
 		HashMap<String, Object> map = new HashMap<>();
-		if(!entityResource.base.isEmpty())
-			map.put("base", entityResource.base);
-		if(!entityResource.components.isEmpty())
-			map.put("components", entityResource.components);
-		if(!entityResource.children.isEmpty())
-			map.put("children", entityResource.children);
+		if(!this.base.isEmpty())
+			map.put("base", this.base);
+		if(!this.components.isEmpty())
+			map.put("components", this.components);
+		if(!this.children.isEmpty())
+			map.put("children", this.children);
 		return map;
 	}
 }

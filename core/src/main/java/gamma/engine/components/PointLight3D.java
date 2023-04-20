@@ -1,6 +1,5 @@
 package gamma.engine.components;
 
-import gamma.engine.annotations.EditorIndex;
 import gamma.engine.annotations.EditorRange;
 import gamma.engine.annotations.EditorVariable;
 import gamma.engine.rendering.RenderingSystem;
@@ -8,7 +7,6 @@ import gamma.engine.scene.Component;
 import vecmatlib.color.Color3f;
 import vecmatlib.vector.Vec3f;
 
-@EditorIndex(1)
 public class PointLight3D extends Component {
 
 	@EditorVariable(name = "Offset")
@@ -26,6 +24,7 @@ public class PointLight3D extends Component {
 	@Override
 	protected void editorUpdate() {
 		super.editorUpdate();
+		RenderingSystem.addToBatch(this);
 	}
 
 	@Override
