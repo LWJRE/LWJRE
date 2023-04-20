@@ -62,4 +62,9 @@ public final class RenderingSystem {
 			batch.values().forEach(Runnable::run);
 		});
 	}
+
+	public static void clearRenderer() {
+		RENDER_BATCH.clear();
+		LIGHTS.clear();
+	}
 }

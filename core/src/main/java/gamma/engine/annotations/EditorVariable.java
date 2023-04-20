@@ -9,6 +9,8 @@ import java.lang.annotation.Target;
  * Indicates that this field should be exposed in the editor.
  * Fields with this annotation will be visible in the inspector when selecting an entity with a component of this type.
  * If the type of this field is not supported, only its name will be visible, and it will not be editable.
+ *
+ * @author Nico
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
