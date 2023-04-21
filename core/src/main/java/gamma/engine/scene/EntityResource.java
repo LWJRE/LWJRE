@@ -81,4 +81,20 @@ public class EntityResource {
 		data.forEach((field, value) -> Reflection.setField(component, field, value));
 		return component;
 	}
+
+	/**
+	 * Converts this entity resource to a {@link HashMap}. Used for serialization.
+	 *
+	 * @return A {@code HashMap} containing the values of {@link EntityResource#base}, {@link EntityResource#components}, and {@link EntityResource#children} if they are not empty
+	 */
+	public HashMap<String, Object> toMap() {
+		HashMap<String, Object> map = new HashMap<>();
+		if(this.base != null && !(this.base.isEmpty() || this.base.isBlank()))
+			map.put("base", this.base);
+		if(!this.components.isEmpty())
+			map.put("components", this.components);
+		if(!this.children.isEmpty())
+			map.put("children", this.children);
+		return map;
+	}
 }

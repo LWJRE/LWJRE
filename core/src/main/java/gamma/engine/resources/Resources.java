@@ -1,6 +1,7 @@
 package gamma.engine.resources;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.ServiceLoader;
 
 /**
@@ -63,6 +64,20 @@ public final class Resources {
 		if(resource != null) {
 			RESOURCES.put(newPath, resource);
 		}
+	}
+
+	/**
+	 * Looks through all the loaded resource to find the path of the given resource. Used for serialization.
+	 *
+	 * @param resource The resource to look for
+	 * @return The path of the given resource or an empty string if it could not be found
+	 */
+	public static String pathOf(Object resource) {
+		return RESOURCES.entrySet().stream()
+				.filter(entry -> entry.getValue().equals(resource))
+				.findFirst()
+				.map(Map.Entry::getKey)
+				.orElse("");
 	}
 
 	public static boolean hasLoader(String file) {
