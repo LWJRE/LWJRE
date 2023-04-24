@@ -33,6 +33,7 @@ public final class YamlSerializer extends Representer {
 	 */
 	public static String serialize(Object data) {
 		DumperOptions options = new DumperOptions();
+		options.setSplitLines(false);
 		options.setIndentWithIndicator(true);
 		options.setIndicatorIndent(2);
 		return new Yaml(new YamlSerializer(), options).dump(data);

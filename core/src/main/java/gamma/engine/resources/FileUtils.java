@@ -2,6 +2,7 @@ package gamma.engine.resources;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.util.Properties;
 import java.util.stream.Collectors;
@@ -135,6 +136,30 @@ public class FileUtils {
 	 */
 	public static byte[] readResourceBytes(String path) {
 		return readResource(path, InputStream::readAllBytes);
+	}
+
+	/**
+	 * Checks if a resource at the given path exists in the classpath.
+	 *
+	 * @see ClassLoader#getResource(String)
+	 *
+	 * @param path The resource's path
+	 * @return True if the resource exists in the classpath, false if it does not.
+	 */
+	public static boolean resourceExists(String path) {
+		return Thread.currentThread().getContextClassLoader().getResource(path) != null;
+	}
+
+	/**
+	 * Checks if a file at the given path exists.
+	 *
+	 * @see Files#exists(Path, LinkOption...)
+	 *
+	 * @param path Path of the file
+	 * @return True if the file exists, false if it does not.
+	 */
+	public static boolean fileExists(String path) {
+		return Files.exists(Path.of(path));
 	}
 
 	/**

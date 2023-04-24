@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 /**
  * Indicates that the inspector should limit the value of this field between a maximum and a minimum value.
  * If this annotation is present, the inspector will show this field as a "draggable" number input.
- * This annotation is applicable to integer types, real types, and vector types.
+ * This annotation is applicable to float and int types and to integer and float vectors.
  *
  * @author Nico
  */
@@ -39,6 +39,4 @@ public @interface EditorRange {
 	 * @return The amount by which the field's value should for every pixel in the inspector.
 	 */
 	float step() default 0.001f;
-
-	boolean slider() default false;
 }

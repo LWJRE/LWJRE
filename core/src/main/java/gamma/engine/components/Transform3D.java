@@ -1,6 +1,5 @@
 package gamma.engine.components;
 
-import gamma.engine.annotations.EditorDegrees;
 import gamma.engine.annotations.EditorRange;
 import gamma.engine.annotations.EditorVariable;
 import gamma.engine.scene.Component;
@@ -22,7 +21,6 @@ public class Transform3D extends Component {
 
 	/** Rotation of the entity in radians around the x, y, z axes */
 	@EditorVariable(name = "Rotation")
-	@EditorDegrees
 	@EditorRange
 	public Vec3f rotation = Vec3f.Zero();
 

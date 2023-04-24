@@ -1,6 +1,5 @@
 package gamma.engine.components;
 
-import gamma.engine.annotations.EditorRange;
 import gamma.engine.annotations.EditorVariable;
 import gamma.engine.physics.Collision3D;
 import vecmatlib.vector.Vec3f;
@@ -17,11 +16,9 @@ public class KinematicBody3D extends CollisionObject3D {
 
 	/** The entity's current velocity */
 	@EditorVariable(name = "Velocity")
-	@EditorRange
 	public Vec3f velocity = Vec3f.Zero();
 	/** The entity's current acceleration */
 	@EditorVariable(name = "Acceleration")
-	@EditorRange
 	public Vec3f acceleration = new Vec3f(0.0f, -9.81f, 0.0f);
 
 	@Override

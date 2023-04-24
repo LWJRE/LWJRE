@@ -1,7 +1,7 @@
 package gamma.engine.components;
 
 import gamma.engine.ApplicationProperties;
-import gamma.engine.annotations.EditorDegrees;
+import gamma.engine.annotations.EditorAngle;
 import gamma.engine.annotations.EditorRange;
 import gamma.engine.annotations.EditorVariable;
 import gamma.engine.rendering.Shader;
@@ -28,8 +28,7 @@ public class Camera3D extends Component {
 	private boolean current = false;
 
 	@EditorVariable(name = "Fov")
-	@EditorDegrees
-	@EditorRange(min = 0.0f, max = 360.0f)
+	@EditorAngle(min = 0.0f)
 	public float fov = 1.22173f;
 	/** Near distance plane */
 	@EditorVariable(name = "Near plane")
