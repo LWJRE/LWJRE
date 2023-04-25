@@ -54,6 +54,7 @@ public final class RenderingSystem {
 			Shader.setUniformStatic("point_lights[" + i + "].position", light.position());
 			Shader.setUniformStatic("point_lights[" + i + "].ambient", light.color);
 			Shader.setUniformStatic("point_lights[" + i + "].diffuse", light.color);
+			Shader.setUniformStatic("point_lights[" + i + "].specular", light.color);
 			i++;
 		}
 		Shader.setUniformStatic("lights_count", i);

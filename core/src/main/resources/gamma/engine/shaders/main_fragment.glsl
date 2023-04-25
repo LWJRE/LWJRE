@@ -32,7 +32,7 @@ uniform PointLight point_lights[MAX_POINT_LIGHTS];
 vec3 point_light(PointLight light, vec3 view_direction) {
     vec3 light_direction = normalize(light.position - world_position);
     // diffuse shading
-    float diffuse_value = max(dot(surface_normal, light_direction), 0.0); // TODO: give a min higher than 0
+    float diffuse_value = max(dot(surface_normal, light_direction), 0.0); // TODO: give a min higher than 0?
     // specular shading
     vec3 reflection = reflect(-light_direction, surface_normal);
     float specular_value = pow(max(dot(view_direction, reflection), 0.0), material.shininess);
@@ -41,10 +41,9 @@ vec3 point_light(PointLight light, vec3 view_direction) {
     float attenuation = 1.0 / (light.attenuation.x + light.attenuation.y * distance + light.attenuation.z * (distance * distance));
     // result
     vec3 ambient = light.ambient * material.ambient.rgb; // TODO: Transparency in material color?
-    vec3 diffuse = light.diffuse * diffuse_value * material.diffuse.rgb;
-    vec3 specular = light.specular * specular_value * material.specular.rgb;
-//    return (ambient + diffuse + specular) * attenuation;
-    return (ambient + diffuse + specular);
+    vec3 diffuse = light.diffuse * (diffuse_value * material.diffuse.rgb);
+    vec3 specular = light.specular * (specular_value * material.specular.rgb);
+    return (ambient + diffuse + specular) /* attenuation*/;
 }
 
 vec4 fragment_shader();
@@ -52,6 +51,7 @@ vec4 fragment_shader();
 void main() {
     vec3 view_direction = normalize(camera_position - world_position);
     frag_color = fragment_shader();
+    // lighting calculation
     for(int i = 0; i < lights_count; i++) {
         frag_color += vec4(point_light(point_lights[i], view_direction), 0.0);
     }
