@@ -5,6 +5,7 @@ import gamma.engine.resources.ResourceLoader;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.*;
+import org.lwjgl.system.MemoryUtil;
 import vecmatlib.color.Color4f;
 
 import java.nio.ByteBuffer;
@@ -21,13 +22,7 @@ public final class ModelLoader implements ResourceLoader {
 
 	@Override
 	public Object load(String path) {
-		AIScene aiScene = FileUtils.readResource(path, inputStream -> {
-			byte[] bytes = inputStream.readAllBytes();
-			ByteBuffer buffer = BufferUtils.createByteBuffer(bytes.length).put(bytes).flip();
-			return Assimp.aiImportFileFromMemory(buffer, 0, ""); // TODO: Add flags in a .properties file
-		});
-		if(aiScene == null)
-			throw new RuntimeException("Failed to load model " + path + ": " + Assimp.aiGetErrorString());
+		AIScene aiScene = this.loadScene(path);
 		ArrayList<Material> materials = new ArrayList<>(aiScene.mNumMaterials());
 		PointerBuffer materialsBuffer = aiScene.mMaterials();
 		if(materialsBuffer != null) {
@@ -39,7 +34,7 @@ public final class ModelLoader implements ResourceLoader {
 				Assimp.aiGetMaterialColor(aiMaterial, Assimp.AI_MATKEY_COLOR_DIFFUSE, Assimp.aiTextureType_NONE, 0, diffuse);
 				AIColor4D specular = AIColor4D.create();
 				Assimp.aiGetMaterialColor(aiMaterial, Assimp.AI_MATKEY_COLOR_SPECULAR, Assimp.aiTextureType_NONE, 0, specular);
-				// TODO: Material color is not loaded correctly
+				// TODO: Get material shininess
 				materials.add(new Material(
 						new Color4f(ambient.r(), ambient.g(), ambient.b(), ambient.a()),
 						new Color4f(diffuse.r(), diffuse.g(), diffuse.b(), diffuse.a()),
@@ -89,8 +84,52 @@ public final class ModelLoader implements ResourceLoader {
 		return new Model(modelData);
 	}
 
+	private AIScene loadScene(String path) {
+		AIScene aiScene;
+		if(path.endsWith(".obj")) {
+			AIFileIO aiFileIO = AIFileIO.create().OpenProc((pFileIO, fileName, openMode) -> {
+				String fileNameUtf8 = MemoryUtil.memUTF8(fileName);
+				byte[] bytes = FileUtils.readResourceBytes(fileNameUtf8); // TODO: This causes a fatal error if the file does not exist
+				ByteBuffer buffer = BufferUtils.createByteBuffer(bytes.length).put(bytes).flip();
+				return AIFile.create().ReadProc((pFile, pBuffer, size, count) -> {
+					long max = Math.min(buffer.remaining() / size, count);
+					MemoryUtil.memCopy(MemoryUtil.memAddress(buffer), pBuffer, max * size);
+					buffer.position(buffer.position() + (int) (max * size));
+					return max;
+				}).SeekProc((pFile, offset, origin) -> {
+					if(origin == Assimp.aiOrigin_CUR) {
+						buffer.position(buffer.position() + (int) offset);
+					} else if(origin == Assimp.aiOrigin_SET) {
+						buffer.position((int) offset);
+					} else if(origin == Assimp.aiOrigin_END) {
+						buffer.position(buffer.limit() + (int) offset);
+					}
+					return 0;
+				}).FileSizeProc(pFile -> buffer.limit()).address();
+			}).CloseProc((pFileIO, pFile) -> {
+				AIFile aiFile = AIFile.create(pFile);
+				aiFile.ReadProc().free();
+				aiFile.SeekProc().free();
+				aiFile.FileSizeProc().free();
+			});
+			aiScene = Assimp.aiImportFileEx(path, 0, aiFileIO); // TODO: Add flags in a .properties file
+			aiFileIO.OpenProc().free();
+			aiFileIO.CloseProc().free();
+		} else {
+			aiScene = FileUtils.readResource(path, inputStream -> {
+				byte[] bytes = inputStream.readAllBytes();
+				ByteBuffer buffer = BufferUtils.createByteBuffer(bytes.length).put(bytes).flip();
+				return Assimp.aiImportFileFromMemory(buffer, 0, ""); // TODO: Add flags in a .properties file
+			});
+		}
+		if(aiScene == null) {
+			throw new RuntimeException("Failed to load model " + path + ": " + Assimp.aiGetErrorString());
+		}
+		return aiScene;
+	}
+
 	@Override
 	public String[] getExtensions() {
-		return new String[] {".obj", ".dae"};
+		return new String[] {".obj", ".dae"}; // TODO: Test with .fbx
 	}
 }
