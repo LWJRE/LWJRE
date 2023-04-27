@@ -1,5 +1,6 @@
 package gamma.engine;
 
+import gamma.engine.physics.PhysicsSystem;
 import gamma.engine.rendering.RenderingSystem;
 import gamma.engine.rendering.DeletableResource;
 import gamma.engine.scene.Scene;
@@ -23,6 +24,7 @@ public final class Application {
 				Scene.changeSceneTo(ApplicationProperties.getString("startScene"));
 				while(!window.isCloseRequested()) {
 					Scene.process();
+					PhysicsSystem.physicsStep();
 					RenderingSystem.render();
 					window.update();
 					GLFW.glfwPollEvents();

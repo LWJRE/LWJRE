@@ -1,4 +1,6 @@
 !!gamma.engine.scene.EntityResource
+components:
+  gamma.demo.components.TestComponent: {}
 children:
   dragon: !!gamma.engine.scene.EntityResource
     base: "scenes/dragon.yaml"

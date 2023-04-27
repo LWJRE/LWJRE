@@ -23,13 +23,13 @@ public class KinematicBody3D extends CollisionObject3D {
 
 	@Override
 	protected void onUpdate(float delta) {
-		super.onUpdate(delta);
 		Vec3f velocityDelta = this.acceleration.multipliedBy(delta);
 		this.velocity = this.velocity.plus(velocityDelta);
 		this.getComponent(Transform3D.class).ifPresent(transform -> {
 			Vec3f movement = this.velocity.multipliedBy(delta);
-			this.moveAndCollide(movement);
+			transform.position = transform.position.plus(movement);
 		});
+		super.onUpdate(delta);
 	}
 
 	@Override
