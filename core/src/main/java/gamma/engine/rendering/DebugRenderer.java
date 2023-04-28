@@ -1,14 +1,15 @@
 package gamma.engine.rendering;
 
-import gamma.engine.scene.Component;
+import gamma.engine.EditorListener;
 import gamma.engine.resources.FileUtils;
+import gamma.engine.scene.Component;
 import org.lwjgl.opengl.GL11;
 import vecmatlib.color.Color4f;
 import vecmatlib.matrix.Mat4f;
 
 import java.util.HashMap;
 
-public final class DebugRenderer {
+public final class DebugRenderer implements EditorListener {
 	
 	private static final Mesh CUBE = new Mesh();
 	private static final Shader SHADER;
@@ -19,7 +20,8 @@ public final class DebugRenderer {
 		BATCH.put(key, transform);
 	}
 
-	public static void render() {
+	@Override
+	public void onEditorProcess() {
 		GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
 		GL11.glDisable(GL11.GL_CULL_FACE);
 		SHADER.start();

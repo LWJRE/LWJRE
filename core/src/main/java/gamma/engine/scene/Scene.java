@@ -1,8 +1,11 @@
 package gamma.engine.scene;
 
+import gamma.engine.ApplicationListener;
+import gamma.engine.ApplicationProperties;
+import gamma.engine.EditorListener;
 import gamma.engine.input.InputEvent;
 
-public final class Scene {
+public final class Scene implements ApplicationListener, EditorListener {
 
 	private static Entity root = new Entity();
 	private static Entity next = null;
@@ -24,24 +27,32 @@ public final class Scene {
 		return root;
 	}
 
-	private static long previousTime = System.nanoTime();
+	// TODO: Add input to ApplicationListener
+	public static void processInput(InputEvent event) {
+		root.input(event);
+	}
 
-	public static void process() {
+	private long previousTime = System.nanoTime();
+
+	@Override
+	public void onInit() {
+		changeSceneTo(ApplicationProperties.getString("startScene"));
+	}
+
+	@Override
+	public void onProcess() {
 		long time = System.nanoTime();
-		float delta = (time - previousTime) / 1_000_000_000.0f;
+		float delta = (time - this.previousTime) / 1_000_000_000.0f;
 		root.process(delta);
 		if(next != null) {
 			root = next;
 			next = null;
 		}
-		previousTime = time;
+		this.previousTime = time;
 	}
 
-	public static void processInput(InputEvent event) {
-		root.input(event);
-	}
-
-	public static void editorProcess() {
+	@Override
+	public void onEditorProcess() {
 		root.editorProcess();
 		if(next != null) {
 			root = next;

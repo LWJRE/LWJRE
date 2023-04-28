@@ -1,9 +1,10 @@
 package gamma.engine.physics;
 
+import gamma.engine.ApplicationListener;
 import gamma.engine.components.BoundingBox3D;
 import gamma.engine.components.CollisionObject3D;
 
-public class PhysicsSystem {
+public class PhysicsSystem implements ApplicationListener {
 
 	private static final SweepAndPrune[] SWEEP_AND_PRUNE = {
 			new SweepAndPrune(),
@@ -53,14 +54,16 @@ public class PhysicsSystem {
 		}
 	}
 
-	public static void physicsStep() {
+	@Override
+	public void onProcess() {
+		// TODO: Start threads on init and stop on terminate
 		long time = System.nanoTime();
 		Thread[] threads = new Thread[8];
 		for(int i = 0; i < threads.length; i++) {
 			threads[i] = new Thread(SWEEP_AND_PRUNE[i]::resolveCollisions);
 			threads[i].start();
 		}
-		for (Thread thread : threads) {
+		for(Thread thread : threads) {
 			try {
 				thread.join();
 			} catch (InterruptedException e) {

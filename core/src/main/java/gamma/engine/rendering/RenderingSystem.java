@@ -1,5 +1,7 @@
 package gamma.engine.rendering;
 
+import gamma.engine.ApplicationListener;
+import gamma.engine.EditorListener;
 import gamma.engine.components.PointLight3D;
 import gamma.engine.scene.Component;
 import org.lwjgl.opengl.GL11;
@@ -7,8 +9,9 @@ import org.lwjgl.opengl.GL11;
 import java.util.HashMap;
 import java.util.HashSet;
 
-public final class RenderingSystem {
+public final class RenderingSystem implements ApplicationListener, EditorListener {
 
+	// TODO: Replace component+runnable with RenderComponent class
 	private static final HashMap<Mesh, HashMap<Component, Runnable>> RENDER_BATCH = new HashMap<>();
 
 	private static final HashSet<PointLight3D> LIGHTS = new HashSet<>();
@@ -41,7 +44,19 @@ public final class RenderingSystem {
 		LIGHTS.remove(light);
 	}
 
-	public static void render() {
+	@Override
+	public void onProcess() {
+		renderingProcess();
+	}
+
+	@Override
+	public void onEditorProcess() {
+		renderingProcess();
+		RENDER_BATCH.clear();
+		LIGHTS.clear();
+	}
+
+	private static void renderingProcess() {
 		// TODO: Give option for depth test and backface culling
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glEnable(GL11.GL_CULL_FACE);
@@ -64,8 +79,8 @@ public final class RenderingSystem {
 		});
 	}
 
-	public static void clearRenderer() {
-		RENDER_BATCH.clear();
-		LIGHTS.clear();
+	@Override
+	public void onTerminate() {
+		DeletableResource.deleteAll();
 	}
 }
