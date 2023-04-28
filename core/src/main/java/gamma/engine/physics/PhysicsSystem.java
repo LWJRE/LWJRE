@@ -2,61 +2,72 @@ package gamma.engine.physics;
 
 import gamma.engine.components.BoundingBox3D;
 import gamma.engine.components.CollisionObject3D;
-import vecmatlib.vector.Vec2i;
-import vecmatlib.vector.Vec3f;
-
-import java.util.ArrayList;
 
 public class PhysicsSystem {
 
-	private static final ArrayList<CollisionObject3D> COLLIDERS = new ArrayList<>();
-	private static final ArrayList<Vec2i> COLLISION_PAIRS = new ArrayList<>();
+	private static final SweepAndPrune[] SWEEP_AND_PRUNE = {
+			new SweepAndPrune(),
+			new SweepAndPrune(),
+			new SweepAndPrune(),
+			new SweepAndPrune(),
+			new SweepAndPrune(),
+			new SweepAndPrune(),
+			new SweepAndPrune(),
+			new SweepAndPrune()
+	};
+
+	// TODO: Colliders need to be re-added every frame because they move
 
 	public static void add(CollisionObject3D collider) {
-		COLLIDERS.add(collider);
+		collider.getComponent(BoundingBox3D.class).map(BoundingBox3D::globalPositionVertices).ifPresent(vertices -> {
+			if(vertices.stream().anyMatch(vertex -> vertex.x() >= 0.0f && vertex.y() >= 0.0f && vertex.z() >= 0.0f)) {
+				SWEEP_AND_PRUNE[0].add(collider);
+			}
+			if(vertices.stream().anyMatch(vertex -> vertex.x() <= 0.0f && vertex.y() >= 0.0f && vertex.z() >= 0.0f)) {
+				SWEEP_AND_PRUNE[1].add(collider);
+			}
+			if(vertices.stream().anyMatch(vertex -> vertex.x() >= 0.0f && vertex.y() <= 0.0f && vertex.z() >= 0.0f)) {
+				SWEEP_AND_PRUNE[2].add(collider);
+			}
+			if(vertices.stream().anyMatch(vertex -> vertex.x() >= 0.0f && vertex.y() >= 0.0f && vertex.z() <= 0.0f)) {
+				SWEEP_AND_PRUNE[3].add(collider);
+			}
+			if(vertices.stream().anyMatch(vertex -> vertex.x() <= 0.0f && vertex.y() >= 0.0f && vertex.z() <= 0.0f)) {
+				SWEEP_AND_PRUNE[4].add(collider);
+			}
+			if(vertices.stream().anyMatch(vertex -> vertex.x() <= 0.0f && vertex.y() <= 0.0f && vertex.z() >= 0.0f)) {
+				SWEEP_AND_PRUNE[5].add(collider);
+			}
+			if(vertices.stream().anyMatch(vertex -> vertex.x() >= 0.0f && vertex.y() <= 0.0f && vertex.z() <= 0.0f)) {
+				SWEEP_AND_PRUNE[6].add(collider);
+			}
+			if(vertices.stream().anyMatch(vertex -> vertex.x() <= 0.0f && vertex.y() <= 0.0f && vertex.z() <= 0.0f)) {
+				SWEEP_AND_PRUNE[7].add(collider);
+			}
+		});
 	}
 
 	public static void remove(CollisionObject3D collider) {
-		COLLIDERS.remove(collider);
+		for(SweepAndPrune sweepAndPrune : SWEEP_AND_PRUNE) {
+			sweepAndPrune.remove(collider);
+		}
 	}
 
 	public static void physicsStep() {
 		long time = System.nanoTime();
-		sweepAndPrune();
-		long delta = System.nanoTime() - time;
-		time = System.nanoTime();
-		System.out.println("Broad phase " + (delta / 1_000_000_000.0f));
-		narrowPhase();
-		delta = System.nanoTime() - time;
-		System.out.println("Narrow phase " + (delta / 1_000_000_000.0f));
-	}
-
-	private static void sweepAndPrune() {
-		for(int i = 0; i < COLLIDERS.size() - 1; i++) {
-			for(int j= i + 1; j < COLLIDERS.size(); j++) {
-				// TODO: Check if they are not both static
-				int finalI = i, finalJ = j; // TODO: Allow easier access to bounding boxes
-				COLLIDERS.get(i).getComponent(BoundingBox3D.class).ifPresent(boxA -> COLLIDERS.get(finalJ).getComponent(BoundingBox3D.class).ifPresent(boxB -> {
-					Projection xA = boxA.project(Vec3f.Right());
-					Projection yA = boxA.project(Vec3f.Up());
-					Projection zA = boxA.project(Vec3f.Forward());
-					Projection xB = boxB.project(Vec3f.Right());
-					Projection yB = boxB.project(Vec3f.Up());
-					Projection zB = boxB.project(Vec3f.Forward());
-					if(xA.overlaps(xB) && yA.overlaps(yB) && zA.overlaps(zB)) {
-						COLLISION_PAIRS.add(new Vec2i(finalI, finalJ));
-					}
-				}));
+		Thread[] threads = new Thread[8];
+		for(int i = 0; i < threads.length; i++) {
+			threads[i] = new Thread(SWEEP_AND_PRUNE[i]::resolveCollisions);
+			threads[i].start();
+		}
+		for (Thread thread : threads) {
+			try {
+				thread.join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
 		}
-	}
-
-	private static void narrowPhase() {
-		for(Vec2i pair : COLLISION_PAIRS) {
-			CollisionObject3D colliderA = COLLIDERS.get(pair.x());
-			CollisionObject3D colliderB = COLLIDERS.get(pair.y());
-			colliderA.resolveCollision(colliderB);
-		}
-		COLLISION_PAIRS.clear();
+		long delta = System.nanoTime() - time;
+		System.out.println("Total time " + (delta / 1_000_000_000.0f));
 	}
 }

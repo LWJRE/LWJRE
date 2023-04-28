@@ -9,6 +9,8 @@ import vecmatlib.matrix.Mat4f;
 import vecmatlib.vector.Vec3f;
 import vecmatlib.vector.Vec4f;
 
+import java.util.List;
+
 /**
  * An oriented bounding box used by {@link CollisionObject3D} to detect collisions.
  * The entity needs a {@link Transform3D} component to determine the bounding box's origin.
@@ -75,6 +77,8 @@ public class BoundingBox3D extends Component {
 		return mean.dividedBy(8);
 	}
 
+	// TODO: Unify 'getVertices' methods
+
 	/**
 	 * Gets all the vertices of this shape.
 	 *
@@ -95,5 +99,33 @@ public class BoundingBox3D extends Component {
 				origin.plus(rotation.multiply(new Vec4f(-halfExtents.x(), halfExtents.y(), -halfExtents.z(), 1.0f)).xyz().multiply(scale)),
 				origin.plus(rotation.multiply(new Vec4f(-halfExtents.x(), -halfExtents.y(), -halfExtents.z(), 1.0f)).xyz().multiply(scale))
 		};
+	}
+	
+	public final List<Vec3f> globalPositionVertices() {
+		Vec3f halfExtents = this.extents.dividedBy(2.0f);
+		return this.getComponent(Transform3D.class).map(transform -> {
+			Vec3f origin = transform.globalPosition().plus(this.offset);
+			Mat4f rotation = transform.globalRotation();
+			Vec3f scale = transform.globalScale();
+			return List.of(
+					origin.plus(rotation.multiply(new Vec4f(halfExtents.x(), halfExtents.y(), halfExtents.z(), 1.0f)).xyz().multiply(scale)),
+					origin.plus(rotation.multiply(new Vec4f(-halfExtents.x(), halfExtents.y(), halfExtents.z(), 1.0f)).xyz().multiply(scale)),
+					origin.plus(rotation.multiply(new Vec4f(halfExtents.x(), -halfExtents.y(), halfExtents.z(), 1.0f)).xyz().multiply(scale)),
+					origin.plus(rotation.multiply(new Vec4f(halfExtents.x(), halfExtents.y(), -halfExtents.z(), 1.0f)).xyz().multiply(scale)),
+					origin.plus(rotation.multiply(new Vec4f(-halfExtents.x(), -halfExtents.y(), halfExtents.z(), 1.0f)).xyz().multiply(scale)),
+					origin.plus(rotation.multiply(new Vec4f(halfExtents.x(), -halfExtents.y(), -halfExtents.z(), 1.0f)).xyz().multiply(scale)),
+					origin.plus(rotation.multiply(new Vec4f(-halfExtents.x(), halfExtents.y(), -halfExtents.z(), 1.0f)).xyz().multiply(scale)),
+					origin.plus(rotation.multiply(new Vec4f(-halfExtents.x(), -halfExtents.y(), -halfExtents.z(), 1.0f)).xyz().multiply(scale))
+			);
+		}).orElseGet(() -> List.of(
+				new Vec3f(halfExtents.x(), halfExtents.y(), halfExtents.z()),
+				new Vec3f(-halfExtents.x(), halfExtents.y(), halfExtents.z()),
+				new Vec3f(halfExtents.x(), -halfExtents.y(), halfExtents.z()),
+				new Vec3f(halfExtents.x(), halfExtents.y(), -halfExtents.z()),
+				new Vec3f(-halfExtents.x(), -halfExtents.y(), halfExtents.z()),
+				new Vec3f(halfExtents.x(), -halfExtents.y(), -halfExtents.z()),
+				new Vec3f(-halfExtents.x(), halfExtents.y(), -halfExtents.z()),
+				new Vec3f(-halfExtents.x(), -halfExtents.y(), -halfExtents.z())
+		));
 	}
 }
