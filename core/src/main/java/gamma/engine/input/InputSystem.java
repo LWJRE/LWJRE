@@ -1,6 +1,7 @@
 package gamma.engine.input;
 
 import gamma.engine.window.WindowListener;
+import vecmatlib.vector.Vec2i;
 
 import java.util.HashSet;
 
@@ -10,6 +11,8 @@ public class InputSystem implements WindowListener {
 	private static final HashSet<Integer> KEYBOARD = new HashSet<>();
 	/** Set of buttons currently held down */
 	private static final HashSet<Integer> MOUSE = new HashSet<>();
+
+	private static Vec2i mousePosition = Vec2i.Zero();
 
 	/**
 	 * Returns true if the given key is being held down, otherwise false.
@@ -33,6 +36,10 @@ public class InputSystem implements WindowListener {
 		return MOUSE.contains(button);
 	}
 
+	public static Vec2i mousePosition() {
+		return mousePosition;
+	}
+
 	@Override
 	public void onWindowInput(InputEvent event) {
 		if(event.isPressed()) {
@@ -45,6 +52,8 @@ public class InputSystem implements WindowListener {
 			KEYBOARD.remove(keyEvent.key());
 		} else if (event instanceof MouseButtonInputEvent mouseEvent) {
 			MOUSE.remove(mouseEvent.button());
+		} else if(event instanceof MouseCursorInputEvent mouseEvent) {
+			mousePosition = mouseEvent.position();
 		}
 	}
 }

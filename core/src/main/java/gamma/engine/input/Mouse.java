@@ -51,7 +51,7 @@ public final class Mouse {
 	 * @return A {@link Vec2i} containing the current mouse position
 	 */
 	public static Vec2i position() {
-		return position;
+		return InputSystem.mousePosition();
 	}
 
 	/**

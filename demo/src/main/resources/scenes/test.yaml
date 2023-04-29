@@ -1,6 +1,4 @@
 !!gamma.engine.scene.EntityResource
-#components:
-#  gamma.demo.components.TestComponent: {}
 children:
   dragon: !!gamma.engine.scene.EntityResource
     base: "scenes/dragon.yaml"
@@ -10,7 +8,7 @@ children:
   camera: !!gamma.engine.scene.EntityResource
     components:
       gamma.engine.components.Transform3D:
-        position: !!vecmatlib.vector.Vec3f [0.0, 3.0, 5.0]
+        position: !!vecmatlib.vector.Vec3f [0.0, 3.0, 15.0]
       gamma.engine.components.Camera3D:
         current: true
   floor: !!gamma.engine.scene.EntityResource
@@ -22,8 +20,6 @@ children:
         mass: 10000.0
         restitution: 1
         immovable: true
-      gamma.engine.components.BoundingBox3D:
-        offset: !!vecmatlib.vector.Vec3f [0.0, 0.0, 0.0]
   light: !!gamma.engine.scene.EntityResource
     components:
       gamma.engine.components.Transform3D:

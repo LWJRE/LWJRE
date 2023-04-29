@@ -1,4 +1,4 @@
-gamma.engine.window.Window
+gamma.engine.window.WindowManager
 gamma.engine.rendering.RenderingSystem
 gamma.engine.physics.PhysicsSystem
 gamma.engine.scene.Scene

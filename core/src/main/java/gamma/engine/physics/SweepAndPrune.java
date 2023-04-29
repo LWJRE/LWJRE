@@ -1,6 +1,5 @@
 package gamma.engine.physics;
 
-import gamma.engine.components.BoundingBox3D;
 import gamma.engine.components.CollisionObject3D;
 import vecmatlib.vector.Vec3f;
 
@@ -28,29 +27,31 @@ public class SweepAndPrune {
 	private void broadPhase() {
 		for(int i = 0; i < this.colliders.size() - 1; i++) {
 			for(int j= i + 1; j < this.colliders.size(); j++) {
-				// TODO: Check if they are not both static
-				int finalI = i, finalJ = j; // TODO: Allow easier access to bounding boxes
-				this.colliders.get(i).getComponent(BoundingBox3D.class).ifPresent(boxA -> this.colliders.get(finalJ).getComponent(BoundingBox3D.class).ifPresent(boxB -> {
-					Projection xA = boxA.project(Vec3f.Right());
-					Projection yA = boxA.project(Vec3f.Up());
-					Projection zA = boxA.project(Vec3f.Forward());
-					Projection xB = boxB.project(Vec3f.Right());
-					Projection yB = boxB.project(Vec3f.Up());
-					Projection zB = boxB.project(Vec3f.Forward());
-					if(xA.overlaps(xB) && yA.overlaps(yB) && zA.overlaps(zB)) {
-						this.collisionPairs.add(new CollisionPair(this.colliders.get(finalI), this.colliders.get(finalJ)));
-					}
-				}));
+				CollisionObject3D colliderA = this.colliders.get(i);
+				CollisionObject3D colliderB = this.colliders.get(j);
+				// TODO: Check that they are not both static
+				Projection xA = colliderA.projectBoundingBox(Vec3f.Right());
+				Projection yA = colliderA.projectBoundingBox(Vec3f.Up());
+				Projection zA = colliderA.projectBoundingBox(Vec3f.Forward());
+				Projection xB = colliderB.projectBoundingBox(Vec3f.Right());
+				Projection yB = colliderB.projectBoundingBox(Vec3f.Up());
+				Projection zB = colliderB.projectBoundingBox(Vec3f.Forward());
+				if(xA.overlaps(xB) && yA.overlaps(yB) && zA.overlaps(zB)) {
+					this.collisionPairs.add(new CollisionPair(this.colliders.get(i), this.colliders.get(j)));
+				}
 			}
 		}
 	}
 
 	private void narrowPhase() {
-		this.collisionPairs.forEach(pair -> pair.colliderA().resolveCollision(pair.colliderB()));
+		this.collisionPairs.forEach(CollisionPair::resolveCollision);
 		this.collisionPairs.clear();
 	}
 
 	private record CollisionPair(CollisionObject3D colliderA, CollisionObject3D colliderB) {
 
+		private void resolveCollision() {
+			this.colliderA().resolveCollision(this.colliderB());
+		}
 	}
 }

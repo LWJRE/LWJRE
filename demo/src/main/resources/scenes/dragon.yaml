@@ -5,8 +5,7 @@ components:
     model: !!gamma.engine.rendering.Model "models/dragon.obj"
     shader: !!gamma.engine.rendering.Shader "gamma/engine/shaders/default_shader.glsl"
   gamma.engine.components.DynamicBody3D:
+    boundingBox: !!vecmatlib.vector.Vec3f [7.25, 4.8, 2.75]
+    offset: !!vecmatlib.vector.Vec3f [-0.2, 2.75, -0.25]
     mass: 100.0
     restitution: 0.25
-  gamma.engine.components.BoundingBox3D:
-    extents: !!vecmatlib.vector.Vec3f [7.25, 4.8, 2.75]
-    offset: !!vecmatlib.vector.Vec3f [-0.2, 2.75, -0.25]
