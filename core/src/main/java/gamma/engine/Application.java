@@ -1,8 +1,5 @@
 package gamma.engine;
 
-import gamma.engine.window.Window;
-import org.lwjgl.glfw.GLFW;
-
 import java.util.ServiceLoader;
 
 /**
@@ -12,31 +9,24 @@ import java.util.ServiceLoader;
  */
 public final class Application {
 
+	private static boolean running = true;
+
+	public static void quit() {
+		running = false;
+	}
+
 	public static void main(String[] args) {
 		ServiceLoader<ApplicationListener> services = ServiceLoader.load(ApplicationListener.class);
-		if(GLFW.glfwInit()) {
-			try {
-				System.out.println("Application started");
-				Window window = new Window();
-				window.setupCallbacks();
-				window.makeContextCurrent();
-				services.forEach(ApplicationListener::onInit);
-				while(!window.isCloseRequested()) {
-					services.forEach(ApplicationListener::onProcess);
-					window.update();
-					GLFW.glfwPollEvents();
-				}
-				window.destroy();
-			} catch (Exception e) {
-				System.err.println("Uncaught exception in main");
-				e.printStackTrace();
-			} finally {
-				System.out.println("Terminating");
-				services.forEach(ApplicationListener::onTerminate);
-				GLFW.glfwTerminate();
+		try {
+			services.forEach(ApplicationListener::onInit);
+			while(running) {
+				services.forEach(ApplicationListener::onProcess);
 			}
-		} else {
-			System.err.println("Unable to initialize GLFW");
+		} catch(Exception e) {
+			System.err.println("Uncaught exception in main");
+			e.printStackTrace();
+		} finally {
+			services.forEach(ApplicationListener::onTerminate);
 		}
 	}
 }

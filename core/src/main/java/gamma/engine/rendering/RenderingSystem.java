@@ -4,12 +4,16 @@ import gamma.engine.ApplicationListener;
 import gamma.engine.EditorListener;
 import gamma.engine.components.PointLight3D;
 import gamma.engine.scene.Component;
+import gamma.engine.window.WindowListener;
+import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
+import vecmatlib.vector.Vec2f;
+import vecmatlib.vector.Vec2i;
 
 import java.util.HashMap;
 import java.util.HashSet;
 
-public final class RenderingSystem implements ApplicationListener, EditorListener {
+public final class RenderingSystem implements ApplicationListener, EditorListener, WindowListener {
 
 	// TODO: Replace component+runnable with RenderComponent class
 	private static final HashMap<Mesh, HashMap<Component, Runnable>> RENDER_BATCH = new HashMap<>();
@@ -45,8 +49,29 @@ public final class RenderingSystem implements ApplicationListener, EditorListene
 	}
 
 	@Override
+	public void onInit() {
+		GL.createCapabilities();
+	}
+
+	@Override
 	public void onProcess() {
 		renderingProcess();
+	}
+
+	@Override
+	public void onWindowResized(int width, int height) {
+		// TODO: Give options for viewport scaling in ApplicationProperties
+		Vec2i windowSize = new Vec2i(width, height);
+		float aspectWidth = windowSize.x();
+		float aspectHeight = aspectWidth / (16.0f / 9.0f);
+		if(aspectHeight > windowSize.y()) {
+			aspectHeight = windowSize.y();
+			aspectWidth = aspectHeight * (16.0f / 9.0f);
+		}
+		Vec2f viewportSize = new Vec2f(aspectWidth, aspectHeight);
+		float viewportX = (windowSize.x() / 2.0f) - (viewportSize.x() / 2.0f);
+		float viewportY = (windowSize.y() / 2.0f) - (viewportSize.y() / 2.0f);
+		GL11.glViewport((int) viewportX, (int) viewportY, (int) viewportSize.x(), (int) viewportSize.y());
 	}
 
 	@Override

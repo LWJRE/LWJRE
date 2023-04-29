@@ -4,8 +4,9 @@ import gamma.engine.ApplicationListener;
 import gamma.engine.ApplicationProperties;
 import gamma.engine.EditorListener;
 import gamma.engine.input.InputEvent;
+import gamma.engine.window.WindowListener;
 
-public final class Scene implements ApplicationListener, EditorListener {
+public final class Scene implements ApplicationListener, EditorListener, WindowListener {
 
 	private static Entity root = new Entity();
 	private static Entity next = null;
@@ -27,16 +28,16 @@ public final class Scene implements ApplicationListener, EditorListener {
 		return root;
 	}
 
-	// TODO: Add input to ApplicationListener
-	public static void processInput(InputEvent event) {
-		root.input(event);
-	}
-
 	private long previousTime = System.nanoTime();
 
 	@Override
 	public void onInit() {
 		changeSceneTo(ApplicationProperties.getString("startScene"));
+	}
+
+	@Override
+	public void onWindowInput(InputEvent event) {
+		root.input(event);
 	}
 
 	@Override

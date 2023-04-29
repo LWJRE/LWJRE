@@ -1,4 +1,3 @@
-gamma.engine.window.Window
+gamma.engine.input.InputSystem
 gamma.engine.rendering.RenderingSystem
-gamma.engine.physics.PhysicsSystem
 gamma.engine.scene.Scene
