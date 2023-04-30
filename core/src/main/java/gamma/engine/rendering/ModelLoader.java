@@ -34,12 +34,13 @@ public final class ModelLoader implements ResourceLoader {
 				Assimp.aiGetMaterialColor(aiMaterial, Assimp.AI_MATKEY_COLOR_DIFFUSE, Assimp.aiTextureType_NONE, 0, diffuse);
 				AIColor4D specular = AIColor4D.create();
 				Assimp.aiGetMaterialColor(aiMaterial, Assimp.AI_MATKEY_COLOR_SPECULAR, Assimp.aiTextureType_NONE, 0, specular);
-				// TODO: Get material shininess
+				float[] shininess = new float[1];
+				Assimp.aiGetMaterialFloatArray(aiMaterial, Assimp.AI_MATKEY_SHININESS, Assimp.aiTextureType_NONE, 0, shininess, new int[] {1});
 				materials.add(new Material(
 						new Color4f(ambient.r(), ambient.g(), ambient.b(), ambient.a()),
 						new Color4f(diffuse.r(), diffuse.g(), diffuse.b(), diffuse.a()),
 						new Color4f(specular.r(), specular.g(), specular.b(), specular.a()),
-						0.0f
+						shininess[0]
 				));
 			}
 		}
