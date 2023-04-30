@@ -23,10 +23,15 @@ public class CollisionObject3D extends Component {
 	public Vec3f offset = Vec3f.Zero();
 
 	@Override
-	protected void onUpdate(float delta) {
-		super.onUpdate(delta);
-		PhysicsSystem.remove(this);
+	protected void onStart() {
+		super.onStart();
 		PhysicsSystem.add(this);
+	}
+
+	@Override
+	protected void onExit() {
+		super.onExit();
+		PhysicsSystem.remove(this);
 	}
 
 	public final void resolveCollision(CollisionObject3D that) {
