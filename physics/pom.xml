@@ -8,7 +8,7 @@
 		<version>1.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>gamma-engine-core</artifactId>
+	<artifactId>gamma-engine-physics</artifactId>
 
 	<properties>
 		<maven.compiler.source>17</maven.compiler.source>
@@ -16,25 +16,11 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
-	<repositories>
-		<repository>
-			<id>jitpack.io</id>
-			<url>https://jitpack.io</url>
-		</repository>
-	</repositories>
-
 	<dependencies>
-		<!-- Vectors math -->
 		<dependency>
-			<groupId>com.github.HexagonNico</groupId>
-			<artifactId>VecMatLib</artifactId>
-			<version>1.2.1</version>
-		</dependency>
-		<!-- Yaml parsing -->
-		<dependency>
-			<groupId>org.yaml</groupId>
-			<artifactId>snakeyaml</artifactId>
-			<version>2.0</version>
+			<groupId>gamma.engine</groupId>
+			<artifactId>gamma-engine-core</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 

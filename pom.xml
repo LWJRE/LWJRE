@@ -9,10 +9,10 @@
 
 	<modules>
 		<module>core</module>
+		<module>window</module>
+		<module>graphics</module>
+		<module>physics</module>
 		<module>demo</module>
-		<module>natives-linux</module>
-		<module>natives-windows</module>
-		<module>natives-macos</module>
 	</modules>
 
 	<properties>
