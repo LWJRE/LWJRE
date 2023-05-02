@@ -14,7 +14,7 @@ import java.util.HashMap;
  *
  * @author Nico
  */
-public class Mesh extends DeletableResource {
+public class Mesh extends GLObject {
 
 	/** Which mesh is currently bound */
 	private static Mesh bound;

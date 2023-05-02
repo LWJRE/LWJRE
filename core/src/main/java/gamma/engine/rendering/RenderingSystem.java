@@ -2,7 +2,7 @@ package gamma.engine.rendering;
 
 import gamma.engine.ApplicationListener;
 import gamma.engine.components.PointLight3D;
-import gamma.engine.scene.Component;
+import gamma.engine.components.RendererComponent;
 import gamma.engine.window.WindowListener;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
@@ -14,17 +14,16 @@ import java.util.HashSet;
 
 public final class RenderingSystem implements ApplicationListener, WindowListener {
 
-	// TODO: Replace component+runnable with RenderComponent class
-	private static final HashMap<Mesh, HashMap<Component, Runnable>> RENDER_BATCH = new HashMap<>();
+	private static final HashMap<Mesh, HashSet<RendererComponent>> RENDER_BATCH = new HashMap<>();
 
 	private static final HashSet<PointLight3D> LIGHTS = new HashSet<>();
 
-	public static void addToBatch(Component key, Mesh mesh, Runnable renderFunction) {
+	public static void addToBatch(Mesh mesh, RendererComponent rendererComponent) {
 		if(RENDER_BATCH.containsKey(mesh)) {
-			RENDER_BATCH.get(mesh).put(key, renderFunction);
+			RENDER_BATCH.get(mesh).add(rendererComponent);
 		} else {
-			HashMap<Component, Runnable> batch = new HashMap<>();
-			batch.put(key, renderFunction);
+			HashSet<RendererComponent> batch = new HashSet<>();
+			batch.add(rendererComponent);
 			RENDER_BATCH.put(mesh, batch);
 		}
 	}
@@ -33,14 +32,14 @@ public final class RenderingSystem implements ApplicationListener, WindowListene
 		LIGHTS.add(light);
 	}
 
-	public static void removeFromBatch(Component key, Mesh mesh) {
+	public static void removeFromBatch(Mesh mesh, RendererComponent rendererComponent) {
 		if(RENDER_BATCH.containsKey(mesh)) {
-			RENDER_BATCH.get(mesh).remove(key);
+			RENDER_BATCH.get(mesh).remove(rendererComponent);
 		}
 	}
 
-	public static void removeFromBatch(Component key) {
-		RENDER_BATCH.values().forEach(batch -> batch.remove(key));
+	public static void removeFromBatch(RendererComponent rendererComponent) {
+		RENDER_BATCH.values().forEach(batch -> batch.remove(rendererComponent));
 	}
 
 	public static void removeFromBatch(PointLight3D light) {
@@ -72,7 +71,7 @@ public final class RenderingSystem implements ApplicationListener, WindowListene
 		Shader.setUniformStatic("lights_count", i);
 		RENDER_BATCH.forEach((mesh, batch) -> {
 			mesh.bind();
-			batch.values().forEach(Runnable::run);
+			batch.forEach(rendererComponent -> rendererComponent.drawMesh(mesh));
 		});
 	}
 
@@ -105,6 +104,6 @@ public final class RenderingSystem implements ApplicationListener, WindowListene
 
 	@Override
 	public void onTerminate() {
-		DeletableResource.deleteAll();
+		GLObject.deleteAll();
 	}
 }

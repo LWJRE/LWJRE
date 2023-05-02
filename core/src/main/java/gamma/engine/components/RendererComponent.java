@@ -2,18 +2,11 @@ package gamma.engine.components;
 
 import gamma.engine.annotations.DefaultResource;
 import gamma.engine.annotations.EditorVariable;
+import gamma.engine.rendering.Mesh;
 import gamma.engine.rendering.Shader;
 import gamma.engine.scene.Component;
 
-/**
- * Base class for all renderer components.
- *
- * @see ModelRenderer
- * @see MeshRenderer
- *
- * @author Nico.
- */
-public class RendererComponent extends Component {
+public abstract class RendererComponent extends Component {
 
 	/** The shader used by this renderer */
 	@EditorVariable(name = "Shader")
@@ -28,6 +21,8 @@ public class RendererComponent extends Component {
 	public final Shader shader() {
 		return this.shader;
 	}
+
+	public abstract void drawMesh(Mesh mesh);
 
 	/**
 	 * Sets this renderer's shader.

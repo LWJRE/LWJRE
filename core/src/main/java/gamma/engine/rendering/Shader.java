@@ -18,7 +18,7 @@ import java.util.function.IntConsumer;
  *
  * @author Nico
  */
-public final class Shader extends DeletableResource {
+public final class Shader extends GLObject {
 
 	/** Set of all shaders needed by {@code setUniformStatic} methods */
 	private static final HashSet<Shader> SHADERS = new HashSet<>();

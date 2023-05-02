@@ -18,22 +18,25 @@ public class MeshRenderer extends RendererComponent {
 	@Override
 	protected void onStart() {
 		super.onStart();
-		RenderingSystem.addToBatch(this, this.mesh, () -> {
-			this.shader().start();
-			this.getComponent(Transform3D.class)
-					.map(Transform3D::globalTransformation)
-					.ifPresent(matrix -> this.shader().setUniform("transformation_matrix", matrix));
-			this.shader().setUniform("material.ambient", material.ambient);
-			this.shader().setUniform("material.diffuse", material.diffuse);
-			this.shader().setUniform("material.specular", material.specular);
-			this.shader().setUniform("material.shininess", material.shininess);
-			this.mesh.drawElements();
-		});
+		RenderingSystem.addToBatch(this.mesh, this);
+	}
+
+	@Override
+	public void drawMesh(Mesh mesh) {
+		this.shader().start();
+		this.getComponent(Transform3D.class)
+				.map(Transform3D::globalTransformation)
+				.ifPresent(matrix -> this.shader().setUniform("transformation_matrix", matrix));
+		this.shader().setUniform("material.ambient", material.ambient);
+		this.shader().setUniform("material.diffuse", material.diffuse);
+		this.shader().setUniform("material.specular", material.specular);
+		this.shader().setUniform("material.shininess", material.shininess);
+		mesh.drawElements();
 	}
 
 	@Override
 	protected void onExit() {
 		super.onExit();
-		RenderingSystem.removeFromBatch(this, this.mesh);
+		RenderingSystem.removeFromBatch(this.mesh, this);
 	}
 }

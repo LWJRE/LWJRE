@@ -4,7 +4,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 import org.lwjgl.opengl.GL30;
 
-public class FrameBuffer extends DeletableResource {
+public class FrameBuffer extends GLObject {
 
 	public static void bind(FrameBuffer frameBuffer) {
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, frameBuffer != null ? frameBuffer.frameBuffer : 0);

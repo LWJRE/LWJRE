@@ -5,7 +5,6 @@ import gamma.engine.rendering.Material;
 import gamma.engine.rendering.Mesh;
 import gamma.engine.rendering.Model;
 import gamma.engine.rendering.RenderingSystem;
-import gamma.engine.scene.Component;
 
 /**
  * Component used to render entities that use a {@link Model}.
@@ -30,18 +29,13 @@ public class ModelRenderer extends RendererComponent {
 		this.addModelToBatch();
 	}
 
-	/**
-	 * Draws the given mesh and material.
-	 * This method is added to the render batch as a {@link Runnable} with {@link RenderingSystem#addToBatch(Component, Mesh, Runnable)}.
-	 *
-	 * @param mesh The mesh to render, part of {@link ModelRenderer#model}
-	 * @param material The material to use
-	 */
-	private void drawMesh(Mesh mesh, Material material) {
+	@Override
+	public void drawMesh(Mesh mesh) {
 		this.shader().start();
 		this.getComponent(Transform3D.class)
 				.map(Transform3D::globalTransformation)
 				.ifPresent(matrix -> this.shader().setUniform("transformation_matrix", matrix));
+		Material material = this.model.getMaterial(mesh);
 		this.shader().setUniform("material.ambient", material.ambient);
 		this.shader().setUniform("material.diffuse", material.diffuse);
 		this.shader().setUniform("material.specular", material.specular);
@@ -91,13 +85,13 @@ public class ModelRenderer extends RendererComponent {
 	 * Adds the model to the {@link RenderingSystem}.
 	 */
 	private void addModelToBatch() {
-		this.model.modelData().forEach((mesh, material) -> RenderingSystem.addToBatch(this, mesh, () -> this.drawMesh(mesh, material)));
+		this.model.modelData().forEach((mesh, material) -> RenderingSystem.addToBatch(mesh, this));
 	}
 
 	/**
 	 * Removes the model from the {@link RenderingSystem}.
 	 */
 	private void removeModelFromBatch() {
-		this.model.modelData().forEach((mesh, material) -> RenderingSystem.removeFromBatch(this, mesh));
+		this.model.modelData().forEach((mesh, material) -> RenderingSystem.removeFromBatch(mesh, this));
 	}
 }

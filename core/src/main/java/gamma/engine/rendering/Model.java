@@ -36,4 +36,8 @@ public record Model(Map<Mesh, Material> modelData) {
 	public Model() {
 		this(new HashMap<>());
 	}
+
+	public Material getMaterial(Mesh mesh) {
+		return this.modelData().get(mesh);
+	}
 }
