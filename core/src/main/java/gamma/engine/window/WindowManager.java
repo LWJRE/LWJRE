@@ -3,10 +3,6 @@ package gamma.engine.window;
 import gamma.engine.Application;
 import gamma.engine.ApplicationListener;
 import gamma.engine.ApplicationProperties;
-import gamma.engine.input.KeyInputEvent;
-import gamma.engine.input.MouseButtonInputEvent;
-import gamma.engine.input.MouseCursorInputEvent;
-import gamma.engine.input.MouseScrollInputEvent;
 import org.lwjgl.glfw.Callbacks;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -38,10 +34,10 @@ public class WindowManager implements ApplicationListener {
 				throw new RuntimeException("Failed to create the GLFW window");
 			}
 			GLFW.glfwSetWindowSizeCallback(this.handle, (window, width, height) -> services.forEach(service -> service.onWindowResized(width, height)));
-			GLFW.glfwSetKeyCallback(this.handle, (window, key, scancode, action, mods) -> services.forEach(service -> service.onWindowInput(new KeyInputEvent(key, scancode, action, mods))));
-			GLFW.glfwSetMouseButtonCallback(this.handle, (window, button, action, mods) -> services.forEach(service -> service.onWindowInput(new MouseButtonInputEvent(button, action, mods))));
-			GLFW.glfwSetCursorPosCallback(this.handle, (window, x, y) -> services.forEach(service -> service.onWindowInput(new MouseCursorInputEvent((int) x, (int) y))));
-			GLFW.glfwSetScrollCallback(this.handle, (window, x, y) -> services.forEach(service -> service.onWindowInput(new MouseScrollInputEvent((float) x, (float) y))));
+			GLFW.glfwSetKeyCallback(this.handle, (window, key, scancode, action, mods) -> services.forEach(service -> service.onKeyInput(key, scancode, action, mods)));
+			GLFW.glfwSetMouseButtonCallback(this.handle, (window, button, action, mods) -> services.forEach(service -> service.onMouseButtonInput(button, action, mods)));
+			GLFW.glfwSetCursorPosCallback(this.handle, (window, x, y) -> services.forEach(service -> service.onCursorInput(x, y)));
+			GLFW.glfwSetScrollCallback(this.handle, (window, x, y) -> services.forEach(service -> service.onMouseScrollInput(x, y)));
 			GLFW.glfwMakeContextCurrent(this.handle);
 			GLFW.glfwShowWindow(this.handle);
 		} else {

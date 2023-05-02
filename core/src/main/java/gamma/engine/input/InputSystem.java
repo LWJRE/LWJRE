@@ -1,6 +1,9 @@
 package gamma.engine.input;
 
+import gamma.engine.scene.Scene;
 import gamma.engine.window.WindowListener;
+import org.lwjgl.glfw.GLFW;
+import vecmatlib.vector.Vec2d;
 import vecmatlib.vector.Vec2i;
 
 import java.util.HashSet;
@@ -41,19 +44,33 @@ public class InputSystem implements WindowListener {
 	}
 
 	@Override
-	public void onWindowInput(InputEvent event) {
-		if(event.isPressed()) {
-			if(event instanceof KeyInputEvent keyEvent) {
-				KEYBOARD.add(keyEvent.key());
-			} else if(event instanceof MouseButtonInputEvent mouseEvent) {
-				MOUSE.add(mouseEvent.button());
-			}
-		} else if (event instanceof KeyInputEvent keyEvent) {
-			KEYBOARD.remove(keyEvent.key());
-		} else if (event instanceof MouseButtonInputEvent mouseEvent) {
-			MOUSE.remove(mouseEvent.button());
-		} else if(event instanceof MouseCursorInputEvent mouseEvent) {
-			mousePosition = mouseEvent.position();
+	public void onKeyInput(int key, int scancode, int action, int mods) {
+		if(action == GLFW.GLFW_PRESS) {
+			KEYBOARD.add(key);
+		} else if(action == GLFW.GLFW_RELEASE) {
+			KEYBOARD.remove(key);
 		}
+		Scene.getRoot().input(new KeyInputEvent(key, scancode, action, mods));
+	}
+
+	@Override
+	public void onMouseButtonInput(int button, int action, int mods) {
+		if(action == GLFW.GLFW_PRESS) {
+			MOUSE.add(button);
+		} else if(action == GLFW.GLFW_RELEASE) {
+			MOUSE.remove(button);
+		}
+		Scene.getRoot().input(new MouseButtonInputEvent(button, action, mods));
+	}
+
+	@Override
+	public void onCursorInput(double x, double y) {
+		mousePosition = new Vec2d(x, y).toInt();
+		Scene.getRoot().input(new MouseCursorInputEvent((int) x, (int) y));
+	}
+
+	@Override
+	public void onMouseScrollInput(double x, double y) {
+		Scene.getRoot().input(new MouseScrollInputEvent((float) x, (float) y));
 	}
 }
