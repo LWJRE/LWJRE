@@ -9,9 +9,6 @@
 
 	<modules>
 		<module>core</module>
-		<module>window</module>
-		<module>graphics</module>
-		<module>physics</module>
 		<module>demo</module>
 	</modules>
 
