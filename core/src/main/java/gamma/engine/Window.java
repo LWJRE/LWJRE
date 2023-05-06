@@ -1,7 +1,5 @@
 package gamma.engine;
 
-import gamma.engine.Application;
-import gamma.engine.ApplicationProperties;
 import gamma.engine.input.Keyboard;
 import gamma.engine.input.Mouse;
 import gamma.engine.rendering.RenderingSystem;

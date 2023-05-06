@@ -1,34 +1,24 @@
-!!gamma.engine.scene.EntityResource
-#components:
-#  gamma.demo.components.TestComponent: {}
-name: TestScene
+!!gamma.engine.tree.NodeResource
 children:
-  - !!gamma.engine.scene.EntityResource
-    base: scenes/dragon.yaml
-    components:
-      gamma.engine.components.Transform3D:
-        position: !!vecmatlib.vector.Vec3f [0.0, 5.0, -1.0]
-  - !!gamma.engine.scene.EntityResource
-    name: Camera
-    components:
-      gamma.engine.components.Transform3D:
-        position: !!vecmatlib.vector.Vec3f [0.0, 3.0, 15.0]
-      gamma.engine.components.Camera3D:
-        current: true
-  - !!gamma.engine.scene.EntityResource
-    name: Floor
-    components:
-      gamma.engine.components.Transform3D:
-        position: !!vecmatlib.vector.Vec3f [0.0, -2.0, 0.0]
-        scale: !!vecmatlib.vector.Vec3f [10.0, 1.0, 10.0]
-      gamma.engine.components.DynamicBody3D:
-        mass: 10000.0
-        restitution: 1
-        immovable: true
-  - !!gamma.engine.scene.EntityResource
-    name: Light
-    components:
-      gamma.engine.components.Transform3D:
-        position: !!vecmatlib.vector.Vec3f [10.0, 10.0, 0.0]
-      gamma.engine.components.PointLight3D:
-        color: !!vecmatlib.color.Color3f [1.0, 1.0, 1.0]
+  dragon: !!gamma.engine.tree.NodeResource
+    override: scenes/dragon.yaml
+    properties:
+      position: !!vecmatlib.vector.Vec3f [0.0, 5.0, -1.0]
+  camera: !!gamma.engine.tree.NodeResource
+    type: gamma.engine.tree.Camera3D
+    properties:
+      position:  !!vecmatlib.vector.Vec3f [0.0, 3.0, 15.0]
+      current: true
+  floor: !!gamma.engine.tree.NodeResource
+    type: gamma.engine.tree.DynamicBody3D
+    properties:
+      position: !!vecmatlib.vector.Vec3f [0.0, -2.0, 0.0]
+      scale: !!vecmatlib.vector.Vec3f [10.0, 1.0, 10.0]
+      mass: 10000.0
+      restitution: 1
+      immovable: true
+  light: !!gamma.engine.tree.NodeResource
+    type: gamma.engine.tree.PointLight3D
+    properties:
+      position: !!vecmatlib.vector.Vec3f [10.0, 10.0, 0.0]
+      color: !!vecmatlib.color.Color3f [1.0, 1.0, 1.0]

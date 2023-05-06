@@ -2,7 +2,7 @@ package gamma.engine;
 
 import gamma.engine.physics.PhysicsSystem;
 import gamma.engine.rendering.RenderingSystem;
-import gamma.engine.scene.Scene;
+import gamma.engine.tree.SceneTree;
 
 /**
  * Main application class.
@@ -21,9 +21,9 @@ public final class Application {
 		try {
 			Window.init();
 			RenderingSystem.init();
-			Scene.changeSceneTo(ApplicationProperties.getString("startScene"));
+			SceneTree.changeScene(ApplicationProperties.getString("startScene"));
 			while(running) {
-				Scene.process();
+				SceneTree.process();
 				Window.update();
 				PhysicsSystem.update();
 				RenderingSystem.render();

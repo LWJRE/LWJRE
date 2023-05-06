@@ -77,6 +77,24 @@ public class Reflection {
 		}
 	}
 
+	public static Object getField(Object object, String fieldName) {
+		return getField(object, fieldName, object.getClass());
+	}
+
+	private static Object getField(Object object, String fieldName, Class<?> fieldClass) {
+		try {
+			Field field = fieldClass.getDeclaredField(fieldName);
+			field.setAccessible(true);
+			return field.get(object);
+		} catch (NoSuchFieldException e) {
+			if(fieldClass.getSuperclass().equals(Object.class))
+				throw new ReflectionException("Cannot find field with name " + fieldName, e);
+			else return getField(object, fieldName, fieldClass.getSuperclass());
+		} catch (IllegalAccessException e) {
+			throw new ReflectionException(e);
+		}
+	}
+
 	/**
 	 * Gets a {@link Stream} of {@link String}s that represent the names of the fields in the given class, including private and static fields.
 	 * This includes fields declared in any superclass of the given one.

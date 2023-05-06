@@ -1,7 +1,7 @@
 package gamma.engine.physics;
 
-import gamma.engine.components.CollisionObject3D;
-import gamma.engine.components.Transform3D;
+import gamma.engine.tree.CollisionObject3D;
+import gamma.engine.tree.Node3D;
 import vecmatlib.vector.Vec3f;
 
 import java.util.ArrayList;
@@ -31,10 +31,7 @@ public class PhysicsSystem {
 	// TODO: This acts differently if the colliders are in a different order
 
 	private static List<ArrayList<CollisionObject3D>> spatialSubdivision() {
-		Vec3f center = COLLIDERS.stream()
-				.map(collider -> collider.getComponent(Transform3D.class).map(Transform3D::globalPosition).orElse(Vec3f.Zero()))
-				.reduce(Vec3f.Zero(), Vec3f::plus)
-				.dividedBy(COLLIDERS.size());
+		Vec3f center = COLLIDERS.stream().map(Node3D::globalPosition).reduce(Vec3f.Zero(), Vec3f::plus).dividedBy(COLLIDERS.size());
 		List<ArrayList<CollisionObject3D>> partitions = List.of(
 				new ArrayList<>(),
 				new ArrayList<>(),

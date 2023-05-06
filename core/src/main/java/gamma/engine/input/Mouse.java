@@ -1,6 +1,6 @@
 package gamma.engine.input;
 
-import gamma.engine.scene.Scene;
+import gamma.engine.tree.SceneTree;
 import org.lwjgl.glfw.GLFW;
 import vecmatlib.vector.Vec2i;
 
@@ -42,16 +42,16 @@ public final class Mouse {
 		} else if(action == GLFW.GLFW_RELEASE) {
 			MOUSE.remove(button);
 		}
-		Scene.getRoot().input(new MouseButtonInputEvent(button, action, mods));
+		SceneTree.getRoot().input(new MouseButtonInputEvent(button, action, mods));
 	}
 
 	public static void cursorPosCallback(double x, double y) {
 		position = new Vec2i((int) x, (int) y);
-		Scene.getRoot().input(new MouseCursorInputEvent((int) x, (int) y));
+		SceneTree.getRoot().input(new MouseCursorInputEvent((int) x, (int) y));
 	}
 
 	public static void scrollCallback(double x, double y) {
-		Scene.getRoot().input(new MouseScrollInputEvent((float) x, (float) y));
+		SceneTree.getRoot().input(new MouseScrollInputEvent((float) x, (float) y));
 	}
 
 	public static Vec2i position() {

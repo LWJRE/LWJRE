@@ -1,6 +1,6 @@
 package gamma.engine.input;
 
-import gamma.engine.scene.Scene;
+import gamma.engine.tree.SceneTree;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.HashSet;
@@ -142,7 +142,7 @@ public final class Keyboard {
 		} else if(action == GLFW.GLFW_RELEASE) {
 			KEYBOARD.remove(key);
 		}
-		Scene.getRoot().input(new KeyInputEvent(key, scancode, action, mods));
+		SceneTree.getRoot().input(new KeyInputEvent(key, scancode, action, mods));
 	}
 
 	public static boolean isKeyDown(int key) {

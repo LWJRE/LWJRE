@@ -1,4 +1,4 @@
-package gamma.engine.components;
+package gamma.engine.tree;
 
 import gamma.engine.annotations.EditorRange;
 import gamma.engine.annotations.EditorVariable;
@@ -47,10 +47,8 @@ public class DynamicBody3D extends KinematicBody3D {
 			float restitution = Math.min(this.restitution, collider.restitution);
 			float impulse = -(1 + restitution) * relativeVelocity.dot(collision.normal()) / (1.0f / this.mass + 1.0f / collider.mass);
 			if(collider.immovable) {
-				this.getComponent(Transform3D.class).ifPresent(transform -> {
-					Vec3f penetration = collision.normal().multipliedBy(collision.depth());
-					transform.position = transform.position.plus(penetration);
-				});
+				Vec3f penetration = collision.normal().multipliedBy(collision.depth());
+				this.position = this.position.plus(penetration);
 			}
 			this.velocity = this.velocity.minus(collision.normal().multipliedBy(impulse / this.mass));
 			collider.velocity = collider.velocity.plus(collision.normal().multipliedBy(impulse / collider.mass));
