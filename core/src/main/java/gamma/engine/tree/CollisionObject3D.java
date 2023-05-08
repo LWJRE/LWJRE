@@ -13,11 +13,11 @@ import java.util.List;
 
 public class CollisionObject3D extends Node3D {
 
-	@EditorVariable
+	@EditorVariable(name = "Bounding box")
 	@EditorRange
 	public Vec3f boundingBox = Vec3f.One();
 
-	@EditorVariable
+	@EditorVariable(name = "Offset")
 	@EditorRange
 	public Vec3f offset = Vec3f.Zero();
 

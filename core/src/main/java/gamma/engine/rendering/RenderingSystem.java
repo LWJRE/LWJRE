@@ -46,6 +46,8 @@ public final class RenderingSystem {
 
 	public static void init() {
 		GL.createCapabilities();
+		// TODO: Give default clear color option
+		GL11.glClearColor(0.0f, 0.5f, 1.0f, 1.0f);
 	}
 
 	public static void render() {
@@ -54,8 +56,6 @@ public final class RenderingSystem {
 		GL11.glEnable(GL11.GL_CULL_FACE);
 		GL11.glCullFace(GL11.GL_BACK);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-		// TODO: Give default clear color option
-		GL11.glClearColor(0.0f, 0.5f, 1.0f, 1.0f);
 		int i = 0;
 		for(PointLight3D light : LIGHTS) {
 			Shader.setUniformStatic("point_lights[" + i + "].position", light.globalPosition());
@@ -84,6 +84,11 @@ public final class RenderingSystem {
 		float viewportX = (windowSize.x() / 2.0f) - (viewportSize.x() / 2.0f);
 		float viewportY = (windowSize.y() / 2.0f) - (viewportSize.y() / 2.0f);
 		GL11.glViewport((int) viewportX, (int) viewportY, (int) viewportSize.x(), (int) viewportSize.y());
+	}
+
+	public static void clearRenderer() {
+		RENDER_BATCH.clear();
+		LIGHTS.clear();
 	}
 
 	public static void cleanUp() {

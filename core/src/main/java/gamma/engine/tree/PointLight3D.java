@@ -1,16 +1,12 @@
 package gamma.engine.tree;
 
-import gamma.engine.annotations.EditorRange;
 import gamma.engine.annotations.EditorVariable;
 import gamma.engine.rendering.RenderingSystem;
 import vecmatlib.color.Color3f;
-import vecmatlib.vector.Vec3f;
 
 public class PointLight3D extends Node3D {
 
-	@EditorVariable(name = "Offset")
-	@EditorRange
-	public Vec3f offset = Vec3f.Zero();
+	// TODO: Finish light node
 	@EditorVariable(name = "Color")
 	public Color3f color = Color3f.White();
 
@@ -24,5 +20,11 @@ public class PointLight3D extends Node3D {
 	protected void onExit() {
 		super.onExit();
 		RenderingSystem.removeFromBatch(this);
+	}
+
+	@Override
+	protected void onEditorProcess() {
+		super.onEditorProcess();
+		RenderingSystem.addToBatch(this);
 	}
 }

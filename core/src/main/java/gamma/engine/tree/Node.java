@@ -155,6 +155,15 @@ public class Node {
 		return this.state != State.OUTSIDE_TREE;
 	}
 
+	public final void editorProcess() {
+		this.children.forEach((key, child) -> child.editorProcess());
+		this.onEditorProcess();
+	}
+
+	protected void onEditorProcess() {
+
+	}
+
 	private enum State {
 		INSIDE_TREE,
 		OUTSIDE_TREE,

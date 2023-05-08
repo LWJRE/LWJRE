@@ -35,6 +35,12 @@ public class ModelRenderer extends Renderer3D {
 		this.removeModelFromBatch();
 	}
 
+	@Override
+	protected void onEditorProcess() {
+		super.onEditorProcess();
+		this.addModelToBatch();
+	}
+
 	public void setModel(Model model) {
 		this.removeModelFromBatch();
 		this.model = model != null ? model : new Model();
