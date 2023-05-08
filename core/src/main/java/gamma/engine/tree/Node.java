@@ -94,6 +94,10 @@ public class Node {
 		}
 	}
 
+	public final boolean hasChild(String key) {
+		return this.children.containsKey(key);
+	}
+
 	public final void queueChild(Node node) {
 		if(node == null) {
 			throw new IllegalArgumentException();

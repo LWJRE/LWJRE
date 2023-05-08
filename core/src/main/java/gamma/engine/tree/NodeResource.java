@@ -17,10 +17,18 @@ public final class NodeResource {
 		return new NodeResource();
 	}
 
-	public String type = "gamma.engine.tree.Node";
+	public String type;
 	public String override = "";
 	public final HashMap<String, Object> properties = new HashMap<>();
 	public final HashMap<String, NodeResource> children = new HashMap<>();
+
+	public NodeResource(String type) {
+		this.type = type;
+	}
+
+	public NodeResource() {
+		this("gamma.engine.tree.Node");
+	}
 
 	public Node instantiate() {
 		Node node;
