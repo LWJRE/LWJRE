@@ -1,6 +1,7 @@
 package gamma.engine.rendering;
 
 import gamma.engine.resources.Resources;
+import gamma.engine.utils.YamlSerializer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,6 +12,10 @@ import java.util.Map;
  * @author Nico
  */
 public record Model(Map<Mesh, Material> modelData) {
+
+	static {
+		YamlSerializer.scalarRepresent(Model.class, "!getOrLoad", Resources::pathOf);
+	}
 
 	/**
 	 * Loads the model at the given path in the classpath or returns the same instance if it was already loaded.

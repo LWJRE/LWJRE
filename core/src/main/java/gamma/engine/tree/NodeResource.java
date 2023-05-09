@@ -2,10 +2,29 @@ package gamma.engine.tree;
 
 import gamma.engine.resources.Resources;
 import gamma.engine.utils.Reflection;
+import gamma.engine.utils.YamlSerializer;
 
 import java.util.HashMap;
 
 public final class NodeResource {
+
+	static {
+		YamlSerializer.mappingRepresent(NodeResource.class, nodeResource -> {
+			HashMap<String, Object> values = new HashMap<>();
+			if(nodeResource.override != null && !nodeResource.override.isEmpty()) {
+				values.put("override", nodeResource.override);
+			} else if(nodeResource.type != null && !nodeResource.type.isEmpty()) {
+				values.put("type", nodeResource.type);
+			}
+			if(!nodeResource.properties.isEmpty()) {
+				values.put("properties", nodeResource.properties);
+			}
+			if(!nodeResource.children.isEmpty()) {
+				values.put("children", nodeResource.children);
+			}
+			return values;
+		});
+	}
 
 	public static NodeResource getOrLoad(String path) {
 		if(path != null && !(path.isEmpty() || path.isBlank())) {

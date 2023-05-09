@@ -1,6 +1,7 @@
 package gamma.engine.rendering;
 
 import gamma.engine.resources.Resources;
+import gamma.engine.utils.YamlSerializer;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
@@ -19,6 +20,10 @@ import java.util.function.IntConsumer;
  * @author Nico
  */
 public final class Shader extends DeletableResource {
+
+	static {
+		YamlSerializer.scalarRepresent(Shader.class, "!getOrLoad", Resources::pathOf);
+	}
 
 	/** Set of all shaders needed by {@code setUniformStatic} methods */
 	private static final HashSet<Shader> SHADERS = new HashSet<>();
