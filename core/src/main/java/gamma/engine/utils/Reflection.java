@@ -14,40 +14,11 @@ import java.util.stream.Stream;
  */
 public class Reflection {
 
-	/**
-	 * Sets a field with the given name in the given object.
-	 * This method can set public as well as private fields even if they are declared in the object's superclass.
-	 * This method cannot set final fields.
-	 *
-	 * @param object The object that holds the given field
-	 * @param fieldName Name of the field
-	 * @param value Value to set to the field
-	 *
-	 * @throws ReflectionException If an exception involving reflection occurs
-	 * @throws NullPointerException If any of the given values except for the last one is null
-	 * @throws SecurityException If a security manager is preventing to set the field
-	 * @throws IllegalArgumentException If type of the given value is not assignable to the field's type
-	 */
-	public static void setField(Object object, String fieldName, Object value) {
+	public static void setField(Object object, String fieldName, Object value) throws ReflectionException {
 		setField(object, fieldName, object.getClass(), value);
 	}
 
-	/**
-	 * Sets a field with the given name in the given object.
-	 * This method can set public as well as private fields even if they are declared in the object's superclass.
-	 * This method cannot set final fields.
-	 *
-	 * @param object The object that holds the given field
-	 * @param fieldName Name of the field
-	 * @param fieldClass Class where to look for the field
-	 * @param value Value to set to the field
-	 *
-	 * @throws ReflectionException If an exception involving reflection occurs
-	 * @throws NullPointerException If any of the given values except for the last one is null
-	 * @throws SecurityException If a security manager is preventing to set the field
-	 * @throws IllegalArgumentException If type of the given value is not assignable to the field's type
-	 */
-	private static void setField(Object object, String fieldName, Class<?> fieldClass, Object value) {
+	private static void setField(Object object, String fieldName, Class<?> fieldClass, Object value) throws ReflectionException {
 		try {
 			Field field = fieldClass.getDeclaredField(fieldName);
 			field.setAccessible(true);
@@ -77,11 +48,11 @@ public class Reflection {
 		}
 	}
 
-	public static Object getField(Object object, String fieldName) {
+	public static Object getField(Object object, String fieldName) throws ReflectionException {
 		return getField(object, fieldName, object.getClass());
 	}
 
-	private static Object getField(Object object, String fieldName, Class<?> fieldClass) {
+	private static Object getField(Object object, String fieldName, Class<?> fieldClass) throws ReflectionException {
 		try {
 			Field field = fieldClass.getDeclaredField(fieldName);
 			field.setAccessible(true);
@@ -95,37 +66,10 @@ public class Reflection {
 		}
 	}
 
-	/**
-	 * Gets a {@link Stream} of {@link String}s that represent the names of the fields in the given class, including private and static fields.
-	 * This includes fields declared in any superclass of the given one.
-	 *
-	 * @param from Class where to look for the fields
-	 *
-	 * @return A {@code Stream} containing the names of all the declared fields in the given class
-	 *
-	 * @throws SecurityException If a security manager is preventing to set the field
-	 * @throws NullPointerException If {@code from} is null
-	 *
-	 * @see Reflection#getAllFields(Class, boolean)
-	 */
 	public static Stream<String> getAllFields(Class<?> from) {
 		return getAllFields(from, true);
 	}
 
-	/**
-	 * Gets a {@link Stream} of {@link String}s that represent the names of the fields in the given class, including private and static fields.
-	 * If {@code includeSuperclass} is true, this also includes fields declared in all superclasses up to {@link Object}.
-	 *
-	 * @param from Class where to look for the fields
-	 * @param includeSuperclass True to include superclasses, false to limit to the given class
-	 *
-	 * @return A {@code Stream} containing the names of all the declared fields in the given class
-	 *
-	 * @throws SecurityException If a security manager is preventing to set the field
-	 * @throws NullPointerException If {@code from} is null
-	 *
-	 * @see Class#getDeclaredFields()
-	 */
 	public static Stream<String> getAllFields(Class<?> from, boolean includeSuperclass) {
 		Stream<String> fields = Arrays.stream(from.getDeclaredFields()).map(Field::getName);
 		if(includeSuperclass && !from.getSuperclass().equals(Object.class)) {
@@ -134,24 +78,7 @@ public class Reflection {
 		return fields;
 	}
 
-	/**
-	 * Instantiates an object of the given class using the given arguments as constructor arguments.
-	 *
-	 * @param type The class to instantiate
-	 * @param arguments Constructor arguments
-	 *
-	 * @return The instantiated object
-	 *
-	 * @throws ReflectionException If an exception involving reflection occurs
-	 * @throws SecurityException If a security manager is preventing to set the field
-	 * @throws NullPointerException If {@code type} is null
-	 *
-	 * @see Class#getDeclaredConstructor(Class[])
-	 * @see Constructor#newInstance(Object...)
-	 *
-	 * @param <T> Type of the object to instantiate
-	 */
-	public static <T> T instantiate(Class<T> type, Object... arguments) {
+	public static <T> T instantiate(Class<T> type, Object... arguments) throws ReflectionException {
 		try {
 			Class<?>[] parameters = Arrays.stream(arguments).map(Object::getClass).toArray(Class[]::new);
 			Constructor<?> constructor = type.getDeclaredConstructor(parameters);
@@ -166,68 +93,19 @@ public class Reflection {
 		}
 	}
 
-	/**
-	 * Instantiates an object of the given class using the given arguments as constructor arguments.
-	 *
-	 * @param className Name of the class to instantiate
-	 * @param arguments Constructor arguments
-	 *
-	 * @return The instantiated object
-	 *
-	 * @throws ReflectionException If an exception involving reflection occurs
-	 * @throws SecurityException If a security manager is preventing to set the field
-	 * @throws NullPointerException If {@code type} is null
-	 *
-	 * @see Class#forName(String)
-	 * @see Reflection#instantiate(Class, Object...)
-	 */
-	public static Object instantiate(String className, Object... arguments) {
+	public static Object instantiate(String className, Object... arguments) throws ReflectionException {
 		try {
-			return instantiate(Class.forName(className), arguments);
+			return instantiate(Thread.currentThread().getContextClassLoader().loadClass(className), arguments);
 		} catch (ClassNotFoundException e) {
 			throw new ReflectionException("Cannot find class with name " + className, e);
 		}
 	}
 
-	/**
-	 * Calls a method with the given name and given arguments on the given object.
-	 * This method can call public as well as private methods even if they are declared in the object's superclass.
-	 *
-	 * @param object The object on which the method is called
-	 * @param methodName The name of the method
-	 * @param arguments The method's arguments
-	 *
-	 * @return The result of the method call
-	 *
-	 * @throws ReflectionException If an exception involving reflection occurs
-	 * @throws NullPointerException If any of the given arguments is null
-	 * @throws SecurityException If a security manager is preventing to set the field
-	 *
-	 * @see Class#getMethod(String, Class[])
-	 * @see Method#invoke(Object, Object...)
-	 */
-	public static Object callMethod(Object object, String methodName, Object... arguments) {
+	public static Object callMethod(Object object, String methodName, Object... arguments) throws ReflectionException {
 		return callMethod(object, methodName, object.getClass(), arguments);
 	}
 
-	/**
-	 * Calls a method with the given name and given arguments on the given object.
-	 * This method can call public as well as private methods even if they are declared in the object's superclass.
-	 *
-	 * @param object The object on which the method is called
-	 * @param methodName The name of the method
-	 * @param methodClass The class where to look for the method
-	 * @param arguments The method's arguments
-	 *
-	 * @return The result of the method call
-	 *
-	 * @throws ReflectionException If an exception involving reflection occurs
-	 * @throws NullPointerException If any of the given arguments is null
-	 * @throws SecurityException If a security manager is preventing to set the field
-	 *
-	 * @see Reflection#callMethod(Object, String, Object...)
-	 */
-	private static Object callMethod(Object object, String methodName, Class<?> methodClass, Object... arguments) {
+	private static Object callMethod(Object object, String methodName, Class<?> methodClass, Object... arguments) throws ReflectionException {
 		try {
 			Class<?>[] parameters = Arrays.stream(arguments).map(Object::getClass).toArray(Class[]::new);
 			Method method = methodClass.getMethod(methodName, parameters);

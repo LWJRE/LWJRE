@@ -1,11 +1,6 @@
 package gamma.engine.utils;
 
-/**
- * Unchecked exception used in {@link Reflection} class to wrap checked reflection exceptions.
- *
- * @author Nico
- */
-public class ReflectionException extends RuntimeException {
+public class ReflectionException extends Exception {
 
 	/**
 	 * Constructs a new reflection exception with the given cause.

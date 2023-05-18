@@ -56,10 +56,10 @@ public class ModelRenderer extends Renderer3D {
 	}
 
 	private void addModelToBatch() {
-		this.model.modelData().forEach((mesh, material) -> RenderingSystem.addToBatch(mesh, this));
+		this.model.modelData().forEach((mesh, material) -> RenderingSystem.addToBatch(mesh, this::render));
 	}
 
 	private void removeModelFromBatch() {
-		this.model.modelData().forEach((mesh, material) -> RenderingSystem.removeFromBatch(mesh, this));
+		this.model.modelData().forEach((mesh, material) -> RenderingSystem.removeFromBatch(mesh, this::render));
 	}
 }

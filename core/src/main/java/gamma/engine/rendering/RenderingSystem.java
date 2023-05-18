@@ -1,26 +1,28 @@
 package gamma.engine.rendering;
 
 import gamma.engine.tree.PointLight3D;
-import gamma.engine.tree.Renderer3D;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
+import vecmatlib.color.Color3f;
+import vecmatlib.color.Color4f;
 import vecmatlib.vector.Vec2f;
 import vecmatlib.vector.Vec2i;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.function.Consumer;
 
 public final class RenderingSystem {
 
-	private static final HashMap<Mesh, HashSet<Renderer3D>> RENDER_BATCH = new HashMap<>();
+	private static final HashMap<Mesh, HashSet<Consumer<Mesh>>> RENDER_BATCH = new HashMap<>();
 
 	private static final HashSet<PointLight3D> LIGHTS = new HashSet<>();
 
-	public static void addToBatch(Mesh mesh, Renderer3D renderer) {
+	public static void addToBatch(Mesh mesh, Consumer<Mesh> renderer) {
 		if(RENDER_BATCH.containsKey(mesh)) {
 			RENDER_BATCH.get(mesh).add(renderer);
 		} else {
-			HashSet<Renderer3D> batch = new HashSet<>();
+			HashSet<Consumer<Mesh>> batch = new HashSet<>();
 			batch.add(renderer);
 			RENDER_BATCH.put(mesh, batch);
 		}
@@ -30,13 +32,13 @@ public final class RenderingSystem {
 		LIGHTS.add(light);
 	}
 
-	public static void removeFromBatch(Mesh mesh, Renderer3D renderer) {
+	public static void removeFromBatch(Mesh mesh, Consumer<Mesh> renderer) {
 		if(RENDER_BATCH.containsKey(mesh)) {
 			RENDER_BATCH.get(mesh).remove(renderer);
 		}
 	}
 
-	public static void removeFromBatch(Renderer3D renderer) {
+	public static void removeFromBatch(Consumer<Mesh> renderer) {
 		RENDER_BATCH.values().forEach(batch -> batch.remove(renderer));
 	}
 
@@ -46,15 +48,13 @@ public final class RenderingSystem {
 
 	public static void init() {
 		GL.createCapabilities();
-		// TODO: Give default clear color option
-		GL11.glClearColor(0.0f, 0.5f, 1.0f, 1.0f);
+		// TODO: Give default options
+		setClearColor(0.0f, 0.5f, 1.0f);
+		deptTest(true);
+		backFaceCulling(true);
 	}
 
 	public static void render() {
-		// TODO: Give option for depth test and backface culling
-		GL11.glEnable(GL11.GL_DEPTH_TEST);
-		GL11.glEnable(GL11.GL_CULL_FACE);
-		GL11.glCullFace(GL11.GL_BACK);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 		int i = 0;
 		for(PointLight3D light : LIGHTS) {
@@ -67,7 +67,7 @@ public final class RenderingSystem {
 		Shader.setUniformStatic("lights_count", i);
 		RENDER_BATCH.forEach((mesh, batch) -> {
 			mesh.bind();
-			batch.forEach(renderer -> renderer.render(mesh));
+			batch.forEach(renderer -> renderer.accept(mesh));
 		});
 	}
 
@@ -85,6 +85,42 @@ public final class RenderingSystem {
 		float viewportY = (windowSize.y() / 2.0f) - (viewportSize.y() / 2.0f);
 		GL11.glViewport((int) viewportX, (int) viewportY, (int) viewportSize.x(), (int) viewportSize.y());
 	}
+
+	public static void setClearColor(float red, float green, float blue) {
+		setClearColor(red, green, blue, 1.0f);
+	}
+
+	public static void setClearColor(Color3f color) {
+		setClearColor(color.r(), color.g(), color.b());
+	}
+
+	public static void setClearColor(float red, float green, float blue, float alpha) {
+		GL11.glClearColor(red, green, blue, alpha);
+	}
+
+	public static void setClearColor(Color4f color) {
+		setClearColor(color.r(), color.g(), color.b(), color.a());
+	}
+
+	public static void deptTest(boolean enable) {
+		if(enable) {
+			GL11.glEnable(GL11.GL_DEPTH_TEST);
+			GL11.glEnable(GL11.GL_CULL_FACE);
+		} else {
+			GL11.glDisable(GL11.GL_DEPTH_TEST);
+		}
+	}
+
+	public static void backFaceCulling(boolean enable) {
+		if(enable) {
+			GL11.glEnable(GL11.GL_CULL_FACE);
+			GL11.glCullFace(GL11.GL_BACK);
+		} else {
+			GL11.glDisable(GL11.GL_CULL_FACE);
+		}
+	}
+
+	// TODO: Option for polygon mode
 
 	public static void clearRenderer() {
 		RENDER_BATCH.clear();

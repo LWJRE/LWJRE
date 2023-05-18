@@ -5,6 +5,8 @@ import gamma.engine.annotations.EditorVariable;
 import gamma.engine.physics.Collision3D;
 import gamma.engine.physics.PhysicsSystem;
 import gamma.engine.physics.Projection;
+import gamma.engine.rendering.CubeMesh;
+import gamma.engine.rendering.DebugRenderer;
 import vecmatlib.matrix.Mat4f;
 import vecmatlib.vector.Vec3f;
 import vecmatlib.vector.Vec4f;
@@ -25,6 +27,17 @@ public class CollisionObject3D extends Node3D {
 	protected void onEnter() {
 		super.onEnter();
 		PhysicsSystem.add(this);
+	}
+
+	@Override
+	protected void onEditorProcess() {
+		super.onEditorProcess();
+		DebugRenderer.addToBatch(CubeMesh.INSTANCE, mesh -> {
+			Mat4f shape = Mat4f.translation(this.offset).multiply(Mat4f.scaling(this.boundingBox.dividedBy(2.0f)));
+			DebugRenderer.SHADER.setUniform("transformation_matrix", this.globalTransformation().multiply(shape));
+			DebugRenderer.SHADER.setUniform("color", 0.0f, 1.0f, 0.0f, 1.0f);
+			mesh.drawElements();
+		});
 	}
 
 	@Override
