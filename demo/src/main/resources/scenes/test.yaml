@@ -3,22 +3,29 @@ children:
   dragon: !!gamma.engine.tree.NodeResource
     override: scenes/dragon.yaml
     properties:
-      position: !!vecmatlib.vector.Vec3f [0.0, 5.0, -1.0]
+      position: !!vecmatlib.vector.Vec3f [0.0, 7.0, -1.0]
   camera: !!gamma.engine.tree.NodeResource
     type: gamma.engine.tree.Camera3D
     properties:
-      position:  !!vecmatlib.vector.Vec3f [0.0, 3.0, 15.0]
       current: true
+      position: !!vecmatlib.vector.Vec3f [0.0, 3.0, 15.0]
   floor: !!gamma.engine.tree.NodeResource
+    children:
+      light1: !!gamma.engine.tree.NodeResource
+        type: gamma.engine.tree.PointLight3D
+        properties:
+          diffuse: !!vecmatlib.color.Color3f [1.0, 0.0, 1.0]
+          position: !!vecmatlib.vector.Vec3f [-10.0, 20.0, 0.0]
+      light2: !!gamma.engine.tree.NodeResource
+        type: gamma.engine.tree.PointLight3D
+        properties:
+          diffuse: !!vecmatlib.color.Color3f [0.0, 0.0, 1.0]
+          position: !!vecmatlib.vector.Vec3f [0.0, 20.0, 0.0]
     type: gamma.engine.tree.DynamicBody3D
     properties:
-      position: !!vecmatlib.vector.Vec3f [0.0, -2.0, 0.0]
-      scale: !!vecmatlib.vector.Vec3f [10.0, 1.0, 10.0]
-      mass: 10000.0
       restitution: 1
       immovable: true
-  light: !!gamma.engine.tree.NodeResource
-    type: gamma.engine.tree.PointLight3D
-    properties:
-      position: !!vecmatlib.vector.Vec3f [10.0, 10.0, 0.0]
-      color: !!vecmatlib.color.Color3f [1.0, 1.0, 1.0]
+      mass: 10000.0
+      scale: !!vecmatlib.vector.Vec3f [10.0, 1.0, 10.0]
+      position: !!vecmatlib.vector.Vec3f [0.0, 0.0, 0.0]
+type: gamma.engine.tree.Node

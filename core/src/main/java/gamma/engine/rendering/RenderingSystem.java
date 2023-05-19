@@ -59,9 +59,10 @@ public final class RenderingSystem {
 		int i = 0;
 		for(PointLight3D light : LIGHTS) {
 			Shader.setUniformStatic("point_lights[" + i + "].position", light.globalPosition());
-			Shader.setUniformStatic("point_lights[" + i + "].ambient", light.color);
-			Shader.setUniformStatic("point_lights[" + i + "].diffuse", light.color);
-			Shader.setUniformStatic("point_lights[" + i + "].specular", light.color);
+			Shader.setUniformStatic("point_lights[" + i + "].ambient", light.ambient.multiply(light.energy));
+			Shader.setUniformStatic("point_lights[" + i + "].diffuse", light.diffuse.multiply(light.energy));
+			Shader.setUniformStatic("point_lights[" + i + "].specular", light.specular.multiply(light.energy));
+			Shader.setUniformStatic("point_lights[" + i + "].attenuation", light.attenuation);
 			i++;
 		}
 		Shader.setUniformStatic("lights_count", i);

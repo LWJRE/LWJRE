@@ -46,7 +46,8 @@ vec3 point_light(PointLight light, vec3 view_direction) {
     // attenuation
     float distance = length(light.position - world_position);
     float attenuation = 1.0 / (light.attenuation.x + light.attenuation.y * distance + light.attenuation.z * (distance * distance));
-    return (ambient + diffuse + specular) /* attenuation*/;
+    // result
+    return (ambient + diffuse + specular) * attenuation;
 }
 
 vec4 fragment_shader();
