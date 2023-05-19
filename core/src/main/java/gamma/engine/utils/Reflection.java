@@ -7,11 +7,6 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-/**
- * Static class to help with reflection.
- *
- * @author Nico
- */
 public class Reflection {
 
 	public static void setField(Object object, String fieldName, Object value) throws ReflectionException {
@@ -76,6 +71,26 @@ public class Reflection {
 			return Stream.concat(fields, getAllFields(from.getSuperclass(), true));
 		}
 		return fields;
+	}
+
+	public static boolean hasField(String name, Class<?> from) {
+		return hasField(name, from, true);
+	}
+
+	public static boolean hasField(String name, Class<?> from, boolean includeSuperclass) {
+		return getAllFields(from, includeSuperclass).toList().contains(name);
+	}
+
+	public static boolean hasField(String fieldName, String className) throws ReflectionException {
+		return hasField(fieldName, className, true);
+	}
+
+	public static boolean hasField(String fieldName, String className, boolean includeSuperclass) throws ReflectionException {
+		try {
+			return hasField(fieldName, Thread.currentThread().getContextClassLoader().loadClass(className), includeSuperclass);
+		} catch (ClassNotFoundException e) {
+			throw new ReflectionException("Cannot find class with name " + className, e);
+		}
 	}
 
 	public static <T> T instantiate(Class<T> type, Object... arguments) throws ReflectionException {

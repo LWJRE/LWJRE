@@ -35,6 +35,7 @@ public class TestNode {
 		Node parent = new Node();
 		Node child = new Node();
 		parent.addChild("Key", child);
+		Assertions.assertTrue(parent.hasChild("Key"));
 		Assertions.assertEquals(parent.getChild("Key"), child);
 	}
 
@@ -114,8 +115,10 @@ public class TestNode {
 		Node parent = new Node();
 		Node child = new Node();
 		parent.addChild("Key", child);
+		Assertions.assertTrue(parent.hasChild("Key"));
 		Assertions.assertEquals(parent.getChild("Key"), child);
 		parent.removeChild("Key");
+		Assertions.assertFalse(parent.hasChild("Key"));
 		Assertions.assertNotEquals(parent.getChild("Key"), child);
 	}
 
