@@ -2,6 +2,7 @@ package gamma.engine.physics;
 
 import gamma.engine.tree.CollisionObject3D;
 import gamma.engine.tree.Node3D;
+import vecmatlib.matrix.Mat4f;
 import vecmatlib.vector.Vec3f;
 
 import java.util.ArrayList;
@@ -102,7 +103,34 @@ public class PhysicsSystem {
 	private record CollisionPair(CollisionObject3D colliderA, CollisionObject3D colliderB) {
 
 		private void resolveCollision() {
-			this.colliderA().resolveCollision(this.colliderB());
+			Vec3f normal = Vec3f.Zero();
+			float depth = Float.POSITIVE_INFINITY;
+			Mat4f rotationA = this.colliderA().globalRotation();
+			Mat4f rotationB = this.colliderB().globalRotation();
+			Vec3f[] axes = new Vec3f[] {
+					rotationA.col0().xyz().normalized(),
+					rotationA.col1().xyz().normalized(),
+					rotationA.col2().xyz().normalized(),
+					rotationB.col0().xyz().normalized(),
+					rotationB.col1().xyz().normalized(),
+					rotationB.col2().xyz().normalized()
+			};
+			for(Vec3f axis : axes) {
+				Projection projectionA = this.colliderA().projectBoundingBox(axis);
+				Projection projectionB = this.colliderB().projectBoundingBox(axis);
+				if(!projectionA.overlaps(projectionB)) {
+					return;
+				}
+				float axisDepth = projectionA.getOverlap(projectionB).length();
+				if(axisDepth < depth) {
+					depth = axisDepth;
+					normal = axis;
+				}
+			}
+			if(this.colliderA().meanCenter().minus(this.colliderB().meanCenter()).dot(normal) < 0.0f) {
+				normal = normal.negated();
+			}
+			this.colliderA().onCollision(new Collision3D(this.colliderB(), normal, depth));
 		}
 	}
 }

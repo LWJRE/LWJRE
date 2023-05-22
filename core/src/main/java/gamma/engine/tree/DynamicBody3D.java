@@ -8,6 +8,11 @@ import vecmatlib.vector.Vec3f;
 
 import java.util.ArrayList;
 
+/**
+ * Collision object moved by applying forces.
+ *
+ * @author Nico
+ */
 public class DynamicBody3D extends KinematicBody3D {
 
 	@EditorVariable(name = "Mass")
@@ -41,7 +46,7 @@ public class DynamicBody3D extends KinematicBody3D {
 	}
 
 	@Override
-	protected void onCollision(Collision3D collision) {
+	public void onCollision(Collision3D collision) {
 		if(collision.collider() instanceof DynamicBody3D collider) {
 			Vec3f relativeVelocity = collider.velocity.minus(this.velocity);
 			float restitution = Math.min(this.restitution, collider.restitution);

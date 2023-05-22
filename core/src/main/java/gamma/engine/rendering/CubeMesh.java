@@ -6,14 +6,14 @@ public final class CubeMesh {
 
 	static {
 		INSTANCE.setVertices3D(new float[] {
-				-1.0f, -1.0f,  1.0f,
-				1.0f, -1.0f,  1.0f,
-				1.0f,  1.0f,  1.0f,
-				-1.0f,  1.0f,  1.0f,
-				-1.0f, -1.0f, -1.0f,
-				1.0f, -1.0f, -1.0f,
-				1.0f,  1.0f, -1.0f,
-				-1.0f,  1.0f, -1.0f
+				-0.5f, -0.5f,  0.5f,
+				0.5f, -0.5f,  0.5f,
+				0.5f,  0.5f,  0.5f,
+				-0.5f,  0.5f,  0.5f,
+				-0.5f, -0.5f, -0.5f,
+				0.5f, -0.5f, -0.5f,
+				0.5f,  0.5f, -0.5f,
+				-0.5f,  0.5f, -0.5f
 		});
 		INSTANCE.setIndices(new int[] {
 				0, 1, 2,

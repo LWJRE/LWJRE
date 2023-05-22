@@ -82,17 +82,17 @@ public final class Shader extends DeletableResource {
 		GL20.glShaderSource(this.vertex, vertexShader);
 		GL20.glCompileShader(this.vertex);
 		if(GL20.glGetShaderi(this.vertex, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
-			System.out.println(GL20.glGetShaderInfoLog(this.vertex));
+			String shaderInfoLog = GL20.glGetShaderInfoLog(this.vertex);
 			GL20.glDeleteShader(this.vertex);
-			throw new ShaderCompilationException("Could not compile vertex shader");
+			throw new ShaderCompilationException("Could not compile vertex shader\n" + shaderInfoLog);
 		}
 		this.fragment = GL20.glCreateShader(GL20.GL_FRAGMENT_SHADER);
 		GL20.glShaderSource(this.fragment, fragmentShader);
 		GL20.glCompileShader(this.fragment);
 		if(GL20.glGetShaderi(this.fragment, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
-			System.out.println(GL20.glGetShaderInfoLog(this.fragment));
+			String shaderInfoLog = GL20.glGetShaderInfoLog(this.fragment);
 			GL20.glDeleteShader(this.fragment);
-			throw new ShaderCompilationException("Could not compile fragment shader");
+			throw new ShaderCompilationException("Could not compile fragment shader\n" + shaderInfoLog);
 		}
 		this.program = GL20.glCreateProgram();
 		GL20.glAttachShader(this.program, this.vertex);

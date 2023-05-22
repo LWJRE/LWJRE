@@ -13,12 +13,24 @@ import vecmatlib.vector.Vec4f;
 
 import java.util.List;
 
+/**
+ * Node that represents a 3D object with a collision box.
+ * Base class for all physic bodies.
+ *
+ * @author Nico
+ */
 public class CollisionObject3D extends Node3D {
 
+	/**
+	 * Extents of this object's bounding box.
+	 */
 	@EditorVariable(name = "Bounding box")
 	@EditorRange
 	public Vec3f boundingBox = Vec3f.One();
 
+	/**
+	 * Offset of the bounding box from the object's origin.
+	 */
 	@EditorVariable(name = "Offset")
 	@EditorRange
 	public Vec3f offset = Vec3f.Zero();
@@ -33,9 +45,9 @@ public class CollisionObject3D extends Node3D {
 	protected void onEditorProcess() {
 		super.onEditorProcess();
 		DebugRenderer.addToBatch(CubeMesh.INSTANCE, mesh -> {
-			Mat4f shape = Mat4f.translation(this.offset).multiply(Mat4f.scaling(this.boundingBox.dividedBy(2.0f)));
+			Mat4f shape = Mat4f.translation(this.offset).multiply(Mat4f.scaling(this.boundingBox));
 			DebugRenderer.SHADER.setUniform("transformation_matrix", this.globalTransformation().multiply(shape));
-			DebugRenderer.SHADER.setUniform("color", 0.0f, 1.0f, 0.0f, 1.0f);
+			DebugRenderer.SHADER.setUniform("color", 0.0f, 0.5f, 1.0f, 1.0f);
 			mesh.drawElements();
 		});
 	}
@@ -46,38 +58,15 @@ public class CollisionObject3D extends Node3D {
 		PhysicsSystem.remove(this);
 	}
 
-	public final void resolveCollision(CollisionObject3D that) {
-		Vec3f normal = Vec3f.Zero();
-		float depth = Float.POSITIVE_INFINITY;
-		Mat4f rotationA = this.globalRotation();
-		Mat4f rotationB = that.globalRotation();
-		Vec3f[] axes = new Vec3f[] {
-				rotationA.col0().xyz().normalized(),
-				rotationA.col1().xyz().normalized(),
-				rotationA.col2().xyz().normalized(),
-				rotationB.col0().xyz().normalized(),
-				rotationB.col1().xyz().normalized(),
-				rotationB.col2().xyz().normalized()
-		};
-		for(Vec3f axis : axes) {
-			Projection projectionA = this.projectBoundingBox(axis);
-			Projection projectionB = that.projectBoundingBox(axis);
-			if(!projectionA.overlaps(projectionB)) {
-				return;
-			}
-			float axisDepth = projectionA.getOverlap(projectionB).length();
-			if(axisDepth < depth) {
-				depth = axisDepth;
-				normal = axis;
-			}
-		}
-		if(this.meanCenter().minus(that.meanCenter()).dot(normal) < 0.0f) {
-			normal = normal.negated();
-		}
-		this.onCollision(new Collision3D(that, normal, depth));
-	}
-
-	public final Projection projectBoundingBox(Vec3f axis) {
+	/**
+	 * Computes the {@link Projection} of this object's bounding box on the given (arbitrary) axis.
+	 * Used to resolve collision in the {@link PhysicsSystem}.
+	 *
+	 * @param axis Axis on which the box should be projected (must be normalized)
+	 *
+	 * @return The projection of the object's bounding box on the given axis
+	 */
+	public Projection projectBoundingBox(Vec3f axis) {
 		float min = Float.POSITIVE_INFINITY, max = Float.NEGATIVE_INFINITY;
 		for(Vec3f vertex : this.getVertices()) {
 			float projection = vertex.dot(axis);
@@ -87,7 +76,13 @@ public class CollisionObject3D extends Node3D {
 		return new Projection(min, max);
 	}
 
-	public final List<Vec3f> getVertices() {
+	/**
+	 * Computes the global position of the vertices of the object's bounding box and returns them in a {@link List}.
+	 * Used to resolve collision in the {@link PhysicsSystem}.
+	 *
+	 * @return A list containing the global position of the 8 vertices of the object's bounding box
+	 */
+	public List<Vec3f> getVertices() {
 		Vec3f halfExtents = this.boundingBox.dividedBy(2.0f);
 		Vec3f origin = this.globalPosition().plus(this.offset);
 		Mat4f rotation = this.globalRotation();
@@ -104,11 +99,23 @@ public class CollisionObject3D extends Node3D {
 		);
 	}
 
-	public final Vec3f meanCenter() {
+	/**
+	 * Computes the mean center of the vertices returned by {@link CollisionObject3D#getVertices()}.
+	 * Used to resolve collision in the {@link PhysicsSystem}.
+	 *
+	 * @return The object's mean center
+	 */
+	public Vec3f meanCenter() {
 		return this.getVertices().stream().reduce(Vec3f.Zero(), Vec3f::plus).dividedBy(8);
 	}
 
-	protected void onCollision(Collision3D collision) {
+	/**
+	 * Called when this object collides with another one.
+	 * Classes that extend {@code CollisionObject3D} must override this method to implement their collision resolution or to listen for collision events.
+	 *
+	 * @param collision Object representing the collision that happened
+	 */
+	public void onCollision(Collision3D collision) {
 
 	}
 }
