@@ -2,6 +2,7 @@ package gamma.engine.tree;
 
 import gamma.engine.annotations.EditorVariable;
 import gamma.engine.physics.Collision3D;
+import gamma.engine.physics.PhysicsSystem;
 import vecmatlib.vector.Vec3f;
 
 /**
@@ -27,9 +28,9 @@ public class KinematicBody3D extends CollisionObject3D {
 
 	@Override
 	protected void onUpdate(float delta) {
-		// TODO: Ask the physics system to process an object only after it moves
 		this.velocity = this.velocity.plus(this.acceleration.multipliedBy(delta));
 		this.position = this.position.plus(this.velocity.multipliedBy(delta));
+		PhysicsSystem.resolveCollision(this);
 		super.onUpdate(delta);
 	}
 
