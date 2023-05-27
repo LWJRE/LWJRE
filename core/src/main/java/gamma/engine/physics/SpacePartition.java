@@ -70,10 +70,6 @@ public class SpacePartition {
 	 */
 	private record CollisionPair(CollisionObject3D colliderA, CollisionObject3D colliderB) {
 
-		/**
-		 * Handles the collision resolution for the two colliders in this pair.
-		 * Checks if the two colliders collide with higher accuracy and calls {@link CollisionObject3D#onCollision(Collision3D)} in case they do.
-		 */
 		public void resolveCollision() {
 			Vec3f normal = Vec3f.Zero();
 			float depth = Float.POSITIVE_INFINITY;
@@ -102,7 +98,7 @@ public class SpacePartition {
 			if(this.colliderA().meanCenter().minus(this.colliderB().meanCenter()).dot(normal) < 0.0f) {
 				normal = normal.negated();
 			}
-			this.colliderA().onCollision(new Collision3D(this.colliderB(), normal, depth));
+			this.colliderA().onCollision(this.colliderB(), normal, depth);
 		}
 	}
 }

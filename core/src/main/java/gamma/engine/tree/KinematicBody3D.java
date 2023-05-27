@@ -1,14 +1,14 @@
 package gamma.engine.tree;
 
 import gamma.engine.annotations.EditorVariable;
-import gamma.engine.physics.Collision3D;
 import gamma.engine.physics.PhysicsSystem;
 import vecmatlib.vector.Vec3f;
 
 /**
- * Collision object that moves through kinematic equations.
- * Contains a velocity and an acceleration.
- * The node's position and velocity are updated every frame accordingly.
+ * Node that represents an object that moves through kinematic equation.
+ * Useful for colliders whose velocity is updated directly such as with user input.
+ *
+ * @see DynamicBody3D
  *
  * @author Nico
  */
@@ -30,13 +30,15 @@ public class KinematicBody3D extends CollisionObject3D {
 	protected void onUpdate(float delta) {
 		this.velocity = this.velocity.plus(this.acceleration.multipliedBy(delta));
 		this.position = this.position.plus(this.velocity.multipliedBy(delta));
-		PhysicsSystem.resolveCollision(this);
+		if(this.velocity.lengthSquared() > 0.0f) {
+			PhysicsSystem.resolveCollision(this);
+		}
 		super.onUpdate(delta);
 	}
 
 	@Override
-	public void onCollision(Collision3D collision) {
-		this.position = this.position.plus(collision.normal().multipliedBy(collision.depth()));
-		this.velocity = this.velocity.slide(collision.normal());
+	public void onCollision(CollisionObject3D collider, Vec3f normal, float depth) {
+		this.position = this.position.plus(normal.multipliedBy(depth));
+		this.velocity = this.velocity.slide(normal);
 	}
 }

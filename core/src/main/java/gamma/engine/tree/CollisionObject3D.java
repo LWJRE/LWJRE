@@ -2,7 +2,6 @@ package gamma.engine.tree;
 
 import gamma.engine.annotations.EditorRange;
 import gamma.engine.annotations.EditorVariable;
-import gamma.engine.physics.Collision3D;
 import gamma.engine.physics.PhysicsSystem;
 import gamma.engine.physics.Projection;
 import gamma.engine.rendering.CubeMesh;
@@ -28,13 +27,6 @@ public class CollisionObject3D extends Node3D {
 	@EditorRange
 	public Vec3f boundingBox = Vec3f.One();
 
-	/**
-	 * Offset of the bounding box from the object's origin.
-	 */
-	@EditorVariable(name = "Offset")
-	@EditorRange
-	public Vec3f offset = Vec3f.Zero();
-
 	@Override
 	protected void onEnter() {
 		super.onEnter();
@@ -45,8 +37,8 @@ public class CollisionObject3D extends Node3D {
 	protected void onEditorProcess() {
 		super.onEditorProcess();
 		DebugRenderer.addToBatch(CubeMesh.INSTANCE, mesh -> {
-			Mat4f shape = Mat4f.translation(this.offset).multiply(Mat4f.scaling(this.boundingBox));
-			DebugRenderer.SHADER.setUniform("transformation_matrix", this.globalTransformation().multiply(shape));
+			Mat4f shape = this.globalTransformation().multiply(Mat4f.scaling(this.boundingBox));
+			DebugRenderer.SHADER.setUniform("transformation_matrix", shape);
 			DebugRenderer.SHADER.setUniform("color", 0.0f, 0.5f, 1.0f, 1.0f);
 			mesh.drawElements();
 		});
@@ -84,18 +76,16 @@ public class CollisionObject3D extends Node3D {
 	 */
 	public List<Vec3f> getVertices() {
 		Vec3f halfExtents = this.boundingBox.dividedBy(2.0f);
-		Vec3f origin = this.globalPosition().plus(this.offset);
-		Mat4f rotation = this.globalRotation();
-		Vec3f scale = this.globalScale();
+		Mat4f transform = this.globalTransformation();
 		return List.of(
-				origin.plus(rotation.multiply(new Vec4f(halfExtents.x(), halfExtents.y(), halfExtents.z(), 1.0f)).xyz().multiply(scale)),
-				origin.plus(rotation.multiply(new Vec4f(-halfExtents.x(), halfExtents.y(), halfExtents.z(), 1.0f)).xyz().multiply(scale)),
-				origin.plus(rotation.multiply(new Vec4f(halfExtents.x(), -halfExtents.y(), halfExtents.z(), 1.0f)).xyz().multiply(scale)),
-				origin.plus(rotation.multiply(new Vec4f(halfExtents.x(), halfExtents.y(), -halfExtents.z(), 1.0f)).xyz().multiply(scale)),
-				origin.plus(rotation.multiply(new Vec4f(-halfExtents.x(), -halfExtents.y(), halfExtents.z(), 1.0f)).xyz().multiply(scale)),
-				origin.plus(rotation.multiply(new Vec4f(halfExtents.x(), -halfExtents.y(), -halfExtents.z(), 1.0f)).xyz().multiply(scale)),
-				origin.plus(rotation.multiply(new Vec4f(-halfExtents.x(), halfExtents.y(), -halfExtents.z(), 1.0f)).xyz().multiply(scale)),
-				origin.plus(rotation.multiply(new Vec4f(-halfExtents.x(), -halfExtents.y(), -halfExtents.z(), 1.0f)).xyz().multiply(scale))
+				transform.multiply(new Vec4f(halfExtents.x(), halfExtents.y(), halfExtents.z(), 1.0f)).xyz(),
+				transform.multiply(new Vec4f(-halfExtents.x(), halfExtents.y(), halfExtents.z(), 1.0f)).xyz(),
+				transform.multiply(new Vec4f(halfExtents.x(), -halfExtents.y(), halfExtents.z(), 1.0f)).xyz(),
+				transform.multiply(new Vec4f(halfExtents.x(), halfExtents.y(), -halfExtents.z(), 1.0f)).xyz(),
+				transform.multiply(new Vec4f(-halfExtents.x(), -halfExtents.y(), halfExtents.z(), 1.0f)).xyz(),
+				transform.multiply(new Vec4f(halfExtents.x(), -halfExtents.y(), -halfExtents.z(), 1.0f)).xyz(),
+				transform.multiply(new Vec4f(-halfExtents.x(), halfExtents.y(), -halfExtents.z(), 1.0f)).xyz(),
+				transform.multiply(new Vec4f(-halfExtents.x(), -halfExtents.y(), -halfExtents.z(), 1.0f)).xyz()
 		);
 	}
 
@@ -113,9 +103,11 @@ public class CollisionObject3D extends Node3D {
 	 * Called when this object collides with another one.
 	 * Classes that extend {@code CollisionObject3D} must override this method to implement their collision resolution or to listen for collision events.
 	 *
-	 * @param collision Object representing the collision that happened
+	 * @param collider The {@code CollisionObject3D} that collided with this one
+	 * @param normal The collision's normal
+	 * @param depth Penetration depth
 	 */
-	public void onCollision(Collision3D collision) {
+	public void onCollision(CollisionObject3D collider, Vec3f normal, float depth) {
 
 	}
 }

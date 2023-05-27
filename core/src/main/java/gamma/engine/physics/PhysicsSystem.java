@@ -14,8 +14,7 @@ import java.util.stream.Stream;
 public final class PhysicsSystem {
 
 	/** Number of partitions in which each dimension of the space is divided */
-	public static final int PARTITIONS = 4; // TODO: Add this as an option in application.properties
-	// TODO: Collisions become inaccurate for more than 4 partitions and only 2 objects in the scene
+	public static final int PARTITIONS = 1; // TODO: This becomes inaccurate for anything > 1
 
 	/** List of all the colliders in the scene */
 	private static final ArrayList<CollisionObject3D> COLLIDERS = new ArrayList<>();

@@ -21,11 +21,7 @@ children:
         properties:
           diffuse: !!vecmatlib.color.Color3f [0.0, 0.0, 1.0]
           position: !!vecmatlib.vector.Vec3f [0.0, 20.0, 0.0]
-    type: gamma.engine.tree.DynamicBody3D
+    type: gamma.engine.tree.CollisionObject3D
     properties:
-      restitution: 1
-      immovable: true
-      mass: 10000.0
       scale: !!vecmatlib.vector.Vec3f [10.0, 1.0, 10.0]
-      position: !!vecmatlib.vector.Vec3f [0.0, 0.0, 0.0]
 type: gamma.engine.tree.Node
