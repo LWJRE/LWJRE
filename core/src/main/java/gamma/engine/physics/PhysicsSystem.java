@@ -1,7 +1,7 @@
 package gamma.engine.physics;
 
 import gamma.engine.tree.CollisionObject3D;
-import vecmatlib.vector.Vec3f;
+import io.github.hexagonnico.vecmatlib.vector.Vec3f;
 
 import java.util.ArrayList;
 import java.util.stream.Stream;

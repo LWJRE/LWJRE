@@ -2,8 +2,8 @@ package gamma.engine.tree;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import vecmatlib.vector.Vec2f;
-import vecmatlib.vector.Vec3f;
+import io.github.hexagonnico.vecmatlib.vector.Vec2f;
+import io.github.hexagonnico.vecmatlib.vector.Vec3f;
 
 public class TestDynamicBody3D {
 

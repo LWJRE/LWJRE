@@ -1,13 +1,13 @@
 !!gamma.engine.tree.NodeResource
 type: gamma.engine.tree.RigidBody3D
 properties:
-  boundingBox: !!vecmatlib.vector.Vec3f [7.25, 4.8, 2.75]
+  boundingBox: !Vec3f [7.25, 4.8, 2.75]
   mass: 100.0
   restitution: 0.25
 children:
-  model: !!gamma.engine.tree.NodeResource
+  model:
     type: gamma.engine.tree.ModelRenderer
     properties:
-      position: !!vecmatlib.vector.Vec3f [0.2, -2.75, 0.25]
+      position: !Vec3f [0.2, -2.75, 0.25]
       model: !getOrLoad models/dragon.obj
       shader: !getOrLoad gamma/engine/shaders/default_shader.glsl

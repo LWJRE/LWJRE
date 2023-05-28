@@ -1,6 +1,6 @@
 package gamma.engine.rendering;
 
-import vecmatlib.color.Color4f;
+import io.github.hexagonnico.vecmatlib.color.Color4f;
 
 public class Material {
 

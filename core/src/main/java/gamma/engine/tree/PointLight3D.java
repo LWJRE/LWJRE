@@ -5,9 +5,9 @@ import gamma.engine.annotations.EditorVariable;
 import gamma.engine.rendering.CubeMesh;
 import gamma.engine.rendering.DebugRenderer;
 import gamma.engine.rendering.RenderingSystem;
-import vecmatlib.color.Color3f;
-import vecmatlib.matrix.Mat4f;
-import vecmatlib.vector.Vec3f;
+import io.github.hexagonnico.vecmatlib.color.Color3f;
+import io.github.hexagonnico.vecmatlib.matrix.Mat4f;
+import io.github.hexagonnico.vecmatlib.vector.Vec3f;
 
 /**
  * Node that represents an omnidirectional point light in a 3D space, such as a light bulb or a candle.

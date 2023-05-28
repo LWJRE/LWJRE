@@ -1,6 +1,6 @@
 package gamma.engine.input;
 
-import vecmatlib.vector.Vec2f;
+import io.github.hexagonnico.vecmatlib.vector.Vec2f;
 
 /**
  * Input event that represents a mouse scroll event.

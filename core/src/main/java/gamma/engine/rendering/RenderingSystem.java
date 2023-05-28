@@ -4,10 +4,10 @@ import gamma.engine.tree.PointLight3D;
 import gamma.engine.tree.Renderer3D;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
-import vecmatlib.color.Color3f;
-import vecmatlib.color.Color4f;
-import vecmatlib.vector.Vec2f;
-import vecmatlib.vector.Vec2i;
+import io.github.hexagonnico.vecmatlib.color.Color3f;
+import io.github.hexagonnico.vecmatlib.color.Color4f;
+import io.github.hexagonnico.vecmatlib.vector.Vec2f;
+import io.github.hexagonnico.vecmatlib.vector.Vec2i;
 
 import java.util.HashMap;
 import java.util.HashSet;

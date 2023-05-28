@@ -1,8 +1,8 @@
 package gamma.engine.physics;
 
 import gamma.engine.tree.CollisionObject3D;
-import vecmatlib.matrix.Mat4f;
-import vecmatlib.vector.Vec3f;
+import io.github.hexagonnico.vecmatlib.matrix.Mat4f;
+import io.github.hexagonnico.vecmatlib.vector.Vec3f;
 
 import java.util.HashSet;
 

@@ -4,7 +4,7 @@ import gamma.engine.annotations.EditorRange;
 import gamma.engine.annotations.EditorVariable;
 import gamma.engine.input.InputEvent;
 import gamma.engine.input.Keyboard;
-import vecmatlib.vector.Vec3f;
+import io.github.hexagonnico.vecmatlib.vector.Vec3f;
 
 /**
  * Node that represents a realistic 3D rigid body.

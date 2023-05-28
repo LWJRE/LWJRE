@@ -1,5 +1,8 @@
 package gamma.engine.resources;
 
+import io.github.hexagonnico.vecmatlib.color.Color3f;
+import io.github.hexagonnico.vecmatlib.color.Color4f;
+import io.github.hexagonnico.vecmatlib.vector.*;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.AbstractConstruct;
@@ -7,7 +10,11 @@ import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.introspector.BeanAccess;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.ScalarNode;
+import org.yaml.snakeyaml.nodes.SequenceNode;
 import org.yaml.snakeyaml.nodes.Tag;
+
+import java.util.List;
+import java.util.function.Function;
 
 /**
  * Implementation of a {@link ResourceLoader} to load {@code .yaml} files.
@@ -21,10 +28,40 @@ public final class YamlLoader extends Constructor implements ResourceLoader {
 	 */
 	public YamlLoader() {
 		super(new Options());
-		this.yamlConstructors.put(new Tag("!getOrLoad"), new AbstractConstruct() {
+		this.scalarConstruct("!getOrLoad", Resources::getOrLoad);
+		this.floatSequenceConstruct("!Vec2f", list -> new Vec2f(list.get(0), list.get(1)));
+		this.floatSequenceConstruct("!Vec3f", list -> new Vec3f(list.get(0), list.get(1), list.get(2)));
+		this.floatSequenceConstruct("!Vec4f", list -> new Vec4f(list.get(0), list.get(1), list.get(2), list.get(3)));
+		this.intSequenceConstruct("!Vec2i", list -> new Vec2i(list.get(0), list.get(1)));
+		this.intSequenceConstruct("!Vec3i", list -> new Vec3i(list.get(0), list.get(1), list.get(2)));
+		this.intSequenceConstruct("!Vec4i", list -> new Vec4i(list.get(0), list.get(1), list.get(2), list.get(3)));
+		this.floatSequenceConstruct("!Color3f", list -> new Color3f(list.get(0), list.get(1), list.get(2)));
+		this.floatSequenceConstruct("!Color4f", list -> new Color4f(list.get(0), list.get(1), list.get(2), list.get(3)));
+	}
+
+	private void scalarConstruct(String tag, Function<String, Object> function) {
+		this.yamlConstructors.put(new Tag(tag), new AbstractConstruct() {
 			@Override
 			public Object construct(Node node) {
-				return Resources.getOrLoad(((ScalarNode) node).getValue());
+				return function.apply(((ScalarNode) node).getValue());
+			}
+		});
+	}
+
+	private void floatSequenceConstruct(String tag, Function<List<Float>, Object> function) {
+		this.yamlConstructors.put(new Tag(tag), new AbstractConstruct() {
+			@Override
+			public Object construct(Node node) {
+				return function.apply(((SequenceNode) node).getValue().stream().map(node1 -> Float.valueOf(((ScalarNode) node1).getValue())).toList());
+			}
+		});
+	}
+
+	private void intSequenceConstruct(String tag, Function<List<Integer>, Object> function) {
+		this.yamlConstructors.put(new Tag(tag), new AbstractConstruct() {
+			@Override
+			public Object construct(Node node) {
+				return function.apply(((SequenceNode) node).getValue().stream().map(node1 -> Integer.valueOf(((ScalarNode) node1).getValue())).toList());
 			}
 		});
 	}

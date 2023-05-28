@@ -1,6 +1,6 @@
 package gamma.engine.input;
 
-import vecmatlib.vector.Vec2i;
+import io.github.hexagonnico.vecmatlib.vector.Vec2i;
 
 public record MouseCursorInputEvent(int x, int y) implements InputEvent {
 

@@ -1,6 +1,6 @@
 package gamma.engine.physics;
 
-import vecmatlib.Float2;
+import io.github.hexagonnico.vecmatlib.Float2;
 
 public record Projection(float min, float max) implements Float2 {
 

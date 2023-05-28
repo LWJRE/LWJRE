@@ -2,7 +2,7 @@ package gamma.engine.tree;
 
 import gamma.engine.annotations.EditorVariable;
 import gamma.engine.physics.PhysicsSystem;
-import vecmatlib.vector.Vec3f;
+import io.github.hexagonnico.vecmatlib.vector.Vec3f;
 
 /**
  * Node that represents an object that moves through kinematic equation.

@@ -2,9 +2,9 @@ package gamma.engine.tree;
 
 import gamma.engine.annotations.EditorRange;
 import gamma.engine.annotations.EditorVariable;
-import vecmatlib.matrix.Mat4f;
-import vecmatlib.vector.Vec3f;
-import vecmatlib.vector.Vec4f;
+import io.github.hexagonnico.vecmatlib.matrix.Mat4f;
+import io.github.hexagonnico.vecmatlib.vector.Vec3f;
+import io.github.hexagonnico.vecmatlib.vector.Vec4f;
 
 /**
  * Node class for all 3D objects.

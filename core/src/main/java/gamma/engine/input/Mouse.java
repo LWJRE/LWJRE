@@ -2,7 +2,7 @@ package gamma.engine.input;
 
 import gamma.engine.tree.SceneTree;
 import org.lwjgl.glfw.GLFW;
-import vecmatlib.vector.Vec2i;
+import io.github.hexagonnico.vecmatlib.vector.Vec2i;
 
 import java.util.HashSet;
 

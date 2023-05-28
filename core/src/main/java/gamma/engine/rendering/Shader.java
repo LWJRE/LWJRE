@@ -5,9 +5,9 @@ import gamma.engine.utils.YamlSerializer;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
-import vecmatlib.*;
-import vecmatlib.matrix.Mat3f;
-import vecmatlib.matrix.Mat4f;
+import io.github.hexagonnico.vecmatlib.*;
+import io.github.hexagonnico.vecmatlib.matrix.Mat3f;
+import io.github.hexagonnico.vecmatlib.matrix.Mat4f;
 
 import java.nio.FloatBuffer;
 import java.util.HashMap;

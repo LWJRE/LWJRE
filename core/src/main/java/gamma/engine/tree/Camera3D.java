@@ -7,8 +7,8 @@ import gamma.engine.annotations.EditorVariable;
 import gamma.engine.rendering.ConeMesh;
 import gamma.engine.rendering.DebugRenderer;
 import gamma.engine.rendering.Shader;
-import vecmatlib.matrix.Mat4f;
-import vecmatlib.vector.Vec3f;
+import io.github.hexagonnico.vecmatlib.matrix.Mat4f;
+import io.github.hexagonnico.vecmatlib.vector.Vec3f;
 
 /**
  * Node that represents a perspective camera in a 3D space.

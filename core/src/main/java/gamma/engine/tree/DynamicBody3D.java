@@ -2,8 +2,8 @@ package gamma.engine.tree;
 
 import gamma.engine.annotations.EditorRange;
 import gamma.engine.annotations.EditorVariable;
-import vecmatlib.vector.Vec2f;
-import vecmatlib.vector.Vec3f;
+import io.github.hexagonnico.vecmatlib.vector.Vec2f;
+import io.github.hexagonnico.vecmatlib.vector.Vec3f;
 
 /**
  * Node that represents a collider that moves through forces, but is not affected by rotation.

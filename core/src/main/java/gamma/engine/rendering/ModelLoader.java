@@ -6,7 +6,7 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.*;
 import org.lwjgl.system.MemoryUtil;
-import vecmatlib.color.Color4f;
+import io.github.hexagonnico.vecmatlib.color.Color4f;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
