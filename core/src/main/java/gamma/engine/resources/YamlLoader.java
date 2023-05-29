@@ -23,6 +23,8 @@ import java.util.function.Function;
  */
 public final class YamlLoader extends Constructor implements ResourceLoader {
 
+	// TODO: Allow adding things from static methods
+
 	/**
 	 * Constructs a new loader.
 	 */

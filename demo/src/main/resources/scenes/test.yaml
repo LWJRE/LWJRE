@@ -24,4 +24,6 @@ children:
     type: gamma.engine.tree.CollisionObject3D
     properties:
       scale: !Vec3f [10.0, 1.0, 10.0]
+#  test:
+#    type: gamma.demo.TestNode
 type: gamma.engine.tree.Node

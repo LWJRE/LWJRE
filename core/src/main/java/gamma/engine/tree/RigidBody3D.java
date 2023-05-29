@@ -2,8 +2,6 @@ package gamma.engine.tree;
 
 import gamma.engine.annotations.EditorRange;
 import gamma.engine.annotations.EditorVariable;
-import gamma.engine.input.InputEvent;
-import gamma.engine.input.Keyboard;
 import io.github.hexagonnico.vecmatlib.vector.Vec3f;
 
 /**
@@ -46,16 +44,8 @@ public class RigidBody3D extends DynamicBody3D {
 	}
 
 	@Override
-	protected void onInput(InputEvent event) {
-		super.onInput(event);
-		if(event.isKeyPressed(Keyboard.KEY_K)) {
-			this.applyForce(0.0f, 10.0f, 0.0f, Vec3f.Right());
-		}
-	}
-
-	@Override
 	public void onCollision(CollisionObject3D collider, Vec3f normal, float depth) {
-		super.onCollision(collider, normal, depth);
+		super.onCollision(collider, normal, depth); // TODO: Rotation caused by collision
 	}
 
 	public final Vec3f torque() {

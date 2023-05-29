@@ -37,5 +37,7 @@ public class TestDynamicBody3D {
 		Assertions.assertEquals(new Vec3f(2.0f, 0.0f, 1.0f), dynamicBody.velocity);
 		dynamicBody.applyImpulse(0.0f, 10.0f);
 		Assertions.assertEquals(new Vec3f(2.0f, 1.0f, 1.0f), dynamicBody.velocity);
+		dynamicBody.applyImpulse(new Vec2f(0.0f, 10.0f));
+		Assertions.assertEquals(new Vec3f(2.0f, 2.0f, 1.0f), dynamicBody.velocity);
 	}
 }

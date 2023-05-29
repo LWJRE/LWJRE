@@ -43,15 +43,13 @@ public class SpacePartition {
 		if(this.colliders.contains(collisionObject)) {
 			HashSet<CollisionPair> collisionPairs = new HashSet<>();
 			// Broad phase
+			Vec3f centerA = collisionObject.globalPosition();
+			float radiusA = collisionObject.boundingBox.dividedBy(2.0f).lengthSquared();
 			this.colliders.forEach(collider -> {
 				if(!collider.equals(collisionObject)) {
-					Projection xA = collisionObject.projectBoundingBox(Vec3f.Right());
-					Projection yA = collisionObject.projectBoundingBox(Vec3f.Up());
-					Projection zA = collisionObject.projectBoundingBox(Vec3f.Forward());
-					Projection xB = collider.projectBoundingBox(Vec3f.Right());
-					Projection yB = collider.projectBoundingBox(Vec3f.Up());
-					Projection zB = collider.projectBoundingBox(Vec3f.Forward());
-					if(xA.overlaps(xB) && yA.overlaps(yB) && zA.overlaps(zB)) {
+					Vec3f centerB = collider.globalPosition();
+					float radiusB = collider.boundingBox.dividedBy(2.0f).lengthSquared();
+					if(centerA.distanceSquaredTo(centerB) <= radiusA + radiusB) {
 						collisionPairs.add(new CollisionPair(collisionObject, collider));
 					}
 				}

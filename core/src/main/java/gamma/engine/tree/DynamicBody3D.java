@@ -32,6 +32,12 @@ public class DynamicBody3D extends KinematicBody3D {
 	private Vec3f force = Vec3f.Zero();
 
 	@Override
+	protected void onEnter() {
+		super.onEnter();
+		this.applyForce(this.acceleration.multipliedBy(this.mass));
+	}
+
+	@Override
 	protected void onUpdate(float delta) {
 		this.acceleration = this.force.dividedBy(this.mass);
 		super.onUpdate(delta);
