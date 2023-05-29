@@ -1,10 +1,10 @@
 package gamma.engine.tree;
 
+import io.github.hexagonnico.vecmatlib.matrix.Mat4f;
+import io.github.hexagonnico.vecmatlib.vector.Vec3f;
+import io.github.hexagonnico.vecmatlib.vector.Vec4f;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import vecmatlib.matrix.Mat4f;
-import vecmatlib.vector.Vec3f;
-import vecmatlib.vector.Vec4f;
 
 public class TestNode3D {
 

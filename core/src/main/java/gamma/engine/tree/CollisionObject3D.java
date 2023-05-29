@@ -29,25 +29,25 @@ public class CollisionObject3D extends Node3D {
 
 	@Override
 	protected void onEnter() {
-		super.onEnter();
 		PhysicsSystem.add(this);
+		super.onEnter();
 	}
 
 	@Override
 	protected void onEditorProcess() {
-		super.onEditorProcess();
 		DebugRenderer.addToBatch(CubeMesh.INSTANCE, mesh -> {
 			Mat4f shape = this.globalTransformation().multiply(Mat4f.scaling(this.boundingBox));
 			DebugRenderer.SHADER.setUniform("transformation_matrix", shape);
 			DebugRenderer.SHADER.setUniform("color", 0.0f, 0.5f, 1.0f, 1.0f);
 			mesh.drawElements();
 		});
+		super.onEditorProcess();
 	}
 
 	@Override
 	protected void onExit() {
-		super.onExit();
 		PhysicsSystem.remove(this);
+		super.onExit();
 	}
 
 	/**

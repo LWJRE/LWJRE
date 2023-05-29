@@ -33,8 +33,8 @@ public class DynamicBody3D extends KinematicBody3D {
 
 	@Override
 	protected void onEnter() {
-		super.onEnter();
 		this.applyForce(this.acceleration.multipliedBy(this.mass));
+		super.onEnter();
 	}
 
 	@Override

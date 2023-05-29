@@ -1,8 +1,8 @@
 package gamma.engine.tree;
 
+import io.github.hexagonnico.vecmatlib.vector.Vec3f;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import vecmatlib.vector.Vec3f;
 
 public class TestRigidBody3D {
 

@@ -1,102 +1,109 @@
 package gamma.engine.physics;
 
 import gamma.engine.tree.CollisionObject3D;
-import io.github.hexagonnico.vecmatlib.matrix.Mat4f;
 import io.github.hexagonnico.vecmatlib.vector.Vec3f;
 
-import java.util.HashSet;
+import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * Class that represents a section of the 3D space that contains {@link CollisionObject3D}s.
- * Used to resolve collision only for objects that are close by.
+ * Uses octree partitioning.
  *
  * @author Nico
  */
 public class SpacePartition {
 
+	/**
+	 * Subdivides the given colliders into a list of space partitions.
+	 * The given number of iterations represents the height of the octree.
+	 *
+	 * @param colliders The colliders to subdivide
+	 * @param iterations The number of iteration for the space partition algorithm or the height of the resulting octree
+	 * @return A list containing all the resulting partitions in no order
+	 */
+	public static List<SpacePartition> subdivide(Collection<CollisionObject3D> colliders, int iterations) {
+		SpacePartition space = new SpacePartition();
+		space.colliders.addAll(colliders);
+		if(iterations > 1) {
+			return space.divideFurther().stream().flatMap(partition -> subdivide(partition.colliders, iterations - 1).stream()).toList();
+		} else {
+			return space.divideFurther();
+		}
+	}
+
 	/** Set of colliders in this partition */
-	private final HashSet<CollisionObject3D> colliders = new HashSet<>();
+	private final HashSet<CollisionObject3D> colliders;
 
 	/**
-	 * Adds a collider to this space partition if it is not already present.
-	 *
-	 * @param collider The collider to add
+	 * Creates an empty space partition.
 	 */
-	public void add(CollisionObject3D collider) {
-		this.colliders.add(collider);
+	private SpacePartition() {
+		this.colliders = new HashSet<>();
 	}
 
 	/**
-	 * Removes all the collider from this partition.
+	 * Divides this space partition into 8 smaller ones.
+	 *
+	 * @return A list containing 8 space partitions
 	 */
-	public void clear() {
-		this.colliders.clear();
+	public List<SpacePartition> divideFurther() {
+		List<SpacePartition> result = Stream.generate(SpacePartition::new).limit(8).toList();
+		Vec3f center = Vec3f.Zero();
+		for(CollisionObject3D collider : colliders) {
+			center = center.plus(collider.globalPosition());
+		}
+		center = center.dividedBy(colliders.size());
+		for(CollisionObject3D collider : colliders) {
+			for(Vec3f vertex : collider.getVertices()) {
+				if(vertex.x() <= center.x() && vertex.y() <= center.y() && vertex.z() <= center.z())
+					result.get(0).colliders.add(collider);
+				if(vertex.x() >= center.x() && vertex.y() <= center.y() && vertex.z() <= center.z())
+					result.get(1).colliders.add(collider);
+				if(vertex.x() <= center.x() && vertex.y() >= center.y() && vertex.z() <= center.z())
+					result.get(2).colliders.add(collider);
+				if(vertex.x() >= center.x() && vertex.y() >= center.y() && vertex.z() <= center.z())
+					result.get(3).colliders.add(collider);
+				if(vertex.x() <= center.x() && vertex.y() <= center.y() && vertex.z() >= center.z())
+					result.get(4).colliders.add(collider);
+				if(vertex.x() >= center.x() && vertex.y() <= center.y() && vertex.z() >= center.z())
+					result.get(5).colliders.add(collider);
+				if(vertex.x() <= center.x() && vertex.y() >= center.y() && vertex.z() >= center.z())
+					result.get(6).colliders.add(collider);
+				if(vertex.x() >= center.x() && vertex.y() >= center.y() && vertex.z() >= center.z())
+					result.get(7).colliders.add(collider);
+			}
+		}
+		return result;
 	}
 
 	/**
-	 * Handles collisions for the given collider using the sweep and prune algorithm if it is in this partition.
-	 * Called from {@link PhysicsSystem#resolveCollision(CollisionObject3D)}.
+	 * Groups all the colliders in this partition into collision pairs, pairs of colliders that may be colliding.
+	 * Represents the broad phase of the collision resolution algorithm.
 	 *
-	 * @param collisionObject The collider
+	 * @return A {@code HashMap} whose keys are the colliders in this partition and whose values are {@code HashSet}s of the colliders that may collide with them
 	 */
-	public void resolveCollision(CollisionObject3D collisionObject) {
-		if(this.colliders.contains(collisionObject)) {
-			HashSet<CollisionPair> collisionPairs = new HashSet<>();
-			// Broad phase
-			Vec3f centerA = collisionObject.globalPosition();
-			float radiusA = collisionObject.boundingBox.dividedBy(2.0f).lengthSquared();
-			this.colliders.forEach(collider -> {
-				if(!collider.equals(collisionObject)) {
-					Vec3f centerB = collider.globalPosition();
-					float radiusB = collider.boundingBox.dividedBy(2.0f).lengthSquared();
+	public HashMap<CollisionObject3D, HashSet<CollisionObject3D>> computePairs() {
+		HashMap<CollisionObject3D, HashSet<CollisionObject3D>> result = new HashMap<>();
+		this.colliders.forEach(colliderA -> {
+			Vec3f centerA = colliderA.globalPosition();
+			float radiusA = colliderA.boundingBox.dividedBy(2.0f).lengthSquared();
+			this.colliders.forEach(colliderB -> {
+				if(!colliderA.equals(colliderB)) {
+					Vec3f centerB = colliderB.globalPosition();
+					float radiusB = colliderB.boundingBox.dividedBy(2.0f).lengthSquared();
 					if(centerA.distanceSquaredTo(centerB) <= radiusA + radiusB) {
-						collisionPairs.add(new CollisionPair(collisionObject, collider));
+						if(result.containsKey(colliderA)) {
+							result.get(colliderA).add(colliderB);
+						} else {
+							HashSet<CollisionObject3D> colliders = new HashSet<>();
+							colliders.add(colliderB);
+							result.put(colliderA, colliders);
+						}
 					}
 				}
 			});
-			// Narrow phase
-			collisionPairs.forEach(CollisionPair::resolveCollision);
-		}
-	}
-
-	/**
-	 * Collision pair used to group two colliders that may collide.
-	 * Needed to separate the narrow phase from the broad phase.
-	 *
-	 * @param colliderA First collider
-	 * @param colliderB Second collider
-	 */
-	private record CollisionPair(CollisionObject3D colliderA, CollisionObject3D colliderB) {
-
-		public void resolveCollision() {
-			Vec3f normal = Vec3f.Zero();
-			float depth = Float.POSITIVE_INFINITY;
-			Mat4f rotationA = this.colliderA().globalRotation();
-			Mat4f rotationB = this.colliderB().globalRotation();
-			Vec3f[] axes = new Vec3f[] {
-					rotationA.col0().xyz().normalized(),
-					rotationA.col1().xyz().normalized(),
-					rotationA.col2().xyz().normalized(),
-					rotationB.col0().xyz().normalized(),
-					rotationB.col1().xyz().normalized(),
-					rotationB.col2().xyz().normalized()
-			};
-			for(Vec3f axis : axes) {
-				Projection projectionA = this.colliderA().projectBoundingBox(axis);
-				Projection projectionB = this.colliderB().projectBoundingBox(axis);
-				if(!projectionA.overlaps(projectionB)) {
-					return;
-				}
-				float axisDepth = projectionA.getOverlap(projectionB).length();
-				if(axisDepth < depth) {
-					depth = axisDepth;
-					normal = axis;
-				}
-			}
-			if(this.colliderA().meanCenter().minus(this.colliderB().meanCenter()).dot(normal) < 0.0f) {
-				normal = normal.negated();
-			}
-			this.colliderA().onCollision(this.colliderB(), normal, depth);
-		}
+		});
+		return result;
 	}
 }

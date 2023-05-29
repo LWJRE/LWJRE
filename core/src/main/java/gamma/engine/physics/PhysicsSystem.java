@@ -1,10 +1,12 @@
 package gamma.engine.physics;
 
 import gamma.engine.tree.CollisionObject3D;
+import io.github.hexagonnico.vecmatlib.matrix.Mat4f;
 import io.github.hexagonnico.vecmatlib.vector.Vec3f;
 
 import java.util.ArrayList;
-import java.util.stream.Stream;
+import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * Static class that handles collision resolution between all the objects in the scene.
@@ -13,13 +15,8 @@ import java.util.stream.Stream;
  */
 public final class PhysicsSystem {
 
-	/** Number of partitions in which each dimension of the space is divided */
-	public static final int PARTITIONS = 1; // TODO: This becomes inaccurate for anything > 1
-
 	/** List of all the colliders in the scene */
 	private static final ArrayList<CollisionObject3D> COLLIDERS = new ArrayList<>();
-	/** Space partitions */
-	private static final SpacePartition[][][] SPACE_PARTITIONS = Stream.generate(() -> Stream.generate(() -> Stream.generate(SpacePartition::new).limit(PARTITIONS).toArray(SpacePartition[]::new)).limit(PARTITIONS).toArray(SpacePartition[][]::new)).limit(PARTITIONS).toArray(SpacePartition[][][]::new);
 
 	/**
 	 * Adds a collider to the physics system to be used for collision detection.
@@ -44,54 +41,55 @@ public final class PhysicsSystem {
 	/**
 	 * Updates the physics system.
 	 * Called from the {@link gamma.engine.Application} main loop.
-	 * Distributes the collider in different {@link SpacePartition}s to improve the efficiency of collision detection.
+	 * Resolves collisions for all the colliders in the scene.
 	 */
 	public static void update() {
-		// Find max and min of space
-		float minX = Float.POSITIVE_INFINITY, minY = Float.POSITIVE_INFINITY, minZ = Float.POSITIVE_INFINITY;
-		float maxX = Float.NEGATIVE_INFINITY, maxY = Float.NEGATIVE_INFINITY, maxZ = Float.NEGATIVE_INFINITY;
-		for(CollisionObject3D collider : COLLIDERS) {
-			for(Vec3f vertex : collider.getVertices()) {
-				if(vertex.x() < minX) minX = vertex.x();
-				if(vertex.y() < minY) minY = vertex.y();
-				if(vertex.z() < minZ) minZ = vertex.z();
-				if(vertex.x() > maxX) maxX = vertex.x();
-				if(vertex.y() > maxY) maxY = vertex.y();
-				if(vertex.z() > maxZ) maxZ = vertex.z();
+		HashMap<CollisionObject3D, HashSet<CollisionObject3D>> collisionPairs = new HashMap<>();
+		SpacePartition.subdivide(COLLIDERS, 2).forEach(partition -> partition.computePairs().forEach((colliderA, colliders) -> {
+			if(collisionPairs.containsKey(colliderA)) {
+				collisionPairs.get(colliderA).addAll(colliders);
+			} else {
+				collisionPairs.put(colliderA, colliders);
 			}
-		}
-		// Clear previous partition
-		for(SpacePartition[][] spacePartition : SPACE_PARTITIONS) {
-			for(SpacePartition[] spacePartitions : spacePartition) {
-				for(SpacePartition partition : spacePartitions) {
-					partition.clear();
-				}
-			}
-		}
-		// Divide the colliders into the partitions
-		for(CollisionObject3D collider : COLLIDERS) {
-			for(Vec3f vertex : collider.getVertices()) {
-				int x = (int) ((vertex.x() - minX) / ((maxX - minX) / PARTITIONS));
-				int y = (int) ((vertex.y() - minY) / ((maxY - minY) / PARTITIONS));
-				int z = (int) ((vertex.z() - minZ) / ((maxZ - minZ) / PARTITIONS));
-				SPACE_PARTITIONS[Math.min(x, PARTITIONS - 1)][Math.min(y, PARTITIONS - 1)][Math.min(z, PARTITIONS - 1)].add(collider);
-			}
-		}
+		}));
+		collisionPairs.forEach((colliderA, colliders) -> colliders.forEach(colliderB -> resolveCollision(colliderA, colliderB)));
 	}
 
 	/**
-	 * Handles the collision resolution of the given object.
-	 * Must be called every frame when a collider moves.
+	 * Checks if the two given colliders are colliding and calls {@link CollisionObject3D#onCollision(CollisionObject3D, Vec3f, float)} if they are.
+	 * Represents the narrow phase of the collision resolution algorithm.
 	 *
-	 * @param collider The collider that moved
+	 * @param colliderA First collider
+	 * @param colliderB Second collider
 	 */
-	public static void resolveCollision(CollisionObject3D collider) {
-		for(SpacePartition[][] spacePartition : SPACE_PARTITIONS) {
-			for(SpacePartition[] spacePartitions : spacePartition) {
-				for(SpacePartition partition : spacePartitions) {
-					partition.resolveCollision(collider);
-				}
+	private static void resolveCollision(CollisionObject3D colliderA, CollisionObject3D colliderB) {
+		Vec3f normal = Vec3f.Zero();
+		float depth = Float.POSITIVE_INFINITY;
+		Mat4f rotationA = colliderA.globalRotation();
+		Mat4f rotationB = colliderB.globalRotation();
+		Vec3f[] axes = new Vec3f[] {
+				rotationA.col0().xyz().normalized(),
+				rotationA.col1().xyz().normalized(),
+				rotationA.col2().xyz().normalized(),
+				rotationB.col0().xyz().normalized(),
+				rotationB.col1().xyz().normalized(),
+				rotationB.col2().xyz().normalized()
+		};
+		for(Vec3f axis : axes) {
+			Projection projectionA = colliderA.projectBoundingBox(axis);
+			Projection projectionB = colliderB.projectBoundingBox(axis);
+			if(!projectionA.overlaps(projectionB)) {
+				return;
+			}
+			float axisDepth = projectionA.getOverlap(projectionB).length();
+			if(axisDepth < depth) {
+				depth = axisDepth;
+				normal = axis;
 			}
 		}
+		if(colliderA.meanCenter().minus(colliderB.meanCenter()).dot(normal) < 0.0f) {
+			normal = normal.negated();
+		}
+		colliderA.onCollision(colliderB, normal, depth);
 	}
 }

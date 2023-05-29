@@ -1,7 +1,6 @@
 package gamma.engine.tree;
 
 import gamma.engine.annotations.EditorVariable;
-import gamma.engine.physics.PhysicsSystem;
 import io.github.hexagonnico.vecmatlib.vector.Vec3f;
 
 /**
@@ -30,9 +29,6 @@ public class KinematicBody3D extends CollisionObject3D {
 	protected void onUpdate(float delta) {
 		this.velocity = this.velocity.plus(this.acceleration.multipliedBy(delta));
 		this.position = this.position.plus(this.velocity.multipliedBy(delta));
-		if(this.velocity.lengthSquared() > 0.0f) {
-			PhysicsSystem.resolveCollision(this);
-		}
 		super.onUpdate(delta);
 	}
 
