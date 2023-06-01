@@ -8,7 +8,6 @@ import gamma.engine.rendering.CubeMesh;
 import gamma.engine.rendering.DebugRenderer;
 import io.github.hexagonnico.vecmatlib.matrix.Mat4f;
 import io.github.hexagonnico.vecmatlib.vector.Vec3f;
-import io.github.hexagonnico.vecmatlib.vector.Vec4f;
 
 import java.util.List;
 
@@ -78,14 +77,14 @@ public class CollisionObject3D extends Node3D {
 		Vec3f halfExtents = this.boundingBox.dividedBy(2.0f);
 		Mat4f transform = this.globalTransformation();
 		return List.of(
-				transform.multiply(new Vec4f(halfExtents.x(), halfExtents.y(), halfExtents.z(), 1.0f)).xyz(),
-				transform.multiply(new Vec4f(-halfExtents.x(), halfExtents.y(), halfExtents.z(), 1.0f)).xyz(),
-				transform.multiply(new Vec4f(halfExtents.x(), -halfExtents.y(), halfExtents.z(), 1.0f)).xyz(),
-				transform.multiply(new Vec4f(halfExtents.x(), halfExtents.y(), -halfExtents.z(), 1.0f)).xyz(),
-				transform.multiply(new Vec4f(-halfExtents.x(), -halfExtents.y(), halfExtents.z(), 1.0f)).xyz(),
-				transform.multiply(new Vec4f(halfExtents.x(), -halfExtents.y(), -halfExtents.z(), 1.0f)).xyz(),
-				transform.multiply(new Vec4f(-halfExtents.x(), halfExtents.y(), -halfExtents.z(), 1.0f)).xyz(),
-				transform.multiply(new Vec4f(-halfExtents.x(), -halfExtents.y(), -halfExtents.z(), 1.0f)).xyz()
+				transform.multiply(halfExtents.x(), halfExtents.y(), halfExtents.z(), 1.0f).xyz(),
+				transform.multiply(-halfExtents.x(), halfExtents.y(), halfExtents.z(), 1.0f).xyz(),
+				transform.multiply(halfExtents.x(), -halfExtents.y(), halfExtents.z(), 1.0f).xyz(),
+				transform.multiply(halfExtents.x(), halfExtents.y(), -halfExtents.z(), 1.0f).xyz(),
+				transform.multiply(-halfExtents.x(), -halfExtents.y(), halfExtents.z(), 1.0f).xyz(),
+				transform.multiply(halfExtents.x(), -halfExtents.y(), -halfExtents.z(), 1.0f).xyz(),
+				transform.multiply(-halfExtents.x(), halfExtents.y(), -halfExtents.z(), 1.0f).xyz(),
+				transform.multiply(-halfExtents.x(), -halfExtents.y(), -halfExtents.z(), 1.0f).xyz()
 		);
 	}
 
