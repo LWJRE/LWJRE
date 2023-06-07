@@ -44,15 +44,21 @@ public final class PhysicsSystem {
 	 * Resolves collisions for all the colliders in the scene.
 	 */
 	public static void update() {
-		HashMap<CollisionObject3D, HashSet<CollisionObject3D>> collisionPairs = new HashMap<>();
-		SpacePartition.subdivide(COLLIDERS, 2).forEach(partition -> partition.computePairs().forEach((colliderA, colliders) -> {
-			if(collisionPairs.containsKey(colliderA)) {
-				collisionPairs.get(colliderA).addAll(colliders);
-			} else {
-				collisionPairs.put(colliderA, colliders);
+		// FIXME: This is wrong now for some reason...
+//		HashMap<CollisionObject3D, HashSet<CollisionObject3D>> collisionPairs = new HashMap<>();
+//		SpacePartition.subdivide(COLLIDERS, 2).forEach(partition -> partition.computePairs().forEach((colliderA, colliders) -> {
+//			if(collisionPairs.containsKey(colliderA)) {
+//				collisionPairs.get(colliderA).addAll(colliders);
+//			} else {
+//				collisionPairs.put(colliderA, colliders);
+//			}
+//		}));
+//		collisionPairs.forEach((colliderA, colliders) -> colliders.forEach(colliderB -> resolveCollision(colliderA, colliderB)));
+		COLLIDERS.forEach(colliderA -> COLLIDERS.forEach(colliderB -> {
+			if(!colliderA.equals(colliderB)) {
+				resolveCollision(colliderA, colliderB);
 			}
 		}));
-		collisionPairs.forEach((colliderA, colliders) -> colliders.forEach(colliderB -> resolveCollision(colliderA, colliderB)));
 	}
 
 	/**

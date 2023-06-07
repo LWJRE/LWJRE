@@ -21,7 +21,8 @@ public final class Application {
 		try {
 			Window.init();
 			RenderingSystem.init();
-			SceneTree.changeScene(ApplicationProperties.getString("startScene"));
+			// TODO: This is unsafe
+			SceneTree.changeScene(args.length > 0 ? args[0] : ApplicationProperties.getString("startScene"));
 			while(running) {
 				SceneTree.process();
 				Window.update();

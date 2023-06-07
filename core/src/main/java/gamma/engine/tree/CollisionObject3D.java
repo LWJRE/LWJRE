@@ -77,14 +77,35 @@ public class CollisionObject3D extends Node3D {
 		Vec3f halfExtents = this.boundingBox.dividedBy(2.0f);
 		Mat4f transform = this.globalTransformation();
 		return List.of(
-				transform.multiply(halfExtents.x(), halfExtents.y(), halfExtents.z(), 1.0f).xyz(),
-				transform.multiply(-halfExtents.x(), halfExtents.y(), halfExtents.z(), 1.0f).xyz(),
-				transform.multiply(halfExtents.x(), -halfExtents.y(), halfExtents.z(), 1.0f).xyz(),
-				transform.multiply(halfExtents.x(), halfExtents.y(), -halfExtents.z(), 1.0f).xyz(),
+				transform.multiply(-halfExtents.x(), -halfExtents.y(), -halfExtents.z(), 1.0f).xyz(),
 				transform.multiply(-halfExtents.x(), -halfExtents.y(), halfExtents.z(), 1.0f).xyz(),
+				transform.multiply(halfExtents.x(), -halfExtents.y(), halfExtents.z(), 1.0f).xyz(),
 				transform.multiply(halfExtents.x(), -halfExtents.y(), -halfExtents.z(), 1.0f).xyz(),
 				transform.multiply(-halfExtents.x(), halfExtents.y(), -halfExtents.z(), 1.0f).xyz(),
-				transform.multiply(-halfExtents.x(), -halfExtents.y(), -halfExtents.z(), 1.0f).xyz()
+				transform.multiply(-halfExtents.x(), halfExtents.y(), halfExtents.z(), 1.0f).xyz(),
+				transform.multiply(halfExtents.x(), halfExtents.y(), halfExtents.z(), 1.0f).xyz(),
+				transform.multiply(halfExtents.x(), halfExtents.y(), -halfExtents.z(), 1.0f).xyz()
+		);
+	}
+
+	public List<Vec3f> getEdges() {
+		List<Vec3f> vertices = this.getVertices();
+		return List.of(
+				// Bottom face edges
+				vertices.get(0), vertices.get(1),
+				vertices.get(1), vertices.get(2),
+				vertices.get(2), vertices.get(3),
+				vertices.get(3), vertices.get(0),
+				// Top face edges
+				vertices.get(4), vertices.get(5),
+				vertices.get(5), vertices.get(6),
+				vertices.get(6), vertices.get(7),
+				vertices.get(7), vertices.get(4),
+				// Vertical edges
+				vertices.get(0), vertices.get(4),
+				vertices.get(1), vertices.get(5),
+				vertices.get(2), vertices.get(6),
+				vertices.get(3), vertices.get(7)
 		);
 	}
 

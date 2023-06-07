@@ -3,9 +3,9 @@ children:
   dragon:
     override: scenes/dragon.yaml
     properties:
-      position: !Vec3f [0.0, 7.0, -1.0]
+      position: !Vec3f [0.0, 15.0, -1.0]
   camera:
-    type: gamma.engine.tree.Camera3D
+    type: gamma.demo.CameraController
     properties:
       current: true
       position: !Vec3f [0.0, 3.0, 15.0]
@@ -21,9 +21,8 @@ children:
         properties:
           diffuse: !Color3f [0.0, 0.0, 1.0]
           position: !Vec3f [0.0, 20.0, 0.0]
-    type: gamma.engine.tree.CollisionObject3D
+    type: gamma.engine.tree.RigidBody3D
     properties:
       scale: !Vec3f [10.0, 1.0, 10.0]
-#  test:
-#    type: gamma.demo.TestNode
+      acceleration: !Vec3f [0.0, 0.0, 0.0]
 type: gamma.engine.tree.Node
