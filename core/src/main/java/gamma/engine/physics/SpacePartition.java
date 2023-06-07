@@ -33,7 +33,7 @@ public class SpacePartition {
 	}
 
 	/** Set of colliders in this partition */
-	private final HashSet<CollisionObject3D> colliders;
+	public final HashSet<CollisionObject3D> colliders;
 
 	/**
 	 * Creates an empty space partition.
@@ -87,12 +87,12 @@ public class SpacePartition {
 		HashMap<CollisionObject3D, HashSet<CollisionObject3D>> result = new HashMap<>();
 		this.colliders.forEach(colliderA -> {
 			Vec3f centerA = colliderA.globalPosition();
-			float radiusA = colliderA.boundingBox.dividedBy(2.0f).lengthSquared();
+			float radiusA = (float) colliderA.boundingBox.dividedBy(2.0f).multiply(colliderA.globalScale()).length();
 			this.colliders.forEach(colliderB -> {
 				if(!colliderA.equals(colliderB)) {
 					Vec3f centerB = colliderB.globalPosition();
-					float radiusB = colliderB.boundingBox.dividedBy(2.0f).lengthSquared();
-					if(centerA.distanceSquaredTo(centerB) <= radiusA + radiusB) {
+					float radiusB = (float) colliderB.boundingBox.dividedBy(2.0f).multiply(colliderB.globalScale()).length();
+					if(centerA.distanceTo(centerB) <= radiusA + radiusB) {
 						if(result.containsKey(colliderA)) {
 							result.get(colliderA).add(colliderB);
 						} else {

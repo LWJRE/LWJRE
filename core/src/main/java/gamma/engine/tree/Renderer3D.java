@@ -20,6 +20,10 @@ public abstract class Renderer3D extends Node3D {
 	@DefaultResource(path = "gamma/engine/shaders/default_shader.glsl")
 	private Shader shader = Shader.defaultShader();
 
+	protected abstract void addToBatch();
+
+	protected abstract void removeFromBatch();
+
 	/**
 	 * Renders the given mesh using this renderer.
 	 * Called from {@link RenderingSystem#render()} to render meshes in batches to improve performance.
@@ -27,6 +31,24 @@ public abstract class Renderer3D extends Node3D {
 	 * @param mesh The mesh to render.
 	 */
 	public abstract void render(Mesh mesh);
+
+	@Override
+	protected void onEnter() {
+		this.addToBatch();
+		super.onEnter();
+	}
+
+	@Override
+	protected void onEditorProcess() {
+		this.addToBatch();
+		super.onEditorProcess();
+	}
+
+	@Override
+	protected void onExit() {
+		this.removeFromBatch();
+		super.onExit();
+	}
 
 	/**
 	 * Gets the shader used by this object.

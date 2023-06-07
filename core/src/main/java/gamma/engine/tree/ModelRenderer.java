@@ -20,34 +20,12 @@ public class ModelRenderer extends Renderer3D {
 	private Model model = new Model();
 
 	@Override
-	protected void onEnter() {
-		super.onEnter();
-		this.addModelToBatch();
-	}
-
-	@Override
-	protected void onEditorProcess() {
-		super.onEditorProcess();
-		this.addModelToBatch();
-	}
-
-	@Override
-	protected void onExit() {
-		super.onExit();
-		this.removeModelFromBatch();
-	}
-
-	/**
-	 * Adds this object's model to the {@link RenderingSystem}.
-	 */
-	private void addModelToBatch() {
+	protected void addToBatch() {
 		this.model.modelData().forEach((mesh, material) -> RenderingSystem.addToBatch(mesh, this));
 	}
 
-	/**
-	 * Removes this object's model from the {@link RenderingSystem}.
-	 */
-	private void removeModelFromBatch() {
+	@Override
+	protected void removeFromBatch() {
 		this.model.modelData().forEach((mesh, material) -> RenderingSystem.removeFromBatch(mesh, this));
 	}
 
@@ -70,9 +48,9 @@ public class ModelRenderer extends Renderer3D {
 	 * @param model The model to set to this object
 	 */
 	public void setModel(Model model) {
-		this.removeModelFromBatch();
+		this.removeFromBatch();
 		this.model = model != null ? model : new Model();
-		this.addModelToBatch();
+		this.addToBatch();
 	}
 
 	/**
