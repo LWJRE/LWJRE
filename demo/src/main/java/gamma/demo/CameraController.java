@@ -1,7 +1,7 @@
 package gamma.demo;
 
-import gamma.engine.input.Keyboard;
-import gamma.engine.tree.Camera3D;
+import gamma.engine.core.input.Keyboard;
+import gamma.engine.graphics.nodes.Camera3D;
 
 public class CameraController extends Camera3D {
 
