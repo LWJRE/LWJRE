@@ -1,6 +1,5 @@
 package gamma.engine.core.utils;
 
-import gamma.engine.core.resources.FileUtils;
 import gamma.engine.core.resources.Resources;
 import io.github.hexagonnico.vecmatlib.color.Color3f;
 import io.github.hexagonnico.vecmatlib.color.Color4f;

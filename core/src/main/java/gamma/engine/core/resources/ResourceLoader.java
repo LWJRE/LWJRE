@@ -3,7 +3,7 @@ package gamma.engine.core.resources;
 /**
  * Interface used to implement a loader that can load a certain type of resource.
  * Loaders are loaded with a {@link java.util.ServiceLoader} when the {@link Resources} class is initialized.
- * Loaders must be added to {@code META-INF/services/gamma.engine.resources.ResourceLoader}.
+ * Loaders must be added to {@code META-INF/servers/gamma.engine.resources.ResourceLoader}.
  *
  * @author Nico
  */

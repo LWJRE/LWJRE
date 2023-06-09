@@ -1,6 +1,6 @@
 package gamma.engine.core.input;
 
-import gamma.engine.core.tree.SceneTree;
+import gamma.engine.core.nodes.SceneTree;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.HashSet;

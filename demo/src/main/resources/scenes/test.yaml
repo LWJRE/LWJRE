@@ -1,4 +1,4 @@
-!!gamma.engine.core.tree.NodeResource
+!!gamma.engine.core.nodes.NodeResource
 children:
   dragon:
     override: scenes/dragon.yaml
@@ -10,18 +10,18 @@ children:
       current: true
       position: !Vec3f [0.0, 3.0, 15.0]
   floor:
-    type: gamma.engine.physics.nodes.RigidBody3D
+    type: gamma.engine.core.nodes.RigidBody3D
     properties:
       scale: !Vec3f [10.0, 1.0, 10.0]
       acceleration: !Vec3f [0.0, 0.0, 0.0]
   light1:
-    type: gamma.engine.graphics.nodes.PointLight3D
+    type: gamma.engine.core.nodes.PointLight3D
     properties:
       diffuse: !Color3f [1.0, 0.0, 1.0]
       position: !Vec3f [-10.0, 20.0, 0.0]
   light2:
-    type: gamma.engine.graphics.nodes.PointLight3D
+    type: gamma.engine.core.nodes.PointLight3D
     properties:
       diffuse: !Color3f [0.0, 0.0, 1.0]
       position: !Vec3f [0.0, 20.0, 0.0]
-type: gamma.engine.core.tree.Node
+type: gamma.engine.core.nodes.Node

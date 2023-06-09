@@ -1,9 +1,9 @@
 package gamma.demo;
 
 import gamma.engine.core.annotations.EditorVariable;
-import gamma.engine.core.tree.Node;
-import gamma.engine.core.tree.NodeResource;
-import gamma.engine.physics.nodes.RigidBody3D;
+import gamma.engine.core.nodes.Node;
+import gamma.engine.core.nodes.NodeResource;
+import gamma.engine.core.nodes.RigidBody3D;
 import io.github.hexagonnico.vecmatlib.vector.Vec3f;
 
 import java.util.Random;

@@ -1,8 +1,8 @@
 package gamma.engine.core.input;
 
-import gamma.engine.core.tree.SceneTree;
-import org.lwjgl.glfw.GLFW;
+import gamma.engine.core.nodes.SceneTree;
 import io.github.hexagonnico.vecmatlib.vector.Vec2i;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.HashSet;
 

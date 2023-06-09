@@ -1,8 +1,0 @@
-!!gamma.engine.core.tree.NodeResource
-type: gamma.engine.core.tree.TestNodeResource$MockNode
-children:
-  child: !!gamma.engine.core.tree.NodeResource
-    type: gamma.engine.core.tree.TestNodeResource$MockNode
-    properties:
-      string: Test
-      number: 1

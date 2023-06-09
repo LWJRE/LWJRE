@@ -1,6 +1,7 @@
 package gamma.engine.core;
 
-import gamma.engine.core.tree.SceneTree;
+import gamma.engine.core.nodes.SceneTree;
+import gamma.engine.core.servers.EngineServer;
 
 import java.util.ServiceLoader;
 
@@ -18,18 +19,19 @@ public final class Application {
 	}
 
 	public static void main(String[] args) {
-		ServiceLoader<EngineService> systems = ServiceLoader.load(EngineService.class);
+		ServiceLoader<EngineServer> systems = ServiceLoader.load(EngineServer.class);
 		try {
-			systems.forEach(EngineService::init);
-			SceneTree.changeScene(args.length > 0 ? args[0] : ApplicationProperties.getString("startScene"));
+			systems.forEach(EngineServer::init);
+			SceneTree.start();
 			while(running) {
 				SceneTree.process();
-				systems.forEach(EngineService::update);
+				systems.forEach(EngineServer::update);
 			}
 		} catch(Exception e) {
+			System.err.println("Uncaught exception in main");
 			e.printStackTrace();
 		} finally {
-			systems.forEach(EngineService::terminate);
+			systems.forEach(EngineServer::terminate);
 		}
 	}
 }
