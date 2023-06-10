@@ -1,6 +1,8 @@
 package gamma.engine.core.nodes;
 
+import gamma.engine.core.Application;
 import gamma.engine.core.ApplicationProperties;
+import gamma.engine.core.resources.NodeResource;
 
 public class SceneTree {
 
@@ -55,5 +57,8 @@ public class SceneTree {
 		// TODO: Call Application.quit() if root is deleted
 	}
 
-	// TODO: Root exit
+	public static void exit() {
+		root.exit();
+		Application.quit();
+	}
 }

@@ -31,6 +31,7 @@ public final class Application {
 			System.err.println("Uncaught exception in main");
 			e.printStackTrace();
 		} finally {
+			SceneTree.exit();
 			systems.forEach(EngineServer::terminate);
 		}
 	}

@@ -3,6 +3,7 @@ package gamma.engine.core.nodes;
 import gamma.engine.core.annotations.EditorAngle;
 import gamma.engine.core.annotations.EditorRange;
 import gamma.engine.core.annotations.EditorVariable;
+import gamma.engine.core.debug.DebugRenderer;
 import gamma.engine.core.window.Window;
 import gamma.engine.core.resources.Shader;
 import io.github.hexagonnico.vecmatlib.matrix.Mat4f;
@@ -56,13 +57,9 @@ public class Camera3D extends Node3D {
 
 	@Override
 	protected void onEditorProcess() {
+		Mat4f cone = Mat4f.translation(this.globalPosition().plus(0.0f, -0.5f, 0.0f)).multiply(Mat4f.rotation((float) (-Math.PI * 0.5), 0.0f, 0.0f));
+		DebugRenderer.drawCone(cone, 0.0f, 1.0f, 0.0f);
 		super.onEditorProcess();
-//		DebugRenderer.addToBatch(ConeMesh.INSTANCE, mesh -> {
-//			Mat4f cone = Mat4f.translation(this.globalPosition().plus(0.0f, -0.5f, 0.0f)).multiply(Mat4f.rotation((float) (-Math.PI * 0.5), 0.0f, 0.0f));
-//			DebugRenderer.SHADER.setUniform("transformation_matrix", cone);
-//			DebugRenderer.SHADER.setUniform("color", 0.0f, 1.0f, 0.0f, 1.0f);
-//			mesh.drawElements();
-//		});
 	}
 
 	/**

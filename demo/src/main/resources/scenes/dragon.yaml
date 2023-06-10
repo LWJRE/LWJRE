@@ -1,4 +1,4 @@
-!!gamma.engine.core.nodes.NodeResource
+!!gamma.engine.core.resources.NodeResource
 type: gamma.engine.core.nodes.RigidBody3D
 properties:
   boundingBox: !Vec3f [7.25, 4.8, 2.75]

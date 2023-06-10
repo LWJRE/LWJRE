@@ -1,9 +1,9 @@
-package gamma.engine.core.nodes;
+package gamma.engine.core.resources;
 
+import gamma.engine.core.nodes.Node;
 import gamma.engine.core.utils.Reflection;
 import gamma.engine.core.utils.ReflectionException;
 import gamma.engine.core.utils.YamlSerializer;
-import gamma.engine.core.resources.Resources;
 
 import java.util.HashMap;
 

@@ -2,6 +2,7 @@ package gamma.engine.core.nodes;
 
 import gamma.engine.core.annotations.EditorRange;
 import gamma.engine.core.annotations.EditorVariable;
+import gamma.engine.core.debug.DebugRenderer;
 import gamma.engine.core.servers.PhysicsServer;
 import io.github.hexagonnico.vecmatlib.Float2;
 import io.github.hexagonnico.vecmatlib.matrix.Mat4f;
@@ -33,12 +34,7 @@ public class CollisionObject3D extends Node3D {
 
 	@Override
 	protected void onEditorProcess() {
-//		DebugRenderer.addToBatch(CubeMesh.INSTANCE, mesh -> {
-//			Mat4f shape = this.globalTransformation().multiply(Mat4f.scaling(this.boundingBox));
-//			DebugRenderer.SHADER.setUniform("transformation_matrix", shape);
-//			DebugRenderer.SHADER.setUniform("color", 0.0f, 0.5f, 1.0f, 1.0f);
-//			mesh.drawElements();
-//		});
+		DebugRenderer.drawCube(this.globalTransformation().multiply(Mat4f.scaling(this.boundingBox)), 0.0f, 0.5f, 1.0f);
 		super.onEditorProcess();
 	}
 

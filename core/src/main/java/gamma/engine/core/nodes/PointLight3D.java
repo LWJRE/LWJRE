@@ -2,8 +2,10 @@ package gamma.engine.core.nodes;
 
 import gamma.engine.core.annotations.EditorRange;
 import gamma.engine.core.annotations.EditorVariable;
+import gamma.engine.core.debug.DebugRenderer;
 import gamma.engine.core.servers.RenderingServer;
 import io.github.hexagonnico.vecmatlib.color.Color3f;
+import io.github.hexagonnico.vecmatlib.matrix.Mat4f;
 import io.github.hexagonnico.vecmatlib.vector.Vec3f;
 
 /**
@@ -59,12 +61,8 @@ public class PointLight3D extends Node3D {
 
 	@Override
 	protected void onEditorProcess() {
+		Mat4f shape = Mat4f.translation(this.globalPosition()).multiply(Mat4f.scaling(this.energy));
+		DebugRenderer.drawCube(shape, 1.0f, 0.5f, 0.0f);
 		super.onEditorProcess();
-//		DebugRenderer.addToBatch(CubeMesh.INSTANCE, mesh -> {
-//			DebugRenderer.SHADER.setUniform("transformation_matrix", Mat4f.translation(this.globalPosition()).multiply(Mat4f.scaling(this.energy, this.energy, this.energy)));
-//			DebugRenderer.SHADER.setUniform("color", 1.0f, 0.5f, 0.0f, 1.0f);
-//			mesh.drawElements();
-//		});
-//		RenderingSystem.addToBatch(this);
 	}
 }

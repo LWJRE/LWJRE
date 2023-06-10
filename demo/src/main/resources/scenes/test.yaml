@@ -1,4 +1,4 @@
-!!gamma.engine.core.nodes.NodeResource
+!!gamma.engine.core.resources.NodeResource
 children:
   dragon:
     override: scenes/dragon.yaml
