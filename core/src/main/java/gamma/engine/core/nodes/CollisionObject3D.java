@@ -4,9 +4,7 @@ import gamma.engine.core.annotations.EditorRange;
 import gamma.engine.core.annotations.EditorVariable;
 import gamma.engine.core.debug.DebugRenderer;
 import gamma.engine.core.servers.PhysicsServer;
-import io.github.hexagonnico.vecmatlib.Float2;
 import io.github.hexagonnico.vecmatlib.matrix.Mat4f;
-import io.github.hexagonnico.vecmatlib.vector.Vec2f;
 import io.github.hexagonnico.vecmatlib.vector.Vec3f;
 
 import java.util.List;
@@ -44,14 +42,66 @@ public class CollisionObject3D extends Node3D {
 		super.onExit();
 	}
 
-	public Float2 projectBoundingBox(Vec3f axis) {
-		float min = Float.POSITIVE_INFINITY, max = Float.NEGATIVE_INFINITY;
-		for(Vec3f vertex : this.getVertices()) {
-			float projection = vertex.dot(axis);
-			if(projection < min) min = projection;
-			if(projection > max) max = projection;
+	/**
+	 * Called when this object collides with another one.
+	 * Classes that extend {@code CollisionObject3D} must override this method to implement their collision resolution or to listen for collision events.
+	 *
+	 * @param collider The {@code CollisionObject3D} that collided with this one
+	 * @param normal The collision's normal
+	 * @param depth Penetration depth
+	 */
+	protected void onCollision(CollisionObject3D collider, Vec3f normal, float depth) {
+
+	}
+
+	public final void resolveCollision(CollisionObject3D collider) {
+		Vec3f normal = Vec3f.Zero();
+		float depth = Float.POSITIVE_INFINITY;
+		Mat4f rotationA = this.globalRotation();
+		Mat4f rotationB = collider.globalRotation();
+		Vec3f[] axes = new Vec3f[] {
+				rotationA.col0().xyz().normalized(),
+				rotationA.col1().xyz().normalized(),
+				rotationA.col2().xyz().normalized(),
+				rotationB.col0().xyz().normalized(),
+				rotationB.col1().xyz().normalized(),
+				rotationB.col2().xyz().normalized()
+		};
+		List<Vec3f> verticesA = this.getVertices();
+		List<Vec3f> verticesB = collider.getVertices();
+		for(Vec3f axis : axes) {
+			float axisDepth = checkAxis(verticesA, verticesB, axis);
+			if(axisDepth < 0.0f) {
+				return;
+			} else if(axisDepth < depth) {
+				depth = axisDepth;
+				normal = axis;
+			}
 		}
-		return new Vec2f(min, max);
+		if(meanCenter(verticesA).minus(meanCenter(verticesB)).dot(normal) < 0.0f) {
+			normal = normal.negated();
+		}
+		this.onCollision(collider, normal, depth);
+	}
+
+	private static float checkAxis(List<Vec3f> verticesA, List<Vec3f> verticesB, Vec3f axis) {
+		float minA = Float.POSITIVE_INFINITY, maxA = Float.NEGATIVE_INFINITY;
+		for(Vec3f vertexA : verticesA) {
+			float projection = vertexA.dot(axis);
+			if(projection < minA) minA = projection;
+			if(projection > maxA) maxA = projection;
+		}
+		float minB = Float.POSITIVE_INFINITY, maxB = Float.NEGATIVE_INFINITY;
+		for(Vec3f vertexB : verticesB) {
+			float projection = vertexB.dot(axis);
+			if(projection < minB) minB = projection;
+			if(projection > maxB) maxB = projection;
+		}
+		return Math.min(maxA, maxB) - Math.max(minA, minB);
+	}
+
+	private static Vec3f meanCenter(List<Vec3f> vertices) {
+		return vertices.stream().reduce(Vec3f.Zero(), Vec3f::plus).dividedBy(vertices.size());
 	}
 
 	/**
@@ -94,27 +144,5 @@ public class CollisionObject3D extends Node3D {
 				vertices.get(2), vertices.get(6),
 				vertices.get(3), vertices.get(7)
 		);
-	}
-
-	/**
-	 * Computes the mean center of the vertices returned by {@link CollisionObject3D#getVertices()}.
-	 * Used to resolve collision in the {@link PhysicsServer}.
-	 *
-	 * @return The object's mean center
-	 */
-	public Vec3f meanCenter() {
-		return this.getVertices().stream().reduce(Vec3f.Zero(), Vec3f::plus).dividedBy(8);
-	}
-
-	/**
-	 * Called when this object collides with another one.
-	 * Classes that extend {@code CollisionObject3D} must override this method to implement their collision resolution or to listen for collision events.
-	 *
-	 * @param collider The {@code CollisionObject3D} that collided with this one
-	 * @param normal The collision's normal
-	 * @param depth Penetration depth
-	 */
-	public void onCollision(CollisionObject3D collider, Vec3f normal, float depth) {
-
 	}
 }

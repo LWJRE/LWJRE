@@ -44,7 +44,7 @@ public class DynamicBody3D extends KinematicBody3D {
 	}
 
 	@Override
-	public void onCollision(CollisionObject3D collider, Vec3f normal, float depth) {
+	protected void onCollision(CollisionObject3D collider, Vec3f normal, float depth) {
 		this.position = this.position.plus(normal.multipliedBy(depth));
 		if(collider instanceof KinematicBody3D kinematicBody) {
 			Vec3f relativeVelocity = kinematicBody.velocity.minus(this.velocity);

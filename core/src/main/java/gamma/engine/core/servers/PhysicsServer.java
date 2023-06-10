@@ -1,8 +1,6 @@
 package gamma.engine.core.servers;
 
 import gamma.engine.core.nodes.CollisionObject3D;
-import io.github.hexagonnico.vecmatlib.Float2;
-import io.github.hexagonnico.vecmatlib.matrix.Mat4f;
 import io.github.hexagonnico.vecmatlib.vector.Vec3f;
 
 import java.util.*;
@@ -52,7 +50,7 @@ public final class PhysicsServer implements EngineServer {
 				collisionPairs.put(colliderA, colliders);
 			}
 		}));
-		collisionPairs.forEach((colliderA, colliders) -> colliders.forEach(colliderB -> resolveCollision(colliderA, colliderB)));
+		collisionPairs.forEach((colliderA, colliders) -> colliders.forEach(colliderA::resolveCollision));
 	}
 
 	@Override
@@ -121,59 +119,5 @@ public final class PhysicsServer implements EngineServer {
 			});
 		});
 		return result;
-	}
-
-	/**
-	 * Checks if the two given colliders are colliding and calls {@link CollisionObject3D#onCollision(CollisionObject3D, Vec3f, float)} if they are.
-	 * Represents the narrow phase of the collision resolution algorithm.
-	 *
-	 * @param colliderA First collider
-	 * @param colliderB Second collider
-	 */
-	private static void resolveCollision(CollisionObject3D colliderA, CollisionObject3D colliderB) {
-		Vec3f normal = Vec3f.Zero();
-		float depth = Float.POSITIVE_INFINITY;
-		Mat4f rotationA = colliderA.globalRotation();
-		Mat4f rotationB = colliderB.globalRotation();
-		Vec3f[] axes = new Vec3f[] {
-				rotationA.col0().xyz().normalized(),
-				rotationA.col1().xyz().normalized(),
-				rotationA.col2().xyz().normalized(),
-				rotationB.col0().xyz().normalized(),
-				rotationB.col1().xyz().normalized(),
-				rotationB.col2().xyz().normalized()
-		};
-		for(Vec3f axis : axes) {
-			Float2 projectionA = colliderA.projectBoundingBox(axis);
-			Float2 projectionB = colliderB.projectBoundingBox(axis);
-			if(!overlaps(projectionA, projectionB)) {
-				return;
-			}
-			float axisDepth = getOverlap(projectionA, projectionB);
-			if(axisDepth < depth) {
-				depth = axisDepth;
-				normal = axis;
-			}
-		}
-		if(colliderA.meanCenter().minus(colliderB.meanCenter()).dot(normal) < 0.0f) {
-			normal = normal.negated();
-		}
-		colliderA.onCollision(colliderB, normal, depth);
-	}
-
-	private static boolean overlaps(Float2 projectionA, Float2 projectionB) {
-		return overlaps(projectionA.x(), projectionA.y(), projectionB.x(), projectionB.y());
-	}
-
-	private static boolean overlaps(float minA, float maxA, float minB, float maxB) {
-		return minA <= maxB && maxA >= minB;
-	}
-
-	private static float getOverlap(Float2 projectionA, Float2 projectionB) {
-		return getOverlap(projectionA.x(), projectionA.y(), projectionB.x(), projectionB.y());
-	}
-
-	private static float getOverlap(float minA, float maxA, float minB, float maxB) {
-		return Math.min(maxA, maxB) - Math.max(minA, minB);
 	}
 }

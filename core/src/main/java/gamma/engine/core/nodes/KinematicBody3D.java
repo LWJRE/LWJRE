@@ -33,7 +33,7 @@ public class KinematicBody3D extends CollisionObject3D {
 	}
 
 	@Override
-	public void onCollision(CollisionObject3D collider, Vec3f normal, float depth) {
+	protected void onCollision(CollisionObject3D collider, Vec3f normal, float depth) {
 		this.position = this.position.plus(normal.multipliedBy(depth));
 		this.velocity = this.velocity.slide(normal);
 	}

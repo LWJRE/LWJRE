@@ -51,7 +51,7 @@ public class RigidBody3D extends DynamicBody3D {
 	// TODO: Refactor this code
 
 	@Override
-	public void onCollision(CollisionObject3D collider, Vec3f normal, float depth) {
+	protected void onCollision(CollisionObject3D collider, Vec3f normal, float depth) {
 		this.position = this.position.plus(normal.multipliedBy(depth));
 		HashSet<Vec3f> intersectionPoints = this.intersectionPoints(collider);
 		Vec3f globalPosition = this.globalPosition();
