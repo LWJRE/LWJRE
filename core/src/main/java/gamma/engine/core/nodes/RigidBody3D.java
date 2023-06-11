@@ -48,8 +48,6 @@ public class RigidBody3D extends DynamicBody3D {
 		super.onUpdate(delta);
 	}
 
-	// TODO: Refactor this code
-
 	@Override
 	protected void onCollision(CollisionObject3D collider, Vec3f normal, float depth) {
 		this.position = this.position.plus(normal.multipliedBy(depth));
@@ -91,78 +89,81 @@ public class RigidBody3D extends DynamicBody3D {
 		}
 	}
 
+	/**
+	 * Finds the intersection points between this collider and the given one.
+	 *
+	 * @param collider The other collider
+	 * @return A {@link HashSet} containing the points of intersection
+	 */
 	private HashSet<Vec3f> intersectionPoints(CollisionObject3D collider) {
 		HashSet<Vec3f> intersectionPoints = new HashSet<>();
-		Mat4f transformB = collider.globalTransformation();
-		Mat4f transformA = this.globalTransformation();
-		Mat4f rotationA = this.globalRotation();
-		Mat4f rotationB = collider.globalRotation();
-		Vec3f[] pointsA = new Vec3f[] {
-				transformA.multiply(new Vec4f(this.boundingBox.dividedBy(-2.0f), 1.0f)).xyz(),
-				transformA.multiply(new Vec4f(this.boundingBox.dividedBy(2.0f), 1.0f)).xyz()
-		};
-		Vec3f[] pointsB = new Vec3f[] {
-				transformB.multiply(new Vec4f(collider.boundingBox.dividedBy(-2.0f), 1.0f)).xyz(),
-				transformB.multiply(new Vec4f(collider.boundingBox.dividedBy(2.0f), 1.0f)).xyz()
-		};
-		Vec3f[] normalsA = new Vec3f[] {
-				rotationA.col0().xyz(),
-				rotationA.col1().xyz(),
-				rotationA.col2().xyz()
-		};
-		Vec3f[] normalsB = new Vec3f[] {
-				rotationB.col0().xyz(),
-				rotationB.col1().xyz(),
-				rotationB.col2().xyz()
-		};
-		List<Vec3f> edgesA = this.getEdges();
-		List<Vec3f> edgesB = collider.getEdges();
-		for(Vec3f normalB : normalsB) {
-			for(Vec3f point : pointsB) {
-				float d = normalB.dot(point);
-				for(int i = 0; i < edgesA.size(); i += 2) {
-					Vec3f direction = edgesA.get(i + 1).minus(edgesA.get(i));
-					if(Math.abs(normalB.dot(direction)) > 0.0f) {
-						float t = (d - normalB.dot(edgesA.get(i))) / normalB.dot(direction);
-						Vec3f candidate = edgesA.get(i).plus(direction.multipliedBy(t));
-						if(t >= -0.00001f && t <= 1.00001f && isPointValid(candidate, collider)) {
-							intersectionPoints.add(candidate);
-						}
-					}
-				}
-			}
-		}
-		for(Vec3f normalA : normalsA) {
-			for(Vec3f pointA : pointsA) {
-				float d = normalA.dot(pointA);
-				for(int i = 0; i < edgesB.size(); i += 2) {
-					Vec3f direction = edgesB.get(i + 1).minus(edgesB.get(i));
-					if(Math.abs(normalA.dot(direction)) > 0.0f) {
-						float t = (d - normalA.dot(edgesB.get(i))) / normalA.dot(direction);
-						Vec3f candidate = edgesB.get(i).plus(direction.multipliedBy(t));
-						if(t >= -0.00001f && t <= 1.00001f && isPointValid(candidate, this)) {
-							intersectionPoints.add(candidate);
-						}
-					}
-				}
-			}
-		}
+		intersectionPoints(collider, this.getEdges(), intersectionPoints);
+		intersectionPoints(this, collider.getEdges(), intersectionPoints);
 		return intersectionPoints;
 	}
 
-	private static boolean isPointValid(Vec3f point, CollisionObject3D collider) {
-		Vec3f v = point.minus(collider.globalPosition());
-		Mat4f rotation = collider.globalRotation();
+	/**
+	 * Finds the intersection points between the given collider and the list of edges.
+	 * Intersection points are computed as line-plane intersections.
+	 *
+	 * @param collider The collider to check
+	 * @param edges The edges of the other collider
+	 * @param intersectionPoints Result list
+	 */
+	private static void intersectionPoints(CollisionObject3D collider, List<Vec3f> edges, HashSet<Vec3f> intersectionPoints) {
+		Mat4f transform = collider.globalTransformation();
+		Vec3f colliderPosition = transform.multiply(new Vec4f(collider.position, 1.0f)).xyz();
+		Mat4f colliderRotation = collider.globalRotation();
 		Vec3f boundingBox = collider.boundingBox.multiply(collider.globalScale());
-		float px = Math.abs(v.dot(rotation.col0().xyz()));
-		float py = Math.abs(v.dot(rotation.col1().xyz()));
-		float pz = Math.abs(v.dot(rotation.col2().xyz()));
+		Vec3f[] normals = new Vec3f[] {
+				colliderRotation.col0().xyz(),
+				colliderRotation.col1().xyz(),
+				colliderRotation.col2().xyz()
+		};
+		Vec3f[] points = new Vec3f[] {
+				transform.multiply(new Vec4f(collider.boundingBox.dividedBy(-2.0f), 1.0f)).xyz(),
+				transform.multiply(new Vec4f(collider.boundingBox.dividedBy(2.0f), 1.0f)).xyz()
+		};
+		for(Vec3f normal : normals) {
+			for(Vec3f point : points) {
+				float d = normal.dot(point);
+				for(int i = 0; i < edges.size(); i += 2) {
+					Vec3f direction = edges.get(i + 1).minus(edges.get(i));
+					if(Math.abs(normal.dot(direction)) > 0.0f) {
+						float t = (d - normal.dot(edges.get(i))) / normal.dot(direction);
+						Vec3f candidate = edges.get(i).plus(direction.multipliedBy(t));
+						if(t >= -0.00001f && t <= 1.00001f && isPointValid(candidate, colliderPosition, colliderRotation, boundingBox)) {
+							intersectionPoints.add(candidate);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Checks if the given point is inside the collider's bounding box.
+	 * Intersection points are computed as line-plane intersections.
+	 * This method checks if the computed point is within the collider's bounds.
+	 *
+	 * @param point The point to check
+	 * @param colliderPosition The collider's global position
+	 * @param colliderRotation The collider's rotation matrix
+	 * @param boundingBox The size of the collider's bounding box
+	 * @return True if the point is inside the collider's bounding box, otherwise false
+	 */
+	private static boolean isPointValid(Vec3f point, Vec3f colliderPosition, Mat4f colliderRotation, Vec3f boundingBox) {
+		Vec3f v = point.minus(colliderPosition);
+		float px = Math.abs(v.dot(colliderRotation.col0().xyz()));
+		float py = Math.abs(v.dot(colliderRotation.col1().xyz()));
+		float pz = Math.abs(v.dot(colliderRotation.col2().xyz()));
 		return 2 * px <= boundingBox.x() && 2 * py <= boundingBox.y() && 2 * pz <= boundingBox.z();
 	}
 
 	/**
+	 * Gets this object's resulting torque.
 	 *
-	 * @return
+	 * @return This object's resulting torque
 	 */
 	public final Vec3f torque() {
 		return this.torque;

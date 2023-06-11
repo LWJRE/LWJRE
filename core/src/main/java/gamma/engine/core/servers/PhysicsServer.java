@@ -14,6 +14,8 @@ public final class PhysicsServer implements EngineServer {
 
 	/** List of all the colliders in the scene */
 	private static final ArrayList<CollisionObject3D> COLLIDERS = new ArrayList<>();
+	/** List of all the colliders that moved during the current frame */
+	private static final ArrayList<CollisionObject3D> MOVING_COLLIDERS = new ArrayList<>();
 
 	/**
 	 * Adds a collider to the physics system to be used for collision detection.
@@ -35,6 +37,17 @@ public final class PhysicsServer implements EngineServer {
 		COLLIDERS.add(collider);
 	}
 
+	/**
+	 * Registers that this collider moved during this frame.
+	 * Collisions will be resolved at the end of the current frame.
+	 * Called when a {@link CollisionObject3D} moves.
+	 *
+	 * @param collider The collider
+	 */
+	public static void resolveCollision(CollisionObject3D collider) {
+		MOVING_COLLIDERS.add(collider);
+	}
+
 	@Override
 	public void init() {
 
@@ -50,7 +63,12 @@ public final class PhysicsServer implements EngineServer {
 				collisionPairs.put(colliderA, colliders);
 			}
 		}));
-		collisionPairs.forEach((colliderA, colliders) -> colliders.forEach(colliderA::resolveCollision));
+		MOVING_COLLIDERS.forEach(collider -> {
+			if(collisionPairs.containsKey(collider)) {
+				collisionPairs.get(collider).forEach(collider::resolveCollision);
+			}
+		});
+		MOVING_COLLIDERS.clear();
 	}
 
 	@Override
@@ -58,6 +76,14 @@ public final class PhysicsServer implements EngineServer {
 
 	}
 
+	/**
+	 * Divides the given colliders into several subspaces.
+	 * The number of iteration indicates how many times the colliders should be divided into 8 subspaces.
+	 *
+	 * @param colliders The list of colliders
+	 * @param iterations The number of iterations
+	 * @return A {@link List} of subspaces, represented by {@link HashSet}s.
+	 */
 	private static List<HashSet<CollisionObject3D>> subdivide(Collection<CollisionObject3D> colliders, int iterations) {
 		HashSet<CollisionObject3D> partition = new HashSet<>(colliders);
 		if(iterations > 1) {
@@ -67,6 +93,12 @@ public final class PhysicsServer implements EngineServer {
 		}
 	}
 
+	/**
+	 * Divides the given colliders into 8 subspaces based on their position.
+	 *
+	 * @param colliders The list of colliders
+	 * @return A {@link List} containing 8 subspaces, represented by {@link HashSet}s.
+	 */
 	private static List<HashSet<CollisionObject3D>> subdivide(Collection<CollisionObject3D> colliders) {
 		List<HashSet<CollisionObject3D>> partitions = List.of(new HashSet<>(), new HashSet<>(), new HashSet<>(), new HashSet<>(), new HashSet<>(), new HashSet<>(), new HashSet<>(), new HashSet<>());
 		Vec3f center = Vec3f.Zero();
@@ -97,6 +129,14 @@ public final class PhysicsServer implements EngineServer {
 		return partitions;
 	}
 
+	/**
+	 * Pairs up the given colliders according to which of them might collide.
+	 * Represents the broad phase of the collision detection algorithm.
+	 * Checks if the bounding spheres of two colliders overlap.
+	 *
+	 * @param colliders The list of colliders
+	 * @return A {@link HashMap} whose keys are the given colliders and whose values are {@link HashSet}s of colliders that may collide with the one used as key
+	 */
 	private static HashMap<CollisionObject3D, HashSet<CollisionObject3D>> computePairs(Collection<CollisionObject3D> colliders) {
 		HashMap<CollisionObject3D, HashSet<CollisionObject3D>> result = new HashMap<>();
 		colliders.forEach(colliderA -> {
