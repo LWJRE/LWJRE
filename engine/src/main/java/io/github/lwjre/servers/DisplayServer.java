@@ -3,24 +3,35 @@ package io.github.lwjre.servers;
 import io.github.lwjre.Application;
 import io.github.lwjre.ApplicationProperties;
 import io.github.lwjre.display.Window;
+import io.github.lwjre.display.WindowOptions;
+import io.github.lwjre.input.Keyboard;
+import io.github.lwjre.input.Mouse;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 
 public class DisplayServer implements EngineServer {
 
-	private static Window mainWindow;
+	private Window mainWindow;
 
 	@Override
 	public void init() {
 		GLFWErrorCallback.createPrint(System.err).set();
 		if(GLFW.glfwInit()) {
-			// TODO: Window hints
-			String windowTitle = ApplicationProperties.get("window.title", "Untitled");
-			int windowWidth = ApplicationProperties.get("window.viewport.width", 400);
-			int windowHeight = ApplicationProperties.get("window.viewport.height", 300);
-			mainWindow = new Window(windowTitle, windowWidth, windowHeight);
-			mainWindow.makeCurrent();
-			mainWindow.setVisible(true);
+			this.mainWindow = new Window(new WindowOptions().title(ApplicationProperties.get("window.title", "Untitled"))
+					.width(ApplicationProperties.get("window.viewport.width", 400))
+					.height(ApplicationProperties.get("window.viewport.height", 300))
+					.visible(ApplicationProperties.get("window.hints.visible", false))
+					.resizable(ApplicationProperties.get("window.hints.resizable", true))
+					.decorated(ApplicationProperties.get("window.hints.decorated", true))
+					.focused(ApplicationProperties.get("window.hints.focused", true))
+					.maximized(ApplicationProperties.get("window.hints.maximized", false)));
+			this.mainWindow.setSizeCallback(RenderingServer::resizeViewport);
+			this.mainWindow.setKeyCallback(new Keyboard.Callback());
+			this.mainWindow.setMouseButtonCallback(new Mouse.ButtonCallback());
+			this.mainWindow.setCursorPosCallback(new Mouse.CursorCallback());
+			this.mainWindow.setMouseScrollCallback(new Mouse.ScrollCallback());
+			this.mainWindow.makeCurrent();
+			this.mainWindow.setVisible(true);
 		} else {
 			throw new RuntimeException("Unable to initialize GLFW");
 		}
@@ -28,19 +39,22 @@ public class DisplayServer implements EngineServer {
 
 	@Override
 	public void update() {
-		if(mainWindow.shouldClose()) {
+		if(this.mainWindow.shouldClose()) {
 			Application.quit();
 		} else {
-			mainWindow.update();
+			this.mainWindow.update();
 			GLFW.glfwPollEvents();
 		}
 	}
 
 	@Override
 	public void terminate() {
-		mainWindow.destroy();
+		this.mainWindow.destroy();
 		GLFW.glfwTerminate();
-		GLFW.glfwSetErrorCallback(null).free();
+		GLFWErrorCallback errorCallback = GLFW.glfwSetErrorCallback(null);
+		if(errorCallback != null) {
+			errorCallback.close();
+		}
 	}
 
 	@Override

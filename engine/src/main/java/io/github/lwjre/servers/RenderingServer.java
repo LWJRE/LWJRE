@@ -156,6 +156,19 @@ public class RenderingServer implements EngineServer {
 		}
 	}
 
+	public static void resizeViewport(int width, int height) {
+		// TODO: Give options for viewport scaling
+		float aspectWidth = width;
+		float aspectHeight = width / (16.0f / 9.0f);
+		if(aspectHeight > height) {
+			aspectHeight = height;
+			aspectWidth = aspectHeight * (16.0f / 9.0f);
+		}
+		float viewportX = (width / 2.0f) - (aspectWidth / 2.0f);
+		float viewportY = (height / 2.0f) - (aspectHeight / 2.0f);
+		setViewport((int) viewportX, (int) viewportY, (int) aspectWidth, (int) aspectHeight);
+	}
+
 	public static void setViewport(int width, int height) {
 		setViewport(0, 0, width, height);
 	}

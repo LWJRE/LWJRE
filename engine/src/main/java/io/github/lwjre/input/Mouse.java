@@ -1,11 +1,11 @@
 package io.github.lwjre.input;
 
 import io.github.hexagonnico.vecmatlib.vector.Vec2i;
+import io.github.lwjre.display.MouseCursorCallback;
+import io.github.lwjre.display.MouseButtonCallback;
+import io.github.lwjre.display.MouseScrollCallback;
 import io.github.lwjre.nodes.SceneTree;
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWCursorPosCallbackI;
-import org.lwjgl.glfw.GLFWMouseButtonCallbackI;
-import org.lwjgl.glfw.GLFWScrollCallbackI;
 
 import java.util.HashSet;
 
@@ -47,10 +47,10 @@ public final class Mouse {
 		return MOUSE.contains(button);
 	}
 
-	public static class ButtonCallback implements GLFWMouseButtonCallbackI {
+	public static class ButtonCallback implements MouseButtonCallback {
 
 		@Override
-		public void invoke(long window, int button, int action, int mods) {
+		public void onButtonEvent(int button, int action, int mods) {
 			if(action == GLFW.GLFW_PRESS) {
 				MOUSE.add(button);
 			} else if(action == GLFW.GLFW_RELEASE) {
@@ -60,20 +60,20 @@ public final class Mouse {
 		}
 	}
 
-	public static class CursorPosCallback implements GLFWCursorPosCallbackI {
+	public static class CursorCallback implements MouseCursorCallback {
 
 		@Override
-		public void invoke(long window, double xpos, double ypos) {
-			position = new Vec2i((int) xpos, (int) ypos);
-			SceneTree.getRoot().input(new MouseCursorInputEvent((int) xpos, (int) ypos));
+		public void onCursorMoved(double xPos, double yPos) {
+			position = new Vec2i((int) xPos, (int) yPos);
+			SceneTree.getRoot().input(new MouseCursorInputEvent((int) xPos, (int) yPos));
 		}
 	}
 
-	public static class ScrollCallback implements GLFWScrollCallbackI {
+	public static class ScrollCallback implements MouseScrollCallback {
 
 		@Override
-		public void invoke(long window, double xoffset, double yoffset) {
-			SceneTree.getRoot().input(new MouseScrollInputEvent((float) xoffset, (float) yoffset));
+		public void onMouseScrolled(double xOffset, double yOffset) {
+			SceneTree.getRoot().input(new MouseScrollInputEvent((float) xOffset, (float) yOffset));
 		}
 	}
 }

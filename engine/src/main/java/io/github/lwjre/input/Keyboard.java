@@ -1,8 +1,8 @@
 package io.github.lwjre.input;
 
+import io.github.lwjre.display.KeyCallback;
 import io.github.lwjre.nodes.SceneTree;
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWKeyCallbackI;
 
 import java.util.HashSet;
 
@@ -155,10 +155,10 @@ public final class Keyboard {
 		return isPositive && !isNegative ? 1 : !isPositive && isNegative ? -1 : 0;
 	}
 
-	public static class Callback implements GLFWKeyCallbackI {
+	public static class Callback implements KeyCallback {
 
 		@Override
-		public void invoke(long window, int key, int scancode, int action, int mods) {
+		public void onKeyEvent(int key, int scancode, int action, int mods) {
 			if(action == GLFW.GLFW_PRESS) {
 				KEYBOARD.add(key);
 			} else if(action == GLFW.GLFW_RELEASE) {

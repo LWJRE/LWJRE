@@ -1,10 +1,7 @@
 package io.github.lwjre.display;
 
 import io.github.hexagonnico.vecmatlib.vector.Vec2i;
-import io.github.lwjre.input.Keyboard;
-import io.github.lwjre.input.Mouse;
-import org.lwjgl.glfw.Callbacks;
-import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.*;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 
@@ -27,27 +24,24 @@ public final class Window {
 	}
 
 	private final long handle;
-	private Vec2i size;
 
-	// TODO: Window hints
-//		GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, ApplicationProperties.get("window/hints/visible", false) ? GLFW.GLFW_TRUE : GLFW.GLFW_FALSE);
-//		GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, ApplicationProperties.get("window/hints/resizable", false) ? GLFW.GLFW_TRUE : GLFW.GLFW_FALSE);
-//		GLFW.glfwWindowHint(GLFW.GLFW_DECORATED, ApplicationProperties.get("window/hints/decorated", true) ? GLFW.GLFW_TRUE : GLFW.GLFW_FALSE);
-//		GLFW.glfwWindowHint(GLFW.GLFW_FOCUSED, ApplicationProperties.get("window/hints/focused", false) ? GLFW.GLFW_TRUE : GLFW.GLFW_FALSE);
-//		GLFW.glfwWindowHint(GLFW.GLFW_MAXIMIZED, ApplicationProperties.get("window/hints/maximized", false) ? GLFW.GLFW_TRUE : GLFW.GLFW_FALSE);
+	public Window(WindowOptions options) {
+		GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, options.visible() ? GLFW.GLFW_TRUE : GLFW.GLFW_FALSE);
+		GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, options.resizable() ? GLFW.GLFW_TRUE : GLFW.GLFW_FALSE);
+		GLFW.glfwWindowHint(GLFW.GLFW_DECORATED, options.decorated() ? GLFW.GLFW_TRUE : GLFW.GLFW_FALSE);
+		GLFW.glfwWindowHint(GLFW.GLFW_FOCUSED, options.focused() ? GLFW.GLFW_TRUE : GLFW.GLFW_FALSE);
+		GLFW.glfwWindowHint(GLFW.GLFW_MAXIMIZED, options.maximized() ? GLFW.GLFW_TRUE : GLFW.GLFW_FALSE);
+		this.handle = GLFW.glfwCreateWindow(options.width(), options.height(), options.title(), MemoryUtil.NULL, MemoryUtil.NULL);
+		if(this.handle == MemoryUtil.NULL) {
+			throw new RuntimeException("Failed to create window");
+		}
+	}
 
 	public Window(String title, int width, int height) {
 		this.handle = GLFW.glfwCreateWindow(width, height, title, MemoryUtil.NULL, MemoryUtil.NULL);
 		if(this.handle == MemoryUtil.NULL) {
 			throw new RuntimeException("Failed to create window");
 		}
-		this.size = new Vec2i(width, height);
-		GLFW.glfwSetWindowSizeCallback(this.handle, (window, newWidth, newHeight) -> this.onResize(newWidth, newHeight));
-		// TODO: Better callbacks
-		GLFW.glfwSetKeyCallback(this.handle, new Keyboard.Callback());
-		GLFW.glfwSetMouseButtonCallback(this.handle, new Mouse.ButtonCallback());
-		GLFW.glfwSetCursorPosCallback(this.handle, new Mouse.CursorPosCallback());
-		GLFW.glfwSetScrollCallback(this.handle, new Mouse.ScrollCallback());
 	}
 
 	public Window() {
@@ -56,12 +50,6 @@ public final class Window {
 
 	private Window(long handle) {
 		this.handle = handle;
-		try(MemoryStack stack = MemoryStack.stackPush()) {
-			IntBuffer width = stack.mallocInt(1);
-			IntBuffer height = stack.mallocInt(1);
-			GLFW.glfwGetWindowSize(this.handle, width, height);
-			this.size = new Vec2i(width.get(), height.get());
-		}
 	}
 
 	public void setVisible(boolean visible) {
@@ -80,35 +68,68 @@ public final class Window {
 		GLFW.glfwSwapBuffers(this.handle);
 	}
 
+	public void setSizeCallback(WindowResizeCallback windowResizeCallback) {
+		GLFWWindowSizeCallback callback = GLFW.glfwSetWindowSizeCallback(this.handle, windowResizeCallback);
+		if(callback != null) {
+			callback.close();
+		}
+	}
+
+	public void setKeyCallback(KeyCallback keyCallback) {
+		GLFWKeyCallback callback = GLFW.glfwSetKeyCallback(this.handle, keyCallback);
+		if(callback != null) {
+			callback.close();
+		}
+	}
+
+	public void setMouseButtonCallback(MouseButtonCallback mouseButtonCallback) {
+		GLFWMouseButtonCallback previousCallback = GLFW.glfwSetMouseButtonCallback(this.handle, mouseButtonCallback);
+		if(previousCallback != null) {
+			previousCallback.close();
+		}
+	}
+
+	public void setCursorPosCallback(MouseCursorCallback cursorPosCallback) {
+		GLFWCursorPosCallback previousCallback = GLFW.glfwSetCursorPosCallback(this.handle, cursorPosCallback);
+		if(previousCallback != null) {
+			previousCallback.close();
+		}
+	}
+
+	public void setMouseScrollCallback(MouseScrollCallback mouseScrollCallback) {
+		GLFWScrollCallback previousCallback = GLFW.glfwSetScrollCallback(this.handle, mouseScrollCallback);
+		if(previousCallback != null) {
+			previousCallback.close();
+		}
+	}
+
 	public boolean shouldClose() {
 		return GLFW.glfwWindowShouldClose(this.handle);
 	}
 
-	private void onResize(int width, int height) {
-		// TODO: Give options for viewport scaling
-		this.size = new Vec2i(width, height);
-		float aspectWidth = this.size.x();
-		float aspectHeight = aspectWidth / (16.0f / 9.0f);
-		if(aspectHeight > this.size.y()) {
-			aspectHeight = this.size.y();
-			aspectWidth = aspectHeight * (16.0f / 9.0f);
-		}
-		float viewportX = (this.size.x() / 2.0f) - (aspectWidth / 2.0f);
-		float viewportY = (this.size.y() / 2.0f) - (aspectHeight / 2.0f);
-		// TODO: How do I...???
-//		RenderingServer.setViewport((int) viewportX, (int) viewportY, (int) aspectWidth, (int) aspectHeight);
-	}
-
 	public int width() {
-		return this.size.x();
+		try(MemoryStack stack = MemoryStack.stackPush()) {
+			IntBuffer width = stack.mallocInt(1);
+			GLFW.glfwGetWindowSize(this.handle, width, null);
+			return width.get();
+		}
 	}
 
 	public int height() {
-		return this.size.y();
+		try(MemoryStack stack = MemoryStack.stackPush()) {
+			IntBuffer height = stack.mallocInt(1);
+			GLFW.glfwGetWindowSize(this.handle, null, height);
+			return height.get();
+		}
 	}
 
 	public Vec2i size() {
-		return this.size;
+		try(MemoryStack stack = MemoryStack.stackPush()) {
+			IntBuffer width = stack.mallocInt(1);
+			IntBuffer height = stack.mallocInt(1);
+			GLFW.glfwGetWindowSize(this.handle, width, height);
+			return new Vec2i(width.get(), height.get());
+		}
 	}
 
 	public float aspectRatio() {
@@ -117,7 +138,6 @@ public final class Window {
 
 	public void setSize(int width, int height) {
 		GLFW.glfwSetWindowSize(this.handle, width, height);
-		// TODO: Check if this calls 'onResize'
 	}
 
 	public void setSize(Vec2i size) {
@@ -132,7 +152,14 @@ public final class Window {
 		this.setSize(position.x(), position.y());
 	}
 
-	// TODO: Get position
+	public Vec2i position() {
+		try(MemoryStack stack = MemoryStack.stackPush()) {
+			IntBuffer xPos = stack.mallocInt(1);
+			IntBuffer yPos = stack.mallocInt(1);
+			GLFW.glfwGetWindowPos(this.handle, xPos, yPos);
+			return new Vec2i(xPos.get(), yPos.get());
+		}
+	}
 
 	public void requestClose() {
 		GLFW.glfwSetWindowShouldClose(this.handle, true);
@@ -141,9 +168,5 @@ public final class Window {
 	public void destroy() {
 		Callbacks.glfwFreeCallbacks(this.handle);
 		GLFW.glfwDestroyWindow(this.handle);
-	}
-
-	public static void setVSync(boolean vSync) {
-		GLFW.glfwSwapInterval(vSync ? 1 : 0);
 	}
 }
