@@ -1,27 +1,27 @@
-!!gamma.engine.core.resources.NodeResource
+!!io.github.lwjre.resources.NodeResource
 children:
   dragon:
     override: scenes/dragon.yaml
     properties:
-      position: !Vec3f [7.0, 15.0, 0.0]
+      position: !Vec3f [5.0, 15.0, -1.0]
   camera:
-    type: gamma.demo.CameraController
+    type: io.github.lwjre.demo.CameraController
     properties:
       current: true
       position: !Vec3f [0.0, 3.0, 15.0]
   floor:
-    type: gamma.engine.core.nodes.RigidBody3D
+    type: io.github.lwjre.nodes.RigidBody3D
     properties:
-      acceleration: !Vec3f [0.0, 0.0, 0.0]
       scale: !Vec3f [10.0, 1.0, 10.0]
+      acceleration: !Vec3f [0.0, 0.0, 0.0]
   light1:
-    type: gamma.engine.core.nodes.PointLight3D
+    type: io.github.lwjre.nodes.PointLight3D
     properties:
       diffuse: !Color3f [1.0, 0.0, 1.0]
       position: !Vec3f [-10.0, 20.0, 0.0]
   light2:
-    type: gamma.engine.core.nodes.PointLight3D
+    type: io.github.lwjre.nodes.PointLight3D
     properties:
       diffuse: !Color3f [0.0, 0.0, 1.0]
       position: !Vec3f [0.0, 20.0, 0.0]
-type: gamma.engine.core.nodes.Node
+type: io.github.lwjre.nodes.Node
