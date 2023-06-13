@@ -17,7 +17,7 @@ public abstract class Renderer3D extends Node3D {
 	 * The shader used by this object.
 	 */
 	@EditorVariable(name = "Shader")
-	@DefaultResource(path = "shaders/default_shader.glsl")
+	@DefaultResource(path = "io/github/lwjre/shaders/default_shader.glsl")
 	private Shader shader = Shader.defaultShader();
 
 	public abstract void render(Mesh mesh);

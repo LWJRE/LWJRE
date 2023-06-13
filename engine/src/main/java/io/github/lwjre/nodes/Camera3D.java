@@ -7,6 +7,7 @@ import io.github.lwjre.annotations.EditorRange;
 import io.github.lwjre.annotations.EditorVariable;
 import io.github.lwjre.debug.DebugRenderer;
 import io.github.lwjre.resources.Shader;
+import io.github.lwjre.servers.DisplayServer;
 
 /**
  * Node that represents a perspective camera in a 3D space.
@@ -210,10 +211,9 @@ public class Camera3D extends Node3D {
 	 */
 	public Mat4f projectionMatrix() {
 		float focalLength = (float) (1.0f / Math.tan(this.fov / 2.0f));
-		// TODO: Window aspect ratio??
 		return new Mat4f(
 				focalLength, 0.0f, 0.0f, 0.0f,
-				0.0f, focalLength * (16.0f / 9.0f), 0.0f, 0.0f,
+				0.0f, focalLength * DisplayServer.window().aspectRatio(), 0.0f, 0.0f,
 				0.0f, 0.0f, -(this.farPlane + this.nearPlane) / (this.farPlane - this.nearPlane), -(2 * this.farPlane * this.nearPlane) / (this.farPlane - this.nearPlane),
 				0.0f, 0.0f, -1.0f, 0.0f
 		);

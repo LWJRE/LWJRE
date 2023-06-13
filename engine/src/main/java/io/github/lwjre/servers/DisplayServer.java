@@ -11,13 +11,17 @@ import org.lwjgl.glfw.GLFWErrorCallback;
 
 public class DisplayServer implements EngineServer {
 
-	private Window mainWindow;
+	private static Window mainWindow;
+
+	public static Window window() {
+		return mainWindow;
+	}
 
 	@Override
 	public void init() {
 		GLFWErrorCallback.createPrint(System.err).set();
 		if(GLFW.glfwInit()) {
-			this.mainWindow = new Window(new WindowOptions().title(ApplicationProperties.get("window.title", "Untitled"))
+			mainWindow = new Window(new WindowOptions().title(ApplicationProperties.get("window.title", "Untitled"))
 					.width(ApplicationProperties.get("window.viewport.width", 400))
 					.height(ApplicationProperties.get("window.viewport.height", 300))
 					.visible(ApplicationProperties.get("window.hints.visible", false))
@@ -25,13 +29,13 @@ public class DisplayServer implements EngineServer {
 					.decorated(ApplicationProperties.get("window.hints.decorated", true))
 					.focused(ApplicationProperties.get("window.hints.focused", true))
 					.maximized(ApplicationProperties.get("window.hints.maximized", false)));
-			this.mainWindow.setSizeCallback(RenderingServer::resizeViewport);
-			this.mainWindow.setKeyCallback(new Keyboard.Callback());
-			this.mainWindow.setMouseButtonCallback(new Mouse.ButtonCallback());
-			this.mainWindow.setCursorPosCallback(new Mouse.CursorCallback());
-			this.mainWindow.setMouseScrollCallback(new Mouse.ScrollCallback());
-			this.mainWindow.makeCurrent();
-			this.mainWindow.setVisible(true);
+			mainWindow.setSizeCallback(RenderingServer::resizeViewport);
+			mainWindow.setKeyCallback(new Keyboard.Callback());
+			mainWindow.setMouseButtonCallback(new Mouse.ButtonCallback());
+			mainWindow.setCursorPosCallback(new Mouse.CursorCallback());
+			mainWindow.setMouseScrollCallback(new Mouse.ScrollCallback());
+			mainWindow.makeCurrent();
+			mainWindow.setVisible(true);
 		} else {
 			throw new RuntimeException("Unable to initialize GLFW");
 		}
@@ -39,17 +43,17 @@ public class DisplayServer implements EngineServer {
 
 	@Override
 	public void update() {
-		if(this.mainWindow.shouldClose()) {
+		if(mainWindow.shouldClose()) {
 			Application.quit();
 		} else {
-			this.mainWindow.update();
+			mainWindow.update();
 			GLFW.glfwPollEvents();
 		}
 	}
 
 	@Override
 	public void terminate() {
-		this.mainWindow.destroy();
+		mainWindow.destroy();
 		GLFW.glfwTerminate();
 		GLFWErrorCallback errorCallback = GLFW.glfwSetErrorCallback(null);
 		if(errorCallback != null) {

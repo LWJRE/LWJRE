@@ -4,6 +4,8 @@ import io.github.hexagonnico.vecmatlib.color.Color4f;
 
 public class Material {
 
+	// TODO: Finish material
+
 	public Color4f ambient;
 	public Color4f diffuse;
 	public Color4f specular;

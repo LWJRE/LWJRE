@@ -54,7 +54,6 @@ public class SceneTree {
 			root.process(delta);
 		}
 		previousTime = time;
-		// TODO: Call Application.quit() if root is deleted
 	}
 
 	public static void exit() {

@@ -49,7 +49,7 @@ public final class ModelLoader implements ResourceLoader {
 			for(int i = 0; i < aiScene.mNumMeshes(); i++) {
 				AIMesh aiMesh = AIMesh.create(meshesBuffer.get(i));
 				AIVector3D.Buffer verticesBuffer = aiMesh.mVertices();
-				Mesh mesh = new Mesh();
+				Mesh.Builder mesh = new Mesh.Builder();
 				float[] vertices = new float[verticesBuffer.capacity() * 3];
 				for(int v = 0; v < vertices.length / 3; v++) {
 					AIVector3D vertex = verticesBuffer.get(v);
@@ -57,14 +57,16 @@ public final class ModelLoader implements ResourceLoader {
 					vertices[v * 3 + 1] = vertex.y();
 					vertices[v * 3 + 2] = vertex.z();
 				}
-				mesh.setVertices3D(vertices);
+				mesh.vertices3D(vertices);
 				IntBuffer indicesBuffer = BufferUtils.createIntBuffer(aiMesh.mNumFaces() * 3);
 				AIFace.Buffer facesBuffer = aiMesh.mFaces();
 				for(int f = 0; f < aiMesh.mNumFaces(); f++) {
 					AIFace face = facesBuffer.get(f);
 					indicesBuffer.put(face.mIndices());
 				}
-				mesh.setIndices(indicesBuffer.flip());
+				int[] indices = new int[indicesBuffer.flip().limit()];
+				indicesBuffer.get(indices);
+				mesh.indices(indices);
 				// TODO: Load vertex textures
 				AIVector3D.Buffer normalsBuffer = aiMesh.mNormals();
 				if(normalsBuffer != null) {
@@ -75,9 +77,9 @@ public final class ModelLoader implements ResourceLoader {
 						normals[n * 3 + 1] = normal.y();
 						normals[n * 3 + 2] = normal.z();
 					}
-					mesh.setNormals(normals);
+					mesh.normals(normals);
 				}
-				modelData.put(mesh, materials.get(aiMesh.mMaterialIndex()));
+				modelData.put(mesh.create(), materials.get(aiMesh.mMaterialIndex()));
 			}
 		}
 		Assimp.aiReleaseImport(aiScene);

@@ -40,7 +40,7 @@ public class ModelRenderer extends Renderer3D {
 		this.shader().setUniform("material.diffuse", material.diffuse);
 		this.shader().setUniform("material.specular", material.specular);
 		this.shader().setUniform("material.shininess", material.shininess);
-		mesh.drawElements();
+		mesh.draw();
 	}
 
 	/**

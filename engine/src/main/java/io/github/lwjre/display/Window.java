@@ -149,7 +149,7 @@ public final class Window {
 	}
 
 	public void setPosition(Vec2i position) {
-		this.setSize(position.x(), position.y());
+		this.setPosition(position.x(), position.y());
 	}
 
 	public Vec2i position() {
@@ -160,6 +160,8 @@ public final class Window {
 			return new Vec2i(xPos.get(), yPos.get());
 		}
 	}
+
+	// TODO: Set fullscreen, set borderless
 
 	public void requestClose() {
 		GLFW.glfwSetWindowShouldClose(this.handle, true);

@@ -159,10 +159,10 @@ public class RenderingServer implements EngineServer {
 	public static void resizeViewport(int width, int height) {
 		// TODO: Give options for viewport scaling
 		float aspectWidth = width;
-		float aspectHeight = width / (16.0f / 9.0f);
+		float aspectHeight = width / DisplayServer.window().aspectRatio();
 		if(aspectHeight > height) {
 			aspectHeight = height;
-			aspectWidth = aspectHeight * (16.0f / 9.0f);
+			aspectWidth = aspectHeight * DisplayServer.window().aspectRatio();
 		}
 		float viewportX = (width / 2.0f) - (aspectWidth / 2.0f);
 		float viewportY = (height / 2.0f) - (aspectHeight / 2.0f);

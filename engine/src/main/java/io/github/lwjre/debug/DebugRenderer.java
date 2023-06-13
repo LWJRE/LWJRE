@@ -56,7 +56,7 @@ public final class DebugRenderer {
 		RENDER_BATCH.get(mesh).add(() -> {
 			SHADER.setUniform("transformation_matrix", transform);
 			SHADER.setUniform("color", color);
-			mesh.drawElements();
+			mesh.draw();
 		});
 	}
 
