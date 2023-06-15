@@ -1,8 +1,8 @@
 package io.github.lwjre.nodes;
 
 import io.github.lwjre.annotations.EditorVariable;
-import io.github.lwjre.servers.RenderingServer;
 import io.github.lwjre.resources.Material;
+import io.github.lwjre.servers.RenderingServer;
 import io.github.lwjre.resources.Mesh;
 import io.github.lwjre.resources.Model;
 
@@ -36,10 +36,10 @@ public class ModelRenderer extends Renderer3D {
 		this.shader().start();
 		Material material = this.model.getMaterial(mesh);
 		this.shader().setUniform("transformation_matrix", this.globalTransformation());
-		this.shader().setUniform("material.ambient", material.ambient);
-		this.shader().setUniform("material.diffuse", material.diffuse);
-		this.shader().setUniform("material.specular", material.specular);
-		this.shader().setUniform("material.shininess", material.shininess);
+		this.shader().setUniform("material.ambient", material.ambientColor());
+		this.shader().setUniform("material.diffuse", material.diffuseColor());
+		this.shader().setUniform("material.specular", material.specularColor());
+		this.shader().setUniform("material.shininess", material.shininess());
 		mesh.draw();
 	}
 
