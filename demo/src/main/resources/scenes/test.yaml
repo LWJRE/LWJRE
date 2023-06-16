@@ -3,17 +3,16 @@ children:
   dragon:
     override: scenes/dragon.yaml
     properties:
-      position: !Vec3f [5.0, 15.0, -1.0]
+      position: !Vec3f [0.0, 15.0, 0.0]
   camera:
     type: io.github.lwjre.demo.CameraController
     properties:
       current: true
       position: !Vec3f [0.0, 3.0, 15.0]
   floor:
-    type: io.github.lwjre.nodes.RigidBody3D
+    type: io.github.lwjre.nodes.CollisionObject3D
     properties:
       scale: !Vec3f [10.0, 1.0, 10.0]
-      acceleration: !Vec3f [0.0, 0.0, 0.0]
   light1:
     type: io.github.lwjre.nodes.PointLight3D
     properties:

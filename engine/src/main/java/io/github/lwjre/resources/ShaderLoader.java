@@ -26,6 +26,7 @@ public final class ShaderLoader implements ResourceLoader {
 			String shaderCode = FileUtils.readResourceAsString(path);
 			String vertexCode = MAIN_VERTEX.replaceAll("#version \\d+", ApplicationProperties.get("rendering.shaders.version", "#version 450"));
 			String fragmentCode = MAIN_FRAGMENT.replaceAll("#version \\d+", ApplicationProperties.get("rendering.shaders.version", "#version 450"));
+			fragmentCode = fragmentCode.replaceAll("#define MAX_POINT_LIGHTS \\d+", "#define MAX_POINT_LIGHTS " + ApplicationProperties.get("rendering.shaders.lights", "4"));
 			if(path.endsWith(".vert")) {
 				vertexCode = vertexCode.replace("void vertex_shader();", shaderCode);
 				fragmentCode = fragmentCode.replace("vec4 fragment_shader();", "vec4 fragment_shader() {return vec4(0.0, 0.0, 0.0, 0.0);}");

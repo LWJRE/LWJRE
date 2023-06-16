@@ -1,5 +1,6 @@
 package io.github.lwjre;
 
+import io.github.hexagonnico.vecmatlib.color.Color4f;
 import io.github.lwjre.utils.FileUtils;
 
 import java.util.Properties;
@@ -105,5 +106,20 @@ public final class ApplicationProperties {
 
 	public static float getFloat(String key) {
 		return get(key, 0.0f);
+	}
+
+	public static Color4f get(String key, Color4f defaultValue) {
+		String property = PROPERTIES.getProperty(key);
+		String[] values = property.split(",");
+		if(values.length == 4) try {
+			return new Color4f(Float.parseFloat(values[0]), Float.parseFloat(values[1]), Float.parseFloat(values[2]), Float.parseFloat(values[3]));
+		} catch (NumberFormatException e) {
+			return defaultValue;
+		}
+		return defaultValue;
+	}
+
+	public static Color4f getColor4(String key) {
+		return get(key, new Color4f(0.3f, 0.3f, 0.3f, 1.0f));
 	}
 }
