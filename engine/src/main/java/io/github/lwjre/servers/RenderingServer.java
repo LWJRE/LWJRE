@@ -25,7 +25,7 @@ public class RenderingServer implements EngineServer {
 	@Override
 	public void init() {
 		GL.createCapabilities();
-		setClearColor(ApplicationProperties.getColor4("rendering.options.defaultClearColor"));
+		setClearColor(ApplicationProperties.get("rendering.options.defaultClearColor", new Color4f(0.3f, 0.3f, 0.3f, 1.0f)));
 		deptTest(ApplicationProperties.get("rendering.options.depthTest", true));
 		backFaceCulling(ApplicationProperties.get("rendering.options.backFaceCulling", true));
 		lineWidth(ApplicationProperties.get("rendering.options.lineWidth", 1.0f));

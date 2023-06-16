@@ -36,7 +36,7 @@ public class SceneTree {
 	private static long previousTime = System.nanoTime();
 
 	public static void start() {
-		changeScene(ApplicationProperties.getString("startScene"));
+		changeScene(ApplicationProperties.get("startScene", ""));
 	}
 
 	public static void process() {
@@ -57,7 +57,9 @@ public class SceneTree {
 	}
 
 	public static void exit() {
-		root.exit();
-		Application.quit();
+		if(root != null) {
+			root.exit();
+			Application.quit();
+		}
 	}
 }
