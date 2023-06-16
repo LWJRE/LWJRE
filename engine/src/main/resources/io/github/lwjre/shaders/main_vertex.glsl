@@ -1,9 +1,8 @@
 #version 450
 
-// TODO: Bind attributes instead of using location
-in layout(location = 0) vec3 vertex;
-in layout(location = 1) vec2 texture_coords;
-in layout(location = 2) vec3 normal;
+in vec3 vertex;
+in vec2 uvs;
+in vec3 normal;
 
 out vec3 world_position;
 out vec3 surface_normal;

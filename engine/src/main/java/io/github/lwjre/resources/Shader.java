@@ -46,8 +46,10 @@ public final class Shader extends GLResource {
 	}
 
 	/**
+	 * Returns the default shader used for every object.
+	 * Path {@code io/github/lwjre/shaders/default_shader.glsl}.
 	 *
-	 * @return
+	 * @return The shader loaded at the path {@code io/github/lwjre/shaders/default_shader.glsl}
 	 */
 	public static Shader defaultShader() {
 		return getOrLoad("io/github/lwjre/shaders/default_shader.glsl");
@@ -95,6 +97,9 @@ public final class Shader extends GLResource {
 		this.program = GL20.glCreateProgram();
 		GL20.glAttachShader(this.program, this.vertex);
 		GL20.glAttachShader(this.program, this.fragment);
+		GL20.glBindAttribLocation(this.program, 0, "vertex");
+		GL20.glBindAttribLocation(this.program, 1, "uvs");
+		GL20.glBindAttribLocation(this.program, 2, "normal");
 		GL20.glLinkProgram(this.program);
 		GL20.glValidateProgram(this.program);
 		SHADERS.add(this);
