@@ -1,10 +1,8 @@
 package io.github.lwjre.engine.nodes;
 
 import io.github.lwjre.engine.annotations.EditorVariable;
-import io.github.lwjre.engine.resources.Material;
-import io.github.lwjre.engine.servers.RenderingServer;
-import io.github.lwjre.engine.resources.Mesh;
 import io.github.lwjre.engine.resources.Model;
+import io.github.lwjre.engine.servers.RenderingServer;
 
 /**
  * Node that represents an object rendered as a 3D {@link Model}.
@@ -20,27 +18,27 @@ public class ModelRenderer extends Renderer3D {
 	private Model model = new Model();
 
 	@Override
-	protected void onEnter() {
+	protected void onUpdate(float delta) {
+		super.onUpdate(delta);
 		this.addToBatch();
-		super.onEnter();
 	}
 
 	@Override
-	protected void onExit() {
-		this.removeFromBatch();
-		super.onExit();
+	protected void onEditorProcess() {
+		super.onEditorProcess();
+		this.addToBatch();
 	}
 
-	@Override
-	public void render(Mesh mesh) {
-		this.shader().start();
-		Material material = this.model.getMaterial(mesh);
-		this.shader().setUniform("transformation_matrix", this.globalTransformation());
-		this.shader().setUniform("material.ambient", material.ambientColor());
-		this.shader().setUniform("material.diffuse", material.diffuseColor());
-		this.shader().setUniform("material.specular", material.specularColor());
-		this.shader().setUniform("material.shininess", material.shininess());
-		mesh.draw();
+	private void addToBatch() {
+		this.model.modelData().forEach((mesh, material) -> RenderingServer.addToBatch(mesh, () -> {
+			this.shader().start();
+			this.shader().setUniform("transformation_matrix", this.globalTransformation());
+			this.shader().setUniform("material.ambient", material.ambientColor());
+			this.shader().setUniform("material.diffuse", material.diffuseColor());
+			this.shader().setUniform("material.specular", material.specularColor());
+			this.shader().setUniform("material.shininess", material.shininess());
+			mesh.draw();
+		}));
 	}
 
 	/**
@@ -50,17 +48,7 @@ public class ModelRenderer extends Renderer3D {
 	 * @param model The model to set to this object
 	 */
 	public void setModel(Model model) {
-		this.removeFromBatch();
 		this.model = model != null ? model : new Model();
-		this.addToBatch();
-	}
-
-	private void addToBatch() {
-		this.model.modelData().forEach((mesh, material) -> RenderingServer.addToBatch(mesh, this));
-	}
-
-	private void removeFromBatch() {
-		this.model.modelData().forEach((mesh, material) -> RenderingServer.removeFromBatch(mesh, this));
 	}
 
 	/**

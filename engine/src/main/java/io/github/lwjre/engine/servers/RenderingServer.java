@@ -4,7 +4,6 @@ import io.github.hexagonnico.vecmatlib.color.Color3f;
 import io.github.hexagonnico.vecmatlib.color.Color4f;
 import io.github.lwjre.engine.ApplicationProperties;
 import io.github.lwjre.engine.nodes.PointLight3D;
-import io.github.lwjre.engine.nodes.Renderer3D;
 import io.github.lwjre.engine.resources.GLResource;
 import io.github.lwjre.engine.resources.Mesh;
 import io.github.lwjre.engine.resources.Shader;
@@ -13,51 +12,14 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.function.Consumer;
 
 public class RenderingServer implements EngineServer {
 
-	/** Batch of {@link Renderer3D}s */
-	private static final HashMap<Mesh, HashSet<Renderer3D>> RENDER_BATCH = new HashMap<>();
+	private static final HashMap<Mesh, HashSet<Runnable>> RENDER_BATCH = new HashMap<>();
 
 	/** Batch of {@link PointLight3D}s */
 	private static final HashSet<PointLight3D> LIGHTS = new HashSet<>();
-
-	@Override
-	public void init() {
-		GL.createCapabilities();
-		setClearColor(ApplicationProperties.get("rendering.options.defaultClearColor", new Color4f(0.3f, 0.3f, 0.3f, 1.0f)));
-		deptTest(ApplicationProperties.get("rendering.options.depthTest", true));
-		backFaceCulling(ApplicationProperties.get("rendering.options.backFaceCulling", true));
-		lineWidth(ApplicationProperties.get("rendering.options.lineWidth", 1.0f));
-		fillPolygons(ApplicationProperties.get("rendering.options.fillPolygons", true));
-		blend(ApplicationProperties.get("rendering.options.blend", false));
-	}
-
-	@Override
-	public void update() {
-		clearScreen();
-		int i = 0;
-		for(PointLight3D light : LIGHTS) {
-			if(i == ApplicationProperties.get("rendering.shaders.lights", LIGHTS.size()))
-				break;
-			Shader.setUniformStatic("point_lights[" + i + "].position", light.globalPosition());
-			Shader.setUniformStatic("point_lights[" + i + "].ambient", light.ambient.multiply(light.energy));
-			Shader.setUniformStatic("point_lights[" + i + "].diffuse", light.diffuse.multiply(light.energy));
-			Shader.setUniformStatic("point_lights[" + i + "].specular", light.specular.multiply(light.energy));
-			Shader.setUniformStatic("point_lights[" + i + "].attenuation", light.attenuation);
-			i++;
-		}
-		Shader.setUniformStatic("lights_count", i);
-		RENDER_BATCH.forEach((mesh, batch) -> {
-			mesh.bind();
-			batch.forEach(renderer -> renderer.render(mesh));
-		});
-	}
-
-	@Override
-	public void terminate() {
-		GLResource.deleteAll();
-	}
 
 	/**
 	 * Adds a {@link Mesh} to the render batch.
@@ -66,11 +28,11 @@ public class RenderingServer implements EngineServer {
 	 * @param mesh The mesh to add to the batch
 	 * @param renderer The renderer node that needs to render this mesh
 	 */
-	public static void addToBatch(Mesh mesh, Renderer3D renderer) {
+	public static void addToBatch(Mesh mesh, Runnable renderer) {
 		if(RENDER_BATCH.containsKey(mesh)) {
 			RENDER_BATCH.get(mesh).add(renderer);
 		} else {
-			HashSet<Renderer3D> batch = new HashSet<>();
+			HashSet<Runnable> batch = new HashSet<>();
 			batch.add(renderer);
 			RENDER_BATCH.put(mesh, batch);
 		}
@@ -86,34 +48,44 @@ public class RenderingServer implements EngineServer {
 		LIGHTS.add(light);
 	}
 
-	/**
-	 * Removes a {@link Mesh} from the render batch.
-	 *
-	 * @param mesh The mesh to remove
-	 * @param renderer The renderer that draws the mesh
-	 */
-	public static void removeFromBatch(Mesh mesh, Renderer3D renderer) {
-		if(RENDER_BATCH.containsKey(mesh)) {
-			RENDER_BATCH.get(mesh).remove(renderer);
+	@Override
+	public void init() {
+		GL.createCapabilities();
+		setClearColor(ApplicationProperties.get("rendering.options.defaultClearColor", new Color4f(0.3f, 0.3f, 0.3f, 1.0f)));
+		deptTest(ApplicationProperties.get("rendering.options.depthTest", true));
+		backFaceCulling(ApplicationProperties.get("rendering.options.backFaceCulling", true));
+		lineWidth(ApplicationProperties.get("rendering.options.lineWidth", 1.0f));
+		fillPolygons(ApplicationProperties.get("rendering.options.fillPolygons", true));
+		blend(ApplicationProperties.get("rendering.options.blend", false));
+	}
+
+	@Override
+	public void update() {
+		clearScreen();
+		render();
+	}
+
+	@Override
+	public void terminate() {
+		GLResource.deleteAll();
+	}
+
+	public static void render() {
+		int i = 0;
+		for(PointLight3D light : LIGHTS) {
+			if(i == ApplicationProperties.get("rendering.shaders.lights", LIGHTS.size()))
+				break;
+			Shader.setUniformStatic("point_lights[" + i + "].position", light.globalPosition());
+			Shader.setUniformStatic("point_lights[" + i + "].ambient", light.ambient.multiply(light.energy));
+			Shader.setUniformStatic("point_lights[" + i + "].diffuse", light.diffuse.multiply(light.energy));
+			Shader.setUniformStatic("point_lights[" + i + "].specular", light.specular.multiply(light.energy));
+			Shader.setUniformStatic("point_lights[" + i + "].attenuation", light.attenuation);
+			i++;
 		}
-	}
-
-	/**
-	 * Removes the given {@link Renderer3D} from all batches.
-	 *
-	 * @param renderer The renderer object to remove
-	 */
-	public static void removeFromBatch(Renderer3D renderer) {
-		RENDER_BATCH.values().forEach(batch -> batch.remove(renderer));
-	}
-
-	/**
-	 * Removes a light from the batch.
-	 *
-	 * @param light The light to remove
-	 */
-	public static void removeFromBatch(PointLight3D light) {
-		LIGHTS.remove(light);
+		LIGHTS.clear();
+		Shader.setUniformStatic("lights_count", i);
+		RENDER_BATCH.forEach((mesh, batch) -> batch.forEach(Runnable::run));
+		RENDER_BATCH.clear();
 	}
 
 	/**

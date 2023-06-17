@@ -2,7 +2,6 @@ package io.github.lwjre.engine.nodes;
 
 import io.github.lwjre.engine.annotations.DefaultResource;
 import io.github.lwjre.engine.annotations.EditorVariable;
-import io.github.lwjre.engine.resources.Mesh;
 import io.github.lwjre.engine.resources.Shader;
 
 /**
@@ -18,8 +17,6 @@ public abstract class Renderer3D extends Node3D {
 	@EditorVariable(name = "Shader")
 	@DefaultResource(path = "io/github/lwjre/engine/shaders/default_shader.glsl")
 	private Shader shader = Shader.defaultShader();
-
-	public abstract void render(Mesh mesh);
 
 	/**
 	 * Gets the shader used by this object.

@@ -48,21 +48,16 @@ public class PointLight3D extends Node3D {
 	public Vec3f attenuation = new Vec3f(1.0f, 0.0f, 0.0f);
 
 	@Override
-	protected void onEnter() {
-		super.onEnter();
+	protected void onUpdate(float delta) {
 		RenderingServer.addToBatch(this);
-	}
-
-	@Override
-	protected void onExit() {
-		super.onExit();
-		RenderingServer.removeFromBatch(this);
+		super.onUpdate(delta);
 	}
 
 	@Override
 	protected void onEditorProcess() {
 		Mat4f shape = Mat4f.translation(this.globalPosition()).multiply(Mat4f.scaling(this.energy));
 		DebugRenderer.drawCube(shape, 1.0f, 0.5f, 0.0f);
+		RenderingServer.addToBatch(this);
 		super.onEditorProcess();
 	}
 }

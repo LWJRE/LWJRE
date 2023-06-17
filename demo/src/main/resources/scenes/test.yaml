@@ -3,24 +3,28 @@ children:
   dragon:
     override: scenes/dragon.yaml
     properties:
-      position: !Vec3f [0.0, 15.0, 0.0]
+      rotation: !Vec3f [0.0, -0.785, 0.0]
+      position: !Vec3f [-2.0, 10.0, -2.0]
   camera:
-    type: io.github.lwjre.demo.CameraController
+    type: io.github.lwjre.engine.nodes.Camera3D
     properties:
       current: true
-      position: !Vec3f [0.0, 3.0, 15.0]
+      rotation: !Vec3f [-0.3, 0.0, 0.0]
+      position: !Vec3f [0.0, 5.0, 12.0]
   floor:
+    children:
+      lightBlue:
+        type: io.github.lwjre.engine.nodes.PointLight3D
+        properties:
+          diffuse: !Color3f [0.0, 0.0, 1.0]
+          position: !Vec3f [0.0, 20.0, 0.0]
+      lightPurple:
+        type: io.github.lwjre.engine.nodes.PointLight3D
+        properties:
+          diffuse: !Color3f [1.0, 0.0, 1.0]
+          position: !Vec3f [-10.0, 20.0, 0.0]
     type: io.github.lwjre.engine.nodes.CollisionObject3D
     properties:
-      scale: !Vec3f [10.0, 1.0, 10.0]
-  light1:
-    type: io.github.lwjre.engine.nodes.PointLight3D
-    properties:
-      diffuse: !Color3f [1.0, 0.0, 1.0]
-      position: !Vec3f [-10.0, 20.0, 0.0]
-  light2:
-    type: io.github.lwjre.engine.nodes.PointLight3D
-    properties:
-      diffuse: !Color3f [0.0, 0.0, 1.0]
-      position: !Vec3f [0.0, 20.0, 0.0]
+      boundingBox: !Vec3f [10.0, 1.0, 10.0]
+      scale: !Vec3f [1.0, 1.0, 1.0]
 type: io.github.lwjre.engine.nodes.Node
