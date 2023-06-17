@@ -1,4 +1,4 @@
-!!io.github.lwjre.resources.NodeResource
+!!io.github.lwjre.engine.resources.NodeResource
 children:
   dragon:
     override: scenes/dragon.yaml
@@ -10,17 +10,17 @@ children:
       current: true
       position: !Vec3f [0.0, 3.0, 15.0]
   floor:
-    type: io.github.lwjre.nodes.CollisionObject3D
+    type: io.github.lwjre.engine.nodes.CollisionObject3D
     properties:
       scale: !Vec3f [10.0, 1.0, 10.0]
   light1:
-    type: io.github.lwjre.nodes.PointLight3D
+    type: io.github.lwjre.engine.nodes.PointLight3D
     properties:
       diffuse: !Color3f [1.0, 0.0, 1.0]
       position: !Vec3f [-10.0, 20.0, 0.0]
   light2:
-    type: io.github.lwjre.nodes.PointLight3D
+    type: io.github.lwjre.engine.nodes.PointLight3D
     properties:
       diffuse: !Color3f [0.0, 0.0, 1.0]
       position: !Vec3f [0.0, 20.0, 0.0]
-type: io.github.lwjre.nodes.Node
+type: io.github.lwjre.engine.nodes.Node

@@ -1,10 +1,10 @@
 package io.github.lwjre.demo;
 
 import io.github.hexagonnico.vecmatlib.vector.Vec3f;
-import io.github.lwjre.annotations.EditorVariable;
-import io.github.lwjre.nodes.Node;
-import io.github.lwjre.nodes.RigidBody3D;
-import io.github.lwjre.resources.NodeResource;
+import io.github.lwjre.engine.annotations.EditorVariable;
+import io.github.lwjre.engine.nodes.Node;
+import io.github.lwjre.engine.nodes.RigidBody3D;
+import io.github.lwjre.engine.resources.NodeResource;
 
 import java.util.Random;
 

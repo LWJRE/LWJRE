@@ -1,7 +1,7 @@
 package io.github.lwjre.demo;
 
-import io.github.lwjre.input.Keyboard;
-import io.github.lwjre.nodes.Camera3D;
+import io.github.lwjre.engine.input.Keyboard;
+import io.github.lwjre.engine.nodes.Camera3D;
 
 public class CameraController extends Camera3D {
 
