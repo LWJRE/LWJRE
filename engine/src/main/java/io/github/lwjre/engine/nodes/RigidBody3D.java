@@ -30,15 +30,21 @@ public class RigidBody3D extends DynamicBody3D {
 	@EditorRange
 	public Vec3f angularAcceleration = new Vec3f(0.0f, 0.0f, 0.0f);
 
-	/**
-	 * The body's moment of inertia.
-	 */
-	@EditorVariable(name = "Inertia")
-	@EditorRange(min = 0.001f)
-	public Vec3f inertia = new Vec3f(10.0f, 10.0f, 10.0f);
+	private Vec3f inertia = new Vec3f(0.0f, 0.0f, 0.0f);
 
 	/** Current torque */
 	private Vec3f torque = new Vec3f(0.0f, 0.0f, 0.0f);
+
+	@Override
+	protected void onEnter() {
+		Vec3f shape = this.boundingBox.multiply(this.globalScale());
+		this.inertia = new Vec3f(
+				1.0f / 12.0f * this.mass * (shape.y() * shape.y() + shape.z() * shape.z()),
+				1.0f / 12.0f * this.mass * (shape.x() * shape.x() + shape.z() * shape.z()),
+				1.0f / 12.0f * this.mass * (shape.x() * shape.x() + shape.y() * shape.y())
+		);
+		super.onEnter();
+	}
 
 	@Override
 	protected void onUpdate(float delta) {
@@ -52,40 +58,30 @@ public class RigidBody3D extends DynamicBody3D {
 	protected void onCollision(CollisionObject3D collider, Vec3f normal, float depth) {
 		this.position = this.position.plus(normal.multipliedBy(depth));
 		HashSet<Vec3f> intersectionPoints = this.intersectionPoints(collider);
-		Vec3f globalPosition = this.globalPosition();
-		if(collider instanceof KinematicBody3D kinematicBody) {
-			Vec3f relativeVelocity = kinematicBody.velocity.minus(this.velocity);
-			if(collider instanceof DynamicBody3D dynamicBody) {
-				float restitution = Math.min(this.restitution, dynamicBody.restitution);
-				float impulse = -(1 + restitution) * relativeVelocity.dot(normal) / (1.0f / this.mass + 1.0f / dynamicBody.mass);
-				if(collider instanceof RigidBody3D rigidBody) {
-					Vec3f colliderPosition = collider.globalPosition();
-					intersectionPoints.forEach(point -> {
-						Vec3f radiusA = globalPosition.minus(point);
-						Vec3f radiusB = colliderPosition.minus(point);
-						this.applyImpulse(normal.multipliedBy(-impulse / intersectionPoints.size()), radiusA);
-						rigidBody.applyImpulse(normal.multipliedBy(impulse / intersectionPoints.size()), radiusB);
-					});
-				} else {
-					intersectionPoints.forEach(point -> {
-						Vec3f radius = globalPosition.minus(point);
-						this.applyImpulse(normal.multipliedBy(-impulse / intersectionPoints.size()), radius);
-					});
-					dynamicBody.applyImpulse(normal.multipliedBy(impulse));
-				}
-			} else {
-				float impulse = -(1 + this.restitution) * relativeVelocity.dot(normal) / (1.0f / this.mass);
-				intersectionPoints.forEach(point -> {
-					Vec3f radius = globalPosition.minus(point);
-					this.applyImpulse(normal.multipliedBy(-impulse / intersectionPoints.size()), radius);
-				});
-			}
-		} else {
-			float impulse = -(1 + this.restitution) * this.velocity.negated().dot(normal) / (1.0f / this.mass);
-			intersectionPoints.forEach(point -> {
-				Vec3f radius = globalPosition.minus(point);
-				this.applyImpulse(normal.multipliedBy(-impulse / intersectionPoints.size()), radius);
-			});
+		float massB = collider instanceof RigidBody3D ? ((RigidBody3D) collider).mass : Float.POSITIVE_INFINITY;
+		Vec3f inertiaB = collider instanceof RigidBody3D ? ((RigidBody3D) collider).inertia : new Vec3f(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY);
+		Vec3f colliderVelocity = Vec3f.Zero();
+		Vec3f colliderAngularVelocity = Vec3f.Zero();
+		Vec3f relativeLinearVelocity = colliderVelocity.minus(this.velocity);
+		Vec3f velocityDelta = Vec3f.Zero();
+		Vec3f angularVelocityDeltaA = Vec3f.Zero();
+		Vec3f angularVelocityDeltaB = Vec3f.Zero();
+		for(Vec3f point : intersectionPoints) {
+			Vec3f radiusA = point.minus(this.globalPosition());
+			Vec3f radiusB = point.minus(collider.globalPosition());
+			Vec3f relativeAngularVelocity = colliderAngularVelocity.cross(radiusB).minus(this.angularVelocity.cross(radiusA));
+			Vec3f relativeVelocity = relativeLinearVelocity.plus(relativeAngularVelocity);
+			float impulseMagnitude = -relativeVelocity.multipliedBy(1 + this.restitution).dot(normal) / (1.0f / this.mass + 1.0f / massB + radiusA.cross(normal).divide(this.inertia).cross(radiusA).plus(radiusB.cross(normal).divide(inertiaB).cross(radiusB)).dot(normal));
+			Vec3f impulse = normal.multipliedBy(impulseMagnitude / intersectionPoints.size());
+			velocityDelta = velocityDelta.plus(impulse.dividedBy(this.mass));
+			angularVelocityDeltaA = angularVelocityDeltaA.plus(radiusA.cross(impulse).divide(this.inertia));
+			angularVelocityDeltaB = angularVelocityDeltaB.plus(radiusB.cross(impulse).divide(inertiaB));
+		}
+		this.velocity = this.velocity.minus(velocityDelta);
+		this.angularVelocity = this.angularVelocity.plus(angularVelocityDeltaA);
+		if(collider instanceof RigidBody3D rigidBody) {
+			rigidBody.velocity = rigidBody.velocity.plus(velocityDelta);
+			rigidBody.angularVelocity = rigidBody.angularVelocity.minus(angularVelocityDeltaB);
 		}
 	}
 

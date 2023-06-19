@@ -76,6 +76,11 @@ public final class PhysicsServer implements EngineServer {
 
 	}
 
+	@Override
+	public int priority() {
+		return 2;
+	}
+
 	/**
 	 * Divides the given colliders into several subspaces.
 	 * The number of iteration indicates how many times the colliders should be divided into 8 subspaces.

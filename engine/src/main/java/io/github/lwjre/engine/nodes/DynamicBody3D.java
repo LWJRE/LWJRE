@@ -46,20 +46,14 @@ public class DynamicBody3D extends KinematicBody3D {
 	@Override
 	protected void onCollision(CollisionObject3D collider, Vec3f normal, float depth) {
 		this.position = this.position.plus(normal.multipliedBy(depth));
-		if(collider instanceof KinematicBody3D kinematicBody) {
-			Vec3f relativeVelocity = kinematicBody.velocity.minus(this.velocity);
-			if(kinematicBody instanceof DynamicBody3D dynamicBody) {
-				float restitution = Math.min(this.restitution, dynamicBody.restitution);
-				float impulse = -(1 + restitution) * relativeVelocity.dot(normal) / (1.0f / this.mass + 1.0f / dynamicBody.mass);
-				this.applyImpulse(normal.multipliedBy(-impulse));
-				dynamicBody.applyImpulse(normal.multipliedBy(impulse));
-			} else {
-				float impulse = -(1 + this.restitution) * relativeVelocity.dot(normal) / (1.0f / this.mass);
-				this.applyImpulse(normal.multipliedBy(-impulse));
-			}
-		} else {
-			float impulse = -(1 + this.restitution) * this.velocity.negated().dot(normal) / (1.0f / this.mass);
-			this.applyImpulse(normal.multipliedBy(-impulse));
+		Vec3f colliderVelocity = collider instanceof KinematicBody3D ? ((KinematicBody3D) collider).velocity : Vec3f.Zero();
+		float colliderMass = collider instanceof DynamicBody3D ? ((DynamicBody3D) collider).mass : Float.POSITIVE_INFINITY;
+		float restitution = collider instanceof DynamicBody3D ? Math.min(this.restitution, ((DynamicBody3D) collider).restitution) : this.restitution;
+		Vec3f relativeVelocity = colliderVelocity.minus(this.velocity);
+		float impulse = -(1 + restitution) * relativeVelocity.dot(normal) / (1.0f / this.mass + 1.0f / colliderMass);
+		this.applyImpulse(normal.multipliedBy(-impulse));
+		if(collider instanceof DynamicBody3D dynamicBody) {
+			dynamicBody.applyImpulse(normal.multipliedBy(impulse));
 		}
 	}
 
