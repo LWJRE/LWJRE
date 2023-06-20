@@ -3,8 +3,7 @@ children:
   dragon:
     override: scenes/dragon.yaml
     properties:
-      rotation: !Vec3f [0.0, -0.785, 0.0]
-      position: !Vec3f [-2.0, 10.0, -2.0]
+      position: !Vec3f [0.0, 10.0, 0.0]
   camera:
     type: io.github.lwjre.engine.nodes.Camera3D
     properties:

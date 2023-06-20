@@ -54,6 +54,24 @@ public class RigidBody3D extends DynamicBody3D {
 		super.onUpdate(delta);
 	}
 
+//	public Mat3f inertiaTensor() {
+//		Vec3f shape = this.boundingBox.multiply(this.globalScale());
+//		return new Mat3f(
+//				1.0f / 12.0f * this.mass * (shape.y() * shape.y() + shape.z() * shape.z()), 0.0f, 0.0f,
+//				0.0f, 1.0f / 12.0f * this.mass * (shape.x() * shape.x() + shape.z() * shape.z()), 0.0f,
+//				0.0f, 0.0f, 1.0f / 12.0f * this.mass * (shape.x() * shape.x() + shape.y() * shape.y())
+//		);
+//	}
+//
+//	public Mat3f inverseInertiaTensor() {
+//		Mat3f inertiaTensor = this.inertiaTensor();
+//		return new Mat3f(
+//				1.0f / inertiaTensor.m00(), 0.0f, 0.0f,
+//				0.0f, 1.0f / inertiaTensor.m11(), 0.0f,
+//				0.0f, 0.0f, 1.0f / inertiaTensor.m22()
+//		);
+//	}
+
 	@Override
 	protected void onCollision(CollisionObject3D collider, Vec3f normal, float depth) {
 		this.position = this.position.plus(normal.multipliedBy(depth));
@@ -222,6 +240,7 @@ public class RigidBody3D extends DynamicBody3D {
 	 */
 	public void applyImpulse(Vec3f impulse, Vec3f radius) {
 		super.applyImpulse(impulse);
+//		this.angularVelocity = this.angularVelocity.plus(this.inverseInertiaTensor().multiply(radius.cross(impulse)));
 		this.angularVelocity = this.angularVelocity.plus(radius.cross(impulse).divide(this.inertia));
 	}
 
