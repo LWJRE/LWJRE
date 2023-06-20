@@ -1,10 +1,12 @@
 package io.github.lwjre.engine.nodes;
 
+import io.github.hexagonnico.vecmatlib.matrix.Mat3f;
 import io.github.hexagonnico.vecmatlib.matrix.Mat4f;
 import io.github.hexagonnico.vecmatlib.vector.Vec3f;
 import io.github.hexagonnico.vecmatlib.vector.Vec4f;
 import io.github.lwjre.engine.annotations.EditorRange;
 import io.github.lwjre.engine.annotations.EditorVariable;
+import io.github.lwjre.engine.physics.CollisionSolver;
 
 import java.util.HashSet;
 import java.util.List;
@@ -30,77 +32,41 @@ public class RigidBody3D extends DynamicBody3D {
 	@EditorRange
 	public Vec3f angularAcceleration = new Vec3f(0.0f, 0.0f, 0.0f);
 
-	private Vec3f inertia = new Vec3f(0.0f, 0.0f, 0.0f);
-
 	/** Current torque */
 	private Vec3f torque = new Vec3f(0.0f, 0.0f, 0.0f);
 
 	@Override
-	protected void onEnter() {
-		Vec3f shape = this.boundingBox.multiply(this.globalScale());
-		this.inertia = new Vec3f(
-				1.0f / 12.0f * this.mass * (shape.y() * shape.y() + shape.z() * shape.z()),
-				1.0f / 12.0f * this.mass * (shape.x() * shape.x() + shape.z() * shape.z()),
-				1.0f / 12.0f * this.mass * (shape.x() * shape.x() + shape.y() * shape.y())
-		);
-		super.onEnter();
-	}
-
-	@Override
 	protected void onUpdate(float delta) {
-		this.angularAcceleration = this.angularAcceleration.plus(this.torque.divide(this.inertia));
+		this.angularAcceleration = this.angularAcceleration.plus(this.inverseInertiaTensor().multiply(this.torque));
 		this.angularVelocity = this.angularVelocity.plus(this.angularAcceleration.multipliedBy(delta));
 		this.rotation = this.rotation.plus(this.angularVelocity.multipliedBy(delta));
 		super.onUpdate(delta);
 	}
 
-//	public Mat3f inertiaTensor() {
-//		Vec3f shape = this.boundingBox.multiply(this.globalScale());
-//		return new Mat3f(
-//				1.0f / 12.0f * this.mass * (shape.y() * shape.y() + shape.z() * shape.z()), 0.0f, 0.0f,
-//				0.0f, 1.0f / 12.0f * this.mass * (shape.x() * shape.x() + shape.z() * shape.z()), 0.0f,
-//				0.0f, 0.0f, 1.0f / 12.0f * this.mass * (shape.x() * shape.x() + shape.y() * shape.y())
-//		);
-//	}
-//
-//	public Mat3f inverseInertiaTensor() {
-//		Mat3f inertiaTensor = this.inertiaTensor();
-//		return new Mat3f(
-//				1.0f / inertiaTensor.m00(), 0.0f, 0.0f,
-//				0.0f, 1.0f / inertiaTensor.m11(), 0.0f,
-//				0.0f, 0.0f, 1.0f / inertiaTensor.m22()
-//		);
-//	}
+	public Mat3f inertiaTensor() {
+		Vec3f shape = this.boundingBox.multiply(this.globalScale());
+		return new Mat3f(
+				1.0f / 12.0f * this.mass * (shape.y() * shape.y() + shape.z() * shape.z()), 0.0f, 0.0f,
+				0.0f, 1.0f / 12.0f * this.mass * (shape.x() * shape.x() + shape.z() * shape.z()), 0.0f,
+				0.0f, 0.0f, 1.0f / 12.0f * this.mass * (shape.x() * shape.x() + shape.y() * shape.y())
+		);
+	}
+
+	public Mat3f inverseInertiaTensor() {
+		Mat3f inertiaTensor = this.inertiaTensor();
+		return new Mat3f(
+				1.0f / inertiaTensor.m00(), 0.0f, 0.0f,
+				0.0f, 1.0f / inertiaTensor.m11(), 0.0f,
+				0.0f, 0.0f, 1.0f / inertiaTensor.m22()
+		);
+	}
 
 	@Override
 	protected void onCollision(CollisionObject3D collider, Vec3f normal, float depth) {
-		this.position = this.position.plus(normal.multipliedBy(depth));
-		HashSet<Vec3f> intersectionPoints = this.intersectionPoints(collider);
-		float massB = collider instanceof RigidBody3D ? ((RigidBody3D) collider).mass : Float.POSITIVE_INFINITY;
-		Vec3f inertiaB = collider instanceof RigidBody3D ? ((RigidBody3D) collider).inertia : new Vec3f(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY);
-		Vec3f colliderVelocity = Vec3f.Zero();
-		Vec3f colliderAngularVelocity = Vec3f.Zero();
-		Vec3f relativeLinearVelocity = colliderVelocity.minus(this.velocity);
-		Vec3f velocityDelta = Vec3f.Zero();
-		Vec3f angularVelocityDeltaA = Vec3f.Zero();
-		Vec3f angularVelocityDeltaB = Vec3f.Zero();
-		for(Vec3f point : intersectionPoints) {
-			Vec3f radiusA = point.minus(this.globalPosition());
-			Vec3f radiusB = point.minus(collider.globalPosition());
-			Vec3f relativeAngularVelocity = colliderAngularVelocity.cross(radiusB).minus(this.angularVelocity.cross(radiusA));
-			Vec3f relativeVelocity = relativeLinearVelocity.plus(relativeAngularVelocity);
-			float impulseMagnitude = -relativeVelocity.multipliedBy(1 + this.restitution).dot(normal) / (1.0f / this.mass + 1.0f / massB + radiusA.cross(normal).divide(this.inertia).cross(radiusA).plus(radiusB.cross(normal).divide(inertiaB).cross(radiusB)).dot(normal));
-			Vec3f impulse = normal.multipliedBy(impulseMagnitude / intersectionPoints.size());
-			velocityDelta = velocityDelta.plus(impulse.dividedBy(this.mass));
-			angularVelocityDeltaA = angularVelocityDeltaA.plus(radiusA.cross(impulse).divide(this.inertia));
-			angularVelocityDeltaB = angularVelocityDeltaB.plus(radiusB.cross(impulse).divide(inertiaB));
-		}
-		this.velocity = this.velocity.minus(velocityDelta);
-		this.angularVelocity = this.angularVelocity.plus(angularVelocityDeltaA);
 		if(collider instanceof RigidBody3D rigidBody) {
-			rigidBody.velocity = rigidBody.velocity.plus(velocityDelta);
-			rigidBody.angularVelocity = rigidBody.angularVelocity.minus(angularVelocityDeltaB);
+			CollisionSolver.solve(this, rigidBody, this.intersectionPoints(collider), normal, depth);
 		}
+		// TODO: Write other solvers
 	}
 
 	/**
@@ -240,8 +206,8 @@ public class RigidBody3D extends DynamicBody3D {
 	 */
 	public void applyImpulse(Vec3f impulse, Vec3f radius) {
 		super.applyImpulse(impulse);
-//		this.angularVelocity = this.angularVelocity.plus(this.inverseInertiaTensor().multiply(radius.cross(impulse)));
-		this.angularVelocity = this.angularVelocity.plus(radius.cross(impulse).divide(this.inertia));
+		this.angularVelocity = this.angularVelocity.plus(this.inverseInertiaTensor().multiply(radius.cross(impulse)));
+//		this.angularVelocity = this.angularVelocity.plus(radius.cross(impulse).divide(this.inertia));
 	}
 
 	/**

@@ -4,6 +4,7 @@ import io.github.hexagonnico.vecmatlib.vector.Vec2f;
 import io.github.hexagonnico.vecmatlib.vector.Vec3f;
 import io.github.lwjre.engine.annotations.EditorRange;
 import io.github.lwjre.engine.annotations.EditorVariable;
+import io.github.lwjre.engine.physics.CollisionSolver;
 
 /**
  * Node that represents a collider that moves through forces, but is not affected by rotation.
@@ -45,15 +46,12 @@ public class DynamicBody3D extends KinematicBody3D {
 
 	@Override
 	protected void onCollision(CollisionObject3D collider, Vec3f normal, float depth) {
-		this.position = this.position.plus(normal.multipliedBy(depth));
-		Vec3f colliderVelocity = collider instanceof KinematicBody3D ? ((KinematicBody3D) collider).velocity : Vec3f.Zero();
-		float colliderMass = collider instanceof DynamicBody3D ? ((DynamicBody3D) collider).mass : Float.POSITIVE_INFINITY;
-		float restitution = collider instanceof DynamicBody3D ? Math.min(this.restitution, ((DynamicBody3D) collider).restitution) : this.restitution;
-		Vec3f relativeVelocity = colliderVelocity.minus(this.velocity);
-		float impulse = -(1 + restitution) * relativeVelocity.dot(normal) / (1.0f / this.mass + 1.0f / colliderMass);
-		this.applyImpulse(normal.multipliedBy(-impulse));
 		if(collider instanceof DynamicBody3D dynamicBody) {
-			dynamicBody.applyImpulse(normal.multipliedBy(impulse));
+			CollisionSolver.solve(this, dynamicBody, normal, depth);
+		} else if(collider instanceof KinematicBody3D kinematicBody) {
+			CollisionSolver.solve(this, kinematicBody, normal, depth);
+		} else {
+			CollisionSolver.solve(this, normal, depth);
 		}
 	}
 

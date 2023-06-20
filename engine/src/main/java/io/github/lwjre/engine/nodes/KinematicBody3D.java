@@ -2,6 +2,7 @@ package io.github.lwjre.engine.nodes;
 
 import io.github.hexagonnico.vecmatlib.vector.Vec3f;
 import io.github.lwjre.engine.annotations.EditorVariable;
+import io.github.lwjre.engine.physics.CollisionSolver;
 import io.github.lwjre.engine.servers.PhysicsServer;
 
 /**
@@ -38,7 +39,6 @@ public class KinematicBody3D extends CollisionObject3D {
 
 	@Override
 	protected void onCollision(CollisionObject3D collider, Vec3f normal, float depth) {
-		this.position = this.position.plus(normal.multipliedBy(depth));
-		this.velocity = this.velocity.slide(normal);
+		CollisionSolver.solve(this, normal, depth);
 	}
 }

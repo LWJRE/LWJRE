@@ -1,5 +1,5 @@
 !!io.github.lwjre.engine.resources.NodeResource
-type: io.github.lwjre.engine.nodes.DynamicBody3D
+type: io.github.lwjre.engine.nodes.RigidBody3D
 properties:
   boundingBox: !Vec3f [7.25, 4.8, 2.75]
   mass: 100.0
