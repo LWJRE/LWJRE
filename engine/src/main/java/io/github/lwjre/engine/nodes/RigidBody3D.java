@@ -65,8 +65,13 @@ public class RigidBody3D extends DynamicBody3D {
 	protected void onCollision(CollisionObject3D collider, Vec3f normal, float depth) {
 		if(collider instanceof RigidBody3D rigidBody) {
 			CollisionSolver.solve(this, rigidBody, this.intersectionPoints(collider), normal, depth);
+		} else if(collider instanceof DynamicBody3D dynamicBody) {
+			CollisionSolver.solve(this, dynamicBody, this.intersectionPoints(collider), normal, depth);
+		} else if(collider instanceof KinematicBody3D kinematicBody) {
+			CollisionSolver.solve(this, kinematicBody, this.intersectionPoints(collider), normal, depth);
+		} else {
+			CollisionSolver.solve(this, this.intersectionPoints(collider), normal, depth);
 		}
-		// TODO: Write other solvers
 	}
 
 	/**
