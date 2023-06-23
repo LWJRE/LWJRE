@@ -2,6 +2,7 @@ package io.github.lwjre.engine.servers;
 
 import io.github.hexagonnico.vecmatlib.vector.Vec3f;
 import io.github.lwjre.engine.nodes.CollisionObject3D;
+import io.github.lwjre.engine.physics.CollisionPair3D;
 
 import java.util.*;
 
@@ -14,8 +15,6 @@ public final class PhysicsServer implements EngineServer {
 
 	/** List of all the colliders in the scene */
 	private static final ArrayList<CollisionObject3D> COLLIDERS = new ArrayList<>();
-	/** List of all the colliders that moved during the current frame */
-	private static final ArrayList<CollisionObject3D> MOVING_COLLIDERS = new ArrayList<>();
 
 	/**
 	 * Adds a collider to the physics system to be used for collision detection.
@@ -37,17 +36,6 @@ public final class PhysicsServer implements EngineServer {
 		COLLIDERS.add(collider);
 	}
 
-	/**
-	 * Registers that this collider moved during this frame.
-	 * Collisions will be resolved at the end of the current frame.
-	 * Called when a {@link CollisionObject3D} moves.
-	 *
-	 * @param collider The collider
-	 */
-	public static void resolveCollision(CollisionObject3D collider) {
-		MOVING_COLLIDERS.add(collider);
-	}
-
 	@Override
 	public void init() {
 
@@ -55,20 +43,9 @@ public final class PhysicsServer implements EngineServer {
 
 	@Override
 	public void update() {
-		HashMap<CollisionObject3D, HashSet<CollisionObject3D>> collisionPairs = new HashMap<>();
-		subdivide(COLLIDERS, 2).forEach(partition -> computePairs(partition).forEach((colliderA, colliders) -> {
-			if(collisionPairs.containsKey(colliderA)) {
-				collisionPairs.get(colliderA).addAll(colliders);
-			} else {
-				collisionPairs.put(colliderA, colliders);
-			}
-		}));
-		MOVING_COLLIDERS.forEach(collider -> {
-			if(collisionPairs.containsKey(collider)) {
-				collisionPairs.get(collider).forEach(collider::resolveCollision);
-			}
-		});
-		MOVING_COLLIDERS.clear();
+		HashSet<CollisionPair3D> collisionPairs = new HashSet<>();
+		subdivide(COLLIDERS, 2).forEach(partition -> computePairs(partition).forEach((colliderA, colliders) -> colliders.forEach(colliderB -> collisionPairs.add(new CollisionPair3D(colliderA, colliderB)))));
+		collisionPairs.forEach(pair -> pair.colliderA().resolveCollision(pair.colliderB()));
 	}
 
 	@Override

@@ -60,12 +60,12 @@ public class CollisionObject3D extends Node3D {
 		Mat4f rotationA = this.globalRotation();
 		Mat4f rotationB = collider.globalRotation();
 		Vec3f[] axes = new Vec3f[] {
-				rotationA.col0().xyz().normalized(),
-				rotationA.col1().xyz().normalized(),
-				rotationA.col2().xyz().normalized(),
-				rotationB.col0().xyz().normalized(),
-				rotationB.col1().xyz().normalized(),
-				rotationB.col2().xyz().normalized()
+				rotationA.col0().xyz(),
+				rotationA.col1().xyz(),
+				rotationA.col2().xyz(),
+				rotationB.col0().xyz(),
+				rotationB.col1().xyz(),
+				rotationB.col2().xyz()
 		};
 		List<Vec3f> verticesA = this.getVertices();
 		List<Vec3f> verticesB = collider.getVertices();
@@ -78,7 +78,7 @@ public class CollisionObject3D extends Node3D {
 				normal = axis;
 			}
 		}
-		if(meanCenter(verticesA).minus(meanCenter(verticesB)).dot(normal) < 0.0f) {
+		if(collider.globalPosition().minus(this.globalPosition()).dot(normal) < 0.0f) {
 			normal = normal.negated();
 		}
 		this.onCollision(collider, normal, depth);
@@ -98,10 +98,6 @@ public class CollisionObject3D extends Node3D {
 			if(projection > maxB) maxB = projection;
 		}
 		return Math.min(maxA, maxB) - Math.max(minA, minB);
-	}
-
-	private static Vec3f meanCenter(List<Vec3f> vertices) {
-		return vertices.stream().reduce(Vec3f.Zero(), Vec3f::plus).dividedBy(vertices.size());
 	}
 
 	/**
@@ -143,6 +139,24 @@ public class CollisionObject3D extends Node3D {
 				vertices.get(1), vertices.get(5),
 				vertices.get(2), vertices.get(6),
 				vertices.get(3), vertices.get(7)
+		);
+	}
+
+	public List<Vec3f> getFaces() {
+		List<Vec3f> vertices = this.getVertices();
+		return List.of(
+			// Bottom face
+			vertices.get(0), vertices.get(1), vertices.get(2), vertices.get(3),
+			// Front face
+			vertices.get(5), vertices.get(1), vertices.get(2), vertices.get(6),
+			// Left face
+			vertices.get(4), vertices.get(0), vertices.get(1), vertices.get(5),
+			// Right face
+			vertices.get(6), vertices.get(2), vertices.get(3), vertices.get(7),
+			// Back face
+			vertices.get(4), vertices.get(0), vertices.get(3), vertices.get(7),
+			// Top face
+			vertices.get(4), vertices.get(5), vertices.get(6), vertices.get(7)
 		);
 	}
 }

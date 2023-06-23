@@ -3,7 +3,6 @@ package io.github.lwjre.engine.nodes;
 import io.github.hexagonnico.vecmatlib.vector.Vec3f;
 import io.github.lwjre.engine.annotations.EditorVariable;
 import io.github.lwjre.engine.physics.CollisionSolver;
-import io.github.lwjre.engine.servers.PhysicsServer;
 
 /**
  * Node that represents an object that moves through kinematic equation.
@@ -31,9 +30,6 @@ public class KinematicBody3D extends CollisionObject3D {
 	protected void onUpdate(float delta) {
 		this.velocity = this.velocity.plus(this.acceleration.multipliedBy(delta));
 		this.position = this.position.plus(this.velocity.multipliedBy(delta));
-		if(this.velocity.lengthSquared() > 0.0f) {
-			PhysicsServer.resolveCollision(this);
-		}
 		super.onUpdate(delta);
 	}
 

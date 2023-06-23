@@ -1,13 +1,13 @@
 package io.github.lwjre.engine.nodes;
 
 import io.github.hexagonnico.vecmatlib.matrix.Mat3f;
-import io.github.hexagonnico.vecmatlib.matrix.Mat4f;
+import io.github.hexagonnico.vecmatlib.vector.Vec3d;
 import io.github.hexagonnico.vecmatlib.vector.Vec3f;
-import io.github.hexagonnico.vecmatlib.vector.Vec4f;
 import io.github.lwjre.engine.annotations.EditorRange;
 import io.github.lwjre.engine.annotations.EditorVariable;
 import io.github.lwjre.engine.physics.CollisionSolver;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -46,9 +46,9 @@ public class RigidBody3D extends DynamicBody3D {
 	public Mat3f inertiaTensor() {
 		Vec3f shape = this.boundingBox.multiply(this.globalScale());
 		return new Mat3f(
-				1.0f / 12.0f * this.mass * (shape.y() * shape.y() + shape.z() * shape.z()), 0.0f, 0.0f,
-				0.0f, 1.0f / 12.0f * this.mass * (shape.x() * shape.x() + shape.z() * shape.z()), 0.0f,
-				0.0f, 0.0f, 1.0f / 12.0f * this.mass * (shape.x() * shape.x() + shape.y() * shape.y())
+				this.mass / 12.0f * (shape.y() * shape.y() + shape.z() * shape.z()), 0.0f, 0.0f,
+				0.0f, this.mass / 12.0f * (shape.x() * shape.x() + shape.z() * shape.z()), 0.0f,
+				0.0f, 0.0f, this.mass / 12.0f * (shape.x() * shape.x() + shape.y() * shape.y())
 		);
 	}
 
@@ -64,7 +64,10 @@ public class RigidBody3D extends DynamicBody3D {
 	@Override
 	protected void onCollision(CollisionObject3D collider, Vec3f normal, float depth) {
 		if(collider instanceof RigidBody3D rigidBody) {
-			CollisionSolver.solve(this, rigidBody, this.intersectionPoints(collider), normal, depth);
+			this.position = this.position.minus(normal.multipliedBy(depth / 2));
+			collider.position = collider.position.plus(normal.multipliedBy(depth / 2));
+			var contactPoints = this.intersectionPoints(collider);
+			CollisionSolver.solve(this, rigidBody, contactPoints, normal, depth);
 		} else if(collider instanceof DynamicBody3D dynamicBody) {
 			CollisionSolver.solve(this, dynamicBody, this.intersectionPoints(collider), normal, depth);
 		} else if(collider instanceof KinematicBody3D kinematicBody) {
@@ -80,69 +83,48 @@ public class RigidBody3D extends DynamicBody3D {
 	 * @param collider The other collider
 	 * @return A {@link HashSet} containing the points of intersection
 	 */
-	private HashSet<Vec3f> intersectionPoints(CollisionObject3D collider) {
-		HashSet<Vec3f> intersectionPoints = new HashSet<>();
-		intersectionPoints(collider, this.getEdges(), intersectionPoints);
-		intersectionPoints(this, collider.getEdges(), intersectionPoints);
+	private ArrayList<Vec3f> intersectionPoints(CollisionObject3D collider) {
+		ArrayList<Vec3f> intersectionPoints = new ArrayList<>();
+		contactPoints(this.getEdges(), collider.getFaces(), intersectionPoints);
+		contactPoints(collider.getEdges(), this.getFaces(), intersectionPoints);
 		return intersectionPoints;
 	}
 
-	/**
-	 * Finds the intersection points between the given collider and the list of edges.
-	 * Intersection points are computed as line-plane intersections.
-	 *
-	 * @param collider The collider to check
-	 * @param edges The edges of the other collider
-	 * @param intersectionPoints Result list
-	 */
-	private static void intersectionPoints(CollisionObject3D collider, List<Vec3f> edges, HashSet<Vec3f> intersectionPoints) {
-		Mat4f transform = collider.globalTransformation();
-		Vec3f colliderPosition = transform.multiply(new Vec4f(collider.position, 1.0f)).xyz();
-		Mat4f colliderRotation = collider.globalRotation();
-		Vec3f boundingBox = collider.boundingBox.multiply(collider.globalScale());
-		Vec3f[] normals = new Vec3f[] {
-				colliderRotation.col0().xyz(),
-				colliderRotation.col1().xyz(),
-				colliderRotation.col2().xyz()
-		};
-		Vec3f[] points = new Vec3f[] {
-				transform.multiply(new Vec4f(collider.boundingBox.dividedBy(-2.0f), 1.0f)).xyz(),
-				transform.multiply(new Vec4f(collider.boundingBox.dividedBy(2.0f), 1.0f)).xyz()
-		};
-		for(Vec3f normal : normals) {
-			for(Vec3f point : points) {
-				float d = normal.dot(point);
-				for(int i = 0; i < edges.size(); i += 2) {
-					Vec3f direction = edges.get(i + 1).minus(edges.get(i));
-					if(Math.abs(normal.dot(direction)) > 0.0f) {
-						float t = (d - normal.dot(edges.get(i))) / normal.dot(direction);
-						Vec3f candidate = edges.get(i).plus(direction.multipliedBy(t));
-						if(t >= -0.00001f && t <= 1.00001f && isPointValid(candidate, colliderPosition, colliderRotation, boundingBox)) {
-							intersectionPoints.add(candidate);
+	private static void contactPoints(List<Vec3f> edges, List<Vec3f> faces, List<Vec3f> contactPoints) {
+		for(int f = 0; f < faces.size(); f += 4) {
+			Vec3d ab = faces.get(f + 1).minus(faces.get(f)).toDouble();
+			Vec3d bc = faces.get(f + 2).minus(faces.get(f + 1)).toDouble();
+			Vec3d cd = faces.get(f + 3).minus(faces.get(f + 2)).toDouble();
+			Vec3d ad = faces.get(f).minus(faces.get(f + 3)).toDouble();
+			Vec3d faceNormal = ab.cross(bc);
+			for(int e = 0; e < edges.size(); e += 2) {
+				Vec3d direction = edges.get(e + 1).minus(edges.get(e)).toDouble();
+				if(Math.abs(direction.dot(faceNormal)) > 0.01f) {
+					double d = faces.get(f).minus(edges.get(e)).toDouble().dot(faceNormal) / direction.dot(faceNormal);
+					Vec3d candidate = edges.get(e).toDouble().plus(direction.multipliedBy(d));
+					if(d >= -0.01f && d <= 1.01f) {
+						Vec3d ap = candidate.minus(faces.get(f).toDouble());
+						Vec3d bp = candidate.minus(faces.get(f + 1).toDouble());
+						Vec3d cp = candidate.minus(faces.get(f + 2).toDouble());
+						Vec3d dp = candidate.minus(faces.get(f + 3).toDouble());
+						if(!(ap.dot(ab) < -0.01f || bp.dot(bc) < -0.01f || cp.dot(cd) < -0.01f || dp.dot(ad) < -0.01f)) {
+							Vec3d projectionAB = ap.project(ab);
+							Vec3d projectionBC = bp.project(bc);
+							Vec3d projectionCD = cp.project(cd);
+							Vec3d projectionAD = dp.project(ad);
+							if(projectionAB.lengthSquared() <= ab.lengthSquared() && projectionBC.lengthSquared() <= bc.lengthSquared() && projectionCD.lengthSquared() <= cd.lengthSquared() && projectionAD.lengthSquared() <= ad.lengthSquared()) {
+								if(contactPoints.stream().noneMatch(point -> {
+									Vec3d difference = point.toDouble().minus(candidate).abs();
+									return difference.x() < 0.01f && difference.y() < 0.01f && difference.z() < 0.01f;
+								})) {
+									contactPoints.add(candidate.toFloat());
+								}
+							}
 						}
 					}
 				}
 			}
 		}
-	}
-
-	/**
-	 * Checks if the given point is inside the collider's bounding box.
-	 * Intersection points are computed as line-plane intersections.
-	 * This method checks if the computed point is within the collider's bounds.
-	 *
-	 * @param point The point to check
-	 * @param colliderPosition The collider's global position
-	 * @param colliderRotation The collider's rotation matrix
-	 * @param boundingBox The size of the collider's bounding box
-	 * @return True if the point is inside the collider's bounding box, otherwise false
-	 */
-	private static boolean isPointValid(Vec3f point, Vec3f colliderPosition, Mat4f colliderRotation, Vec3f boundingBox) {
-		Vec3f v = point.minus(colliderPosition);
-		float px = Math.abs(v.dot(colliderRotation.col0().xyz()));
-		float py = Math.abs(v.dot(colliderRotation.col1().xyz()));
-		float pz = Math.abs(v.dot(colliderRotation.col2().xyz()));
-		return 2 * px <= boundingBox.x() && 2 * py <= boundingBox.y() && 2 * pz <= boundingBox.z();
 	}
 
 	/**
@@ -212,7 +194,6 @@ public class RigidBody3D extends DynamicBody3D {
 	public void applyImpulse(Vec3f impulse, Vec3f radius) {
 		super.applyImpulse(impulse);
 		this.angularVelocity = this.angularVelocity.plus(this.inverseInertiaTensor().multiply(radius.cross(impulse)));
-//		this.angularVelocity = this.angularVelocity.plus(radius.cross(impulse).divide(this.inertia));
 	}
 
 	/**

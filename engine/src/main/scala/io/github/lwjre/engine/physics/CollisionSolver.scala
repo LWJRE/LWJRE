@@ -24,12 +24,15 @@ object CollisionSolver {
   }
 
   def solve(colliderA: DynamicBody3D, colliderB: DynamicBody3D, normal: Vec3f, depth: Float): Unit = {
-    colliderA.position = colliderA.position + normal * depth
+    colliderA.position = colliderA.position - normal * (depth / 2)
+    colliderB.position = colliderB.position + normal * (depth / 2)
     val relativeVelocity = colliderB.velocity - colliderA.velocity
-    val restitution = math.min(colliderA.restitution, colliderB.restitution)
-    val impulse = -(1.0f + restitution) * (relativeVelocity dot normal) / (1.0f / colliderA.mass + 1.0f / colliderB.mass)
-    colliderA.applyImpulse(normal * -impulse)
-    colliderB.applyImpulse(normal * impulse)
+    if((relativeVelocity dot normal) <= 0.0f) {
+      val restitution = math.min(colliderA.restitution, colliderB.restitution)
+      val impulse = -(1.0f + restitution) * (relativeVelocity dot normal) / (1.0f / colliderA.mass + 1.0f / colliderB.mass)
+      colliderA.applyImpulse(normal * -impulse)
+      colliderB.applyImpulse(normal * impulse)
+    }
   }
 
   def solve(colliderA: RigidBody3D, contactPoints: java.util.Collection[Vec3f], normal: Vec3f, depth: Float): Unit = {
@@ -79,7 +82,6 @@ object CollisionSolver {
   }
 
   def solve(colliderA: RigidBody3D, colliderB: RigidBody3D, contactPoints: java.util.Collection[Vec3f], normal: Vec3f, depth: Float): Unit = {
-    colliderA.position = colliderA.position + normal * depth
     val positionA = colliderA.globalPosition
     val positionB = colliderB.globalPosition
     val linearVelocityA = colliderA.velocity
@@ -92,9 +94,11 @@ object CollisionSolver {
       val radiusB = point - positionB
       val relativeAngularVelocity = (angularVelocityB cross radiusB) - (angularVelocityA cross radiusA)
       val relativeVelocity = (linearVelocityB - linearVelocityA) + relativeAngularVelocity
-      val impulse = (relativeVelocity * -(1.0f + restitution) dot normal) / (1.0f / colliderA.mass + 1.0f / colliderB.mass + (((colliderA.inverseInertiaTensor * (radiusA cross normal) cross radiusA) + (colliderB.inverseInertiaTensor * (radiusB cross normal) cross radiusB)) dot normal))
-      colliderA.applyImpulse(normal * -impulse / contactPoints.size, radiusA)
-      colliderB.applyImpulse(normal * impulse / contactPoints.size, -radiusB)
+      if(relativeVelocity.dot(normal) <= 0.0f) {
+        val impulse = (relativeVelocity * -(1.0f + restitution) dot normal) / (1.0f / colliderA.mass + 1.0f / colliderB.mass + (((colliderA.inverseInertiaTensor * (radiusA cross normal) cross radiusA) + (colliderB.inverseInertiaTensor * (radiusB cross normal) cross radiusB)) dot normal))
+        colliderA.applyImpulse(normal * -impulse, radiusA)
+        colliderB.applyImpulse(normal * impulse, radiusB)
+      }
     })
   }
 }

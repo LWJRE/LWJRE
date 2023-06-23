@@ -11,9 +11,13 @@ children:
       rotation: !Vec3f [-0.3, 0.0, 0.0]
       position: !Vec3f [0.0, 5.0, 12.0]
   floor:
-    type: io.github.lwjre.engine.nodes.CollisionObject3D
+    type: io.github.lwjre.engine.nodes.RigidBody3D
     properties:
-      scale: !Vec3f [10.0, 1.0, 10.0]
+      position: !Vec3f [0.0, -500.0, 0.0]
+      scale: !Vec3f [10.0, 1000.0, 10.0]
+      acceleration: !Vec3f [0.0, 0.0, 0.0]
+      mass: 1000000000.0
+      restitution: 1.0
     children:
       cube:
         type: io.github.lwjre.engine.nodes.CubeRenderer
