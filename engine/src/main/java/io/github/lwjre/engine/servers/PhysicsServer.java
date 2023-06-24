@@ -2,7 +2,6 @@ package io.github.lwjre.engine.servers;
 
 import io.github.hexagonnico.vecmatlib.vector.Vec3f;
 import io.github.lwjre.engine.nodes.CollisionObject3D;
-import io.github.lwjre.engine.physics.CollisionPair3D;
 
 import java.util.*;
 
@@ -14,7 +13,7 @@ import java.util.*;
 public final class PhysicsServer implements EngineServer {
 
 	/** List of all the colliders in the scene */
-	private static final ArrayList<CollisionObject3D> COLLIDERS = new ArrayList<>();
+	private static final HashMap<CollisionObject3D, HashSet<CollisionObject3D>> COLLISION_PAIRS = new HashMap<>();
 
 	/**
 	 * Adds a collider to the physics system to be used for collision detection.
@@ -23,7 +22,7 @@ public final class PhysicsServer implements EngineServer {
 	 * @param collider The collider to add
 	 */
 	public static void add(CollisionObject3D collider) {
-		COLLIDERS.add(collider);
+		COLLISION_PAIRS.put(collider, new HashSet<>());
 	}
 
 	/**
@@ -33,7 +32,15 @@ public final class PhysicsServer implements EngineServer {
 	 * @param collider The collider to remove
 	 */
 	public static void remove(CollisionObject3D collider) {
-		COLLIDERS.add(collider);
+		COLLISION_PAIRS.remove(collider);
+	}
+
+	public static boolean resolveCollision(CollisionObject3D collider) {
+		if(COLLISION_PAIRS.containsKey(collider)) {
+			COLLISION_PAIRS.get(collider).forEach(collider::resolveCollision);
+			return true;
+		}
+		return false;
 	}
 
 	@Override
@@ -43,9 +50,11 @@ public final class PhysicsServer implements EngineServer {
 
 	@Override
 	public void update() {
-		HashSet<CollisionPair3D> collisionPairs = new HashSet<>();
-		subdivide(COLLIDERS, 2).forEach(partition -> computePairs(partition).forEach((colliderA, colliders) -> colliders.forEach(colliderB -> collisionPairs.add(new CollisionPair3D(colliderA, colliderB)))));
-		collisionPairs.forEach(pair -> pair.colliderA().resolveCollision(pair.colliderB()));
+		COLLISION_PAIRS.values().forEach(HashSet::clear);
+		subdivide(COLLISION_PAIRS.keySet(), 2).forEach(partition -> computePairs(partition).forEach((colliderA, colliders) -> colliders.forEach(colliderB -> {
+			COLLISION_PAIRS.get(colliderA).add(colliderB);
+			COLLISION_PAIRS.get(colliderB).add(colliderA);
+		})));
 	}
 
 	@Override

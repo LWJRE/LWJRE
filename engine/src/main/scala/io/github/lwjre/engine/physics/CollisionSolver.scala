@@ -36,16 +36,16 @@ object CollisionSolver {
   }
 
   def solve(colliderA: RigidBody3D, contactPoints: java.util.Collection[Vec3f], normal: Vec3f, depth: Float): Unit = {
-    colliderA.position = colliderA.position + normal * depth
     val positionA = colliderA.globalPosition
     val linearVelocityA = colliderA.velocity
     val angularVelocityA = colliderA.angularVelocity
     contactPoints.forEach(point => {
       val radiusA = point - positionA
-      val relativeAngularVelocity = -(angularVelocityA cross radiusA)
-      val relativeVelocity = -linearVelocityA + relativeAngularVelocity
-      val impulse = (relativeVelocity * -(1.0f + colliderA.restitution) dot normal) / (1.0f / colliderA.mass + (colliderA.inverseInertiaTensor * (radiusA cross normal) cross radiusA dot normal))
-      colliderA.applyImpulse(normal * -impulse / contactPoints.size, radiusA)
+      val relativeVelocity = -linearVelocityA - (angularVelocityA cross radiusA)
+      if (relativeVelocity.dot(normal) <= 0.0f) {
+        val impulse = (relativeVelocity * -(1.0f + colliderA.restitution) dot normal) / (1.0f / colliderA.mass + (colliderA.inverseInertiaTensor * (radiusA cross normal) cross radiusA dot normal))
+        colliderA.applyImpulse(normal * -impulse, radiusA)
+      }
     })
   }
 

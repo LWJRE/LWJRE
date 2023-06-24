@@ -1,7 +1,6 @@
 package io.github.lwjre.engine.nodes;
 
 import io.github.hexagonnico.vecmatlib.matrix.Mat3f;
-import io.github.hexagonnico.vecmatlib.vector.Vec3d;
 import io.github.hexagonnico.vecmatlib.vector.Vec3f;
 import io.github.lwjre.engine.annotations.EditorRange;
 import io.github.lwjre.engine.annotations.EditorVariable;
@@ -63,11 +62,9 @@ public class RigidBody3D extends DynamicBody3D {
 
 	@Override
 	protected void onCollision(CollisionObject3D collider, Vec3f normal, float depth) {
+		this.position = this.position.minus(normal.multipliedBy(depth));
 		if(collider instanceof RigidBody3D rigidBody) {
-			this.position = this.position.minus(normal.multipliedBy(depth / 2));
-			collider.position = collider.position.plus(normal.multipliedBy(depth / 2));
-			var contactPoints = this.intersectionPoints(collider);
-			CollisionSolver.solve(this, rigidBody, contactPoints, normal, depth);
+			CollisionSolver.solve(this, rigidBody, this.intersectionPoints(collider), normal, depth);
 		} else if(collider instanceof DynamicBody3D dynamicBody) {
 			CollisionSolver.solve(this, dynamicBody, this.intersectionPoints(collider), normal, depth);
 		} else if(collider instanceof KinematicBody3D kinematicBody) {
@@ -92,32 +89,32 @@ public class RigidBody3D extends DynamicBody3D {
 
 	private static void contactPoints(List<Vec3f> edges, List<Vec3f> faces, List<Vec3f> contactPoints) {
 		for(int f = 0; f < faces.size(); f += 4) {
-			Vec3d ab = faces.get(f + 1).minus(faces.get(f)).toDouble();
-			Vec3d bc = faces.get(f + 2).minus(faces.get(f + 1)).toDouble();
-			Vec3d cd = faces.get(f + 3).minus(faces.get(f + 2)).toDouble();
-			Vec3d ad = faces.get(f).minus(faces.get(f + 3)).toDouble();
-			Vec3d faceNormal = ab.cross(bc);
+			Vec3f ab = faces.get(f + 1).minus(faces.get(f));
+			Vec3f bc = faces.get(f + 2).minus(faces.get(f + 1));
+			Vec3f cd = faces.get(f + 3).minus(faces.get(f + 2));
+			Vec3f ad = faces.get(f).minus(faces.get(f + 3));
+			Vec3f faceNormal = ab.cross(bc);
 			for(int e = 0; e < edges.size(); e += 2) {
-				Vec3d direction = edges.get(e + 1).minus(edges.get(e)).toDouble();
+				Vec3f direction = edges.get(e + 1).minus(edges.get(e));
 				if(Math.abs(direction.dot(faceNormal)) > 0.01f) {
-					double d = faces.get(f).minus(edges.get(e)).toDouble().dot(faceNormal) / direction.dot(faceNormal);
-					Vec3d candidate = edges.get(e).toDouble().plus(direction.multipliedBy(d));
+					float d = faces.get(f).minus(edges.get(e)).dot(faceNormal) / direction.dot(faceNormal);
+					Vec3f candidate = edges.get(e).plus(direction.multipliedBy(d));
 					if(d >= -0.01f && d <= 1.01f) {
-						Vec3d ap = candidate.minus(faces.get(f).toDouble());
-						Vec3d bp = candidate.minus(faces.get(f + 1).toDouble());
-						Vec3d cp = candidate.minus(faces.get(f + 2).toDouble());
-						Vec3d dp = candidate.minus(faces.get(f + 3).toDouble());
+						Vec3f ap = candidate.minus(faces.get(f));
+						Vec3f bp = candidate.minus(faces.get(f + 1));
+						Vec3f cp = candidate.minus(faces.get(f + 2));
+						Vec3f dp = candidate.minus(faces.get(f + 3));
 						if(!(ap.dot(ab) < -0.01f || bp.dot(bc) < -0.01f || cp.dot(cd) < -0.01f || dp.dot(ad) < -0.01f)) {
-							Vec3d projectionAB = ap.project(ab);
-							Vec3d projectionBC = bp.project(bc);
-							Vec3d projectionCD = cp.project(cd);
-							Vec3d projectionAD = dp.project(ad);
+							Vec3f projectionAB = ap.project(ab);
+							Vec3f projectionBC = bp.project(bc);
+							Vec3f projectionCD = cp.project(cd);
+							Vec3f projectionAD = dp.project(ad);
 							if(projectionAB.lengthSquared() <= ab.lengthSquared() && projectionBC.lengthSquared() <= bc.lengthSquared() && projectionCD.lengthSquared() <= cd.lengthSquared() && projectionAD.lengthSquared() <= ad.lengthSquared()) {
 								if(contactPoints.stream().noneMatch(point -> {
-									Vec3d difference = point.toDouble().minus(candidate).abs();
+									Vec3f difference = point.minus(candidate).abs();
 									return difference.x() < 0.01f && difference.y() < 0.01f && difference.z() < 0.01f;
 								})) {
-									contactPoints.add(candidate.toFloat());
+									contactPoints.add(candidate);
 								}
 							}
 						}
@@ -193,7 +190,7 @@ public class RigidBody3D extends DynamicBody3D {
 	 */
 	public void applyImpulse(Vec3f impulse, Vec3f radius) {
 		super.applyImpulse(impulse);
-		this.angularVelocity = this.angularVelocity.plus(this.inverseInertiaTensor().multiply(radius.cross(impulse)));
+		this.angularVelocity = this.angularVelocity.minus(this.inverseInertiaTensor().multiply(radius.cross(impulse)));
 	}
 
 	/**
