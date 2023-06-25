@@ -5,36 +5,6 @@ import io.github.lwjre.engine.nodes.{DynamicBody3D, KinematicBody3D, RigidBody3D
 
 object CollisionSolver {
 
-  def solve(collider: KinematicBody3D, normal: Vec3f, depth: Float): Unit = {
-    collider.position = collider.position + normal * depth
-    collider.velocity = collider.velocity.slide(normal)
-  }
-
-  def solve(colliderA: DynamicBody3D, normal: Vec3f, depth: Float): Unit = {
-    colliderA.position = colliderA.position + normal * depth
-    val impulse = -(1.0f + colliderA.restitution) * (-colliderA.velocity dot normal) / (1.0f / colliderA.mass)
-    colliderA.applyImpulse(normal * -impulse)
-  }
-
-  def solve(colliderA: DynamicBody3D, colliderB: KinematicBody3D, normal: Vec3f, depth: Float): Unit = {
-    colliderA.position = colliderA.position + normal * depth
-    val relativeVelocity = colliderB.velocity - colliderA.velocity
-    val impulse = -(1.0f + colliderA.restitution) * (relativeVelocity dot normal) / (1.0f / colliderA.mass)
-    colliderA.applyImpulse(normal * -impulse)
-  }
-
-  def solve(colliderA: DynamicBody3D, colliderB: DynamicBody3D, normal: Vec3f, depth: Float): Unit = {
-    colliderA.position = colliderA.position - normal * (depth / 2)
-    colliderB.position = colliderB.position + normal * (depth / 2)
-    val relativeVelocity = colliderB.velocity - colliderA.velocity
-    if((relativeVelocity dot normal) <= 0.0f) {
-      val restitution = math.min(colliderA.restitution, colliderB.restitution)
-      val impulse = -(1.0f + restitution) * (relativeVelocity dot normal) / (1.0f / colliderA.mass + 1.0f / colliderB.mass)
-      colliderA.applyImpulse(normal * -impulse)
-      colliderB.applyImpulse(normal * impulse)
-    }
-  }
-
   def solve(colliderA: RigidBody3D, contactPoints: java.util.Collection[Vec3f], normal: Vec3f, depth: Float): Unit = {
     val positionA = colliderA.globalPosition
     val linearVelocityA = colliderA.velocity

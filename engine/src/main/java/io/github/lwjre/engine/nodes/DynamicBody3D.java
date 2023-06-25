@@ -4,7 +4,6 @@ import io.github.hexagonnico.vecmatlib.vector.Vec2f;
 import io.github.hexagonnico.vecmatlib.vector.Vec3f;
 import io.github.lwjre.engine.annotations.EditorRange;
 import io.github.lwjre.engine.annotations.EditorVariable;
-import io.github.lwjre.engine.physics.CollisionSolver;
 
 /**
  * Node that represents a collider that moves through forces, but is not affected by rotation.
@@ -46,12 +45,26 @@ public class DynamicBody3D extends KinematicBody3D {
 
 	@Override
 	protected void onCollision(CollisionObject3D collider, Vec3f normal, float depth) {
-		if(collider instanceof DynamicBody3D dynamicBody) {
-			CollisionSolver.solve(this, dynamicBody, normal, depth);
-		} else if(collider instanceof KinematicBody3D kinematicBody) {
-			CollisionSolver.solve(this, kinematicBody, normal, depth);
+		this.position = this.position.minus(normal.multipliedBy(depth));
+		if(collider instanceof KinematicBody3D kinematicBody) {
+			Vec3f relativeVelocity = kinematicBody.velocity.minus(this.velocity);
+			if(relativeVelocity.dot(normal) <= 0.0f) {
+				if(kinematicBody instanceof DynamicBody3D dynamicBody) {
+					// DynamicBody to DynamicBody collision
+					float restitution = Math.min(this.restitution, dynamicBody.restitution);
+					float impulse = -(1.0f + restitution) * relativeVelocity.dot(normal) / (1.0f / this.mass + 1.0f / dynamicBody.mass);
+					this.applyImpulse(normal.multipliedBy(-impulse));
+					dynamicBody.applyImpulse(normal.multipliedBy(impulse));
+				} else {
+					// DynamicBody to KinematicBody collision
+					float impulse = -(1.0f + this.restitution) * relativeVelocity.dot(normal) / (1.0f / this.mass);
+					this.applyImpulse(normal.multipliedBy(-impulse));
+				}
+			}
 		} else {
-			CollisionSolver.solve(this, normal, depth);
+			// DynamicBody to StaticBody collision
+			float impulse = -(1.0f + this.restitution) * this.velocity.negated().dot(normal) / (1.0f / this.mass);
+			this.applyImpulse(normal.multipliedBy(-impulse));
 		}
 	}
 
