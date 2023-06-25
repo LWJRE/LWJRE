@@ -104,7 +104,7 @@ public class TestNode3D {
 			0.0f, 2.5f, 0.0f, 0.0f,
 			0.0f, 0.0f, 3.5f, 0.0f,
 			0.0f, 0.0f, 0.0f, 1.0f
-		), node.scalingMatrix());
+		), node.localScaling());
 	}
 
 	@Test
@@ -116,7 +116,7 @@ public class TestNode3D {
 		Mat4f translation = Mat4f.translation(0.0f, 1.0f, 2.0f);
 		Mat4f rotation = Mat4f.rotation(3.14f, 1.57f, 0.0f);
 		Mat4f scale = Mat4f.scaling(1.1f, 1.1f, 1.1f);
-		Assertions.assertEquals(translation.multiply(rotation).multiply(scale), node.localTransformation());
+		Assertions.assertEquals(translation.multiply(rotation).multiply(scale), node.localTransform());
 	}
 
 	@Test
@@ -130,7 +130,7 @@ public class TestNode3D {
 		child.rotation = new Vec3f(1.57f, 1.57f, 3.14f);
 		child.scale = new Vec3f(1.0f, 2.0f, 1.0f);
 		parent.addChild(child);
-		Assertions.assertEquals(parent.localTransformation().multiply(child.localTransformation()), child.globalTransformation());
+		Assertions.assertEquals(parent.localTransform().multiply(child.localTransform()), child.globalTransform());
 	}
 
 	private static void assertEqualApprox(Vec3f expected, Vec3f actual) {

@@ -38,7 +38,8 @@ public class RigidBody3D extends DynamicBody3D {
 	protected void onUpdate(float delta) {
 		this.angularAcceleration = this.angularAcceleration.plus(this.inverseInertiaTensor().multiply(this.torque));
 		this.angularVelocity = this.angularVelocity.plus(this.angularAcceleration.multipliedBy(delta));
-		this.rotation = this.rotation.plus(this.angularVelocity.multipliedBy(delta));
+		// TODO: Figure out why this needs to be minus
+		this.rotation = this.rotation.minus(this.angularVelocity.multipliedBy(delta));
 		super.onUpdate(delta);
 	}
 
@@ -190,7 +191,7 @@ public class RigidBody3D extends DynamicBody3D {
 	 */
 	public void applyImpulse(Vec3f impulse, Vec3f radius) {
 		super.applyImpulse(impulse);
-		this.angularVelocity = this.angularVelocity.minus(this.inverseInertiaTensor().multiply(radius.cross(impulse)));
+		this.angularVelocity = this.angularVelocity.plus(this.inverseInertiaTensor().multiply(radius.cross(impulse)));
 	}
 
 	/**

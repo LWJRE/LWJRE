@@ -111,7 +111,7 @@ public class CubeRenderer extends Renderer3D {
 
 	private void render() {
 		this.shader().start();
-		this.shader().setUniform("transformation_matrix", this.globalTransformation());
+		this.shader().setUniform("transformation_matrix", this.globalTransform());
 		this.shader().setUniform("material.ambient", Color4f.White());
 		this.shader().setUniform("material.diffuse", Color4f.White());
 		this.shader().setUniform("material.specular", Color4f.White());

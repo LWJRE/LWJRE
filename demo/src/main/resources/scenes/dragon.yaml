@@ -3,7 +3,6 @@ type: io.github.lwjre.engine.nodes.RigidBody3D
 properties:
   boundingBox: !Vec3f [7.25, 4.8, 2.75]
   mass: 100.0
-  restitution: 0.25
 children:
   model:
     type: io.github.lwjre.engine.nodes.ModelRenderer

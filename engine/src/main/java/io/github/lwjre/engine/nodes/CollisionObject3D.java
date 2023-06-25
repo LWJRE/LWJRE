@@ -32,7 +32,7 @@ public class CollisionObject3D extends Node3D {
 
 	@Override
 	protected void onEditorProcess() {
-		DebugRenderer.drawCube(this.globalTransformation().multiply(Mat4f.scaling(this.boundingBox)), 0.0f, 0.5f, 1.0f);
+		DebugRenderer.drawCube(this.globalTransform().multiply(Mat4f.scaling(this.boundingBox)), 0.0f, 0.5f, 1.0f);
 		super.onEditorProcess();
 	}
 
@@ -108,7 +108,7 @@ public class CollisionObject3D extends Node3D {
 	 */
 	public List<Vec3f> getVertices() {
 		Vec3f halfExtents = this.boundingBox.dividedBy(2.0f);
-		Mat4f transform = this.globalTransformation();
+		Mat4f transform = this.globalTransform();
 		return List.of(
 				transform.multiply(-halfExtents.x(), -halfExtents.y(), -halfExtents.z(), 1.0f).xyz(),
 				transform.multiply(-halfExtents.x(), -halfExtents.y(), halfExtents.z(), 1.0f).xyz(),

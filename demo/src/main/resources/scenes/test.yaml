@@ -4,7 +4,7 @@ children:
     override: scenes/dragon.yaml
     properties:
       position: !Vec3f [0.4, 10.0, -2.0]
-#      rotation: !Vec3f [0.0, 0.0, 0.4]
+      rotation: !Vec3f [0.0, 0.0, 0.4]
   camera:
     type: io.github.lwjre.engine.nodes.Camera3D
     properties:
@@ -12,12 +12,11 @@ children:
       rotation: !Vec3f [-0.3, 0.0, 0.0]
       position: !Vec3f [0.0, 5.0, 12.0]
   floor:
-    type: io.github.lwjre.engine.nodes.CollisionObject3D
+    type: io.github.lwjre.engine.nodes.RigidBody3D
     properties:
-      position: !Vec3f [0.0, 0.0, 0.0]
       scale: !Vec3f [10.0, 1.0, 10.0]
-#      acceleration: !Vec3f [0.0, 0.0, 0.0]
-#      mass: 1000.0
+      acceleration: !Vec3f [0.0, 0.0, 0.0]
+      mass: 10000000000.0
     children:
       cube:
         type: io.github.lwjre.engine.nodes.CubeRenderer

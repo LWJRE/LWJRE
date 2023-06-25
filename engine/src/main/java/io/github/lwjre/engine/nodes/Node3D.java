@@ -37,13 +37,13 @@ public class Node3D extends Node {
 
 	/**
 	 * Computes this node's global position.
-	 * If this node's parent is also a {@code Node3D} the global position will be the parent's {@link Node3D#globalTransformation()} multiplied by this node's local position, otherwise it will be equal to the local position.
+	 * If this node's parent is also a {@code Node3D} the global position will be the parent's {@link Node3D#globalTransform()} multiplied by this node's local position, otherwise it will be equal to the local position.
 	 *
 	 * @return A {@link Vec3f} representing this node's global position
 	 */
 	public Vec3f globalPosition() {
 		if(this.getParent() instanceof Node3D parent) {
-			return parent.globalTransformation().multiply(new Vec4f(this.position, 1.0f)).xyz();
+			return parent.globalTransform().multiply(new Vec4f(this.position, 1.0f)).xyz();
 		}
 		return this.position;
 	}
@@ -55,6 +55,10 @@ public class Node3D extends Node {
 	 */
 	public Mat4f localTranslation() {
 		return Mat4f.translation(this.position);
+	}
+
+	public Mat4f inverseTranslation() {
+		return Mat4f.translation(this.position.negated());
 	}
 
 	/**
@@ -128,6 +132,14 @@ public class Node3D extends Node {
 		return this.localRotation();
 	}
 
+	public Mat4f inverseRotation() {
+		return this.localRotation().transposed();
+	}
+
+	public Mat4f inverseGlobalRotation() {
+		return this.globalRotation().transposed();
+	}
+
 	/**
 	 * Computes this node's global scale.
 	 * If this node's parent is also a {@code Node3D} the global scale will be the parent's global scale multiplied by this node's {@link Node3D#scale}, otherwise it will be equal to the local scale.
@@ -146,8 +158,12 @@ public class Node3D extends Node {
 	 *
 	 * @return A {@link Mat4f} representing this node's local scale
 	 */
-	public Mat4f scalingMatrix() {
+	public Mat4f localScaling() {
 		return Mat4f.scaling(this.scale);
+	}
+
+	public Mat4f inverseScaling() {
+		return Mat4f.scaling(this.scale.inverse());
 	}
 
 	/**
@@ -155,20 +171,31 @@ public class Node3D extends Node {
 	 *
 	 * @return A {@link Mat4f} representing this node's local transformation
 	 */
-	public Mat4f localTransformation() {
-		return this.localTranslation().multiply(this.localRotation()).multiply(this.scalingMatrix());
+	public Mat4f localTransform() {
+		return this.localTranslation().multiply(this.localRotation()).multiply(this.localScaling());
+	}
+
+	public Mat4f inverseLocalTransform() {
+		return this.inverseScaling().multiply(this.inverseRotation()).multiply(this.inverseTranslation());
 	}
 
 	/**
 	 * Computes a transformation matrix representing this node's global transformation.
-	 * If this node's parent is also a {@code Node3D} the global transformation will be the parent's global transformation multiplied by this node's {@link Node3D#localTransformation()}, otherwise it will be equal to the local transformation.
+	 * If this node's parent is also a {@code Node3D} the global transformation will be the parent's global transformation multiplied by this node's {@link Node3D#localTransform()}, otherwise it will be equal to the local transformation.
 	 *
 	 * @return A {@link Mat4f} representing this node's local transformation
 	 */
-	public Mat4f globalTransformation() {
+	public Mat4f globalTransform() {
 		if(this.getParent() instanceof Node3D parent) {
-			return parent.globalTransformation().multiply(this.localTransformation());
+			return parent.globalTransform().multiply(this.localTransform());
 		}
-		return this.localTransformation();
+		return this.localTransform();
+	}
+
+	public Mat4f inverseGlobalTransform() {
+		if(this.getParent() instanceof Node3D parent) {
+			return this.inverseLocalTransform().multiply(parent.inverseGlobalTransform());
+		}
+		return this.inverseLocalTransform();
 	}
 }

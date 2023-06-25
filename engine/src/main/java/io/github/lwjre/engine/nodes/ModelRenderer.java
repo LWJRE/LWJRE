@@ -32,7 +32,7 @@ public class ModelRenderer extends Renderer3D {
 	private void addToBatch() {
 		this.model.modelData().forEach((mesh, material) -> RenderingServer.addToBatch(mesh, () -> {
 			this.shader().start();
-			this.shader().setUniform("transformation_matrix", this.globalTransformation());
+			this.shader().setUniform("transformation_matrix", this.globalTransform());
 			this.shader().setUniform("material.ambient", material.ambientColor());
 			this.shader().setUniform("material.diffuse", material.diffuseColor());
 			this.shader().setUniform("material.specular", material.specularColor());
