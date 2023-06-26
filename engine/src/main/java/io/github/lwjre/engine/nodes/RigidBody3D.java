@@ -1,10 +1,10 @@
 package io.github.lwjre.engine.nodes;
 
 import io.github.hexagonnico.vecmatlib.matrix.Mat3f;
+import io.github.hexagonnico.vecmatlib.matrix.Mat4f;
 import io.github.hexagonnico.vecmatlib.vector.Vec3f;
 import io.github.lwjre.engine.annotations.EditorRange;
 import io.github.lwjre.engine.annotations.EditorVariable;
-import io.github.lwjre.engine.physics.CollisionSolver;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -64,14 +64,71 @@ public class RigidBody3D extends DynamicBody3D {
 	@Override
 	protected void onCollision(CollisionObject3D collider, Vec3f normal, float depth) {
 		this.position = this.position.minus(normal.multipliedBy(depth));
-		if(collider instanceof RigidBody3D rigidBody) {
-			CollisionSolver.solve(this, rigidBody, this.intersectionPoints(collider), normal, depth);
-		} else if(collider instanceof DynamicBody3D dynamicBody) {
-			CollisionSolver.solve(this, dynamicBody, this.intersectionPoints(collider), normal, depth);
-		} else if(collider instanceof KinematicBody3D kinematicBody) {
-			CollisionSolver.solve(this, kinematicBody, this.intersectionPoints(collider), normal, depth);
+		Vec3f positionA = this.globalPosition();
+		Vec3f linearVelocityA = this.velocity;
+		Vec3f angularVelocityA = this.angularVelocity;
+		Mat4f inverseTransformA = this.inverseGlobalTransform();
+		// TODO: Strange bounce if RigidBody (this) is rotated and has restitution > 0.0
+		if(collider instanceof KinematicBody3D kinematicBody) {
+			Vec3f linearVelocityB = kinematicBody.velocity;
+			if(kinematicBody instanceof DynamicBody3D dynamicBody) {
+				float restitution = Math.min(this.restitution, dynamicBody.restitution);
+				if(dynamicBody instanceof RigidBody3D rigidBody) {
+					// RigidBody to RigidBody collision
+					Vec3f positionB = rigidBody.globalPosition();
+					Vec3f angularVelocityB = rigidBody.angularVelocity;
+					Mat4f inverseTransformB = rigidBody.inverseGlobalTransform();
+					this.contactPoints(collider).forEach(point -> {
+						Vec3f radiusA = inverseTransformA.multiply(point.minus(positionA), 0.0f).xyz();
+						Vec3f radiusB = inverseTransformB.multiply(point.minus(positionB), 0.0f).xyz();
+						// vr = (vb - va) + (wb X rb - wa X ra)
+						Vec3f relativeVelocity = linearVelocityB.minus(linearVelocityA).plus(angularVelocityB.cross(radiusB).minus(angularVelocityA.cross(radiusA)));
+						if(relativeVelocity.dot(normal) <= 0.0f) {
+							// J = -(1 + e) * vr . n / (1 / ma + 1 / mb + (Ia^-1 * (ra X n) X ra + Ib^-1 * (rb X n) X rb) . n)
+							float impulse = -(1.0f + restitution) * relativeVelocity.dot(normal) / (1.0f / this.mass + 1.0f / rigidBody.mass + this.inverseInertiaTensor().multiply(radiusA.cross(normal)).cross(radiusA).plus(rigidBody.inverseInertiaTensor().multiply(radiusB.cross(normal)).cross(radiusB)).dot(normal));
+							this.applyImpulse(normal.multipliedBy(-impulse), radiusA);
+							rigidBody.applyImpulse(normal.multipliedBy(impulse), radiusB);
+						}
+					});
+				} else {
+					// RigidBody to DynamicBody collision
+					this.contactPoints(collider).forEach(point -> {
+						Vec3f radiusA = inverseTransformA.multiply(point.minus(positionA), 0.0f).xyz();
+						// vr = vb - va + (0 - wa X ra) = vb - va - wa X ra
+						Vec3f relativeVelocity = linearVelocityB.minus(linearVelocityA).minus(angularVelocityA.cross(radiusA));
+						if(relativeVelocity.dot(normal) <= 0.0f) {
+							// J = -(1 + e) * vr . n / (1 / ma + 1 / mb + (I^-1 * (r X n) X r) . n)
+							float impulse = -(1.0f + restitution) * relativeVelocity.dot(normal) / (1.0f / this.mass + 1.0f / dynamicBody.mass + this.inverseInertiaTensor().multiply(radiusA.cross(normal)).cross(radiusA).dot(normal));
+							this.applyImpulse(normal.multipliedBy(-impulse), radiusA);
+							dynamicBody.applyImpulse(normal.multipliedBy(impulse));
+						}
+					});
+				}
+			} else {
+				// RigidBody to KinematicBody collision
+				this.contactPoints(collider).forEach(point -> {
+					Vec3f radiusA = inverseTransformA.multiply(point.minus(positionA), 0.0f).xyz();
+					// vr = vb - va + (0 - wa X ra) = vb - ba - wa X ra
+					Vec3f relativeVelocity = linearVelocityB.minus(linearVelocityA).minus(angularVelocityA.cross(radiusA));
+					if(relativeVelocity.dot(normal) <= 0.0f) {
+						// J = -(1 + e) * v . n / (1 / m + (I^-1 * (r X n) X r) . n)
+						float impulse = -(1.0f + this.restitution) * relativeVelocity.dot(normal) / (1.0f / this.mass + this.inverseInertiaTensor().multiply(radiusA.cross(normal)).cross(radiusA).dot(normal));
+						this.applyImpulse(normal.multipliedBy(-impulse), radiusA);
+					}
+				});
+			}
 		} else {
-			CollisionSolver.solve(this, this.intersectionPoints(collider), normal, depth);
+			// RigidBody to StaticBody collision
+			this.contactPoints(collider).forEach(point -> {
+				Vec3f radiusA = inverseTransformA.multiply(point.minus(positionA), 0.0f).xyz();
+				// vr = 0 - va + (0 - wa X ra) = -va - wa X ra
+				Vec3f relativeVelocity = linearVelocityA.negated().minus(angularVelocityA.cross(radiusA));
+				if(relativeVelocity.dot(normal) <= 0.0f) {
+					// J = -(1 + e) * v . n / (1 / m + (I^-1 * (r X n)) . n)
+					float impulse = -(1.0f + this.restitution) * relativeVelocity.dot(normal) / (1.0f / this.mass + this.inverseInertiaTensor().multiply(radiusA.cross(normal)).cross(radiusA).dot(normal));
+					this.applyImpulse(normal.multipliedBy(-impulse), radiusA);
+				}
+			});
 		}
 	}
 
@@ -81,7 +138,7 @@ public class RigidBody3D extends DynamicBody3D {
 	 * @param collider The other collider
 	 * @return A {@link HashSet} containing the points of intersection
 	 */
-	private ArrayList<Vec3f> intersectionPoints(CollisionObject3D collider) {
+	private ArrayList<Vec3f> contactPoints(CollisionObject3D collider) {
 		ArrayList<Vec3f> intersectionPoints = new ArrayList<>();
 		contactPoints(this.getEdges(), collider.getFaces(), intersectionPoints);
 		contactPoints(collider.getEdges(), this.getFaces(), intersectionPoints);
