@@ -6,6 +6,7 @@ import io.github.lwjre.engine.utils.ReflectionException;
 import io.github.lwjre.engine.utils.YamlSerializer;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * Class that represents a {@link Node} as a resource.
@@ -122,5 +123,25 @@ public final class NodeResource {
 		} catch (ReflectionException e) {
 			throw new RuntimeException("Could not instantiate " + this, e);
 		}
+	}
+
+	@Override
+	public boolean equals(Object object) {
+		if(this == object) {
+			return true;
+		} else if(object == null || getClass() != object.getClass()) {
+			return false;
+		} else {
+			NodeResource that = (NodeResource) object;
+			return Objects.equals(this.type, that.type) &&
+				Objects.equals(this.override, that.override) &&
+				Objects.equals(this.properties, that.properties) &&
+				Objects.equals(this.children, that.children);
+		}
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(this.type, this.override, this.properties, this.children);
 	}
 }
