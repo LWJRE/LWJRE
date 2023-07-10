@@ -3,12 +3,11 @@ package io.github.lwjre.engine;
 import io.github.hexagonnico.vecmatlib.color.Color3f;
 import io.github.hexagonnico.vecmatlib.color.Color4f;
 import io.github.hexagonnico.vecmatlib.vector.*;
-import io.github.lwjre.engine.utils.FileUtils;
+import io.github.lwjre.engine.utils.YamlParser;
 
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Properties;
-import java.util.function.Function;
 
 /**
  * Static class to store application properties.
@@ -18,33 +17,83 @@ import java.util.function.Function;
  */
 public final class ApplicationProperties {
 
-	/** Application properties */
-	private static final Properties PROPERTIES = FileUtils.readPropertiesResource("application.properties");
+	/** Stores the application properties */
+	private static final HashMap<String, Object> PROPERTIES = new HashMap<>();
+
+	static {
+		((Map<?, ?>) YamlParser.parseResource("application.yaml")).forEach((key, value) -> {
+			if(value instanceof Map<?, ?>) {
+				setProperties(key.toString(), (Map<?, ?>) value);
+			} else {
+				PROPERTIES.put(key.toString(), value);
+			}
+		});
+	}
+
+	/**
+	 * Stores the properties of the given map.
+	 * Called from the static initializer above.
+	 *
+	 * @param name Previous key
+	 * @param map Map to read
+	 */
+	private static void setProperties(String name, Map<?, ?> map) {
+		map.forEach((key, value) -> {
+			if(value instanceof Map<?, ?>) {
+				setProperties(name + '.' + key, (Map<?, ?>) value);
+			} else {
+				PROPERTIES.put(name + '.' + key, value);
+			}
+		});
+	}
+
+	/**
+	 * Gets a generic property.
+	 *
+	 * @param key Key of the property to get
+	 * @param type Class of the property
+	 * @return The requested property
+	 * @param <T> Type of the property to get
+	 * @throws NoSuchElementException If there is no property with the given key
+	 */
+	private static <T> T get(String key, Class<T> type) {
+		if(PROPERTIES.containsKey(key)) {
+			return type.cast(PROPERTIES.get(key));
+		}
+		throw new NoSuchElementException("There is no property with key " + key);
+	}
+
+	/**
+	 * Gets a generic property.
+	 *
+	 * @param key Key of the property to get
+	 * @param type Class of the property
+	 * @param defaultValue Default value to get in case the property is not defined
+	 * @return The requested property or the default value if that property is not defined
+	 * @param <T> Type of the property to get
+	 */
+	private static <T> T get(String key, Class<T> type, T defaultValue) {
+		if(PROPERTIES.containsKey(key)) {
+			Object value = PROPERTIES.get(key);
+			if(value.getClass().isAssignableFrom(type)) {
+				return type.cast(value);
+			}
+		}
+		return defaultValue;
+	}
 
 	/**
 	 * Gets a string from application properties.
 	 *
 	 * @param key Key of the property to get
 	 * @return The requested property
-	 * @throws NoSuchElementException if there is no property with the given key
+	 * @throws NoSuchElementException If there is no property with the given key
 	 */
 	public static String getString(String key) {
-		String property = PROPERTIES.getProperty(key);
-		if(property == null)
-			throw new NoSuchElementException("There is no property with key " + key);
-		return property;
-	}
-
-	/**
-	 * Gets a property and applies the given function to it.
-	 *
-	 * @param key Key of the property to get
-	 * @param function The function to apply
-	 * @return The requested property
-	 * @param <T> Return type of the function
-	 */
-	private static <T> T get(String key, Function<String, T> function) {
-		return function.apply(getString(key));
+		if(PROPERTIES.containsKey(key)) {
+			return PROPERTIES.get(key).toString();
+		}
+		throw new NoSuchElementException("There is no property with key " + key);
 	}
 
 	/**
@@ -55,20 +104,22 @@ public final class ApplicationProperties {
 	 * @return The requested property or the default value if that property is not defined
 	 */
 	public static String get(String key, String defaultValue) {
-		String property = PROPERTIES.getProperty(key);
-		return property != null ? property : defaultValue;
+		if(PROPERTIES.containsKey(key)) {
+			return PROPERTIES.get(key).toString();
+		}
+		return defaultValue;
 	}
 
 	/**
-	 * Gets an int from application properties.
+	 * Gets an integer from application properties.
 	 *
 	 * @param key Key of the property to get
 	 * @return The requested property
-	 * @throws NoSuchElementException if there is no property with the given key
-	 * @throws NumberFormatException if the given key does not map to an integer
+	 * @throws NoSuchElementException If there is no property with the given key
+	 * @throws ClassCastException If this property is not an integer
 	 */
 	public static int getInt(String key) {
-		return get(key, Integer::parseInt);
+		return get(key, Integer.class);
 	}
 
 	/**
@@ -79,13 +130,7 @@ public final class ApplicationProperties {
 	 * @return The requested property or the default value if that property is not defined
 	 */
 	public static int get(String key, int defaultValue) {
-		String property = PROPERTIES.getProperty(key);
-		if(property != null) try {
-			return Integer.parseInt(property);
-		} catch (NumberFormatException e) {
-			return defaultValue;
-		}
-		return defaultValue;
+		return get(key, Integer.class, defaultValue);
 	}
 
 	/**
@@ -93,10 +138,11 @@ public final class ApplicationProperties {
 	 *
 	 * @param key Key of the property to get
 	 * @return The requested property
-	 * @throws NoSuchElementException if there is no property with the given key
+	 * @throws NoSuchElementException If there is no property with the given key
+	 * @throws ClassCastException If this property is not a boolean
 	 */
 	public static boolean getBoolean(String key) {
-		return get(key, Boolean::parseBoolean);
+		return get(key, Boolean.class);
 	}
 
 	/**
@@ -107,11 +153,7 @@ public final class ApplicationProperties {
 	 * @return The requested property or the default value if that property is not defined
 	 */
 	public static boolean get(String key, boolean defaultValue) {
-		String property = PROPERTIES.getProperty(key);
-		if(property != null) {
-			return Boolean.parseBoolean(property);
-		}
-		return defaultValue;
+		return get(key, Boolean.class, defaultValue);
 	}
 
 	/**
@@ -122,15 +164,7 @@ public final class ApplicationProperties {
 	 * @return The requested property or the default value if that property is not defined
 	 */
 	public static float get(String key, float defaultValue) {
-		String property = PROPERTIES.getProperty(key);
-		if(property != null) {
-			try {
-				return Float.parseFloat(property);
-			} catch (NumberFormatException e) {
-				return defaultValue;
-			}
-		}
-		return defaultValue;
+		return get(key, Float.class, defaultValue);
 	}
 
 	/**
@@ -138,240 +172,194 @@ public final class ApplicationProperties {
 	 *
 	 * @param key Key of the property to get
 	 * @return The requested property
-	 * @throws NoSuchElementException if there is no property with the given key
-	 * @throws NumberFormatException if the given key does not map to a float
+	 * @throws NoSuchElementException If there is no property with the given key
+	 * @throws ClassCastException If this property is not a float
 	 */
 	public static float getFloat(String key) {
-		return get(key, Float::parseFloat);
+		return get(key, Float.class);
 	}
 
 	/**
-	 * Simplifies getting vector types.
-	 *
-	 * @param key Key of the property to get
-	 * @param function The constructor function to apply
-	 * @return The requested property
-	 * @param <T> Return type of the function
-	 */
-	private static <T> T getArray(String key, Function<String[], T> function) {
-		String property = getString(key);
-		String[] values = Arrays.stream(property.split(",")).map(String::trim).toArray(String[]::new);
-		return function.apply(values);
-	}
-
-	/**
-	 * Simplifies getting vector types.
-	 *
-	 * @param key Key of the property to get
-	 * @param defaultValue Default value to get in case the property is not defined
-	 * @param expectedLength Expected length of the array
-	 * @param function The constructor function to apply
-	 * @return The requested property
-	 * @param <T> Return type of the function
-	 */
-	private static <T> T getArray(String key, T defaultValue, int expectedLength, Function<String[], T> function) {
-		String property = PROPERTIES.getProperty(key);
-		if(property == null) {
-			return defaultValue;
-		}
-		String[] values = property.split(",");
-		if(values.length == expectedLength) try {
-			return function.apply(values);
-		} catch (NumberFormatException e) {
-			return defaultValue;
-		}
-		return defaultValue;
-	}
-
-	/**
-	 * Gets a float vector from application properties.
+	 * Gets a {@link Vec2f} from application properties.
 	 *
 	 * @param key Key of the property to get
 	 * @param defaultValue Default value to get in case the property is not defined
 	 * @return The requested property or the default value if that property is not defined
 	 */
 	public static Vec2f get(String key, Vec2f defaultValue) {
-		return getArray(key, defaultValue, 2, values -> new Vec2f(Float.parseFloat(values[0]), Float.parseFloat(values[1])));
+		return get(key, Vec2f.class, defaultValue);
 	}
 
 	/**
-	 * Gets a float vector from application properties.
+	 * Gets a {@link Vec2f} from application properties.
 	 *
 	 * @param key Key of the property to get
 	 * @return The requested property
-	 * @throws NoSuchElementException if there is no property with the given key
-	 * @throws NumberFormatException if the given key does not map to a float vector
-	 * @throws ArrayIndexOutOfBoundsException if the vector has a smaller dimension
+	 * @throws NoSuchElementException If there is no property with the given key
+	 * @throws ClassCastException If this property is not a {@code Vec2f}
 	 */
 	public static Vec2f getVec2f(String key) {
-		return getArray(key, values -> new Vec2f(Float.parseFloat(values[0]), Float.parseFloat(values[1])));
+		return get(key, Vec2f.class);
 	}
 
 	/**
-	 * Gets a float vector from application properties.
+	 * Gets a {@link Vec3f} from application properties.
 	 *
 	 * @param key Key of the property to get
 	 * @param defaultValue Default value to get in case the property is not defined
 	 * @return The requested property or the default value if that property is not defined
 	 */
 	public static Vec3f get(String key, Vec3f defaultValue) {
-		return getArray(key, defaultValue, 3, values -> new Vec3f(Float.parseFloat(values[0]), Float.parseFloat(values[1]), Float.parseFloat(values[2])));
+		return get(key, Vec3f.class, defaultValue);
 	}
 
 	/**
-	 * Gets a float vector from application properties.
+	 * Gets a {@link Vec3f} from application properties.
 	 *
 	 * @param key Key of the property to get
 	 * @return The requested property
-	 * @throws NoSuchElementException if there is no property with the given key
-	 * @throws NumberFormatException if the given key does not map to a float vector
-	 * @throws ArrayIndexOutOfBoundsException if the vector has a smaller dimension
+	 * @throws NoSuchElementException If there is no property with the given key
+	 * @throws ClassCastException If this property is not a {@code Vec3f}
 	 */
 	public static Vec3f getVec3f(String key) {
-		return getArray(key, values -> new Vec3f(Float.parseFloat(values[0]), Float.parseFloat(values[1]), Float.parseFloat(values[2])));
+		return get(key, Vec3f.class);
 	}
 
 	/**
-	 * Gets a float vector from application properties.
+	 * Gets a {@link Vec4f} from application properties.
 	 *
 	 * @param key Key of the property to get
 	 * @param defaultValue Default value to get in case the property is not defined
 	 * @return The requested property or the default value if that property is not defined
 	 */
 	public static Vec4f get(String key, Vec4f defaultValue) {
-		return getArray(key, defaultValue, 4, values -> new Vec4f(Float.parseFloat(values[0]), Float.parseFloat(values[1]), Float.parseFloat(values[2]), Float.parseFloat(values[3])));
+		return get(key, Vec4f.class, defaultValue);
 	}
 
 	/**
-	 * Gets a float vector from application properties.
+	 * Gets a {@link Vec4f} from application properties.
 	 *
 	 * @param key Key of the property to get
 	 * @return The requested property
-	 * @throws NoSuchElementException if there is no property with the given key
-	 * @throws NumberFormatException if the given key does not map to a float vector
-	 * @throws ArrayIndexOutOfBoundsException if the vector has a smaller dimension
+	 * @throws NoSuchElementException If there is no property with the given key
+	 * @throws ClassCastException If this property is not a {@code Vec4f}
 	 */
 	public static Vec4f getVec4f(String key) {
-		return getArray(key, values -> new Vec4f(Float.parseFloat(values[0]), Float.parseFloat(values[1]), Float.parseFloat(values[2]), Float.parseFloat(values[3])));
+		return get(key, Vec4f.class);
 	}
 
 	/**
-	 * Gets an int vector from application properties.
+	 * Gets a {@link Vec2i} from application properties.
 	 *
 	 * @param key Key of the property to get
 	 * @param defaultValue Default value to get in case the property is not defined
 	 * @return The requested property or the default value if that property is not defined
 	 */
 	public static Vec2i get(String key, Vec2i defaultValue) {
-		return getArray(key, defaultValue, 2, values -> new Vec2i(Integer.parseInt(values[0]), Integer.parseInt(values[1])));
+		return get(key, Vec2i.class, defaultValue);
 	}
 
 	/**
-	 * Gets an int vector from application properties.
+	 * Gets a {@link Vec2i} from application properties.
 	 *
 	 * @param key Key of the property to get
 	 * @return The requested property
-	 * @throws NoSuchElementException if there is no property with the given key
-	 * @throws NumberFormatException if the given key does not map to an int vector
-	 * @throws ArrayIndexOutOfBoundsException if the vector has a smaller dimension
+	 * @throws NoSuchElementException If there is no property with the given key
+	 * @throws ClassCastException If this property is not a {@code Vec2i}
 	 */
 	public static Vec2i getVec2i(String key) {
-		return getArray(key, values -> new Vec2i(Integer.parseInt(values[0]), Integer.parseInt(values[1])));
+		return get(key, Vec2i.class);
 	}
 
 	/**
-	 * Gets an int vector from application properties.
+	 * Gets a {@link Vec3i} from application properties.
 	 *
 	 * @param key Key of the property to get
 	 * @param defaultValue Default value to get in case the property is not defined
 	 * @return The requested property or the default value if that property is not defined
 	 */
 	public static Vec3i get(String key, Vec3i defaultValue) {
-		return getArray(key, defaultValue, 3, values -> new Vec3i(Integer.parseInt(values[0]), Integer.parseInt(values[1]), Integer.parseInt(values[2])));
+		return get(key, Vec3i.class, defaultValue);
 	}
 
 	/**
-	 * Gets an int vector from application properties.
+	 * Gets a {@link Vec3i} from application properties.
 	 *
 	 * @param key Key of the property to get
 	 * @return The requested property
-	 * @throws NoSuchElementException if there is no property with the given key
-	 * @throws NumberFormatException if the given key does not map to an int vector
-	 * @throws ArrayIndexOutOfBoundsException if the vector has a smaller dimension
+	 * @throws NoSuchElementException If there is no property with the given key
+	 * @throws ClassCastException If this property is not a {@code Vec3i}
 	 */
 	public static Vec3i getVec3i(String key) {
-		return getArray(key, values -> new Vec3i(Integer.parseInt(values[0]), Integer.parseInt(values[1]), Integer.parseInt(values[2])));
+		return get(key, Vec3i.class);
 	}
 
 	/**
-	 * Gets an int vector from application properties.
+	 * Gets a {@link Vec4i} from application properties.
 	 *
 	 * @param key Key of the property to get
 	 * @param defaultValue Default value to get in case the property is not defined
 	 * @return The requested property or the default value if that property is not defined
 	 */
 	public static Vec4i get(String key, Vec4i defaultValue) {
-		return getArray(key, defaultValue, 4, values -> new Vec4i(Integer.parseInt(values[0]), Integer.parseInt(values[1]), Integer.parseInt(values[2]), Integer.parseInt(values[3])));
+		return get(key, Vec4i.class, defaultValue);
 	}
 
 	/**
-	 * Gets an int vector from application properties.
+	 * Gets a {@link Vec4i} from application properties.
 	 *
 	 * @param key Key of the property to get
 	 * @return The requested property
-	 * @throws NoSuchElementException if there is no property with the given key
-	 * @throws NumberFormatException if the given key does not map to an int vector
-	 * @throws ArrayIndexOutOfBoundsException if the vector has a smaller dimension
+	 * @throws NoSuchElementException If there is no property with the given key
+	 * @throws ClassCastException If this property is not a {@code Vec4i}
 	 */
 	public static Vec4i getVec4i(String key) {
-		return getArray(key, values -> new Vec4i(Integer.parseInt(values[0]), Integer.parseInt(values[1]), Integer.parseInt(values[2]), Integer.parseInt(values[3])));
+		return get(key, Vec4i.class);
 	}
 
 	/**
-	 * Gets a color from application properties.
+	 * Gets a {@link Color3f} from application properties.
 	 *
 	 * @param key Key of the property to get
 	 * @param defaultValue Default value to get in case the property is not defined
 	 * @return The requested property or the default value if that property is not defined
 	 */
 	public static Color3f get(String key, Color3f defaultValue) {
-		return getArray(key, defaultValue, 3, values -> new Color3f(Float.parseFloat(values[0]), Float.parseFloat(values[1]), Float.parseFloat(values[2])));
+		return get(key, Color3f.class, defaultValue);
 	}
 
 	/**
-	 * Gets a color from application properties.
+	 * Gets a {@link Color3f} from application properties.
 	 *
 	 * @param key Key of the property to get
 	 * @return The requested property
-	 * @throws NoSuchElementException if there is no property with the given key
-	 * @throws NumberFormatException if the given key does not map to a float vector
-	 * @throws ArrayIndexOutOfBoundsException if the vector has a smaller dimension
+	 * @throws NoSuchElementException If there is no property with the given key
+	 * @throws ClassCastException If this property is not a {@code Color3f}
 	 */
 	public static Color3f getColor3f(String key) {
-		return getArray(key, values -> new Color3f(Float.parseFloat(values[0]), Float.parseFloat(values[1]), Float.parseFloat(values[2])));
+		return get(key, Color3f.class);
 	}
 
 	/**
-	 * Gets a color from application properties.
+	 * Gets a {@link Color4f} from application properties.
 	 *
 	 * @param key Key of the property to get
 	 * @param defaultValue Default value to get in case the property is not defined
 	 * @return The requested property or the default value if that property is not defined
 	 */
 	public static Color4f get(String key, Color4f defaultValue) {
-		return getArray(key, defaultValue, 4, values -> new Color4f(Float.parseFloat(values[0]), Float.parseFloat(values[1]), Float.parseFloat(values[2]), Float.parseFloat(values[3])));
+		return get(key, Color4f.class, defaultValue);
 	}
 
 	/**
-	 * Gets a color from application properties.
+	 * Gets a {@link Color4f} from application properties.
 	 *
 	 * @param key Key of the property to get
 	 * @return The requested property
-	 * @throws NoSuchElementException if there is no property with the given key
-	 * @throws NumberFormatException if the given key does not map to a float vector
-	 * @throws ArrayIndexOutOfBoundsException if the vector has a smaller dimension
+	 * @throws NoSuchElementException If there is no property with the given key
+	 * @throws ClassCastException If this property is not a {@code Color4f}
 	 */
 	public static Color4f getColor4f(String key) {
-		return getArray(key, values -> new Color4f(Float.parseFloat(values[0]), Float.parseFloat(values[1]), Float.parseFloat(values[2]), Float.parseFloat(values[3])));
+		return get(key, Color4f.class);
 	}
 }
