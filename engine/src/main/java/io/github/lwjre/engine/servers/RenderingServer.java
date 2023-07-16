@@ -2,7 +2,8 @@ package io.github.lwjre.engine.servers;
 
 import io.github.hexagonnico.vecmatlib.color.Color3f;
 import io.github.hexagonnico.vecmatlib.color.Color4f;
-import io.github.lwjre.engine.ApplicationProperties;
+import io.github.hexagonnico.vecmatlib.vector.Vec2i;
+import io.github.lwjre.engine.ApplicationSettings;
 import io.github.lwjre.engine.nodes.PointLight3D;
 import io.github.lwjre.engine.resources.GLResource;
 import io.github.lwjre.engine.resources.Mesh;
@@ -12,7 +13,6 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.function.Consumer;
 
 public class RenderingServer implements EngineServer {
 
@@ -51,12 +51,12 @@ public class RenderingServer implements EngineServer {
 	@Override
 	public void init() {
 		GL.createCapabilities();
-		setClearColor(ApplicationProperties.get("rendering.options.defaultClearColor", new Color4f(0.3f, 0.3f, 0.3f, 1.0f)));
-		deptTest(ApplicationProperties.get("rendering.options.depthTest", true));
-		backFaceCulling(ApplicationProperties.get("rendering.options.backFaceCulling", true));
-		lineWidth(ApplicationProperties.get("rendering.options.lineWidth", 1.0f));
-		fillPolygons(ApplicationProperties.get("rendering.options.fillPolygons", true));
-		blend(ApplicationProperties.get("rendering.options.blend", false));
+		setClearColor(ApplicationSettings.get("rendering.clearColor", new Color4f(0.3f, 0.3f, 0.3f, 1.0f)));
+		deptTest(ApplicationSettings.get("rendering.depthTest", true));
+		backFaceCulling(ApplicationSettings.get("rendering.backFaceCulling", true));
+		lineWidth(ApplicationSettings.get("rendering.lineWidth", 1.0f));
+		fillPolygons(ApplicationSettings.get("rendering.fillPolygons", true));
+		blend(ApplicationSettings.get("rendering.blend", false));
 	}
 
 	@Override
@@ -73,7 +73,7 @@ public class RenderingServer implements EngineServer {
 	public static void render() {
 		int i = 0;
 		for(PointLight3D light : LIGHTS) {
-			if(i == ApplicationProperties.get("rendering.shaders.lights", LIGHTS.size()))
+			if(i == ApplicationSettings.get("shaders.lights", LIGHTS.size()))
 				break;
 			Shader.setUniformStatic("point_lights[" + i + "].position", light.globalPosition());
 			Shader.setUniformStatic("point_lights[" + i + "].ambient", light.ambient.multiply(light.energy));
@@ -232,14 +232,13 @@ public class RenderingServer implements EngineServer {
 	 * @param height New window height
 	 */
 	public static void resizeViewport(int width, int height) {
-		if(ApplicationProperties.get("rendering.viewport.scale", true)) {
-			float targetWidth = ApplicationProperties.get("window.viewport.width", 400);
-			float targetHeight = ApplicationProperties.get("window.viewport.height", 300);
+		if(ApplicationSettings.get("rendering.viewportScaling", true)) {
+			Vec2i targetViewport = ApplicationSettings.get("window.viewport", new Vec2i(400, 300));
 			float aspectWidth = width;
-			float aspectHeight = width / (targetWidth / targetHeight);
+			float aspectHeight = width / ((float) targetViewport.x() / targetViewport.y());
 			if(aspectHeight > height) {
 				aspectHeight = height;
-				aspectWidth = aspectHeight * (targetWidth / targetHeight);
+				aspectWidth = aspectHeight * ((float) targetViewport.x() / targetViewport.y());
 			}
 			float viewportX = (width / 2.0f) - (aspectWidth / 2.0f);
 			float viewportY = (height / 2.0f) - (aspectHeight / 2.0f);

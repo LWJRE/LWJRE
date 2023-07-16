@@ -1,8 +1,9 @@
 package io.github.lwjre.engine.nodes;
 
 import io.github.hexagonnico.vecmatlib.matrix.Mat4f;
+import io.github.hexagonnico.vecmatlib.vector.Vec2i;
 import io.github.hexagonnico.vecmatlib.vector.Vec3f;
-import io.github.lwjre.engine.ApplicationProperties;
+import io.github.lwjre.engine.ApplicationSettings;
 import io.github.lwjre.engine.annotations.EditorAngle;
 import io.github.lwjre.engine.annotations.EditorRange;
 import io.github.lwjre.engine.annotations.EditorVariable;
@@ -212,9 +213,8 @@ public class Camera3D extends Node3D {
 	 */
 	public Mat4f projectionMatrix() {
 		float focalLength = (float) (1.0f / Math.tan(this.fov / 2.0f));
-		float targetWidth = ApplicationProperties.get("window.viewport.width", 400);
-		float targetHeight = ApplicationProperties.get("window.viewport.height", 300);
-		float aspectRatio = ApplicationProperties.get("rendering.viewport.scale", true) ? (targetWidth / targetHeight) : DisplayServer.window().aspectRatio();
+		Vec2i targetSize = ApplicationSettings.get("window.viewport", new Vec2i(400, 300));
+		float aspectRatio = ApplicationSettings.get("rendering.viewportScaling", true) ? (float) targetSize.x() / targetSize.y() : DisplayServer.window().aspectRatio();
 		return new Mat4f(
 				focalLength, 0.0f, 0.0f, 0.0f,
 				0.0f, focalLength * aspectRatio, 0.0f, 0.0f,

@@ -1,0 +1,21 @@
+general:
+  startScene: scenes/test.yaml
+window:
+  title: Demo project
+  viewport: !Vec2i [1280, 720]
+  visible: false
+  resizable: true
+  decorated: true
+  focused: true
+  maximized: false
+rendering:
+  clearColor: !Color4f [0.1, 0.5, 1.0, 1.0]
+  depthTest: true
+  backFaceCulling: true
+  lineWidth: 1.0
+  fillPolygons: true
+  blend: false
+  viewportScaling: true
+shaders:
+  version: version 450
+  lights: 256

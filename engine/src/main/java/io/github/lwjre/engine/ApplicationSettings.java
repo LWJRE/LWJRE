@@ -9,40 +9,34 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-/**
- * Static class to store application properties.
- * Reads the {@code application.properties} file at the root of the classpath.
- *
- * @author Nico
- */
-public final class ApplicationProperties {
+public final class ApplicationSettings {
 
-	/** Stores the application properties */
-	private static final HashMap<String, Object> PROPERTIES = new HashMap<>();
+	/** Stores the application settings */
+	private static final HashMap<String, Object> SETTINGS = new HashMap<>();
 
 	static {
-		((Map<?, ?>) YamlParser.parseResource("application.yaml")).forEach((key, value) -> {
+		((Map<?, ?>) YamlParser.parseResource("settings.yaml")).forEach((key, value) -> {
 			if(value instanceof Map<?, ?>) {
-				setProperties(key.toString(), (Map<?, ?>) value);
+				setSettings(key.toString(), (Map<?, ?>) value);
 			} else {
-				PROPERTIES.put(key.toString(), value);
+				SETTINGS.put(key.toString(), value);
 			}
 		});
 	}
 
 	/**
-	 * Stores the properties of the given map.
+	 * Stores the settings of the given map.
 	 * Called from the static initializer above.
 	 *
 	 * @param name Previous key
 	 * @param map Map to read
 	 */
-	private static void setProperties(String name, Map<?, ?> map) {
+	private static void setSettings(String name, Map<?, ?> map) {
 		map.forEach((key, value) -> {
 			if(value instanceof Map<?, ?>) {
-				setProperties(name + '.' + key, (Map<?, ?>) value);
+				setSettings(name + '.' + key, (Map<?, ?>) value);
 			} else {
-				PROPERTIES.put(name + '.' + key, value);
+				SETTINGS.put(name + '.' + key, value);
 			}
 		});
 	}
@@ -57,8 +51,8 @@ public final class ApplicationProperties {
 	 * @throws NoSuchElementException If there is no property with the given key
 	 */
 	private static <T> T get(String key, Class<T> type) {
-		if(PROPERTIES.containsKey(key)) {
-			return type.cast(PROPERTIES.get(key));
+		if(SETTINGS.containsKey(key)) {
+			return type.cast(SETTINGS.get(key));
 		}
 		throw new NoSuchElementException("There is no property with key " + key);
 	}
@@ -73,8 +67,8 @@ public final class ApplicationProperties {
 	 * @param <T> Type of the property to get
 	 */
 	private static <T> T get(String key, Class<T> type, T defaultValue) {
-		if(PROPERTIES.containsKey(key)) {
-			Object value = PROPERTIES.get(key);
+		if(SETTINGS.containsKey(key)) {
+			Object value = SETTINGS.get(key);
 			if(value.getClass().isAssignableFrom(type)) {
 				return type.cast(value);
 			}
@@ -83,35 +77,35 @@ public final class ApplicationProperties {
 	}
 
 	/**
-	 * Gets a string from application properties.
+	 * Gets a string from application settings.
 	 *
 	 * @param key Key of the property to get
 	 * @return The requested property
 	 * @throws NoSuchElementException If there is no property with the given key
 	 */
 	public static String getString(String key) {
-		if(PROPERTIES.containsKey(key)) {
-			return PROPERTIES.get(key).toString();
+		if(SETTINGS.containsKey(key)) {
+			return SETTINGS.get(key).toString();
 		}
 		throw new NoSuchElementException("There is no property with key " + key);
 	}
 
 	/**
-	 * Gets a string from application properties.
+	 * Gets a string from application settings.
 	 *
 	 * @param key Key of the property to get
 	 * @param defaultValue Default value to get in case the property is not defined
 	 * @return The requested property or the default value if that property is not defined
 	 */
 	public static String get(String key, String defaultValue) {
-		if(PROPERTIES.containsKey(key)) {
-			return PROPERTIES.get(key).toString();
+		if(SETTINGS.containsKey(key)) {
+			return SETTINGS.get(key).toString();
 		}
 		return defaultValue;
 	}
 
 	/**
-	 * Gets an integer from application properties.
+	 * Gets an integer from application settings.
 	 *
 	 * @param key Key of the property to get
 	 * @return The requested property
@@ -123,7 +117,7 @@ public final class ApplicationProperties {
 	}
 
 	/**
-	 * Gets an integer from application properties.
+	 * Gets an integer from application settings.
 	 *
 	 * @param key Key of the property to get
 	 * @param defaultValue Default value to get in case the property is not defined
@@ -134,7 +128,7 @@ public final class ApplicationProperties {
 	}
 
 	/**
-	 * Gets a boolean from application properties.
+	 * Gets a boolean from application settings.
 	 *
 	 * @param key Key of the property to get
 	 * @return The requested property
@@ -146,7 +140,7 @@ public final class ApplicationProperties {
 	}
 
 	/**
-	 * Gets a boolean from application properties.
+	 * Gets a boolean from application settings.
 	 *
 	 * @param key Key of the property to get
 	 * @param defaultValue Default value to get in case the property is not defined
@@ -157,7 +151,7 @@ public final class ApplicationProperties {
 	}
 
 	/**
-	 * Gets a float from application properties.
+	 * Gets a float from application settings.
 	 *
 	 * @param key Key of the property to get
 	 * @param defaultValue Default value to get in case the property is not defined
@@ -168,7 +162,7 @@ public final class ApplicationProperties {
 	}
 
 	/**
-	 * Gets a float from application properties.
+	 * Gets a float from application settings.
 	 *
 	 * @param key Key of the property to get
 	 * @return The requested property
@@ -180,7 +174,7 @@ public final class ApplicationProperties {
 	}
 
 	/**
-	 * Gets a {@link Vec2f} from application properties.
+	 * Gets a {@link Vec2f} from application settings.
 	 *
 	 * @param key Key of the property to get
 	 * @param defaultValue Default value to get in case the property is not defined
@@ -191,7 +185,7 @@ public final class ApplicationProperties {
 	}
 
 	/**
-	 * Gets a {@link Vec2f} from application properties.
+	 * Gets a {@link Vec2f} from application settings.
 	 *
 	 * @param key Key of the property to get
 	 * @return The requested property
@@ -203,7 +197,7 @@ public final class ApplicationProperties {
 	}
 
 	/**
-	 * Gets a {@link Vec3f} from application properties.
+	 * Gets a {@link Vec3f} from application settings.
 	 *
 	 * @param key Key of the property to get
 	 * @param defaultValue Default value to get in case the property is not defined
@@ -214,7 +208,7 @@ public final class ApplicationProperties {
 	}
 
 	/**
-	 * Gets a {@link Vec3f} from application properties.
+	 * Gets a {@link Vec3f} from application settings.
 	 *
 	 * @param key Key of the property to get
 	 * @return The requested property
@@ -226,7 +220,7 @@ public final class ApplicationProperties {
 	}
 
 	/**
-	 * Gets a {@link Vec4f} from application properties.
+	 * Gets a {@link Vec4f} from application settings.
 	 *
 	 * @param key Key of the property to get
 	 * @param defaultValue Default value to get in case the property is not defined
@@ -237,7 +231,7 @@ public final class ApplicationProperties {
 	}
 
 	/**
-	 * Gets a {@link Vec4f} from application properties.
+	 * Gets a {@link Vec4f} from application settings.
 	 *
 	 * @param key Key of the property to get
 	 * @return The requested property
@@ -249,7 +243,7 @@ public final class ApplicationProperties {
 	}
 
 	/**
-	 * Gets a {@link Vec2i} from application properties.
+	 * Gets a {@link Vec2i} from application settings.
 	 *
 	 * @param key Key of the property to get
 	 * @param defaultValue Default value to get in case the property is not defined
@@ -260,7 +254,7 @@ public final class ApplicationProperties {
 	}
 
 	/**
-	 * Gets a {@link Vec2i} from application properties.
+	 * Gets a {@link Vec2i} from application settings.
 	 *
 	 * @param key Key of the property to get
 	 * @return The requested property
@@ -272,7 +266,7 @@ public final class ApplicationProperties {
 	}
 
 	/**
-	 * Gets a {@link Vec3i} from application properties.
+	 * Gets a {@link Vec3i} from application settings.
 	 *
 	 * @param key Key of the property to get
 	 * @param defaultValue Default value to get in case the property is not defined
@@ -283,7 +277,7 @@ public final class ApplicationProperties {
 	}
 
 	/**
-	 * Gets a {@link Vec3i} from application properties.
+	 * Gets a {@link Vec3i} from application settings.
 	 *
 	 * @param key Key of the property to get
 	 * @return The requested property
@@ -295,7 +289,7 @@ public final class ApplicationProperties {
 	}
 
 	/**
-	 * Gets a {@link Vec4i} from application properties.
+	 * Gets a {@link Vec4i} from application settings.
 	 *
 	 * @param key Key of the property to get
 	 * @param defaultValue Default value to get in case the property is not defined
@@ -306,7 +300,7 @@ public final class ApplicationProperties {
 	}
 
 	/**
-	 * Gets a {@link Vec4i} from application properties.
+	 * Gets a {@link Vec4i} from application settings.
 	 *
 	 * @param key Key of the property to get
 	 * @return The requested property
@@ -318,7 +312,7 @@ public final class ApplicationProperties {
 	}
 
 	/**
-	 * Gets a {@link Color3f} from application properties.
+	 * Gets a {@link Color3f} from application settings.
 	 *
 	 * @param key Key of the property to get
 	 * @param defaultValue Default value to get in case the property is not defined
@@ -329,7 +323,7 @@ public final class ApplicationProperties {
 	}
 
 	/**
-	 * Gets a {@link Color3f} from application properties.
+	 * Gets a {@link Color3f} from application settings.
 	 *
 	 * @param key Key of the property to get
 	 * @return The requested property
@@ -341,7 +335,7 @@ public final class ApplicationProperties {
 	}
 
 	/**
-	 * Gets a {@link Color4f} from application properties.
+	 * Gets a {@link Color4f} from application settings.
 	 *
 	 * @param key Key of the property to get
 	 * @param defaultValue Default value to get in case the property is not defined
@@ -352,7 +346,7 @@ public final class ApplicationProperties {
 	}
 
 	/**
-	 * Gets a {@link Color4f} from application properties.
+	 * Gets a {@link Color4f} from application settings.
 	 *
 	 * @param key Key of the property to get
 	 * @return The requested property

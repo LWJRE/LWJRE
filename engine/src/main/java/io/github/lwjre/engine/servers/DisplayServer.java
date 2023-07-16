@@ -1,7 +1,8 @@
 package io.github.lwjre.engine.servers;
 
+import io.github.hexagonnico.vecmatlib.vector.Vec2i;
 import io.github.lwjre.engine.Application;
-import io.github.lwjre.engine.ApplicationProperties;
+import io.github.lwjre.engine.ApplicationSettings;
 import io.github.lwjre.engine.display.Window;
 import io.github.lwjre.engine.display.WindowOptions;
 import io.github.lwjre.engine.input.Keyboard;
@@ -21,14 +22,16 @@ public class DisplayServer implements EngineServer {
 	public void init() {
 		GLFWErrorCallback.createPrint(System.err).set();
 		if(GLFW.glfwInit()) {
-			mainWindow = new Window(new WindowOptions().title(ApplicationProperties.get("window.title", "Untitled"))
-					.width(ApplicationProperties.get("window.viewport.width", 400))
-					.height(ApplicationProperties.get("window.viewport.height", 300))
-					.visible(ApplicationProperties.get("window.hints.visible", false))
-					.resizable(ApplicationProperties.get("window.hints.resizable", true))
-					.decorated(ApplicationProperties.get("window.hints.decorated", true))
-					.focused(ApplicationProperties.get("window.hints.focused", true))
-					.maximized(ApplicationProperties.get("window.hints.maximized", false)));
+			// TODO: I don't like this
+			mainWindow = new Window(new WindowOptions()
+				.title(ApplicationSettings.get("window.title", "Untitled"))
+				.width(ApplicationSettings.get("window.viewport", new Vec2i(400, 0)).x())
+				.height(ApplicationSettings.get("window.viewport", new Vec2i(0, 300)).y())
+				.visible(ApplicationSettings.get("window.visible", false))
+				.resizable(ApplicationSettings.get("window.resizable", true))
+				.decorated(ApplicationSettings.get("window.decorated", true))
+				.focused(ApplicationSettings.get("window.focused", true))
+				.maximized(ApplicationSettings.get("window.maximized", false)));
 			mainWindow.setSizeCallback(RenderingServer::resizeViewport);
 			mainWindow.setKeyCallback(new Keyboard.Callback());
 			mainWindow.setMouseButtonCallback(new Mouse.ButtonCallback());

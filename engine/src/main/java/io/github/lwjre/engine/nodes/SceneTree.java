@@ -1,7 +1,7 @@
 package io.github.lwjre.engine.nodes;
 
 import io.github.lwjre.engine.Application;
-import io.github.lwjre.engine.ApplicationProperties;
+import io.github.lwjre.engine.ApplicationSettings;
 import io.github.lwjre.engine.resources.NodeResource;
 
 public class SceneTree {
@@ -36,7 +36,7 @@ public class SceneTree {
 	private static long previousTime = System.nanoTime();
 
 	public static void start() {
-		changeScene(ApplicationProperties.get("startScene", ""));
+		changeScene(ApplicationSettings.get("general.startScene", ""));
 	}
 
 	public static void process() {
