@@ -8,9 +8,12 @@ import java.util.Map;
 /**
  * Class that represents a 3D model. Contains a map of {@link Mesh}es and {@link Material}s.
  *
+ * @param modelData A {@link Map} containing the model's meshes and materials
+ * @param boundingRadius The radius of this model's bounding sphere
+ *
  * @author Nico
  */
-public record Model(Map<Mesh, Material> modelData) {
+public record Model(Map<Mesh, Material> modelData, float boundingRadius) {
 
 	static {
 		YamlSerializer.scalarRepresent(Model.class, "!getOrLoad", Resources::pathOf);
@@ -38,9 +41,16 @@ public record Model(Map<Mesh, Material> modelData) {
 	 * Creates an empty model.
 	 */
 	public Model() {
-		this(new HashMap<>());
+		this(new HashMap<>(), 0.0f);
 	}
 
+	/**
+	 * Gets the material for the given mesh.
+	 * This method is equivalent to {@code model.modelData().get(mesh)}.
+	 *
+	 * @param mesh The mesh
+	 * @return The material used by the given mesh
+	 */
 	public Material getMaterial(Mesh mesh) {
 		return this.modelData().get(mesh);
 	}

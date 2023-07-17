@@ -5,7 +5,7 @@ children:
     properties:
       position: !Vec3f [0.4, 10.0, -2.0]
   camera:
-    type: io.github.lwjre.engine.nodes.Camera3D
+    type: io.github.lwjre.demo.CameraController
     properties:
       current: true
       rotation: !Vec3f [-0.3, 0.0, 0.0]

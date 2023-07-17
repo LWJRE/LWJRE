@@ -22,6 +22,17 @@ public class Camera3D extends Node3D {
 	private static Camera3D currentCamera = null;
 
 	/**
+	 * Gets the current camera or null if there is no current camera.
+	 *
+	 * @return The current camera or null if there is no current camera
+	 *
+	 * @see Camera3D#makeCurrent()
+	 */
+	public static Camera3D getCurrent() {
+		return currentCamera;
+	}
+
+	/**
 	 * Whether this camera is current or not.
 	 */
 	@EditorVariable(name = "Is current")
@@ -47,6 +58,14 @@ public class Camera3D extends Node3D {
 	@EditorVariable(name = "Far plane")
 	@EditorRange(min = 0.001f)
 	public float farPlane = 1000.0f;
+
+	@Override
+	protected void onEnter() {
+		super.onEnter();
+		if(this.current) {
+			currentCamera = this;
+		}
+	}
 
 	@Override
 	protected void onUpdate(float delta) {
@@ -213,8 +232,13 @@ public class Camera3D extends Node3D {
 	 */
 	public Mat4f projectionMatrix() {
 		float focalLength = (float) (1.0f / Math.tan(this.fov / 2.0f));
-		Vec2i targetSize = ApplicationSettings.get("window.viewport", new Vec2i(400, 300));
-		float aspectRatio = ApplicationSettings.get("rendering.viewportScaling", true) ? (float) targetSize.x() / targetSize.y() : DisplayServer.window().aspectRatio();
+		float aspectRatio;
+		if(ApplicationSettings.get("rendering.viewportScaling", true)) {
+			Vec2i targetSize = ApplicationSettings.get("window.viewport", new Vec2i(400, 300));
+			aspectRatio = (float) targetSize.x() / targetSize.y();
+		} else {
+			aspectRatio = DisplayServer.window().aspectRatio();
+		}
 		return new Mat4f(
 				focalLength, 0.0f, 0.0f, 0.0f,
 				0.0f, focalLength * aspectRatio, 0.0f, 0.0f,

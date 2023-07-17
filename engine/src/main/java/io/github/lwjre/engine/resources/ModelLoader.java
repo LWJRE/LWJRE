@@ -1,6 +1,7 @@
 package io.github.lwjre.engine.resources;
 
 import io.github.hexagonnico.vecmatlib.color.Color4f;
+import io.github.hexagonnico.vecmatlib.vector.Vec3f;
 import io.github.lwjre.engine.utils.FileUtils;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.PointerBuffer;
@@ -58,9 +59,9 @@ public class ModelLoader implements ResourceLoader {
 	public Object load(String path) {
 		AIScene aiScene = loadScene(path);
 		Material[] materials = readMaterials(aiScene);
-		HashMap<Mesh, Material> modelData = readMeshes(aiScene, materials);
+		Model model = readModel(aiScene, materials);
 		Assimp.aiReleaseImport(aiScene);
-		return new Model(modelData);
+		return model;
 	}
 
 	protected AIScene loadScene(String path) {
@@ -107,7 +108,8 @@ public class ModelLoader implements ResourceLoader {
 		return materials;
 	}
 
-	protected HashMap<Mesh, Material> readMeshes(AIScene aiScene, Material[] materials) {
+	protected Model readModel(AIScene aiScene, Material[] materials) {
+		float boundingRadiusSquared = 0.0f;
 		HashMap<Mesh, Material> modelData = new HashMap<>();
 		PointerBuffer meshesBuffer = aiScene.mMeshes();
 		if(meshesBuffer != null) {
@@ -121,6 +123,10 @@ public class ModelLoader implements ResourceLoader {
 					vertices[v * 3] = vertex.x();
 					vertices[v * 3 + 1] = vertex.y();
 					vertices[v * 3 + 2] = vertex.z();
+					float distance = new Vec3f(vertices[v * 3], vertices[v * 3 + 1], vertices[v * 3 + 2]).lengthSquared();
+					if(distance > boundingRadiusSquared) {
+						boundingRadiusSquared = distance;
+					}
 				}
 				mesh.vertices3D(vertices);
 				IntBuffer indicesBuffer = BufferUtils.createIntBuffer(aiMesh.mNumFaces() * 3);
@@ -147,7 +153,7 @@ public class ModelLoader implements ResourceLoader {
 				modelData.put(mesh.create(), materials[aiMesh.mMaterialIndex()]);
 			}
 		}
-		return modelData;
+		return new Model(modelData, (float) Math.sqrt(boundingRadiusSquared));
 	}
 
 	@Override
