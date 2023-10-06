@@ -36,6 +36,7 @@ public final class Application {
 			e.printStackTrace();
 		} finally {
 			SceneTree.exit();
+			Collections.reverse(servers);
 			servers.forEach(EngineServer::terminate);
 		}
 	}
