@@ -86,7 +86,7 @@ public class Mesh extends GLResource {
 			ArrayList<Integer> vbo = new ArrayList<>();
 			ArrayList<Integer> attributes = new ArrayList<>();
 			Runnable drawFunction = () -> {};
-			// TODO: Triangle strips?
+			// TODO: Add triangle strips
 			if(this.vertices != null && this.vertices.length > 0) {
 				vbo.add(storeData(this.vertices, this.coordinateSize, 0));
 				attributes.add(0);

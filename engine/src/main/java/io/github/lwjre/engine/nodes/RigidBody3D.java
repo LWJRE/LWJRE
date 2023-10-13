@@ -38,7 +38,6 @@ public class RigidBody3D extends DynamicBody3D {
 	protected void onUpdate(float delta) {
 		this.angularAcceleration = this.angularAcceleration.plus(this.inverseInertiaTensor().multiply(this.torque));
 		this.angularVelocity = this.angularVelocity.plus(this.angularAcceleration.multipliedBy(delta));
-		// TODO: Figure out why this needs to be minus
 		this.rotation = this.rotation.minus(this.angularVelocity.multipliedBy(delta));
 		super.onUpdate(delta);
 	}
@@ -68,7 +67,6 @@ public class RigidBody3D extends DynamicBody3D {
 		Vec3f linearVelocityA = this.velocity;
 		Vec3f angularVelocityA = this.angularVelocity;
 		Mat4f inverseTransformA = this.inverseGlobalTransform();
-		// TODO: Strange bounce if RigidBody (this) is rotated and has restitution > 0.0
 		if(collider instanceof KinematicBody3D kinematicBody) {
 			Vec3f linearVelocityB = kinematicBody.velocity;
 			if(kinematicBody instanceof DynamicBody3D dynamicBody) {

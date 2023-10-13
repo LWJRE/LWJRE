@@ -22,7 +22,6 @@ public class DisplayServer implements EngineServer {
 	public void init() {
 		GLFWErrorCallback.createPrint(System.err).set();
 		if(GLFW.glfwInit()) {
-			// TODO: I don't like this
 			mainWindow = new Window(new WindowOptions()
 				.title(ApplicationSettings.get("window.title", "Untitled"))
 				.width(ApplicationSettings.get("window.viewport", new Vec2i(400, 0)).x())
