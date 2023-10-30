@@ -21,9 +21,9 @@ public class TestNode extends Node {
 			if(resource.instantiate() instanceof RigidBody3D dragon) {
 				dragon.applyForce(new Vec3f(0.0f, -9.81f, 0.0f).multipliedBy(dragon.mass));
 				dragon.position = new Vec3f(
-						random.nextFloat(-100.f, 100.0f),
-						random.nextFloat(-100.f, 100.0f),
-						random.nextFloat(-100.f, 100.0f)
+						random.nextFloat(-100.0f, 100.0f),
+						random.nextFloat(-100.0f, 100.0f),
+						random.nextFloat(-100.0f, 100.0f)
 				);
 				this.getParent().queueChild(dragon);
 			}

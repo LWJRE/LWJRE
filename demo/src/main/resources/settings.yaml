@@ -1,5 +1,5 @@
 general:
-  startScene: scenes/test.yaml
+  startScene: scenes/one_thousand.yaml
 window:
   title: Demo project
   viewport: !Vec2i [1280, 720]

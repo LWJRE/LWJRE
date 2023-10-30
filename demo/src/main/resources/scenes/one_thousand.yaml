@@ -1,0 +1,11 @@
+!!io.github.lwjre.engine.resources.NodeResource
+type: io.github.lwjre.engine.nodes.Node
+children:
+  test:
+    type: io.github.lwjre.demo.TestNode
+  camera:
+    type: io.github.lwjre.demo.CameraController
+    properties:
+      current: true
+      rotation: !Vec3f [-0.2, 0.0, 0.0]
+      position: !Vec3f [0.0, 4.0, 8.5]
