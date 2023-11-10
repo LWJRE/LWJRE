@@ -19,5 +19,6 @@ target/
 # Visual Studio Code
 .vscode/
 
-# Mac OS X
+# Directories
 .DS_Store
+.directory
