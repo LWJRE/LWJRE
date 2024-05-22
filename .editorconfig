@@ -5,3 +5,7 @@ indent_size = 4
 [*.scala]
 indent_style = space
 indent_size = 2
+
+[pom.xml]
+indent_style = space
+indent_size = 4
