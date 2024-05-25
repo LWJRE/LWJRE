@@ -1,8 +1,11 @@
 package io.github.hexagonnico.glfw;
 
-import io.github.hexagonnico.core.DisplayAPI;
+import io.github.hexagonnico.core.DisplayApi;
 
-public class DisplayImplementation implements DisplayAPI {
+/**
+ * GLFW implementation of the {@link DisplayApi}.
+ */
+public class DisplayImplementation implements DisplayApi {
 
     @Override
     public void setWindowTitle(String title) {

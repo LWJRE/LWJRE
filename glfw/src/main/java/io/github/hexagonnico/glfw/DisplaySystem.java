@@ -5,6 +5,9 @@ import io.github.hexagonnico.core.EngineSystem;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 
+/**
+ * Display system used to manage the GLFW window.
+ */
 public class DisplaySystem implements EngineSystem {
 
     @Override
@@ -31,5 +34,10 @@ public class DisplaySystem implements EngineSystem {
         MainWindow.getInstance().destroy();
         GLFW.glfwTerminate();
         GLFW.glfwSetErrorCallback(null).free();
+    }
+
+    @Override
+    public int priority() {
+        return 1;
     }
 }
