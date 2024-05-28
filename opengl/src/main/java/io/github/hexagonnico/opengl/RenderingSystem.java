@@ -1,7 +1,7 @@
 package io.github.hexagonnico.opengl;
 
 import io.github.hexagonnico.core.EngineSystem;
-import io.github.hexagonnico.core.RenderingServer;
+import io.github.hexagonnico.core.rendering.RenderingServer;
 import org.lwjgl.opengl.GL;
 
 /**
@@ -22,6 +22,6 @@ public class RenderingSystem implements EngineSystem {
 
     @Override
     public void terminate() {
-
+        RendererOpenGL.deleteResources();
     }
 }

@@ -1,4 +1,4 @@
-package io.github.hexagonnico.core;
+package io.github.hexagonnico.core.rendering;
 
 import java.util.ServiceLoader;
 
@@ -7,35 +7,29 @@ import java.util.ServiceLoader;
  * <p>
  *     This class attempts to load the API when any of its methods are called the first time.
  *     If no API could be loaded the first time, the methods in this class won't have any effect.
+ *     Only one rendering API may be used at once.
  * </p>
  */
 public final class RenderingServer {
 
     /**
-     * The current rendering API. Can be null.
-     * Use {@link RenderingServer#loadIfNotLoaded()} before accessing.
+     * The current rendering API.
+     * Loaded when {@link RenderingServer#getApi()} is called for the first time.
      */
     private static RenderingApi api;
-    /**
-     * Keeps track of whether this class has attempted to load the API yet.
-     */
-    private static boolean loaded = false;
 
     /**
-     * Attempts to load the API using a {@link ServiceLoader}.
-     * <p>
-     *     The API is only loaded the first time this method is called.
-     *     If the loading is failed, {@link RenderingServer#api} will remain null and this method will return false.
-     * </p>
+     * Private method that loads the {@link RenderingApi} the first time it is called.
+     * If no rendering API could be loaded, {@link RenderingServer#api} is set to a default implementation.
      *
-     * @return True if the API has been loaded and {@link RenderingServer#api} is not null, otherwise false.
+     * @return The current rendering API.
      */
-    private static boolean loadIfNotLoaded() {
-        if(!loaded) {
-            api = ServiceLoader.load(RenderingApi.class).findFirst().orElse(null);
-            loaded = true;
+    private static RenderingApi getApi() {
+        if(api == null) {
+            api = ServiceLoader.load(RenderingApi.class).findFirst().orElse(new RenderingApi() {});
+            // TODO: Log a warning if there are more than one
         }
-        return api != null;
+        return api;
     }
 
     /**
@@ -47,9 +41,7 @@ public final class RenderingServer {
      * @param alpha The alpha component of the color.
      */
     public static void setDefaultClearColor(float red, float green, float blue, float alpha) {
-        if(loadIfNotLoaded()) {
-            api.setDefaultClearColor(red, green, blue, alpha);
-        }
+        getApi().setDefaultClearColor(red, green, blue, alpha);
     }
 
     /**
@@ -63,13 +55,29 @@ public final class RenderingServer {
         setDefaultClearColor(red, green, blue, 1.0f);
     }
 
+    // TODO: Add overloaded methods
+
     /**
      * Clears the screen.
      * Used to clear the screen before rendering a new frame.
      */
     public static void clearScreen() {
-        if(loadIfNotLoaded()) {
-            api.clearScreen();
-        }
+        getApi().clearScreen();
+    }
+
+    /**
+     * Creates a {@link MeshData}, an interface used internally in the {@link Mesh} class to abstract the representation of a mesh in different rendering APIs.
+     * <p>
+     *     If no {@link RenderingApi} could be loaded, the default implementation returns an empty {@link MeshData}.
+     * </p>
+     * <p>
+     *     This method is used internally by the engine.
+     *     Users should use the {@link Mesh} class instead.
+     * </p>
+     *
+     * @return An instance of {@link MeshData}.
+     */
+    public static MeshData createMesh() {
+        return getApi().createMesh();
     }
 }
