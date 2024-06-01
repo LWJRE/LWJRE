@@ -22,7 +22,12 @@
         <dependency>
             <groupId>io.github.scalamath</groupId>
             <artifactId>vecmatlib</artifactId>
-            <version>3.0</version>
+            <version>3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.scalamath</groupId>
+            <artifactId>colorlib</artifactId>
+            <version>1.1</version>
         </dependency>
     </dependencies>
 </project>

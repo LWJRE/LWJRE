@@ -1,32 +1,24 @@
 package io.github.hexagonnico.core.rendering;
 
 /**
- * Abstract mesh class.
- * Different types of meshes may extend this class to provide different ways of updating the mesh.
+ * Base mesh class.
+ * Other classes may extend this one to provide different ways of updating the mesh.
+ * <p>
+ *     Meshes are rendered using the {@link RenderingServer#render(Mesh, Shader)} method.
+ * </p>
  */
-public abstract class Mesh {
+public class Mesh {
 
     /**
-     * Internally used mesh data.
-     * Created using {@link RenderingServer#createMesh()}.
+     * Mesh data used internally to abstract the representation of a mesh across different rendering APIs.
      */
-    protected final MeshData meshData;
+    protected final MeshData meshData = RenderingServer.createMesh(this);
 
     /**
-     * Constructs a mesh with no vertices.
+     * Method called before the mesh is rendered in {@link RenderingServer#render(Mesh, Shader)}.
+     * Can be used to update the mesh before it is rendered.
      */
-    public Mesh() {
-        this.meshData = RenderingServer.createMesh();
-    }
+    public void onRender() {
 
-    /**
-     * Draws this mesh.
-     * <p>
-     *     Drawing may not happen immediately.
-     *     The rendering system may batch together meshes to speed up the rendering.
-     * </p>
-     */
-    public void draw() {
-        this.meshData.draw();
     }
 }

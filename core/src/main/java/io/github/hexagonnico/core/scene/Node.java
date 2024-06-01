@@ -1,7 +1,6 @@
 package io.github.hexagonnico.core.scene;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -154,15 +153,13 @@ public class Node {
     }
 
     /**
-     * Returns an immutable view of the children of this node.
-     * Nodes may not be added or removed from the given list.
+     * Returns a view of the children of this node.
+     * If nodes are added or removed from the given list, they won't be removed from the scene or added to it.
      *
-     * @return An immutable view of the children of this node.
-     *
-     * @see List#copyOf(Collection)
+     * @return A view of the children of this node.
      */
     public final List<Node> getChildren() {
-        return List.copyOf(this.children);
+        return new ArrayList<>(this.children);
     }
 
     /**
@@ -200,7 +197,7 @@ public class Node {
      * @see Node#getChildOrNull(int)
      */
     public final Node getChild(int index) {
-        Node child = this.getChildOrNull(index);
+        var child = this.getChildOrNull(index);
         if(child == null) {
             System.err.println("Index " + index + " is out of bounds [0, " + this.children.size() + "]");
         }
@@ -218,7 +215,7 @@ public class Node {
      * @param <T> The type of node to return.
      */
     public final <T extends Node> T getChildOrNull(Class<T> type) {
-        for(Node child : this.children) {
+        for(var child : this.children) {
             if(child.getClass().isAssignableFrom(type)) {
                 return type.cast(child);
             }
@@ -237,7 +234,7 @@ public class Node {
      * @see Node#getChildOrNull(Class)
      */
     public final <T extends Node> T getChild(Class<T> type) {
-        T child = this.getChildOrNull(type);
+        var child = this.getChildOrNull(type);
         if(child == null) {
             System.err.println("Node " + this + " has no children of type " + type.getName());
         }
@@ -254,7 +251,7 @@ public class Node {
      * @return The first child of this node with the given name or null if this node has no children with the given name.
      */
     public final Node getChildOrNull(String name) {
-        for(Node child : this.children) {
+        for(var child : this.children) {
             if(child.name.equals(name)) {
                 return child;
             }
@@ -272,7 +269,7 @@ public class Node {
      * @see Node#getChildOrNull(String)
      */
     public final Node getChild(String name) {
-        Node child = this.getChildOrNull(name);
+        var child = this.getChildOrNull(name);
         if(child == null) {
             System.err.println("Node " + this + " has no children with name " + name);
         }
@@ -291,7 +288,7 @@ public class Node {
      * @param <T> The type of node to return.
      */
     public final <T extends Node> T getChildOrNull(Class<T> type, String name) {
-        for(Node child : this.children) {
+        for(var child : this.children) {
             if(child.getClass().isAssignableFrom(type) && child.name.equals(name)) {
                 return type.cast(child);
             }
@@ -309,7 +306,7 @@ public class Node {
      * @param <T> The type of node to return.
      */
     public final <T extends Node> T getChild(Class<T> type, String name) {
-        T child = this.getChildOrNull(type, name);
+        var child = this.getChildOrNull(type, name);
         if(child == null) {
             System.err.println("Node " + this + " has no children of type " + type.getName() + " with name " + name);
         }
@@ -343,7 +340,7 @@ public class Node {
         if(index < 0 || index >= this.children.size()) {
             System.err.println("Index " + index + " is out of bounds [0, " + this.children.size() + "]");
         } else {
-            Node node = this.children.remove(index);
+            var node = this.children.remove(index);
             if(this.isInsideTree()) {
                 node.exitTree();
             }

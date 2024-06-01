@@ -22,6 +22,6 @@ public class RenderingSystem implements EngineSystem {
 
     @Override
     public void terminate() {
-        RendererOpenGL.deleteResources();
+        OpenGLApi.deleteResources();
     }
 }

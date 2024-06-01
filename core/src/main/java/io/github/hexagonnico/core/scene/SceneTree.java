@@ -20,6 +20,7 @@ public final class SceneTree {
             this.root.exitTree();
         }
         this.root = new Node(); // TODO: Implement change scene
+        this.root.addChild(new Sprite2D());
         this.root.enterTree();
     }
 
@@ -31,8 +32,8 @@ public final class SceneTree {
         if(previousTime == 0) {
             previousTime = System.nanoTime();
         }
-        long time = System.nanoTime();
-        float delta = (time - previousTime) / 1_000_000_000.0f;
+        var time = System.nanoTime();
+        var delta = (time - previousTime) / 1_000_000_000.0f;
         if(this.root != null) {
             this.process(this.root, delta);
         }
@@ -47,7 +48,7 @@ public final class SceneTree {
      * @param delta Delta time.
      */
     private void process(Node node, float delta) {
-        for(Node child : node.getChildren()) {
+        for(var child : node.getChildren()) {
             this.process(child, delta);
         }
         node.onUpdate(delta);

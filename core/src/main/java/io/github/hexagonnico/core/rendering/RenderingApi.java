@@ -37,15 +37,58 @@ public interface RenderingApi {
     }
 
     /**
-     * Creates a {@link MeshData}, an interface used internally in the {@link Mesh} class to abstract the representation of a mesh in different rendering APIs.
+     * Tells the rendering API that a mesh has been created.
+     * The returned {@link MeshData} is used internally in the {@link Mesh} class.
      * <p>
-     *     The default implementation of this method returns an empty {@link MeshData}.
-     *     An implementation of {@link RenderingApi} should provide its own implementation of {@link MeshData} as well.
+     *     The default implementation of this method returns an instance of {@link MeshData}.
      * </p>
      *
-     * @return An instance of {@link MeshData}.
+     * @param mesh The created mesh.
+     * @return The mesh data to use internally for the given mesh.
      */
-    default MeshData createMesh() {
-        return new MeshData() {};
+    default MeshData createMesh(Mesh mesh) {
+        return new MeshData();
+    }
+
+    /**
+     * Tells the rendering API that a shader has been created.
+     * The returned {@link ShaderData} is used internally in the {@link Shader} class.
+     * <p>
+     *     The default implementation of this method returns an instance of {@link ShaderData}.
+     * </p>
+     *
+     * @param shader The created shader.
+     * @return The shader data to use internally for the given shader.
+     */
+    default ShaderData createShader(Shader shader) {
+        return new ShaderData();
+    }
+
+    /**
+     * Tells the rendering API that a texture has been created.
+     * The returned {@link TextureData} is used internally in the {@link Texture} class.
+     * <p>
+     *     The default implementation of this method returns an instance of {@link TextureData}.
+     * </p>
+     *
+     * @param texture The created texture.
+     * @return The texture data to use internally for the given texture.
+     */
+    default TextureData createTexture(Texture texture) {
+        return new TextureData();
+    }
+
+    /**
+     * Renders the given mesh using the given shader.
+     * <p>
+     *     Rendering may not happen immediately.
+     *     The rendering API may render meshes in batch to speed up the process.
+     * </p>
+     *
+     * @param mesh The mesh to render.
+     * @param shader The shader to use.
+     */
+    default void render(Mesh mesh, Shader shader) {
+
     }
 }

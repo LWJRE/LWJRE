@@ -11,7 +11,7 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.HashMap;
 
-public class MeshOpenGL implements MeshData {
+public class OpenGLMesh extends MeshData {
 
     private final int vertexArray;
     private final HashMap<Integer, Integer> vertexBuffers = new HashMap<>();
@@ -21,7 +21,7 @@ public class MeshOpenGL implements MeshData {
     private int indexBuffer = 0;
     private int indicesCount = 0;
 
-    public MeshOpenGL() {
+    public OpenGLMesh() {
         this.vertexArray = GL30.glGenVertexArrays();
     }
 
@@ -71,13 +71,12 @@ public class MeshOpenGL implements MeshData {
         this.setAttribute(normals, 3, 2);
     }
 
-    @Override
     public void draw() {
         GL30.glBindVertexArray(this.vertexArray);
         for(int attribute : this.vertexBuffers.keySet()) {
             GL20.glEnableVertexAttribArray(attribute);
         }
-        // TODO: Implement different draw modes
+        // TODO: Use triangle strips for 2D vertices
         if(this.indicesCount > 0) {
             GL11.glDrawElements(GL11.GL_TRIANGLES, this.indicesCount, GL11.GL_UNSIGNED_INT, 0);
         } else if(this.vertexCount > 0) {

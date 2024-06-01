@@ -4,6 +4,7 @@ import io.github.scalamath.vecmatlib.Vec3f;
 
 /**
  * An axis-aligned box primitive mesh.
+ * The origin of the mesh is the center of the box.
  */
 public class BoxMesh extends Mesh {
 
@@ -22,7 +23,6 @@ public class BoxMesh extends Mesh {
      * Constructs a box mesh of size (1, 1, 1).
      */
     public BoxMesh() {
-        this.setSize(Vec3f.One());
         this.meshData.setIndices(new int[] {
             0, 1, 3,
             3, 1, 2,
@@ -66,6 +66,16 @@ public class BoxMesh extends Mesh {
         // TODO: Normals
     }
 
+    public BoxMesh(Vec3f size) {
+        this();
+        this.size = size;
+    }
+
+    public BoxMesh(float x, float y, float z) {
+        this();
+        this.size = new Vec3f(x, y, z);
+    }
+
     /**
      * Setter method.
      * Updates the size of this mesh.
@@ -99,36 +109,35 @@ public class BoxMesh extends Mesh {
     }
 
     @Override
-    public void draw() {
+    public void onRender() {
         if(this.dirty) {
             this.meshData.setVertices3D(new float[] {
-                -0.5f * size.x(), 0.5f * size.y(), -0.5f * size.z(),
-                -0.5f * size.x(), -0.5f * size.y(), -0.5f * size.z(),
-                0.5f * size.x(), -0.5f * size.y(), -0.5f * size.z(),
-                0.5f * size.x(), 0.5f * size.y(), -0.5f * size.z(),
-                -0.5f * size.x(), 0.5f * size.y(), 0.5f * size.z(),
-                -0.5f * size.x(), -0.5f * size.y(), 0.5f * size.z(),
-                0.5f * size.x(), -0.5f * size.y(), 0.5f * size.z(),
-                0.5f * size.x(), 0.5f * size.y(), 0.5f * size.z(),
-                0.5f * size.x(), 0.5f * size.y(), -0.5f * size.z(),
-                0.5f * size.x(), -0.5f * size.y(), -0.5f * size.z(),
-                0.5f * size.x(), -0.5f * size.y(), 0.5f * size.z(),
-                0.5f * size.x(), 0.5f * size.y(), 0.5f * size.z(),
-                -0.5f * size.x(), 0.5f * size.y(), -0.5f * size.z(),
-                -0.5f * size.x(), -0.5f * size.y(), -0.5f * size.z(),
-                -0.5f * size.x(), -0.5f * size.y(), 0.5f * size.z(),
-                -0.5f * size.x(), 0.5f * size.y(), 0.5f * size.z(),
-                -0.5f * size.x(), 0.5f * size.y(), 0.5f * size.z(),
-                -0.5f * size.x(), 0.5f * size.y(), -0.5f * size.z(),
-                0.5f * size.x(), 0.5f * size.y(), -0.5f * size.z(),
-                0.5f * size.x(), 0.5f * size.y(), 0.5f * size.z(),
-                -0.5f * size.x(), -0.5f * size.y(), 0.5f * size.z(),
-                -0.5f * size.x(), -0.5f * size.y(), -0.5f * size.z(),
-                0.5f * size.x(), -0.5f * size.y(), -0.5f * size.z(),
-                0.5f * size.x(), -0.5f * size.y(), 0.5f * size.z()
+                -0.5f * this.size.x(), 0.5f * this.size.y(), -0.5f * this.size.z(),
+                -0.5f * this.size.x(), -0.5f * this.size.y(), -0.5f * this.size.z(),
+                0.5f * this.size.x(), -0.5f * this.size.y(), -0.5f * this.size.z(),
+                0.5f * this.size.x(), 0.5f * this.size.y(), -0.5f * this.size.z(),
+                -0.5f * this.size.x(), 0.5f * this.size.y(), 0.5f * this.size.z(),
+                -0.5f * this.size.x(), -0.5f * this.size.y(), 0.5f * this.size.z(),
+                0.5f * this.size.x(), -0.5f * this.size.y(), 0.5f * this.size.z(),
+                0.5f * this.size.x(), 0.5f * this.size.y(), 0.5f * this.size.z(),
+                0.5f * this.size.x(), 0.5f * this.size.y(), -0.5f * this.size.z(),
+                0.5f * this.size.x(), -0.5f * this.size.y(), -0.5f * this.size.z(),
+                0.5f * this.size.x(), -0.5f * this.size.y(), 0.5f * this.size.z(),
+                0.5f * this.size.x(), 0.5f * this.size.y(), 0.5f * this.size.z(),
+                -0.5f * this.size.x(), 0.5f * this.size.y(), -0.5f * this.size.z(),
+                -0.5f * this.size.x(), -0.5f * this.size.y(), -0.5f * this.size.z(),
+                -0.5f * this.size.x(), -0.5f * this.size.y(), 0.5f * this.size.z(),
+                -0.5f * this.size.x(), 0.5f * this.size.y(), 0.5f * this.size.z(),
+                -0.5f * this.size.x(), 0.5f * this.size.y(), 0.5f * this.size.z(),
+                -0.5f * this.size.x(), 0.5f * this.size.y(), -0.5f * this.size.z(),
+                0.5f * this.size.x(), 0.5f * this.size.y(), -0.5f * this.size.z(),
+                0.5f * this.size.x(), 0.5f * this.size.y(), 0.5f * this.size.z(),
+                -0.5f * this.size.x(), -0.5f * this.size.y(), 0.5f * this.size.z(),
+                -0.5f * this.size.x(), -0.5f * this.size.y(), -0.5f * this.size.z(),
+                0.5f * this.size.x(), -0.5f * this.size.y(), -0.5f * this.size.z(),
+                0.5f * this.size.x(), -0.5f * this.size.y(), 0.5f * this.size.z()
             });
             this.dirty = false;
         }
-        super.draw();
     }
 }

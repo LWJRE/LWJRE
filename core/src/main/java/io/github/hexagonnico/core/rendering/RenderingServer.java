@@ -1,5 +1,7 @@
 package io.github.hexagonnico.core.rendering;
 
+import io.github.scalamath.colorlib.Color;
+
 import java.util.ServiceLoader;
 
 /**
@@ -55,7 +57,14 @@ public final class RenderingServer {
         setDefaultClearColor(red, green, blue, 1.0f);
     }
 
-    // TODO: Add overloaded methods
+    /**
+     * Sets the default clear color to use the next time {@link RenderingServer#clearScreen()} is called.
+     *
+     * @param color The color to use.
+     */
+    public static void setDefaultClearColor(Color color) {
+        setDefaultClearColor(color.r(), color.g(), color.b(), color.a());
+    }
 
     /**
      * Clears the screen.
@@ -66,18 +75,59 @@ public final class RenderingServer {
     }
 
     /**
-     * Creates a {@link MeshData}, an interface used internally in the {@link Mesh} class to abstract the representation of a mesh in different rendering APIs.
+     * Tells the rendering API that a mesh has been created.
+     * The returned {@link MeshData} is used internally in the {@link Mesh} class.
      * <p>
-     *     If no {@link RenderingApi} could be loaded, the default implementation returns an empty {@link MeshData}.
-     * </p>
-     * <p>
-     *     This method is used internally by the engine.
-     *     Users should use the {@link Mesh} class instead.
+     *     The default implementation of this method returns an instance of {@link MeshData}.
      * </p>
      *
-     * @return An instance of {@link MeshData}.
+     * @param mesh The created mesh.
+     * @return The mesh data to use internally for the given mesh.
      */
-    public static MeshData createMesh() {
-        return getApi().createMesh();
+    public static MeshData createMesh(Mesh mesh) {
+        return getApi().createMesh(mesh);
+    }
+
+    /**
+     * Tells the rendering API that a shader has been created.
+     * The returned {@link ShaderData} is used internally in the {@link Shader} class.
+     * <p>
+     *     The default implementation of this method returns an instance of {@link ShaderData}.
+     * </p>
+     *
+     * @param shader The created shader.
+     * @return The shader data to use internally for the given shader.
+     */
+    public static ShaderData createShader(Shader shader) {
+        return getApi().createShader(shader);
+    }
+
+    /**
+     * Tells the rendering API that a texture has been created.
+     * The returned {@link TextureData} is used internally in the {@link Texture} class.
+     * <p>
+     *     The default implementation of this method returns an instance of {@link TextureData}.
+     * </p>
+     *
+     * @param texture The created texture.
+     * @return The texture data to use internally for the given texture.
+     */
+    public static TextureData createTexture(Texture texture) {
+        return getApi().createTexture(texture);
+    }
+
+    /**
+     * Renders the given mesh using the given shader.
+     * <p>
+     *     Rendering may not happen immediately.
+     *     The rendering API may render meshes in batch to speed up the process.
+     * </p>
+     *
+     * @param mesh The mesh to render.
+     * @param shader The shader to use.
+     */
+    public static void render(Mesh mesh, Shader shader) {
+        mesh.onRender();
+        getApi().render(mesh, shader);
     }
 }
