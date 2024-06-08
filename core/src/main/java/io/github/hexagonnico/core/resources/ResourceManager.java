@@ -18,22 +18,19 @@ public class ResourceManager {
         }
     }
 
-    public static Object getOrLoad(String path) {
-        if(RESOURCES.containsKey(path)) {
-            return RESOURCES.get(path);
-        } else {
+    public static Object getOrLoad(String resourcePath) {
+        return RESOURCES.computeIfAbsent(resourcePath, path -> {
             var index = path.lastIndexOf('.');
             if(index != -1) {
                 var extension = path.substring(index);
                 if(RESOURCE_LOADERS.containsKey(extension)) {
-                    var resource = RESOURCE_LOADERS.get(extension).load(path);
-                    RESOURCES.put(path, resource);
-                    return resource;
+                    return RESOURCE_LOADERS.get(extension).load(path);
                 }
-                // TODO: Log an error if there is no suitable loader
+                System.err.println("There is no resource loader for resources of type " + extension);
+                return null;
             }
-            // TODO: Log an error if the given path is invalid
+            System.err.println("Invalid path " + path);
             return null;
-        }
+        });
     }
 }

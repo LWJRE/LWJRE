@@ -3,7 +3,6 @@ package io.github.hexagonnico.core.resources;
 import io.github.hexagonnico.core.rendering.ImageTexture;
 
 import javax.imageio.ImageIO;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -14,7 +13,8 @@ public class TextureLoader implements ResourceLoader {
     public Object load(String path) {
         try(InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(path)) {
             if(inputStream == null) {
-                throw new FileNotFoundException();
+                System.err.println("Could not find texture file " + path);
+                return null;
             }
             var image = ImageIO.read(inputStream);
             var buffer = ByteBuffer.allocateDirect(4 * image.getWidth() * image.getHeight());
@@ -28,12 +28,14 @@ public class TextureLoader implements ResourceLoader {
             texture.setPixels(buffer.flip(), image.getWidth(), image.getHeight());
             return texture;
         } catch(IOException e) {
-            throw new RuntimeException(e);
+            System.err.println("Could not load texture file " + path);
+            e.printStackTrace();
+            return null;
         }
     }
 
     @Override
     public String[] supportedExtensions() {
-        return new String[] {".png"}; // TODO: Test other extensions
+        return new String[] {".png"}; // TODO: Test other types
     }
 }

@@ -1,5 +1,6 @@
 package io.github.hexagonnico.core.rendering;
 
+import io.github.scalamath.colorlib.Color;
 import io.github.scalamath.vecmatlib.*;
 
 import java.io.*;
@@ -138,5 +139,10 @@ public final class Shader {
 
     public void set(String variable, Texture texture) {
         this.shaderData.set(variable, texture);
+    }
+
+    // TODO: Differentiate between Col4f and Col3f
+    public void set(String variable, Color color) {
+        this.shaderData.set(variable, color.r(), color.g(), color.b(), color.a());
     }
 }

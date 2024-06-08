@@ -1,5 +1,7 @@
 package io.github.hexagonnico.core;
 
+import io.github.scalamath.vecmatlib.Vec2i;
+
 import java.util.ServiceLoader;
 
 /**
@@ -11,31 +13,13 @@ import java.util.ServiceLoader;
  */
 public final class DisplayServer {
 
-    /**
-     * The current display API. Can be null.
-     * Use {@link DisplayServer#loadIfNotLoaded()} before accessing.
-     */
     private static DisplayApi api;
-    /**
-     * Keeps track of whether this class has attempted to load the API yet.
-     */
-    private static boolean loaded = false;
 
-    /**
-     * Attempts to load the API using a {@link ServiceLoader}.
-     * <p>
-     *     The API is only loaded the first time this method is called.
-     *     If the loading is failed, {@link DisplayServer#api} will remain null and this method will return false.
-     * </p>
-     *
-     * @return True if the API has been loaded and {@link DisplayServer#api} is not null, otherwise false.
-     */
-    private static boolean loadIfNotLoaded() {
-        if(!loaded) {
-            api = ServiceLoader.load(DisplayApi.class).findFirst().orElse(null);
-            loaded = true;
+    private static DisplayApi getApi() {
+        if(api == null) {
+            api = ServiceLoader.load(DisplayApi.class).findFirst().orElse(new DisplayApi() {});
         }
-        return api != null;
+        return api;
     }
 
     /**
@@ -44,9 +28,7 @@ public final class DisplayServer {
      * @param title The title.
      */
     public static void setWindowTitle(String title) {
-        if(loadIfNotLoaded()) {
-            api.setWindowTitle(title);
-        }
+        getApi().setWindowTitle(title);
     }
 
     /**
@@ -56,8 +38,30 @@ public final class DisplayServer {
      * @param height Window height.
      */
     public static void setWindowSize(int width, int height) {
-        if(loadIfNotLoaded()) {
-            api.setWindowSize(width, height);
-        }
+        getApi().setWindowSize(width, height);
+    }
+
+    public static void setWindowSize(Vec2i size) {
+        setWindowSize(size.x(), size.y());
+    }
+
+    public static void setWindowPosition(int x, int y) {
+        getApi().setWindowPosition(x, y);
+    }
+
+    public static void setWindowPosition(Vec2i position) {
+        setWindowPosition(position.x(), position.y());
+    }
+
+    public static void showWindow() {
+        getApi().showWindow();
+    }
+
+    public static void hideWindow() {
+        getApi().hideWindow();
+    }
+
+    public static Vec2i getWindowSize() {
+        return getApi().getWindowSize();
     }
 }

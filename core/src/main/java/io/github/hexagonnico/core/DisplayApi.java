@@ -1,5 +1,7 @@
 package io.github.hexagonnico.core;
 
+import io.github.scalamath.vecmatlib.Vec2i;
+
 /**
  * Interface used to abstract the display API.
  * <p>
@@ -17,7 +19,9 @@ public interface DisplayApi {
      *
      * @param title The title.
      */
-    void setWindowTitle(String title);
+    default void setWindowTitle(String title) {
+
+    }
 
     /**
      * Sets the size of the main window.
@@ -25,5 +29,23 @@ public interface DisplayApi {
      * @param width Window width.
      * @param height Window height.
      */
-    void setWindowSize(int width, int height);
+    default void setWindowSize(int width, int height) {
+
+    }
+
+    default void setWindowPosition(int x, int y) {
+
+    }
+
+    default void showWindow() {
+
+    }
+
+    default void hideWindow() {
+
+    }
+
+    default Vec2i getWindowSize() {
+        return Vec2i.Zero();
+    }
 }

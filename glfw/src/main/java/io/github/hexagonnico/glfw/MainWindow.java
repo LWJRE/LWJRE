@@ -1,8 +1,13 @@
 package io.github.hexagonnico.glfw;
 
+import io.github.hexagonnico.core.ApplicationProperties;
+import io.github.scalamath.vecmatlib.Vec2i;
 import org.lwjgl.glfw.Callbacks;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
+
+import java.nio.IntBuffer;
 
 /**
  * Singleton class used to manage the GLFW main window.
@@ -27,6 +32,10 @@ public final class MainWindow {
         return instance;
     }
 
+    private static void windowHint(int hint, String property, boolean defaultValue) {
+        GLFW.glfwWindowHint(hint, ApplicationProperties.getBoolean(property, defaultValue) ? GLFW.GLFW_TRUE : GLFW.GLFW_FALSE);
+    }
+
     /**
      * Window handle.
      */
@@ -38,7 +47,24 @@ public final class MainWindow {
      * @throws RuntimeException If the GLFW window couldn't be created.
      */
     private MainWindow() {
-        this.handle = GLFW.glfwCreateWindow(300, 300, "Hello world", MemoryUtil.NULL, MemoryUtil.NULL);
+        windowHint(GLFW.GLFW_FOCUSED, "window.hints.focused", true);
+        windowHint(GLFW.GLFW_RESIZABLE, "window.hints.resizable", true);
+        // TODO: Window visible?
+        windowHint(GLFW.GLFW_DECORATED, "window.hints.decorated", true);
+        // TODO: Auto iconify?
+        windowHint(GLFW.GLFW_FLOATING, "window.hint.floating", false);
+        windowHint(GLFW.GLFW_MAXIMIZED, "window.hint.maximized", false);
+        windowHint(GLFW.GLFW_CENTER_CURSOR, "window.hint.centerCursor", false);
+        windowHint(GLFW.GLFW_TRANSPARENT_FRAMEBUFFER, "window.hint.transparent", false);
+        // TODO: Focus on show?
+        windowHint(GLFW.GLFW_MOUSE_PASSTHROUGH, "window.hint.passthrough", false);
+        this.handle = GLFW.glfwCreateWindow(
+            ApplicationProperties.getInt("window.size.width", 400),
+            ApplicationProperties.getInt("window.size.height", 300),
+            ApplicationProperties.getString("window.title", "untitled"),
+            MemoryUtil.NULL,
+            MemoryUtil.NULL
+        );
         if(this.handle == MemoryUtil.NULL) {
             throw new RuntimeException("Failed to create the GLFW window");
         }
@@ -52,6 +78,10 @@ public final class MainWindow {
      */
     public void show() {
         GLFW.glfwShowWindow(this.handle);
+    }
+
+    public void hide() {
+        GLFW.glfwHideWindow(this.handle);
     }
 
     /**
@@ -75,6 +105,19 @@ public final class MainWindow {
      */
     public void setSize(int width, int height) {
         GLFW.glfwSetWindowSize(this.handle, width, height);
+    }
+
+    public Vec2i getSize() {
+        try(MemoryStack memoryStack = MemoryStack.stackPush()) {
+            IntBuffer width = memoryStack.mallocInt(1);
+            IntBuffer height = memoryStack.mallocInt(1);
+            GLFW.glfwGetWindowSize(this.handle, width, height);
+            return new Vec2i(width.get(0), height.get(0));
+        }
+    }
+
+    public void setPosition(int x, int y) {
+        GLFW.glfwSetWindowPos(this.handle, x, y);
     }
 
     /**
