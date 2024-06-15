@@ -10,49 +10,22 @@ public final class SceneTree {
      */
     private Node root = null;
 
-    /**
-     * Previous time obtained using {@link System#nanoTime()} and used to compute {@code delta}.
-     */
-    private long previousTime = 0;
-
     public void changeScene() {
         if(this.root != null) {
             this.root.exitTree();
         }
-        this.root = new Node(); // TODO: Implement change scene
+        // TODO: Implement scene change
+        this.root = new Node();
         this.root.addChild(new Sprite2D());
-        this.root.enterTree();
+        this.root.enterTree(this);
     }
 
     /**
-     * Processes the scene tree.
-     * Called every frame from the main {@link io.github.hexagonnico.core.Application} class.
-     */
-    public void process() {
-        if(previousTime == 0) {
-            previousTime = System.nanoTime();
-        }
-        var time = System.nanoTime();
-        var delta = (time - previousTime) / 1_000_000_000.0f;
-        if(this.root != null) {
-            this.process(this.root, delta);
-        }
-        previousTime = time;
-    }
-
-    /**
-     * Recursive function used to process the scene tree.
-     * Children are processed first.
+     * Returns the root of the current scene or null if no scene is running.
      *
-     * @param node The node to process.
-     * @param delta Delta time.
+     * @return The root of the current scene or null if no scene is running.
      */
-    private void process(Node node, float delta) {
-        for(var child : node.getChildren()) {
-            this.process(child, delta);
-        }
-        node.onUpdate(delta);
+    public Node getRoot() {
+        return root;
     }
-
-    // TODO: Call exit tree when terminating
 }

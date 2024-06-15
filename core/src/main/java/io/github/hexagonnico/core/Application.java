@@ -1,19 +1,16 @@
 package io.github.hexagonnico.core;
 
-import io.github.hexagonnico.core.scene.SceneTree;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.ServiceLoader;
 
 public final class Application {
 
-    private static final SceneTree SCENE_TREE = new SceneTree();
     private static boolean running = true;
+    private static long processFrames = 0;
 
-    public static void changeScene() {
-        // TODO: Scene parameter
-        SCENE_TREE.changeScene();
+    public static long getProcessFrames() {
+        return processFrames;
     }
 
     public static void quit() {
@@ -25,10 +22,9 @@ public final class Application {
         ServiceLoader.load(EngineSystem.class).forEach(engineSystems::add);
         Collections.sort(engineSystems);
         engineSystems.forEach(EngineSystem::initialize);
-        SCENE_TREE.changeScene(); // TODO: Load main scene
         while(running) {
+            processFrames++;
             engineSystems.forEach(EngineSystem::process);
-            SCENE_TREE.process();
         }
         Collections.reverse(engineSystems);
         engineSystems.forEach(EngineSystem::terminate);

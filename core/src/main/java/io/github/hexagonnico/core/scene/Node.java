@@ -1,5 +1,7 @@
 package io.github.hexagonnico.core.scene;
 
+import io.github.hexagonnico.core.input.InputEvent;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,9 +10,12 @@ import java.util.List;
  * A tree of nodes represents a scene.
  * <p>
  *     Scene objects are creating by extending a node class and overriding the necessary methods.
- *     The method {@link Node#onEnter()} is called when the node enters the scene tree.
- *     The method {@link Node#onUpdate(float)} is called every frame.
- *     The method {@link Node#onExit()} is called when the node exits the scene tree.
+ *     <ul>
+ *         <li>The method {@link Node#onEnter()} is called when the node enters the scene tree.</li>
+ *         <li>The method {@link Node#onUpdate(float)} is called every frame.</li>
+ *         <li>The method {@link Node#onInput(InputEvent)} is called every time there is an input event.</li>
+ *         <li>The method {@link Node#onExit()} is called when the node exits the scene tree.</li>
+ *     </ul>
  * </p>
  */
 public class Node {
@@ -25,9 +30,10 @@ public class Node {
      */
     private final ArrayList<Node> children = new ArrayList<>();
     /**
-     * Keeps track of whether this node is inside the scene tree or not.
+     * Reference to the {@link SceneTree} this node is in.
+     * Passed to the {@link Node#enterTree(SceneTree)} function when the node enters the scene.
      */
-    private boolean insideTree = false;
+    private SceneTree sceneTree = null;
     /**
      * The parent of this node.
      */
@@ -59,12 +65,19 @@ public class Node {
 
     }
 
-    // TODO: onInput
+    /**
+     * Called every time there is an input event while this node is inside the scene tree.
+     *
+     * @param event The input event.
+     */
+    public void onInput(InputEvent event) {
+
+    }
 
     /**
      * Called when this node exits the scene tree, after it has been called on all its children.
      * <p>
-     *     When a node is removed from the scene using {@link Node#removeChild(Node)} or {@link Node#removeFromScene()} and the parent is inside the scene tree,
+     *     When a node is removed from the scene using {@link Node#removeChild(Node)} or {@link Node#removeFromParent()} and the parent is inside the scene tree,
      *     this method is first called on the children of the removed node, then on the node itself.
      * </p>
      * <p>
@@ -80,12 +93,14 @@ public class Node {
     /**
      * Package-protected method called when a node enters the scene tree.
      * Iterates through the children of this node and calls {@code enterTree} on each of them.
+     *
+     * @param sceneTree The scene tree this node is in.
      */
-    final void enterTree() {
+    final void enterTree(SceneTree sceneTree) {
         for(Node child : this.children) {
-            child.enterTree();
+            child.enterTree(sceneTree);
         }
-        this.insideTree = true;
+        this.sceneTree = sceneTree;
         this.onEnter();
     }
 
@@ -98,7 +113,7 @@ public class Node {
             child.exitTree();
         }
         this.onExit();
-        this.insideTree = false;
+        this.sceneTree = null;
     }
 
     /**
@@ -121,7 +136,7 @@ public class Node {
             this.children.add(node);
             node.parent = this;
             if(this.isInsideTree()) {
-                node.enterTree();
+                node.enterTree(this.sceneTree);
             }
         }
     }
@@ -147,7 +162,7 @@ public class Node {
             this.children.add(index, node);
             node.parent = this;
             if(this.isInsideTree()) {
-                node.enterTree();
+                node.enterTree(this.sceneTree);
             }
         }
     }
@@ -216,7 +231,7 @@ public class Node {
      */
     public final <T extends Node> T getChildOrNull(Class<T> type) {
         for(var child : this.children) {
-            if(child.getClass().isAssignableFrom(type)) {
+            if(type.isAssignableFrom(child.getClass())) {
                 return type.cast(child);
             }
         }
@@ -271,7 +286,7 @@ public class Node {
     public final Node getChild(String name) {
         var child = this.getChildOrNull(name);
         if(child == null) {
-            System.err.println("Node " + this + " has no children with name " + name);
+            System.err.println("Node " + this + " has no children with name \"" + name + "\"");
         }
         return child;
     }
@@ -308,7 +323,7 @@ public class Node {
     public final <T extends Node> T getChild(Class<T> type, String name) {
         var child = this.getChildOrNull(type, name);
         if(child == null) {
-            System.err.println("Node " + this + " has no children of type " + type.getName() + " with name " + name);
+            System.err.println("Node " + this + " has no children of type " + type.getName() + " with name \"" + name + "\"");
         }
         return child;
     }
@@ -353,8 +368,8 @@ public class Node {
     /**
      * Removes this node from the scene.
      */
-    public final void removeFromScene() {
-        if(this.isInsideTree()) {
+    public final void removeFromParent() {
+        if(this.getParent() != null) {
             this.getParent().removeChild(this);
         }
     }
@@ -374,7 +389,20 @@ public class Node {
      * @return True if this node is inside the scene tree, otherwise false.
      */
     public final boolean isInsideTree() {
-        return this.insideTree;
+        return this.sceneTree != null;
+    }
+
+    /**
+     * Returns the scene tree this node is in.
+     * <p>
+     *     Returns {@code null} if this node is not inside the scene tree.
+     *     Use {@link Node#isInsideTree()} to check if the node is inside the scene tree.
+     * </p>
+     *
+     * @return The scene tree this node is in.
+     */
+    public final SceneTree getSceneTree() {
+        return this.sceneTree;
     }
 
     @Override

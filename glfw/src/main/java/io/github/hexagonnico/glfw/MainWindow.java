@@ -1,13 +1,13 @@
 package io.github.hexagonnico.glfw;
 
 import io.github.hexagonnico.core.ApplicationProperties;
+import io.github.hexagonnico.core.input.*;
+import io.github.scalamath.vecmatlib.Vec2f;
 import io.github.scalamath.vecmatlib.Vec2i;
 import org.lwjgl.glfw.Callbacks;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
-
-import java.nio.IntBuffer;
 
 /**
  * Singleton class used to manage the GLFW main window.
@@ -41,6 +41,9 @@ public final class MainWindow {
      */
     private final long handle;
 
+    private float mouseX = 0.0f;
+    private float mouseY = 0.0f;
+
     /**
      * Creates the GLFW window.
      *
@@ -68,7 +71,24 @@ public final class MainWindow {
         if(this.handle == MemoryUtil.NULL) {
             throw new RuntimeException("Failed to create the GLFW window");
         }
+        GLFW.glfwSetKeyCallback(this.handle, (window, key, scancode, action, mods) -> {
+            Input.parseEvent(new InputEventKey(key, mods, action == GLFW.GLFW_PRESS || action == GLFW.GLFW_REPEAT, action == GLFW.GLFW_REPEAT));
+        });
+        GLFW.glfwSetMouseButtonCallback(this.handle, (window, button, action, mods) -> {
+            Input.parseEvent(new InputEventMouseButton(button, mods, this.mouseX, this.mouseY, action == GLFW.GLFW_PRESS));
+        });
+        GLFW.glfwSetCursorPosCallback(this.handle, (window, xpos, ypos) -> {
+            var mx = (float) xpos - this.mouseX;
+            var my = (float) ypos - this.mouseY;
+            this.mouseX = (float) xpos;
+            this.mouseY = (float) ypos;
+            Input.parseEvent(new InputEventMouseMotion(this.mouseX, this.mouseY, mx, my));
+        });
+        GLFW.glfwSetScrollCallback(this.handle, (window, xoffset, yoffset) -> {
+            Input.parseEvent(new InputEventScroll((float) xoffset, (float) yoffset));
+        });
         GLFW.glfwMakeContextCurrent(this.handle);
+        // TODO: GLFW.glfwGetKeyName()
     }
 
     /**
@@ -108,9 +128,9 @@ public final class MainWindow {
     }
 
     public Vec2i getSize() {
-        try(MemoryStack memoryStack = MemoryStack.stackPush()) {
-            IntBuffer width = memoryStack.mallocInt(1);
-            IntBuffer height = memoryStack.mallocInt(1);
+        try(var memoryStack = MemoryStack.stackPush()) {
+            var width = memoryStack.mallocInt(1);
+            var height = memoryStack.mallocInt(1);
             GLFW.glfwGetWindowSize(this.handle, width, height);
             return new Vec2i(width.get(0), height.get(0));
         }
@@ -118,6 +138,19 @@ public final class MainWindow {
 
     public void setPosition(int x, int y) {
         GLFW.glfwSetWindowPos(this.handle, x, y);
+    }
+
+    public void setCursorPosition(float x, float y) {
+        GLFW.glfwSetCursorPos(this.handle, x, y);
+    }
+
+    public Vec2f getCursorPosition() {
+        try(var memoryStack = MemoryStack.stackPush()) {
+            var x = memoryStack.mallocDouble(1);
+            var y = memoryStack.mallocDouble(1);
+            GLFW.glfwGetCursorPos(this.handle, x, y);
+            return new Vec2f((float) x.get(0), (float) y.get(0));
+        }
     }
 
     /**

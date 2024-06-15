@@ -1,5 +1,6 @@
 package io.github.hexagonnico.core;
 
+import io.github.scalamath.vecmatlib.Vec2f;
 import io.github.scalamath.vecmatlib.Vec2i;
 
 /**
@@ -47,5 +48,13 @@ public interface DisplayApi {
 
     default Vec2i getWindowSize() {
         return Vec2i.Zero();
+    }
+
+    default void setCursorPosition(float x, float y) {
+
+    }
+
+    default Vec2f getCursorPosition() {
+        return Vec2f.Zero();
     }
 }

@@ -1,6 +1,7 @@
 package io.github.hexagonnico.glfw;
 
 import io.github.hexagonnico.core.DisplayApi;
+import io.github.scalamath.vecmatlib.Vec2f;
 import io.github.scalamath.vecmatlib.Vec2i;
 
 /**
@@ -36,5 +37,15 @@ public class GlfwApi implements DisplayApi {
     @Override
     public Vec2i getWindowSize() {
         return MainWindow.getInstance().getSize();
+    }
+
+    @Override
+    public void setCursorPosition(float x, float y) {
+        MainWindow.getInstance().setCursorPosition(x, y);
+    }
+
+    @Override
+    public Vec2f getCursorPosition() {
+        return MainWindow.getInstance().getCursorPosition();
     }
 }
