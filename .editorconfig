@@ -6,6 +6,10 @@ indent_size = 4
 indent_style = space
 indent_size = 2
 
-[pom.xml]
+[*.xml]
 indent_style = space
 indent_size = 4
+
+[{*.yaml,*.yml}]
+indent_style = space
+indent_size = 2
