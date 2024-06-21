@@ -2,6 +2,7 @@ package io.github.hexagonnico.glfw;
 
 import io.github.hexagonnico.core.Application;
 import io.github.hexagonnico.core.EngineSystem;
+import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 
@@ -12,6 +13,7 @@ public class DisplaySystem implements EngineSystem {
 
     @Override
     public void initialize() {
+        System.out.println("Initializing GLFW display system using LWJGL " + Version.getVersion());
         GLFWErrorCallback.createPrint(System.err).set();
         if(!GLFW.glfwInit()) {
             throw new IllegalStateException("Unable to initialize GLFW");

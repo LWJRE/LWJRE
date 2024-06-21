@@ -1,5 +1,7 @@
 package io.github.hexagonnico.core.scene;
 
+import io.github.hexagonnico.core.resources.SceneResource;
+
 /**
  * Class representing the currently running scene.
  */
@@ -10,14 +12,21 @@ public final class SceneTree {
      */
     private Node root = null;
 
-    public void changeScene() {
+    public void changeScene(SceneResource sceneResource) {
         if(this.root != null) {
             this.root.exitTree();
         }
-        // TODO: Implement scene change
-        this.root = new Node();
-        this.root.addChild(new Sprite2D());
-        this.root.enterTree(this);
+        this.root = sceneResource.instantiate();
+        if(this.root != null) {
+            this.root.enterTree(this);
+        }
+    }
+
+    public void changeScene(String file) {
+        var scene = SceneResource.getOrLoad(file);
+        if(scene != null) {
+            this.changeScene(scene);
+        }
     }
 
     /**

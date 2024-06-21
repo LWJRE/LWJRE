@@ -138,6 +138,9 @@ public final class Shader {
     }
 
     public void set(String variable, Texture texture) {
+        if(texture != null) {
+            texture.updateTexture();
+        }
         this.shaderData.set(variable, texture);
     }
 

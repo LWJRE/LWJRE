@@ -1,5 +1,6 @@
 package io.github.hexagonnico.core.scene;
 
+import io.github.hexagonnico.core.ApplicationProperties;
 import io.github.hexagonnico.core.EngineSystem;
 import io.github.hexagonnico.core.input.Input;
 import io.github.hexagonnico.core.input.InputEvent;
@@ -29,8 +30,10 @@ public final class MainLoop implements EngineSystem {
     @Override
     public void initialize() {
         Input.setEventDispatchFunction(this::input);
-        // TODO: Load the main scene
-        this.sceneTree.changeScene();
+        var mainScene = ApplicationProperties.getString("application.run.mainScene");
+        if(!mainScene.isEmpty()) {
+            this.sceneTree.changeScene(mainScene);
+        }
     }
 
     /**

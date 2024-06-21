@@ -1,0 +1,23 @@
+!!io.github.hexagonnico.core.resources.SceneResource
+type: io.github.hexagonnico.core.scene.Node2D
+properties:
+  name: Root
+  scale: !Vec2f [1.5, 1.5]
+children:
+  - type: io.github.hexagonnico.core.scene.Sprite2D
+    properties:
+      name: Sprite
+      spriteTexture:
+        &id001
+        !!io.github.hexagonnico.core.rendering.GradientTexture
+        gradient: !Gradient
+          0.0: !Col4f [1.0, 0.0, 0.0, 1.0]
+          0.5: !Col4f [1.0, 1.0, 0.0, 1.0]
+          1.0: !Col4f [0.0, 1.0, 0.0, 1.0]
+        width: 128
+        height: 128
+  - type: io.github.hexagonnico.core.scene.Sprite2D
+    properties:
+      name: AnotherSprite
+      spriteTexture: *id001
+      position: !Vec2f [150.0, 0.0]

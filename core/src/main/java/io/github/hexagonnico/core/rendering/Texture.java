@@ -24,4 +24,13 @@ public abstract class Texture {
      * @return The height of this texture.
      */
     public abstract int getHeight();
+
+    /**
+     * Method called before the texture is loaded into a shader.
+     * Texture classes may override this method to update the texture if it has been modified.
+     * The default implementation does nothing.
+     */
+    public void updateTexture() {
+
+    }
 }

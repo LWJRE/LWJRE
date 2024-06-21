@@ -1,5 +1,6 @@
 package io.github.hexagonnico.core.resources;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.ServiceLoader;
 
@@ -19,18 +20,35 @@ public class ResourceManager {
     }
 
     public static Object getOrLoad(String resourcePath) {
-        return RESOURCES.computeIfAbsent(resourcePath, path -> {
-            var index = path.lastIndexOf('.');
+        var resource = RESOURCES.get(resourcePath);
+        if(resource == null) {
+            var index = resourcePath.lastIndexOf('.');
             if(index != -1) {
-                var extension = path.substring(index);
-                if(RESOURCE_LOADERS.containsKey(extension)) {
-                    return RESOURCE_LOADERS.get(extension).load(path);
+                var extension = resourcePath.substring(index);
+                var loader = RESOURCE_LOADERS.get(extension);
+                if(loader != null) {
+                    try(var inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourcePath)) {
+                        if(inputStream != null) {
+                            resource = loader.load(inputStream);
+                            RESOURCES.put(resourcePath, resource);
+                        } else {
+                            System.err.println("Could not find resource " + resourcePath);
+                            return null;
+                        }
+                    } catch(IOException e) {
+                        System.err.println("Error loading resource " + resourcePath);
+                        e.printStackTrace();
+                        return null;
+                    }
+                } else {
+                    System.err.println("There is no resource loader for resources of type " + extension);
+                    return null;
                 }
-                System.err.println("There is no resource loader for resources of type " + extension);
+            } else {
+                System.err.println("Invalid path " + resourcePath);
                 return null;
             }
-            System.err.println("Invalid path " + path);
-            return null;
-        });
+        }
+        return resource;
     }
 }

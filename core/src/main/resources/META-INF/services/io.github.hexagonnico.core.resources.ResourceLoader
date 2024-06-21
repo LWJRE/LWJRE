@@ -1,2 +1,3 @@
 io.github.hexagonnico.core.resources.ShaderLoader
 io.github.hexagonnico.core.resources.TextureLoader
+io.github.hexagonnico.core.resources.YamlLoader
