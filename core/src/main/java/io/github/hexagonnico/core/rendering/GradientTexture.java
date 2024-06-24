@@ -45,7 +45,7 @@ public class GradientTexture extends Texture {
     }
 
     @Override
-    public void updateTexture() {
+    public void bind() {
         if(this.dirty) {
             var pixels = ByteBuffer.allocateDirect(4 * this.getWidth() * this.getHeight());
             for(var x = 0; x < this.getWidth(); x++) {
@@ -57,8 +57,9 @@ public class GradientTexture extends Texture {
                     pixels.put((byte) color.a8());
                 }
             }
-            this.textureData.setPixels(pixels.flip(), this.getWidth(), this.getHeight());
+            this.textureData.setImage(pixels.flip(), this.getWidth(), this.getHeight());
             this.dirty = false;
         }
+        super.bind();
     }
 }

@@ -5,6 +5,15 @@ package io.github.hexagonnico.core.rendering;
  */
 public class QuadMesh2D extends Mesh {
 
+    private static QuadMesh2D instance;
+
+    public static QuadMesh2D getInstance() {
+        if(instance == null) {
+            instance = new QuadMesh2D();
+        }
+        return instance;
+    }
+
     /**
      * Constructs a quad mesh of size (1, 1).
      */

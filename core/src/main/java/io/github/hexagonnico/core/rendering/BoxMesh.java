@@ -8,9 +8,7 @@ import io.github.scalamath.vecmatlib.Vec3f;
  */
 public class BoxMesh extends Mesh {
 
-    /**
-     * Size of the box mesh.
-     */
+    /** Size of the box mesh. */
     private Vec3f size = Vec3f.One();
 
     /**
@@ -109,7 +107,7 @@ public class BoxMesh extends Mesh {
     }
 
     @Override
-    public void onRender() {
+    public void draw() {
         if(this.dirty) {
             this.meshData.setVertices3D(new float[] {
                 -0.5f * this.size.x(), 0.5f * this.size.y(), -0.5f * this.size.z(),
@@ -139,5 +137,6 @@ public class BoxMesh extends Mesh {
             });
             this.dirty = false;
         }
+        super.draw();
     }
 }

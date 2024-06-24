@@ -2,10 +2,24 @@ package io.github.hexagonnico.core.rendering;
 
 import io.github.scalamath.vecmatlib.*;
 
+/**
+ * Class used internally by shaders to abstract the representation of a shader across different rendering APIs.
+ * <p>
+ *     All the methods in this class are dummy methods.
+ *     The rendering API module should extend this class to provide its implementation.
+ * </p>
+ *
+ * @see Shader
+ */
 public class ShaderData {
 
-    public void compile(String vertexShader, String fragmentShader) {
-        // TODO: Replace this method with a pattern to allow geometry and compute shaders
+    /**
+     * Compiles the shader.
+     *
+     * @param shaderProcessor Shader processor containing the processed shader code.
+     */
+    public void compile(ShaderProcessor shaderProcessor) {
+
     }
 
     public void set(String variable, float value) {
@@ -62,5 +76,20 @@ public class ShaderData {
 
     public void set(String variable, Texture texture) {
 
+    }
+
+    // TODO: Add colors
+
+    /**
+     * Uses this shader to draw the given mesh.
+     * <p>
+     *     The default implementation of this method only calls {@link Mesh#draw()}.
+     *     The rendering API must provide its way to use the shader.
+     * </p>
+     *
+     * @param mesh The mesh to draw.
+     */
+    public void draw(Mesh mesh) {
+        mesh.draw();
     }
 }

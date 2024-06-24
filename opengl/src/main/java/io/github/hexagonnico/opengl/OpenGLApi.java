@@ -1,18 +1,24 @@
 package io.github.hexagonnico.opengl;
 
-import io.github.hexagonnico.core.rendering.*;
+import io.github.hexagonnico.core.rendering.MeshData;
+import io.github.hexagonnico.core.rendering.RenderingApi;
+import io.github.hexagonnico.core.rendering.ShaderData;
+import io.github.hexagonnico.core.rendering.TextureData;
 import org.lwjgl.opengl.GL11;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
 /**
  * OpenGL implementation of the {@link RenderingApi}.
  */
 public class OpenGLApi implements RenderingApi {
 
-    private static final HashMap<Mesh, OpenGLMesh> MESHES = new HashMap<>();
-    private static final HashMap<Shader, OpenGLShader> SHADERS = new HashMap<>();
-    private static final HashMap<Texture, OpenGLTexture> TEXTURES = new HashMap<>();
+    /** Keeps track of meshes for them to be deleted when the rendering system is terminated. */
+    private static final ArrayList<OpenGLMesh> MESHES = new ArrayList<>();
+    /** Keeps track of shaders for them to be deleted when the rendering system is terminated. */
+    private static final ArrayList<OpenGLShader> SHADERS = new ArrayList<>();
+    /** Keeps track of textures for them to be deleted when the rendering system is terminated. */
+    private static final ArrayList<OpenGLTexture> TEXTURES = new ArrayList<>();
 
     @Override
     public void setDefaultClearColor(float red, float green, float blue, float alpha) {
@@ -25,47 +31,38 @@ public class OpenGLApi implements RenderingApi {
     }
 
     @Override
-    public MeshData createMesh(Mesh mesh) {
-        return MESHES.computeIfAbsent(mesh, key -> new OpenGLMesh());
-    }
-
-    public static OpenGLMesh getMeshData(Mesh mesh) {
-        return MESHES.get(mesh); // TODO: Log error if the mesh is invalid
-    }
-
-    @Override
-    public ShaderData createShader(Shader shader) {
-        return SHADERS.computeIfAbsent(shader, key -> new OpenGLShader());
-    }
-
-    public static OpenGLShader getShaderData(Shader shader) {
-        return SHADERS.get(shader); // TODO: Log error if the shader is invalid
+    public MeshData createMesh() {
+        var mesh = new OpenGLMesh();
+        MESHES.add(mesh);
+        return mesh;
     }
 
     @Override
-    public TextureData createTexture(Texture texture) {
-        return TEXTURES.computeIfAbsent(texture, key -> new OpenGLTexture());
-    }
-
-    public static OpenGLTexture getTextureData(Texture texture) {
-        return TEXTURES.get(texture); // TODO: Log error if the texture is invalid
+    public ShaderData createShader() {
+        var shader = new OpenGLShader();
+        SHADERS.add(shader);
+        return shader;
     }
 
     @Override
-    public void render(Mesh mesh, Shader shader) {
-        // TODO: Log error if mesh and shader are invalid (if the HashMap does not contain them)
-        SHADERS.get(shader).start();
-        MESHES.get(mesh).draw();
+    public TextureData createTexture() {
+        var texture = new OpenGLTexture();
+        TEXTURES.add(texture);
+        return texture;
     }
 
+    /**
+     * Deletes all OpenGL resources.
+     * Must be called when the {@link RenderingSystem} is terminated.
+     */
     public static void deleteResources() {
-        for(var mesh : MESHES.values()) {
+        for(var mesh : MESHES) {
             mesh.delete();
         }
-        for(var shader : SHADERS.values()) {
+        for(var shader : SHADERS) {
             shader.delete();
         }
-        for(var texture : TEXTURES.values()) {
+        for(var texture : TEXTURES) {
             texture.delete();
         }
     }

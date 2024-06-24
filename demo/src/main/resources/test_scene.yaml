@@ -2,7 +2,7 @@
 type: io.github.hexagonnico.core.scene.Node2D
 properties:
   name: Root
-  scale: !Vec2f [1.5, 1.5]
+#  scale: !Vec2f [1.5, 1.5]
 children:
   - type: io.github.hexagonnico.core.scene.Sprite2D
     properties:
@@ -20,4 +20,5 @@ children:
     properties:
       name: AnotherSprite
       spriteTexture: *id001
+      shader: !resource example_sprite_shader.glsl
       position: !Vec2f [150.0, 0.0]

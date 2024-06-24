@@ -20,8 +20,8 @@ public class ImageTexture extends Texture {
      * @param width Width of the texture.
      * @param height Height of the texture.
      */
-    public final void setPixels(ByteBuffer pixels, int width, int height) {
-        this.textureData.setPixels(pixels, width, height);
+    public final void setImage(ByteBuffer pixels, int width, int height) {
+        this.textureData.setImage(pixels, width, height);
         this.width = width;
         this.height = height;
     }

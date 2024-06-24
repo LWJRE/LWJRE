@@ -63,4 +63,11 @@ public class MeshData {
     public void setNormals(float[] normals) {
 
     }
+
+    /**
+     * Draws the mesh.
+     */
+    public void draw() {
+
+    }
 }

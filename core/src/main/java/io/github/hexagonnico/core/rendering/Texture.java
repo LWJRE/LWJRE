@@ -9,7 +9,7 @@ public abstract class Texture {
     /**
      * Texture data used internally to abstract the representation of a texture across different rendering APIs.
      */
-    protected final TextureData textureData = RenderingServer.createTexture(this);
+    protected final TextureData textureData = RenderingServer.createTexture();
 
     /**
      * Returns the width of this texture.
@@ -26,11 +26,11 @@ public abstract class Texture {
     public abstract int getHeight();
 
     /**
-     * Method called before the texture is loaded into a shader.
+     * Binds this texture for it to be used by the current rendering API.
+     * This method is called before the texture is used in a shader.
      * Texture classes may override this method to update the texture if it has been modified.
-     * The default implementation does nothing.
      */
-    public void updateTexture() {
-
+    public void bind() {
+        this.textureData.bindTexture();
     }
 }

@@ -6,12 +6,12 @@ in vec2 uv;
 out vec4 frag_color;
 
 uniform sampler2D sprite_texture;
-uniform vec4 modulate;
+uniform vec4 modulate = vec4(1.0);
+
+void fragment_shader() {
+    frag_color = modulate * texture(sprite_texture, uv);
+}
 
 void main() {
-#ifdef FRAGMENT_SHADER
     fragment_shader();
-#else
-    frag_color = modulate * texture(sprite_texture, uv);
-#endif
 }

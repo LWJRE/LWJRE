@@ -11,7 +11,7 @@ import java.nio.ByteBuffer;
  * Resource loader used to load texture files.
  * Loads instances of {@link ImageTexture}.
  * <p>
- *     Reads image files as a {@link ByteBuffer} and calls {@link ImageTexture#setPixels(ByteBuffer, int, int)}.
+ *     Reads image files as a {@link ByteBuffer} and calls {@link ImageTexture#setImage(ByteBuffer, int, int)}.
  * </p>
  */
 public class TextureLoader implements ResourceLoader {
@@ -27,7 +27,7 @@ public class TextureLoader implements ResourceLoader {
             buffer.put((byte) ((pixel >> 24) & 0xff));
         }
         var texture = new ImageTexture();
-        texture.setPixels(buffer.flip(), image.getWidth(), image.getHeight());
+        texture.setImage(buffer.flip(), image.getWidth(), image.getHeight());
         return texture;
     }
 

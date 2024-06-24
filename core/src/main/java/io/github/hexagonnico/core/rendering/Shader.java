@@ -1,151 +1,295 @@
 package io.github.hexagonnico.core.rendering;
 
-import io.github.scalamath.colorlib.Color;
 import io.github.scalamath.vecmatlib.*;
 
-import java.io.*;
 import java.util.HashMap;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
 /**
- * A Shader used for rendering.
+ * A shader used for rendering.
+ * <p>
+ *     Objects that can be rendered use a built-in shader.
+ *     User-defined shaders can be loaded from {@code .glsl} files.
+ * </p>
  */
 public final class Shader {
 
-    /**
-     * Map containing the code for built-in shaders.
-     */
-    private static final HashMap<String, String> BUILTIN_SHADER_CODE = new HashMap<>();
-    /**
-     * Map containing instances of built-in shaders.
-     */
+    /** Map containing instances of built-in shaders. */
     private static final HashMap<String, Shader> BUILTIN_SHADERS = new HashMap<>();
 
     /**
-     * Returns the code for a built-in shader of the given type.
-     * The given string must end with {@code .vert} or {@code .frag}.
+     * Returns an instance of a built-in shader.
+     * Built-in shaders are used when no user-defined shader is assigned to an object.
      *
-     * @param shader The shader type.
-     * @return The code for the requested built-in shader.
+     * @param type The shader type.
+     * @return An instance of a built-in shader.
      */
-    public static String getBuiltinShaderCode(String shader) {
-        // TODO: Create a FileUtils class
-        return BUILTIN_SHADER_CODE.computeIfAbsent(shader, shaderType -> {
-            try(var inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("io/github/hexagonnico/core/shaders/" + shaderType)) {
-                if(inputStream == null) {
-                    throw new FileNotFoundException();
-                }
-                return new BufferedReader(new InputStreamReader(inputStream)).lines().collect(Collectors.joining("\n"));
-            } catch(IOException e) {
-                throw new UncheckedIOException(e);
-            }
-        });
-        // TODO: Builtin shaders may not exist for types different from vertex and fragment
-    }
-
     public static Shader getBuiltinShader(String type) {
         return BUILTIN_SHADERS.computeIfAbsent(type, shaderType -> {
             var shader = new Shader();
-            shader.shaderData.compile(getBuiltinShaderCode(shaderType + ".vert"), getBuiltinShaderCode(shaderType + ".frag"));
+            shader.compile("#define SHADER_TYPE " + shaderType);
             return shader;
         });
     }
 
-    /**
-     * Shader data used internally to abstract the representation of a shaders across different rendering APIs.
-     */
-    private final ShaderData shaderData = RenderingServer.createShader(this);
+    /** Shader data used internally to abstract shaders across different rendering APIs. */
+    private final ShaderData shaderData = RenderingServer.createShader();
 
+    /**
+     * Compiles this shader into a runnable shader program.
+     * The provided code must be the non-processed code read from a {@code .glsl} file.
+     *
+     * @param code The non-processed shader code.
+     */
     public void compile(String code) {
-        var processor = new ShaderProcessor(code);
-        this.shaderData.compile(processor.getVertexCode(), processor.getFragmentCode());
+        this.shaderData.compile(new ShaderProcessor(code));
     }
 
+    /**
+     * Sets a float uniform variable in the shader.
+     *
+     * @param variable Name of the uniform variable as it is declared in the shader.
+     * @param value Value to assign to the variable.
+     */
     public void set(String variable, float value) {
         this.shaderData.set(variable, value);
     }
 
+    /**
+     * Sets a {@code vec2} uniform variable in the shader.
+     *
+     * @param variable Name of the uniform variable as it is declared in the shader.
+     * @param x X component of the variable.
+     * @param y Y component of the variable.
+     */
     public void set(String variable, float x, float y) {
         this.shaderData.set(variable, x, y);
     }
 
+    /**
+     * Sets a {@code vec2} uniform variable in the shader.
+     * If the given vector is {@code null}, it will default to {@link Vec2f#Zero()}.
+     *
+     * @param variable Name of the uniform variable as it is declared in the shader.
+     * @param vector Value to assign to the variable.
+     */
     public void set(String variable, Vec2f vector) {
+        vector = Objects.requireNonNullElse(vector, Vec2f.Zero());
         this.set(variable, vector.x(), vector.y());
     }
 
+    /**
+     * Sets a {@code vec3} uniform variable in the shader.
+     *
+     * @param variable Name of the uniform variable as it is declared in the shader.
+     * @param x X component of the variable.
+     * @param y Y component of the variable.
+     * @param z Z component of the variable.
+     */
     public void set(String variable, float x, float y, float z) {
         this.shaderData.set(variable, x, y, z);
     }
 
+    /**
+     * Sets a {@code vec3} uniform variable in the shader.
+     * If the given vector is {@code null}, it will default to {@link Vec3f#Zero()}.
+     *
+     * @param variable Name of the uniform variable as it is declared in the shader.
+     * @param vector Value to assign to the variable.
+     */
     public void set(String variable, Vec3f vector) {
+        vector = Objects.requireNonNullElse(vector, Vec3f.Zero());
         this.set(variable, vector.x(), vector.y(), vector.z());
     }
 
+    /**
+     * Sets a {@code vec4} uniform variable in the shader.
+     *
+     * @param variable Name of the uniform variable as it is declared in the shader.
+     * @param x X component of the variable.
+     * @param y Y component of the variable.
+     * @param z Z component of the variable.
+     * @param w W component of the variable.
+     */
     public void set(String variable, float x, float y, float z, float w) {
         this.shaderData.set(variable, x, y, z, w);
     }
 
+    /**
+     * Sets a {@code vec4} uniform variable in the shader.
+     * If the given vector is {@code null}, it will default to {@link Vec4f#Zero()}.
+     *
+     * @param variable Name of the uniform variable as it is declared in the shader.
+     * @param vector Value to assign to the variable.
+     */
     public void set(String variable, Vec4f vector) {
+        vector = Objects.requireNonNullElse(vector, Vec4f.Zero());
         this.set(variable, vector.x(), vector.y(), vector.z(), vector.w());
     }
 
+    /**
+     * Sets an int uniform variable in the shader.
+     *
+     * @param variable Name of the uniform variable as it is declared in the shader.
+     * @param value Value to assign to the variable.
+     */
     public void set(String variable, int value) {
         this.shaderData.set(variable, value);
     }
 
+    /**
+     * Sets an {@code ivec2} uniform variable in the shader.
+     *
+     * @param variable Name of the uniform variable as it is declared in the shader.
+     * @param x X component of the variable.
+     * @param y Y component of the variable.
+     */
     public void set(String variable, int x, int y) {
         this.shaderData.set(variable, x, y);
     }
 
+    /**
+     * Sets an {@code ivec2} uniform variable in the shader.
+     * If the given vector is {@code null}, it will default to {@link Vec2i#Zero()}.
+     *
+     * @param variable Name of the uniform variable as it is declared in the shader.
+     * @param vector Value to assign to the variable.
+     */
     public void set(String variable, Vec2i vector) {
+        vector = Objects.requireNonNullElse(vector, Vec2i.Zero());
         this.set(variable, vector.x(), vector.y());
     }
 
+    /**
+     * Sets an {@code ivec3} uniform variable in the shader.
+     *
+     * @param variable Name of the uniform variable as it is declared in the shader.
+     * @param x X component of the variable.
+     * @param y Y component of the variable.
+     * @param z Z component of the variable.
+     */
     public void set(String variable, int x, int y, int z) {
         this.shaderData.set(variable, x, y, z);
     }
 
+    /**
+     * Sets an {@code ivec3} uniform variable in the shader.
+     * If the given vector is {@code null}, it will default to {@link Vec3i#Zero()}.
+     *
+     * @param variable Name of the uniform variable as it is declared in the shader.
+     * @param vector Value to assign to the variable.
+     */
     public void set(String variable, Vec3i vector) {
+        vector = Objects.requireNonNullElse(vector, Vec3i.Zero());
         this.set(variable, vector.x(), vector.y(), vector.z());
     }
 
+    /**
+     * Sets an {@code ivec4} uniform variable in the shader.
+     *
+     * @param variable Name of the uniform variable as it is declared in the shader.
+     * @param x X component of the variable.
+     * @param y Y component of the variable.
+     * @param z Z component of the variable.
+     * @param w W component of the variable.
+     */
     public void set(String variable, int x, int y, int z, int w) {
         this.shaderData.set(variable, x, y, z, w);
     }
 
+    /**
+     * Sets an {@code ivec4} uniform variable in the shader.
+     * If the given vector is {@code null}, it will default to {@link Vec4i#Zero()}.
+     *
+     * @param variable Name of the uniform variable as it is declared in the shader.
+     * @param vector Value to assign to the variable.
+     */
     public void set(String variable, Vec4i vector) {
+        vector = Objects.requireNonNullElse(vector, Vec4i.Zero());
         this.set(variable, vector.x(), vector.y(), vector.z(), vector.w());
     }
 
+    /**
+     * Sets a {@code mat2} uniform variable in the shader.
+     * If the given matrix is {@code null}, it will default to {@link Mat2f#Zero()}.
+     *
+     * @param variable Name of the uniform variable as it is declared in the shader.
+     * @param matrix Value to assign to the variable.
+     */
     public void set(String variable, Mat2f matrix) {
+        matrix = Objects.requireNonNullElse(matrix, Mat2f.Zero());
         this.shaderData.set(variable, matrix);
     }
 
+    /**
+     * Sets a {@code mat3x2} uniform variable in the shader.
+     * If the given matrix is {@code null}, it will default to {@link Mat2x3f#Zero()}.
+     * Note that glsl uses column-major order, therefore a 3x2 matrix is a matrix with 2 rows and 3 columns and corresponds to a {@link Mat2x3f} object.
+     *
+     * @param variable Name of the uniform variable as it is declared in the shader.
+     * @param matrix Value to assign to the variable.
+     */
     public void set(String variable, Mat2x3f matrix) {
+        matrix = Objects.requireNonNullElse(matrix, Mat2x3f.Zero());
         this.shaderData.set(variable, matrix);
     }
 
+    /**
+     * Sets a {@code mat3} uniform variable in the shader.
+     * If the given matrix is {@code null}, it will default to {@link Mat3f#Zero()}.
+     *
+     * @param variable Name of the uniform variable as it is declared in the shader.
+     * @param matrix Value to assign to the variable.
+     */
     public void set(String variable, Mat3f matrix) {
+        matrix = Objects.requireNonNullElse(matrix, Mat3f.Zero());
         this.shaderData.set(variable, matrix);
     }
 
+    /**
+     * Sets a {@code mat4x3} uniform variable in the shader.
+     * If the given matrix is {@code null}, it will default to {@link Mat3x4f#Zero()}.
+     * Note that glsl uses column-major order, therefore a 4x3 matrix is a matrix with 3 rows and 4 columns and corresponds to a {@link Mat3x4f} object.
+     *
+     * @param variable Name of the uniform variable as it is declared in the shader.
+     * @param matrix Value to assign to the variable.
+     */
     public void set(String variable, Mat3x4f matrix) {
+        matrix = Objects.requireNonNullElse(matrix, Mat3x4f.Zero());
         this.shaderData.set(variable, matrix);
     }
 
+    /**
+     * Sets a {@code mat4} uniform variable in the shader.
+     * If the given matrix is {@code null}, it will default to {@link Mat4f#Zero()}.
+     *
+     * @param variable Name of the uniform variable as it is declared in the shader.
+     * @param matrix Value to assign to the variable.
+     */
     public void set(String variable, Mat4f matrix) {
+        matrix = Objects.requireNonNullElse(matrix, Mat4f.Zero());
         this.shaderData.set(variable, matrix);
     }
 
+    /**
+     * Sets a {@code sampler2D} uniform variable in the shader.
+     * The given texture can be {@code null} to tell the shader to use no texture for this variable.
+     *
+     * @param variable Name of the uniform variable as it is declared in the shader.
+     * @param texture Texture to use for the {@code sampler2D}.
+     */
     public void set(String variable, Texture texture) {
-        if(texture != null) {
-            texture.updateTexture();
-        }
         this.shaderData.set(variable, texture);
     }
 
-    // TODO: Differentiate between Col4f and Col3f
-    public void set(String variable, Color color) {
-        this.shaderData.set(variable, color.r(), color.g(), color.b(), color.a());
+    // TODO: Add colors
+
+    /**
+     * Uses this shader to draw the given mesh.
+     *
+     * @param mesh The mesh to draw.
+     */
+    public void draw(Mesh mesh) {
+        this.shaderData.draw(mesh);
     }
 }

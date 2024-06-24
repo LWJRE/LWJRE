@@ -41,12 +41,12 @@ public interface RenderingApi {
      * The returned {@link MeshData} is used internally in the {@link Mesh} class.
      * <p>
      *     The default implementation of this method returns an instance of {@link MeshData}.
+     *     Different rendering APIs must return their implementation of a mesh.
      * </p>
      *
-     * @param mesh The created mesh.
-     * @return The mesh data to use internally for the given mesh.
+     * @return Mesh data used internally for meshes.
      */
-    default MeshData createMesh(Mesh mesh) {
+    default MeshData createMesh() {
         return new MeshData();
     }
 
@@ -55,12 +55,12 @@ public interface RenderingApi {
      * The returned {@link ShaderData} is used internally in the {@link Shader} class.
      * <p>
      *     The default implementation of this method returns an instance of {@link ShaderData}.
+     *     Different rendering APIs must return their implementation of a shader.
      * </p>
      *
-     * @param shader The created shader.
-     * @return The shader data to use internally for the given shader.
+     * @return Shader data used internally for shaders.
      */
-    default ShaderData createShader(Shader shader) {
+    default ShaderData createShader() {
         return new ShaderData();
     }
 
@@ -69,26 +69,12 @@ public interface RenderingApi {
      * The returned {@link TextureData} is used internally in the {@link Texture} class.
      * <p>
      *     The default implementation of this method returns an instance of {@link TextureData}.
+     *     Different rendering APIs must return their implementation of a texture.
      * </p>
      *
-     * @param texture The created texture.
-     * @return The texture data to use internally for the given texture.
+     * @return Texture data used internally for textures.
      */
-    default TextureData createTexture(Texture texture) {
+    default TextureData createTexture() {
         return new TextureData();
-    }
-
-    /**
-     * Renders the given mesh using the given shader.
-     * <p>
-     *     Rendering may not happen immediately.
-     *     The rendering API may render meshes in batch to speed up the process.
-     * </p>
-     *
-     * @param mesh The mesh to render.
-     * @param shader The shader to use.
-     */
-    default void render(Mesh mesh, Shader shader) {
-
     }
 }
