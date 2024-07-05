@@ -9,18 +9,46 @@ import io.github.scalamath.vecmatlib.Vec3f;
 public class BoxMesh extends Mesh {
 
     /** Size of the box mesh. */
-    private Vec3f size = Vec3f.One();
+    private Vec3f size;
 
     /**
      * Flag used to tell that the mesh should be updated.
      * Set to false when the size is updated.
      */
-    private boolean dirty = true;
+    private boolean dirty;
 
     /**
-     * Constructs a box mesh of size (1, 1, 1).
+     * Constructs a box mesh with the given size.
+     *
+     * @param size Size of the box.
      */
-    public BoxMesh() {
+    public BoxMesh(Vec3f size) {
+        this.meshData.setVertices3D(new float[] {
+            -0.5f * size.x(), 0.5f * size.y(), -0.5f * size.z(),
+            -0.5f * size.x(), -0.5f * size.y(), -0.5f * size.z(),
+            0.5f * size.x(), -0.5f * size.y(), -0.5f * size.z(),
+            0.5f * size.x(), 0.5f * size.y(), -0.5f * size.z(),
+            -0.5f * size.x(), 0.5f * size.y(), 0.5f * size.z(),
+            -0.5f * size.x(), -0.5f * size.y(), 0.5f * size.z(),
+            0.5f * size.x(), -0.5f * size.y(), 0.5f * size.z(),
+            0.5f * size.x(), 0.5f * size.y(), 0.5f * size.z(),
+            0.5f * size.x(), 0.5f * size.y(), -0.5f * size.z(),
+            0.5f * size.x(), -0.5f * size.y(), -0.5f * size.z(),
+            0.5f * size.x(), -0.5f * size.y(), 0.5f * size.z(),
+            0.5f * size.x(), 0.5f * size.y(), 0.5f * size.z(),
+            -0.5f * size.x(), 0.5f * size.y(), -0.5f * size.z(),
+            -0.5f * size.x(), -0.5f * size.y(), -0.5f * size.z(),
+            -0.5f * size.x(), -0.5f * size.y(), 0.5f * size.z(),
+            -0.5f * size.x(), 0.5f * size.y(), 0.5f * size.z(),
+            -0.5f * size.x(), 0.5f * size.y(), 0.5f * size.z(),
+            -0.5f * size.x(), 0.5f * size.y(), -0.5f * size.z(),
+            0.5f * size.x(), 0.5f * size.y(), -0.5f * size.z(),
+            0.5f * size.x(), 0.5f * size.y(), 0.5f * size.z(),
+            -0.5f * size.x(), -0.5f * size.y(), 0.5f * size.z(),
+            -0.5f * size.x(), -0.5f * size.y(), -0.5f * size.z(),
+            0.5f * size.x(), -0.5f * size.y(), -0.5f * size.z(),
+            0.5f * size.x(), -0.5f * size.y(), 0.5f * size.z()
+        });
         this.meshData.setIndices(new int[] {
             0, 1, 3,
             3, 1, 2,
@@ -62,16 +90,26 @@ public class BoxMesh extends Mesh {
             1, 0
         });
         // TODO: Normals
-    }
-
-    public BoxMesh(Vec3f size) {
-        this();
         this.size = size;
+        this.dirty = false;
     }
 
+    /**
+     * Constructs a box mesh with the given size.
+     *
+     * @param x Width of the box.
+     * @param y Height of the box.
+     * @param z Depth of the box.
+     */
     public BoxMesh(float x, float y, float z) {
-        this();
-        this.size = new Vec3f(x, y, z);
+        this(new Vec3f(x, y, z));
+    }
+
+    /**
+     * Constructs a box mesh of size (1, 1, 1).
+     */
+    public BoxMesh() {
+        this(Vec3f.One());
     }
 
     /**

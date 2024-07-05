@@ -24,7 +24,6 @@ public final class Input {
      * Sets the function to which input events are sent when {@link Input#parseEvent(InputEvent)} is called.
      * <p>
      *     By default, the event dispatch function is set to send input events to the scene tree when the main loop is initialized.
-     *     Setting it to a different function causes input events to stop being sent to {@link io.github.hexagonnico.core.scene.Node#onInput(InputEvent)}.
      * </p>
      * <p>
      *     Can be set to {@code null} to disable the event dispatch function.

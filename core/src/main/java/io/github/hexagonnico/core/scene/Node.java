@@ -70,7 +70,7 @@ public class Node {
      *
      * @param event The input event.
      */
-    public void onInput(InputEvent event) {
+    protected void onInput(InputEvent event) {
 
     }
 
@@ -156,7 +156,7 @@ public class Node {
     public final void addChild(Node node, int index) {
         if(node.parent != null) {
             System.err.println("Node " + node + " already has parent " + node.parent);
-        } else if(index < 0 || index >= this.getChildCount()) {
+        } else if(index < 0 || index > this.getChildCount()) {
             System.err.println("Index " + index + " is out of bounds [0, " + this.children.size() + "]");
         } else {
             this.children.add(index, node);
@@ -366,15 +366,6 @@ public class Node {
     // TODO: Remove child with name
 
     /**
-     * Removes this node from the scene.
-     */
-    public final void removeFromParent() {
-        if(this.getParent() != null) {
-            this.getParent().removeChild(this);
-        }
-    }
-
-    /**
      * Returns this node's parent or null if this node does not have a parent.
      *
      * @return This node's parent or null if this node does not have a parent.
@@ -403,6 +394,25 @@ public class Node {
      */
     public final SceneTree getSceneTree() {
         return this.sceneTree;
+    }
+
+    /**
+     * Removes this node from its parent.
+     * <p>
+     *     If this node is inside the scene tree, this method will effectively remove it from the scene.
+     * </p>
+     * <p>
+     *     This method has no effect if this node has no parent.
+     * </p>
+     *
+     * @see Node#getParent()
+     * @see Node#removeChild(Node)
+     * @see Node#isInsideTree()
+     */
+    public final void removeFromParent() {
+        if(this.getParent() != null) {
+            this.getParent().removeChild(this);
+        }
     }
 
     @Override

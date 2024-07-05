@@ -42,6 +42,10 @@ public class ShaderData {
 
     }
 
+    public void set(String variable, boolean value) {
+
+    }
+
     public void set(String variable, int x, int y) {
 
     }

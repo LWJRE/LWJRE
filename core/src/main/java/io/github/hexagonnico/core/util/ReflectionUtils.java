@@ -77,6 +77,12 @@ public final class ReflectionUtils {
                     field.set(object, numberValue.doubleValue());
                 }
                 return true;
+            } else if(value instanceof Boolean booleanValue) {
+                // Boolean values need to be converted to the boolean primitive
+                if(fieldType.equals(boolean.class) || fieldType.equals(Boolean.class)) {
+                    field.set(object, booleanValue);
+                }
+                return true;
             }
             // Return false if the type does not match
             return false;

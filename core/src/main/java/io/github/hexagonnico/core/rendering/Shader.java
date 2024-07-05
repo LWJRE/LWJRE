@@ -138,6 +138,16 @@ public final class Shader {
     }
 
     /**
+     * Sets a bool uniform variable in the shader.
+     *
+     * @param variable Name of the uniform variable as it is declared in the shader.
+     * @param value Value to assign to the variable.
+     */
+    public void set(String variable, boolean value) {
+        this.shaderData.set(variable, value);
+    }
+
+    /**
      * Sets an {@code ivec2} uniform variable in the shader.
      *
      * @param variable Name of the uniform variable as it is declared in the shader.

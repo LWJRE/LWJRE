@@ -114,6 +114,11 @@ public class OpenGLShader extends ShaderData {
     }
 
     @Override
+    public void set(String variable, boolean value) {
+        this.set(variable, value ? 1 : 0);
+    }
+
+    @Override
     public void set(String variable, int x, int y) {
         GL41.glProgramUniform2i(this.program, this.getUniformLocation(variable), x, y);
     }

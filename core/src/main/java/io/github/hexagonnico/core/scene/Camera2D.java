@@ -37,6 +37,8 @@ public class Camera2D extends Node2D {
     public float nearPlane = 0.1f;
     public float farPlane = 100.0f;
 
+    // TODO: Limits, drag, smoothing
+
     @Override
     protected void onEnter() {
         if(this.enabled) {
@@ -50,11 +52,13 @@ public class Camera2D extends Node2D {
     }
 
     public Mat3f viewMatrix() {
-        // TODO: Cache the view matrix until the camera is updated
-        var pos = this.globalPosition().negated();
+        var pos = this.globalPosition();
         var cos = (float) Math.cos(this.rotation);
         var sin = (float) Math.sin(this.rotation);
-        // TODO: Add zoom and offset
-        return new Mat3f(cos, -sin, pos.x(), sin, cos, pos.y(), 0.0f, 0.0f, -1.0f);
+        return new Mat3f(
+            cos * this.zoom.x(), -sin * this.zoom.y(), -pos.x() - this.offset.x(),
+            sin * this.zoom.x(), cos * this.zoom.y(), -pos.y() - this.offset.y(),
+            0.0f, 0.0f, -1.0f
+        );
     }
 }

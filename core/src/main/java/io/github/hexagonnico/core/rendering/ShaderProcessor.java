@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
  */
 public class ShaderProcessor {
 
+    // TODO: Find a way to process shader code only when the project is built
+
     /** Map containing the code for built-in shaders. */
     private static final HashMap<String, String> BUILTIN_SHADER_CODE = new HashMap<>();
 

@@ -2,8 +2,6 @@ package io.github.hexagonnico.core.input;
 
 /**
  * Base interface for input events.
- *
- * @see io.github.hexagonnico.core.scene.Node#onInput(InputEvent)
  */
 public interface InputEvent {
 

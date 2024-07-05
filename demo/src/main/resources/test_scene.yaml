@@ -1,12 +1,11 @@
 !!io.github.hexagonnico.core.resources.SceneResource
-type: io.github.hexagonnico.core.scene.Node2D
+type: io.github.hexagonnico.demo.TestNode
 properties:
   name: Root
-#  scale: !Vec2f [1.5, 1.5]
 children:
   - type: io.github.hexagonnico.core.scene.Sprite2D
     properties:
-      name: Sprite
+      name: First
       spriteTexture:
         &id001
         !!io.github.hexagonnico.core.rendering.GradientTexture
@@ -18,7 +17,23 @@ children:
         height: 128
   - type: io.github.hexagonnico.core.scene.Sprite2D
     properties:
-      name: AnotherSprite
+      name: Second
       spriteTexture: *id001
       shader: !resource example_sprite_shader.glsl
       position: !Vec2f [150.0, 0.0]
+  - type: io.github.hexagonnico.core.scene.Sprite2D
+    properties:
+      name: Third
+      spriteTexture: *id001
+      position: !Vec2f [200.0, 50.0]
+  - type: io.github.hexagonnico.core.scene.Sprite2D
+    properties:
+      name: Fourth
+      spriteTexture: *id001
+      position: !Vec2f [250.0, 100.0]
+  - type: io.github.hexagonnico.core.scene.Sprite2D
+    properties:
+      name: Fifth
+      spriteTexture: *id001
+      position: !Vec2f [300.0, 150.0]
+  - type: io.github.hexagonnico.core.scene.Camera2D

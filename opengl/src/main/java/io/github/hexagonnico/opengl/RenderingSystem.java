@@ -16,7 +16,11 @@ public class RenderingSystem implements EngineSystem {
     public void initialize() {
         System.out.println("Initializing OpenGL rendering system using LWJGL " + Version.getVersion());
         GL.createCapabilities();
-        RenderingServer.setDefaultClearColor(0.5f, 0.5f, 1.0f);
+        RenderingServer.setDefaultClearColor(0.3f, 0.3f, 0.3f);
+        // TODO: This should only be used for 2D
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
+        GL11.glDepthFunc(GL11.GL_GEQUAL);
+        GL11.glClearDepth(0.0);
     }
 
     @Override
