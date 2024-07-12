@@ -2,6 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <!-- TODO: Rename the project -->
     <groupId>io.github.hexagonnico</groupId>
     <artifactId>yet-another-engine</artifactId>
     <version>0.1-SNAPSHOT</version>
@@ -12,6 +13,7 @@
         <module>demo</module>
         <module>glfw</module>
         <module>opengl</module>
+        <module>lwjge-maven-plugin</module>
     </modules>
 
     <properties>
@@ -19,6 +21,18 @@
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>io.github.hexagonnico</groupId>
+                    <artifactId>lwjge-maven-plugin</artifactId>
+                    <version>${project.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 
     <dependencyManagement>
         <dependencies>

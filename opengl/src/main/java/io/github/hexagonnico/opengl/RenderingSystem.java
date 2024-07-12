@@ -34,5 +34,6 @@ public class RenderingSystem implements EngineSystem {
     @Override
     public void terminate() {
         OpenGLApi.deleteResources();
+        OpenGLShader.deleteShaders();
     }
 }

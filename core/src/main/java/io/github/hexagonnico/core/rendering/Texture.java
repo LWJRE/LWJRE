@@ -1,10 +1,21 @@
 package io.github.hexagonnico.core.rendering;
 
+import io.github.hexagonnico.core.resources.ResourceManager;
+
 /**
  * Base texture class.
  * Other classes may extend this one to provide different ways of updating the texture.
  */
 public abstract class Texture {
+
+    public static Texture getOrLoad(String resourcePath) {
+        var resource = ResourceManager.getOrLoad(resourcePath);
+        if(resource instanceof Texture) {
+            return (Texture) resource;
+        }
+        System.err.println("Resource " + resourcePath + " is not a texture");
+        return null;
+    }
 
     /**
      * Texture data used internally to abstract the representation of a texture across different rendering APIs.

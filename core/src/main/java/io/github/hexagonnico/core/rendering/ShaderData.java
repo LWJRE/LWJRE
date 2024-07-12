@@ -14,11 +14,12 @@ import io.github.scalamath.vecmatlib.*;
 public class ShaderData {
 
     /**
-     * Compiles the shader.
+     * Compiles this shader.
      *
-     * @param shaderProcessor Shader processor containing the processed shader code.
+     * @param vertexCode Code for the vertex shader.
+     * @param fragmentCode Code for the fragment shader.
      */
-    public void compile(ShaderProcessor shaderProcessor) {
+    public void compile(CharSequence vertexCode, CharSequence fragmentCode) {
 
     }
 

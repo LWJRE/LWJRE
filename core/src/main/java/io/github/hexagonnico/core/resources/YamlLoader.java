@@ -1,5 +1,6 @@
 package io.github.hexagonnico.core.resources;
 
+import io.github.hexagonnico.core.rendering.Shader;
 import io.github.scalamath.colorlib.*;
 import io.github.scalamath.vecmatlib.*;
 import org.yaml.snakeyaml.LoaderOptions;
@@ -75,6 +76,7 @@ public class YamlLoader implements ResourceLoader {
             this.yamlConstructors.put(new Tag("!Col4f"), new ConstructCol4f());
             this.yamlConstructors.put(new Tag("!Col1i"), new ConstructCol1i());
             this.yamlConstructors.put(new Tag("!Gradient"), new ConstructGradient());
+            this.yamlConstructors.put(new Tag(Shader.class), new ConstructShader());
         }
 
         private class ConstructActualFloat extends ConstructYamlFloat {
@@ -310,6 +312,22 @@ public class YamlLoader implements ResourceLoader {
                     }
                 }
                 return gradient;
+            }
+        }
+
+        private class ConstructShader extends AbstractConstruct {
+
+            @Override
+            public Object construct(Node node) {
+                if(node instanceof MappingNode mappingNode) {
+                    var shader = new Shader();
+                    var mapping = constructMapping(mappingNode);
+                    if(mapping.get("vertexShader") instanceof CharSequence vertexCode && mapping.get("fragmentShader") instanceof CharSequence fragmentCode) {
+                        shader.compile(vertexCode, fragmentCode);
+                    }
+                    return shader;
+                }
+                return null;
             }
         }
     }

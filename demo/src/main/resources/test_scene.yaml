@@ -19,7 +19,10 @@ children:
     properties:
       name: Second
       spriteTexture: *id001
-      shader: !resource example_sprite_shader.glsl
+      shader:
+        !!io.github.hexagonnico.core.rendering.Shader
+        vertexShader: !resource example_sprite_shader.vert
+        fragmentShader: !resource example_sprite_shader.frag
       position: !Vec2f [150.0, 0.0]
   - type: io.github.hexagonnico.core.scene.Sprite2D
     properties:

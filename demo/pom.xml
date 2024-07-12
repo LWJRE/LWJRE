@@ -18,6 +18,25 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>io.github.hexagonnico</groupId>
+                <artifactId>lwjge-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>process-shaders</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <trim>false</trim>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
     <dependencies>
         <dependency>
             <groupId>io.github.hexagonnico</groupId>

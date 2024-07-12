@@ -1,8 +1,8 @@
 package io.github.hexagonnico.core.rendering;
 
+import io.github.hexagonnico.core.resources.ResourceManager;
 import io.github.scalamath.vecmatlib.*;
 
-import java.util.HashMap;
 import java.util.Objects;
 
 /**
@@ -14,22 +14,13 @@ import java.util.Objects;
  */
 public final class Shader {
 
-    /** Map containing instances of built-in shaders. */
-    private static final HashMap<String, Shader> BUILTIN_SHADERS = new HashMap<>();
-
-    /**
-     * Returns an instance of a built-in shader.
-     * Built-in shaders are used when no user-defined shader is assigned to an object.
-     *
-     * @param type The shader type.
-     * @return An instance of a built-in shader.
-     */
-    public static Shader getBuiltinShader(String type) {
-        return BUILTIN_SHADERS.computeIfAbsent(type, shaderType -> {
-            var shader = new Shader();
-            shader.compile("#define SHADER_TYPE " + shaderType);
-            return shader;
-        });
+    public static Shader getOrLoad(String resourcePath) {
+        var resource = ResourceManager.getOrLoad(resourcePath);
+        if(resource instanceof Shader) {
+            return (Shader) resource;
+        }
+        System.err.println("Resource " + resourcePath + " is not a shader");
+        return null;
     }
 
     /** Shader data used internally to abstract shaders across different rendering APIs. */
@@ -37,12 +28,16 @@ public final class Shader {
 
     /**
      * Compiles this shader into a runnable shader program.
-     * The provided code must be the non-processed code read from a {@code .glsl} file.
+     * <p>
+     *     The provided code must be a valid glsl program.
+     *     The shader code is processed at build time.
+     * </p>
      *
-     * @param code The non-processed shader code.
+     * @param vertexCode Code for the vertex shader.
+     * @param fragmentCode Code for the fragment shader.
      */
-    public void compile(String code) {
-        this.shaderData.compile(new ShaderProcessor(code));
+    public void compile(CharSequence vertexCode, CharSequence fragmentCode) {
+        this.shaderData.compile(vertexCode, fragmentCode);
     }
 
     /**
@@ -227,8 +222,7 @@ public final class Shader {
      * @param matrix Value to assign to the variable.
      */
     public void set(String variable, Mat2f matrix) {
-        matrix = Objects.requireNonNullElse(matrix, Mat2f.Zero());
-        this.shaderData.set(variable, matrix);
+        this.shaderData.set(variable, Objects.requireNonNullElse(matrix, Mat2f.Zero()));
     }
 
     /**
@@ -240,8 +234,7 @@ public final class Shader {
      * @param matrix Value to assign to the variable.
      */
     public void set(String variable, Mat2x3f matrix) {
-        matrix = Objects.requireNonNullElse(matrix, Mat2x3f.Zero());
-        this.shaderData.set(variable, matrix);
+        this.shaderData.set(variable, Objects.requireNonNullElse(matrix, Mat2x3f.Zero()));
     }
 
     /**
@@ -252,8 +245,7 @@ public final class Shader {
      * @param matrix Value to assign to the variable.
      */
     public void set(String variable, Mat3f matrix) {
-        matrix = Objects.requireNonNullElse(matrix, Mat3f.Zero());
-        this.shaderData.set(variable, matrix);
+        this.shaderData.set(variable, Objects.requireNonNullElse(matrix, Mat3f.Zero()));
     }
 
     /**
@@ -265,8 +257,7 @@ public final class Shader {
      * @param matrix Value to assign to the variable.
      */
     public void set(String variable, Mat3x4f matrix) {
-        matrix = Objects.requireNonNullElse(matrix, Mat3x4f.Zero());
-        this.shaderData.set(variable, matrix);
+        this.shaderData.set(variable, Objects.requireNonNullElse(matrix, Mat3x4f.Zero()));
     }
 
     /**
@@ -277,8 +268,7 @@ public final class Shader {
      * @param matrix Value to assign to the variable.
      */
     public void set(String variable, Mat4f matrix) {
-        matrix = Objects.requireNonNullElse(matrix, Mat4f.Zero());
-        this.shaderData.set(variable, matrix);
+        this.shaderData.set(variable, Objects.requireNonNullElse(matrix, Mat4f.Zero()));
     }
 
     /**

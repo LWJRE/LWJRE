@@ -2,7 +2,6 @@ package io.github.hexagonnico.opengl;
 
 import io.github.hexagonnico.core.rendering.Mesh;
 import io.github.hexagonnico.core.rendering.ShaderData;
-import io.github.hexagonnico.core.rendering.ShaderProcessor;
 import io.github.hexagonnico.core.rendering.Texture;
 import io.github.scalamath.vecmatlib.*;
 import org.lwjgl.BufferUtils;
@@ -11,12 +10,16 @@ import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL41;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
  * OpenGL implementation of a shader.
  */
 public class OpenGLShader extends ShaderData {
+
+    /** Keeps track of created shaders for them to be deleted when the rendering system is terminated. */
+    private static final ArrayList<OpenGLShader> SHADERS = new ArrayList<>();
 
     /** Shader program object. */
     private final int program;
@@ -38,6 +41,7 @@ public class OpenGLShader extends ShaderData {
      */
     public OpenGLShader() {
         this.program = GL20.glCreateProgram();
+        SHADERS.add(this);
     }
 
     /**
@@ -56,23 +60,24 @@ public class OpenGLShader extends ShaderData {
      * @param type Shader type.
      * @param code Shader code.
      */
-    private void compile(int type, String code) {
+    private void compile(int type, CharSequence code) {
         var shader = this.getShader(type);
         GL20.glShaderSource(shader, code);
         GL20.glCompileShader(shader);
         if(GL20.glGetShaderi(shader, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
+            System.err.println("Could not compile shader");
             System.out.println(GL20.glGetShaderInfoLog(shader));
             GL20.glDeleteShader(shader);
-            throw new RuntimeException("Could not compile shader"); // TODO: Better error handling
+        } else {
+            this.shaders.put(type, shader);
+            GL20.glAttachShader(this.program, shader);
         }
-        this.shaders.put(type, shader);
-        GL20.glAttachShader(this.program, shader);
     }
 
     @Override
-    public void compile(ShaderProcessor shaderProcessor) {
-        this.compile(GL20.GL_VERTEX_SHADER, shaderProcessor.getVertexCode());
-        this.compile(GL20.GL_FRAGMENT_SHADER, shaderProcessor.getFragmentCode());
+    public void compile(CharSequence vertexCode, CharSequence fragmentCode) {
+        this.compile(GL20.GL_VERTEX_SHADER, vertexCode);
+        this.compile(GL20.GL_FRAGMENT_SHADER, fragmentCode);
         GL20.glLinkProgram(this.program);
         GL20.glValidateProgram(this.program);
     }
@@ -85,7 +90,7 @@ public class OpenGLShader extends ShaderData {
      * @return The location of the uniform variable.
      */
     private int getUniformLocation(String variable) {
-        return this.uniformLocations.computeIfAbsent(variable, key -> GL20.glGetUniformLocation(this.program, key));
+        return this.uniformLocations.computeIfAbsent(variable, name -> GL20.glGetUniformLocation(this.program, name));
     }
 
     @Override
@@ -209,11 +214,25 @@ public class OpenGLShader extends ShaderData {
         super.draw(mesh);
     }
 
-    public void delete() {
+    /**
+     * Deletes this shader.
+     * Called when the {@link RenderingSystem} is terminated.
+     */
+    private void delete() {
         for(var shader : this.shaders.values()) {
             GL20.glDetachShader(this.program, shader);
             GL20.glDeleteShader(shader);
         }
         GL20.glDeleteProgram(this.program);
+    }
+
+    /**
+     * Deletes all shaders that were created.
+     * Called when the {@link RenderingSystem} is terminated.
+     */
+    public static void deleteShaders() {
+        for(var shader : SHADERS) {
+            shader.delete();
+        }
     }
 }

@@ -33,20 +33,16 @@ public class ResourceManager {
                             RESOURCES.put(resourcePath, resource);
                         } else {
                             System.err.println("Could not find resource " + resourcePath);
-                            return null;
                         }
                     } catch(IOException e) {
                         System.err.println("Error loading resource " + resourcePath);
                         e.printStackTrace();
-                        return null;
                     }
                 } else {
-                    System.err.println("There is no resource loader for resources of type " + extension);
-                    return null;
+                    System.err.println("There is no resource loader for resources of type '" + extension + "'");
                 }
             } else {
                 System.err.println("Invalid path " + resourcePath);
-                return null;
             }
         }
         return resource;

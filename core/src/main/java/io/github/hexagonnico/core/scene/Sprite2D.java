@@ -74,30 +74,32 @@ public class Sprite2D extends Node2D {
 
     // TODO: Modulate color
 
-    public Shader shader = Shader.getBuiltinShader("sprite_shader");
+    public Shader shader = Shader.getOrLoad("io/github/hexagonnico/core/shaders/sprite_2d.yaml");
 
     @Override
     protected void onUpdate(float delta) {
         if(this.shader == null) {
-            this.shader = Shader.getBuiltinShader("sprite_shader");
+            this.shader = Shader.getOrLoad("io/github/hexagonnico/core/shaders/sprite_2d.yaml");
         }
         // TODO: Do not render the sprite if it is outside of the camera's view
-        this.shader.set("transformation_matrix", this.globalTransform());
-        this.shader.set("projection_matrix", Camera2D.currentProjection());
-        this.shader.set("view_matrix", Camera2D.currentView());
-        this.shader.set("z_index", this.effectiveZIndex());
-        if(this.spriteTexture != null) {
-            this.shader.set("texture_size", this.spriteTexture.getWidth(), this.spriteTexture.getHeight());
-        } else {
-            this.shader.set("texture_size", 0, 0);
+        if(this.shader != null) {
+            this.shader.set("transformation_matrix", this.globalTransform());
+            this.shader.set("projection_matrix", Camera2D.currentProjection());
+            this.shader.set("view_matrix", Camera2D.currentView());
+            this.shader.set("z_index", this.effectiveZIndex());
+            if(this.spriteTexture != null) {
+                this.shader.set("texture_size", this.spriteTexture.getWidth(), this.spriteTexture.getHeight());
+            } else {
+                this.shader.set("texture_size", 0, 0);
+            }
+            this.shader.set("sprite_texture", this.spriteTexture);
+            this.shader.set("offset", this.offset);
+            this.shader.set("flip_h", this.flipH ? -1 : 1);
+            this.shader.set("flip_v", this.flipV ? -1 : 1);
+            this.shader.set("h_frames", this.hFrames);
+            this.shader.set("v_frames", this.vFrames);
+            this.shader.set("frame", this.frame);
+            this.shader.draw(QuadMesh2D.getInstance());
         }
-        this.shader.set("sprite_texture", this.spriteTexture);
-        this.shader.set("offset", this.offset);
-        this.shader.set("flip_h", this.flipH ? -1 : 1);
-        this.shader.set("flip_v", this.flipV ? -1 : 1);
-        this.shader.set("h_frames", this.hFrames);
-        this.shader.set("v_frames", this.vFrames);
-        this.shader.set("frame", this.frame);
-        this.shader.draw(QuadMesh2D.getInstance());
     }
 }

@@ -13,10 +13,9 @@ import java.util.ArrayList;
  */
 public class OpenGLApi implements RenderingApi {
 
+    // TODO: Move these to their own class
     /** Keeps track of meshes for them to be deleted when the rendering system is terminated. */
     private static final ArrayList<OpenGLMesh> MESHES = new ArrayList<>();
-    /** Keeps track of shaders for them to be deleted when the rendering system is terminated. */
-    private static final ArrayList<OpenGLShader> SHADERS = new ArrayList<>();
     /** Keeps track of textures for them to be deleted when the rendering system is terminated. */
     private static final ArrayList<OpenGLTexture> TEXTURES = new ArrayList<>();
 
@@ -39,9 +38,7 @@ public class OpenGLApi implements RenderingApi {
 
     @Override
     public ShaderData createShader() {
-        var shader = new OpenGLShader();
-        SHADERS.add(shader);
-        return shader;
+        return new OpenGLShader();
     }
 
     @Override
@@ -58,9 +55,6 @@ public class OpenGLApi implements RenderingApi {
     public static void deleteResources() {
         for(var mesh : MESHES) {
             mesh.delete();
-        }
-        for(var shader : SHADERS) {
-            shader.delete();
         }
         for(var texture : TEXTURES) {
             texture.delete();

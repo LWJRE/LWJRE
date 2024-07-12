@@ -23,7 +23,7 @@ public interface ResourceLoader {
 
     /**
      * Returns an array of strings representing supported extensions that should be recognized by this resource loader.
-     * Must begin with a dot.
+     * Each entry must begin with a dot.
      * <p>
      *     When a resource is loaded from the {@link ResourceManager}, it will first look for a suitable resource loader based on the file's extension.
      * </p>
