@@ -41,25 +41,16 @@ The engine will be responsible for loading the correct library for the current o
 
 ### Version 0.1
 
-+--------------------------+-------------+
-| **Feature**              | **Status**  |
-+--------------------------+-------------+
+| Feature                  | Status      |
+|--------------------------|-------------|
 | 3D rendering of meshes   | In progress |
-+--------------------------+-------------+
 | 2D rendering of textures | Done        |
-+--------------------------+-------------+
 | 2D physics in Java       | Missing     |
-+--------------------------+-------------+
 | Shaders system           | Done        |
-+--------------------------+-------------+
 | Basic 3D lighting        | Missing     |
-+--------------------------+-------------+
 | Resource manager         | In progress |
-+--------------------------+-------------+
 | Nuklear bindings         | Missing     |
-+--------------------------+-------------+
 | Stub editor application  | Missing     |
-+--------------------------+-------------+
 
 ### Version 0.2
 
