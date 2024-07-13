@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>io.github.ardentengine</groupId>
+        <artifactId>ardent-engine</artifactId>
+        <version>0.1-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>ardent-demo</artifactId>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>io.github.ardentengine</groupId>
+                <artifactId>ardent-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>process-shaders</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <trim>false</trim>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.github.ardentengine</groupId>
+            <artifactId>ardent-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.ardentengine</groupId>
+            <artifactId>ardent-glfw</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.ardentengine</groupId>
+            <artifactId>ardent-opengl</artifactId>
+        </dependency>
+    </dependencies>
+</project>

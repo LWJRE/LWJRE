@@ -1,3 +1,0 @@
-!!io.github.hexagonnico.core.rendering.Shader
-vertexShader: !resource io/github/hexagonnico/core/shaders/sprite_2d.vert
-fragmentShader: !resource io/github/hexagonnico/core/shaders/sprite_2d.frag

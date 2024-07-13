@@ -2,18 +2,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- TODO: Rename the project -->
-    <groupId>io.github.hexagonnico</groupId>
-    <artifactId>yet-another-engine</artifactId>
+    <groupId>io.github.ardentengine</groupId>
+    <artifactId>ardent-engine</artifactId>
     <version>0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
-        <module>core</module>
-        <module>demo</module>
-        <module>glfw</module>
-        <module>opengl</module>
-        <module>lwjge-maven-plugin</module>
+        <module>ardent-core</module>
+        <module>ardent-demo</module>
+        <module>ardent-glfw</module>
+        <module>ardent-opengl</module>
+        <module>ardent-maven-plugin</module>
     </modules>
 
     <properties>
@@ -26,8 +25,8 @@
         <pluginManagement>
             <plugins>
                 <plugin>
-                    <groupId>io.github.hexagonnico</groupId>
-                    <artifactId>lwjge-maven-plugin</artifactId>
+                    <groupId>io.github.ardentengine</groupId>
+                    <artifactId>ardent-maven-plugin</artifactId>
                     <version>${project.version}</version>
                 </plugin>
             </plugins>
@@ -44,19 +43,19 @@
                 <type>pom</type>
             </dependency>
             <dependency>
-                <groupId>io.github.hexagonnico</groupId>
-                <artifactId>core</artifactId>
+                <groupId>io.github.ardentengine</groupId>
+                <artifactId>ardent-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.github.hexagonnico</groupId>
-                <artifactId>glfw</artifactId>
+                <groupId>io.github.ardentengine</groupId>
+                <artifactId>ardent-glfw</artifactId>
                 <version>${project.version}</version>
                 <scope>runtime</scope>
             </dependency>
             <dependency>
-                <groupId>io.github.hexagonnico</groupId>
-                <artifactId>opengl</artifactId>
+                <groupId>io.github.ardentengine</groupId>
+                <artifactId>ardent-opengl</artifactId>
                 <version>${project.version}</version>
                 <scope>runtime</scope>
             </dependency>
@@ -71,5 +70,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
 </project>
