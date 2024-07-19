@@ -28,6 +28,7 @@ public class TextureLoader implements ResourceLoader {
         }
         var texture = new ImageTexture();
         texture.setImage(buffer.flip(), image.getWidth(), image.getHeight());
+        // TODO: Load texture properties
         return texture;
     }
 

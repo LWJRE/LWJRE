@@ -1,6 +1,6 @@
 package io.github.ardentengine.core.scene;
 
-import io.github.ardentengine.core.DisplayServer;
+import io.github.ardentengine.core.display.DisplayServer;
 import io.github.scalamath.vecmatlib.Mat3f;
 import io.github.scalamath.vecmatlib.Mat4f;
 import io.github.scalamath.vecmatlib.Vec2f;
@@ -16,15 +16,15 @@ public class Camera2D extends Node2D {
     }
 
     public static Mat3f currentView() {
-        if(current != null) {
-            return current.viewMatrix();
+        if(current() != null) {
+            return current().viewMatrix();
         }
         return IDENTITY_VIEW;
     }
 
     public static Mat4f currentProjection() {
-        if(current != null) {
-            return current.projectionMatrix();
+        if(current() != null) {
+            return current().projectionMatrix();
         }
         var windowSize = DisplayServer.getWindowSize().toFloat(); // TODO: Avoid computing this every frame
         return Mat4f.orthographicProjection(windowSize.x(), windowSize.aspect(), 0.1f, 100.0f);

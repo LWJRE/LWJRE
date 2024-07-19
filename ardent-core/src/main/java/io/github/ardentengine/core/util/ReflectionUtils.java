@@ -1,7 +1,6 @@
 package io.github.ardentengine.core.util;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Map;
 
 /**
  * Static class containing utility methods for reflection.
@@ -9,10 +8,24 @@ import java.util.Map;
 public final class ReflectionUtils {
 
     /**
-     * Prevents the instantiation of a static class.
+     * Creates a new instance of the given class.
+     * The given class must have a public no-args constructor for it to be instantiated by this method.
+     *
+     * @param ofClass The class to instantiate.
+     * @return A new instance of the given class.
+     * @param <T> The type of object to instantiate.
+     * @throws ReflectionException If an exception occurs while trying to instantiate the class.
      */
-    private ReflectionUtils() {
-
+    public static <T> T newInstance(Class<T> ofClass) {
+        try {
+            return ofClass.getConstructor().newInstance();
+        } catch(InvocationTargetException e) {
+            throw new ReflectionException("Exception occurred while instantiating " + ofClass, e);
+        } catch(InstantiationException e) {
+            throw new ReflectionException("Cannot instantiate " + ofClass + " because it is abstract", e);
+        } catch(IllegalAccessException | NoSuchMethodException e) {
+            throw new ReflectionException("Could not find a public no-args constructor in " + ofClass, e);
+        }
     }
 
     /**
@@ -21,19 +34,13 @@ public final class ReflectionUtils {
      *
      * @param className Name of the class to instantiate.
      * @return A new instance of the class with the given name.
-     * @throws ReflectionException If an exception occur while trying to instantiate the class.
+     * @throws ReflectionException If an exception occurs while trying to instantiate the class.
      */
     public static Object newInstance(String className) {
         try {
-            return Class.forName(className).getConstructor().newInstance();
-        } catch(ClassNotFoundException e) {
+            return newInstance(Class.forName(className));
+        } catch (ClassNotFoundException e) {
             throw new ReflectionException("Could not find class with name " + className, e);
-        } catch(InvocationTargetException e) {
-            throw new ReflectionException("Exception occurred while instantiating class " + className, e);
-        } catch(InstantiationException e) {
-            throw new ReflectionException("Cannot instantiate class " + className + " because it is abstract", e);
-        } catch(IllegalAccessException | NoSuchMethodException e) {
-            throw new ReflectionException("Could not find a public no-args constructor in class " + className, e);
         }
     }
 
@@ -110,45 +117,5 @@ public final class ReflectionUtils {
      */
     public static boolean setField(Object object, String fieldName, Object value) {
         return setField(object, object.getClass(), fieldName, value);
-    }
-
-    /**
-     * Private method used to look for fields in superclasses when getting fields.
-     * <p>
-     *     Calls itself recursively with the superclass of the given class.
-     *     Stops when the given class is {@link Object}.
-     * </p>
-     *
-     * @param object Object from which the fields' values are to be extracted.
-     * @param fromClass Class where to look for fields.
-     * @param result The map where to store the result.
-     * @throws ReflectionException If any of the fields could not be accessed.
-     */
-    private static void getAllFields(Object object, Class<?> fromClass, Map<String, Object> result) {
-        if(!fromClass.equals(Object.class)) {
-            getAllFields(object, fromClass.getSuperclass(), result);
-        }
-        for(var field : fromClass.getDeclaredFields()) {
-            field.setAccessible(true);
-            try {
-                result.put(field.getName(), field.get(object));
-            } catch(IllegalAccessException e) {
-                throw new ReflectionException("Could not access field " + field.getName() + " in " + fromClass, e);
-            }
-        }
-    }
-
-    // TODO: Should this get transient fields?
-
-    /**
-     * Gets name and value of all fields in the given object and adds them to the given map, including private fields.
-     * Looks for fields in the class of the given object and all of its superclasses.
-     *
-     * @param object Object from which the fields' values are to be extracted.
-     * @param result The map where to store the result.
-     * @throws ReflectionException If any of the fields could not be accessed.
-     */
-    public static void getAllFields(Object object, Map<String, Object> result) {
-        getAllFields(object, object.getClass(), result);
     }
 }

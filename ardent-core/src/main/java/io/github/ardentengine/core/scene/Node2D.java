@@ -128,7 +128,7 @@ public class Node2D extends Node {
      * @return This node's effective z index.
      */
     public final int effectiveZIndex() {
-        // TODO: Use a render method that keeps the z index its parent instead of this
+        // TODO: Use a render method that keeps the z index from its parent instead of this
         if(this.getParent() instanceof Node2D parent) {
             return parent.effectiveZIndex() + this.zIndex;
         }
@@ -235,6 +235,7 @@ public class Node2D extends Node {
             var parentTransform = parent.globalTransform();
             var transform = parentTransform.multiply(this.localTransform(), 0.0f, 0.0f, 1.0f);
             // Set rotation
+            // TODO: Check if this is equivalent to a transform with global position, given global rotation, and global scale
             var sin = (float) Math.sin(rotation);
             var cos = (float) Math.cos(rotation);
             var sx = transform.col0().length();
@@ -339,16 +340,15 @@ public class Node2D extends Node {
     }
 
     /**
-     * Removes this node from its parent and adds it as a child of the given node keeping its {@link Node2D#globalTransform()}.
+     * Sets this node's parent and keeps its global transform.
      *
-     * @param parent The new parent.
+     * @param parent This node's new parent or null to remove this node from its parent.
      *
-     * @see Node2D#setGlobalTransform(Mat2x3f)
+     * @see Node#setParent(Node)
      */
-    public final void reparent(Node parent) {
+    public final void setParentKeepTransform(Node parent) {
         var transform = this.globalTransform();
-        this.removeFromParent();
-        parent.addChild(this);
+        this.setParent(parent);
         this.setGlobalTransform(transform);
     }
 

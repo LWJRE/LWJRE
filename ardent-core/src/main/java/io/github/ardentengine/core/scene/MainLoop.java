@@ -1,9 +1,9 @@
 package io.github.ardentengine.core.scene;
 
-import io.github.ardentengine.core.input.InputEvent;
 import io.github.ardentengine.core.ApplicationProperties;
 import io.github.ardentengine.core.EngineSystem;
 import io.github.ardentengine.core.input.Input;
+import io.github.ardentengine.core.input.InputEvent;
 
 import java.util.function.Consumer;
 
@@ -36,6 +36,19 @@ public final class MainLoop implements EngineSystem {
         }
     }
 
+    @Override
+    public void process() {
+        if(this.previousTime == 0) {
+            this.previousTime = System.nanoTime();
+        }
+        var time = System.nanoTime();
+        var delta = (time - this.previousTime) / 1_000_000_000.0f;
+        if(this.sceneTree.getRoot() != null) {
+            this.process(this.sceneTree.getRoot(), delta);
+        }
+        this.previousTime = time;
+    }
+
     /**
      * Recursive method used to process the scene tree.
      * Children are processed first.
@@ -48,19 +61,6 @@ public final class MainLoop implements EngineSystem {
             this.process(child, delta);
         }
         node.onUpdate(delta);
-    }
-
-    @Override
-    public void process() {
-        if(this.previousTime == 0) {
-            this.previousTime = System.nanoTime();
-        }
-        var time = System.nanoTime();
-        var delta = (time - this.previousTime) / 1_000_000_000.0f;
-        if(this.sceneTree.getRoot() != null) {
-            this.process(this.sceneTree.getRoot(), delta);
-        }
-        this.previousTime = time;
     }
 
     /**

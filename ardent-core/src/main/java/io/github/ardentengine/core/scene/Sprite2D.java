@@ -3,6 +3,7 @@ package io.github.ardentengine.core.scene;
 import io.github.ardentengine.core.rendering.QuadMesh2D;
 import io.github.ardentengine.core.rendering.Shader;
 import io.github.ardentengine.core.rendering.Texture;
+import io.github.scalamath.colorlib.Col4f;
 import io.github.scalamath.vecmatlib.Vec2f;
 
 /**
@@ -72,7 +73,13 @@ public class Sprite2D extends Node2D {
 
     // TODO: Region enabled and region rect
 
-    // TODO: Modulate color
+    /**
+     * The color applied to the sprite.
+     * <p>
+     *     Accessible in the fragment shader as {@code modulate}.
+     * </p>
+     */
+    public Col4f modulate = new Col4f(1.0f, 1.0f, 1.0f, 1.0f);
 
     public Shader shader = Shader.getOrLoad("io/github/ardentengine/core/shaders/sprite_2d.yaml");
 
@@ -99,6 +106,7 @@ public class Sprite2D extends Node2D {
             this.shader.set("h_frames", this.hFrames);
             this.shader.set("v_frames", this.vFrames);
             this.shader.set("frame", this.frame);
+            this.shader.set("modulate", this.modulate);
             this.shader.draw(QuadMesh2D.getInstance());
         }
     }

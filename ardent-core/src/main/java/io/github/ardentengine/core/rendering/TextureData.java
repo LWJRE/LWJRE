@@ -23,11 +23,4 @@ public class TextureData {
     public void setImage(ByteBuffer pixels, int width, int height) {
 
     }
-
-    /**
-     * Binds the texture for it to be used by the current rendering API.
-     */
-    public void bindTexture() {
-
-    }
 }

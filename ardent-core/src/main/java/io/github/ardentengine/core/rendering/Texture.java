@@ -1,5 +1,6 @@
 package io.github.ardentengine.core.rendering;
 
+import io.github.ardentengine.core.logging.Logger;
 import io.github.ardentengine.core.resources.ResourceManager;
 
 /**
@@ -8,19 +9,30 @@ import io.github.ardentengine.core.resources.ResourceManager;
  */
 public abstract class Texture {
 
+    /**
+     * Utility method to get a texture resource using {@link ResourceManager#getOrLoad(String)}.
+     * <p>
+     *     Loads the texture at the given path or returns the same instance if it was already loaded.
+     * </p>
+     * <p>
+     *     Returns null and logs an error if the resource at the given path is not of class {@code Texture}.
+     * </p>
+     * @param resourcePath Path at which to load the texture resource. Must point to an image file or a {@code .yaml} resource file in the classpath.
+     * @return The requested texture.
+     */
     public static Texture getOrLoad(String resourcePath) {
         var resource = ResourceManager.getOrLoad(resourcePath);
         if(resource instanceof Texture) {
             return (Texture) resource;
         }
-        System.err.println("Resource " + resourcePath + " is not a texture");
+        Logger.error("Resource " + resourcePath + " is not a texture");
         return null;
     }
 
     /**
      * Texture data used internally to abstract the representation of a texture across different rendering APIs.
      */
-    protected final TextureData textureData = RenderingServer.createTexture();
+    protected final TextureData textureData = RenderingServer.getTextureData(this);
 
     /**
      * Returns the width of this texture.
@@ -37,11 +49,13 @@ public abstract class Texture {
     public abstract int getHeight();
 
     /**
-     * Binds this texture for it to be used by the current rendering API.
-     * This method is called before the texture is used in a shader.
-     * Texture classes may override this method to update the texture if it has been modified.
+     * Updates this texture.
+     * <p>
+     *     Textures are updated before they are used in a shader.
+     *     Different types of textures may override this method to provide their own update logic.
+     * </p>
      */
-    public void bind() {
-        this.textureData.bindTexture();
+    protected void updateTexture() {
+
     }
 }

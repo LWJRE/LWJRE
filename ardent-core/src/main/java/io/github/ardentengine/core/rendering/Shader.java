@@ -1,6 +1,10 @@
 package io.github.ardentengine.core.rendering;
 
+import io.github.ardentengine.core.logging.Logger;
 import io.github.ardentengine.core.resources.ResourceManager;
+import io.github.scalamath.colorlib.Col1i;
+import io.github.scalamath.colorlib.Col3f;
+import io.github.scalamath.colorlib.Col4f;
 import io.github.scalamath.vecmatlib.*;
 
 import java.util.Objects;
@@ -14,17 +18,28 @@ import java.util.Objects;
  */
 public final class Shader {
 
+    /**
+     * Utility method to get a shader resource using {@link ResourceManager#getOrLoad(String)}.
+     * <p>
+     *     Loads the shader at the given path or returns the same instance if it was already loaded.
+     * </p>
+     * <p>
+     *     Returns null and logs an error if the resource at the given path is not of class {@code Shader}.
+     * </p>
+     * @param resourcePath Path at which to load the shader resource. Must point to a {@code .yaml} shader file in the classpath.
+     * @return The requested shader.
+     */
     public static Shader getOrLoad(String resourcePath) {
         var resource = ResourceManager.getOrLoad(resourcePath);
         if(resource instanceof Shader) {
             return (Shader) resource;
         }
-        System.err.println("Resource " + resourcePath + " is not a shader");
+        Logger.error("Resource " + resourcePath + " is not a shader");
         return null;
     }
 
     /** Shader data used internally to abstract shaders across different rendering APIs. */
-    private final ShaderData shaderData = RenderingServer.createShader();
+    private final ShaderData shaderData = RenderingServer.getShaderData(this);
 
     /**
      * Compiles this shader into a runnable shader program.
@@ -63,7 +78,7 @@ public final class Shader {
 
     /**
      * Sets a {@code vec2} uniform variable in the shader.
-     * If the given vector is {@code null}, it will default to {@link Vec2f#Zero()}.
+     * If the given vector is null, it will default to {@link Vec2f#Zero()}.
      *
      * @param variable Name of the uniform variable as it is declared in the shader.
      * @param vector Value to assign to the variable.
@@ -87,7 +102,7 @@ public final class Shader {
 
     /**
      * Sets a {@code vec3} uniform variable in the shader.
-     * If the given vector is {@code null}, it will default to {@link Vec3f#Zero()}.
+     * If the given vector is null, it will default to {@link Vec3f#Zero()}.
      *
      * @param variable Name of the uniform variable as it is declared in the shader.
      * @param vector Value to assign to the variable.
@@ -112,7 +127,7 @@ public final class Shader {
 
     /**
      * Sets a {@code vec4} uniform variable in the shader.
-     * If the given vector is {@code null}, it will default to {@link Vec4f#Zero()}.
+     * If the given vector is null, it will default to {@link Vec4f#Zero()}.
      *
      * @param variable Name of the uniform variable as it is declared in the shader.
      * @param vector Value to assign to the variable.
@@ -155,7 +170,7 @@ public final class Shader {
 
     /**
      * Sets an {@code ivec2} uniform variable in the shader.
-     * If the given vector is {@code null}, it will default to {@link Vec2i#Zero()}.
+     * If the given vector is null, it will default to {@link Vec2i#Zero()}.
      *
      * @param variable Name of the uniform variable as it is declared in the shader.
      * @param vector Value to assign to the variable.
@@ -179,7 +194,7 @@ public final class Shader {
 
     /**
      * Sets an {@code ivec3} uniform variable in the shader.
-     * If the given vector is {@code null}, it will default to {@link Vec3i#Zero()}.
+     * If the given vector is null, it will default to {@link Vec3i#Zero()}.
      *
      * @param variable Name of the uniform variable as it is declared in the shader.
      * @param vector Value to assign to the variable.
@@ -204,7 +219,7 @@ public final class Shader {
 
     /**
      * Sets an {@code ivec4} uniform variable in the shader.
-     * If the given vector is {@code null}, it will default to {@link Vec4i#Zero()}.
+     * If the given vector is null, it will default to {@link Vec4i#Zero()}.
      *
      * @param variable Name of the uniform variable as it is declared in the shader.
      * @param vector Value to assign to the variable.
@@ -216,7 +231,7 @@ public final class Shader {
 
     /**
      * Sets a {@code mat2} uniform variable in the shader.
-     * If the given matrix is {@code null}, it will default to {@link Mat2f#Zero()}.
+     * If the given matrix is null, it will default to {@link Mat2f#Zero()}.
      *
      * @param variable Name of the uniform variable as it is declared in the shader.
      * @param matrix Value to assign to the variable.
@@ -227,7 +242,7 @@ public final class Shader {
 
     /**
      * Sets a {@code mat3x2} uniform variable in the shader.
-     * If the given matrix is {@code null}, it will default to {@link Mat2x3f#Zero()}.
+     * If the given matrix is null, it will default to {@link Mat2x3f#Zero()}.
      * Note that glsl uses column-major order, therefore a 3x2 matrix is a matrix with 2 rows and 3 columns and corresponds to a {@link Mat2x3f} object.
      *
      * @param variable Name of the uniform variable as it is declared in the shader.
@@ -239,7 +254,7 @@ public final class Shader {
 
     /**
      * Sets a {@code mat3} uniform variable in the shader.
-     * If the given matrix is {@code null}, it will default to {@link Mat3f#Zero()}.
+     * If the given matrix is null, it will default to {@link Mat3f#Zero()}.
      *
      * @param variable Name of the uniform variable as it is declared in the shader.
      * @param matrix Value to assign to the variable.
@@ -250,7 +265,7 @@ public final class Shader {
 
     /**
      * Sets a {@code mat4x3} uniform variable in the shader.
-     * If the given matrix is {@code null}, it will default to {@link Mat3x4f#Zero()}.
+     * If the given matrix is null, it will default to {@link Mat3x4f#Zero()}.
      * Note that glsl uses column-major order, therefore a 4x3 matrix is a matrix with 3 rows and 4 columns and corresponds to a {@link Mat3x4f} object.
      *
      * @param variable Name of the uniform variable as it is declared in the shader.
@@ -262,7 +277,7 @@ public final class Shader {
 
     /**
      * Sets a {@code mat4} uniform variable in the shader.
-     * If the given matrix is {@code null}, it will default to {@link Mat4f#Zero()}.
+     * If the given matrix is null, it will default to {@link Mat4f#Zero()}.
      *
      * @param variable Name of the uniform variable as it is declared in the shader.
      * @param matrix Value to assign to the variable.
@@ -273,16 +288,53 @@ public final class Shader {
 
     /**
      * Sets a {@code sampler2D} uniform variable in the shader.
-     * The given texture can be {@code null} to tell the shader to use no texture for this variable.
+     * The given texture can be null to tell the shader to use no texture for this variable.
      *
      * @param variable Name of the uniform variable as it is declared in the shader.
      * @param texture Texture to use for the {@code sampler2D}.
      */
     public void set(String variable, Texture texture) {
+        if(texture != null) {
+            texture.updateTexture();
+        }
         this.shaderData.set(variable, texture);
     }
 
-    // TODO: Add colors
+    /**
+     * Sets a {@code vec3} uniform variable in the shader.
+     * If the given color is null, it will default to black.
+     *
+     * @param variable Name of the uniform variable as it is declared in the shader.
+     * @param color Value to assign to the variable.
+     */
+    public void set(String variable, Col3f color) {
+        color = Objects.requireNonNullElse(color, new Col3f(0.0f, 0.0f, 0.0f));
+        this.set(variable, color.r(), color.g(), color.b());
+    }
+
+    /**
+     * Sets a {@code vec4} uniform variable in the shader.
+     * If the given color is null, it will default to black.
+     *
+     * @param variable Name of the uniform variable as it is declared in the shader.
+     * @param color Value to assign to the variable.
+     */
+    public void set(String variable, Col4f color) {
+        color = Objects.requireNonNullElse(color, new Col4f(0.0f, 0.0f, 0.0f, 1.0f));
+        this.set(variable, color.r(), color.g(), color.b(), color.a());
+    }
+
+    /**
+     * Sets a {@code vec4} uniform variable in the shader.
+     * If the given color is null, it will default to black.
+     *
+     * @param variable Name of the uniform variable as it is declared in the shader.
+     * @param color Value to assign to the variable.
+     */
+    public void set(String variable, Col1i color) {
+        color = Objects.requireNonNullElse(color, new Col1i(0));
+        this.set(variable, color.r(), color.g(), color.b(), color.a());
+    }
 
     /**
      * Uses this shader to draw the given mesh.

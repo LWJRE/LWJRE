@@ -75,44 +75,35 @@ public final class RenderingServer {
     }
 
     /**
-     * Tells the rendering API that a mesh has been created.
-     * The returned {@link MeshData} is used internally in the {@link Mesh} class.
-     * <p>
-     *     The default implementation of this method returns an instance of {@link MeshData}.
-     *     Different rendering APIs must return their implementation of a mesh.
-     * </p>
+     * Returns the {@code MeshData} corresponding to the given mesh or creates a new one.
+     * Used to abstract the low-level implementation of meshes across different rendering APIs.
      *
-     * @return Mesh data used internally for meshes.
+     * @param mesh The mesh object.
+     * @return The mesh data corresponding to the given mesh.
      */
-    public static MeshData createMesh() {
-        return getApi().createMesh();
+    public static MeshData getMeshData(Mesh mesh) {
+        return getApi().getMeshData(mesh);
     }
 
     /**
-     * Tells the rendering API that a shader has been created.
-     * The returned {@link ShaderData} is used internally in the {@link Shader} class.
-     * <p>
-     *     The default implementation of this method returns an instance of {@link ShaderData}.
-     *     Different rendering APIs must return their implementation of a shader.
-     * </p>
+     * Returns the {@code ShaderData} corresponding to the given shader or creates a new one.
+     * Used to abstract the low-level implementation of shaders across different rendering APIs.
      *
-     * @return Shader data used internally for shaders.
+     * @param shader The shader object.
+     * @return The shader data corresponding to the given shader.
      */
-    public static ShaderData createShader() {
-        return getApi().createShader();
+    public static ShaderData getShaderData(Shader shader) {
+        return getApi().getShaderData(shader);
     }
 
     /**
-     * Tells the rendering API that a texture has been created.
-     * The returned {@link TextureData} is used internally in the {@link Texture} class.
-     * <p>
-     *     The default implementation of this method returns an instance of {@link TextureData}.
-     *     Different rendering APIs must return their implementation of a texture.
-     * </p>
+     * Returns the {@code TextureData} corresponding to the given texture or creates a new one.
+     * Used to abstract the low-level implementation of textures across different rendering APIs.
      *
-     * @return Texture data used internally for textures.
+     * @param texture The texture object.
+     * @return The texture data corresponding to the given texture.
      */
-    public static TextureData createTexture() {
-        return getApi().createTexture();
+    public static TextureData getTextureData(Texture texture) {
+        return getApi().getTextureData(texture);
     }
 }

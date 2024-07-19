@@ -1,6 +1,8 @@
 package io.github.ardentengine.opengl;
 
+import io.github.ardentengine.core.logging.Logger;
 import io.github.ardentengine.core.rendering.Mesh;
+import io.github.ardentengine.core.rendering.Shader;
 import io.github.ardentengine.core.rendering.ShaderData;
 import io.github.ardentengine.core.rendering.Texture;
 import io.github.scalamath.vecmatlib.*;
@@ -10,7 +12,6 @@ import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL41;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -19,7 +20,17 @@ import java.util.HashMap;
 public class OpenGLShader extends ShaderData {
 
     /** Keeps track of created shaders for them to be deleted when the rendering system is terminated. */
-    private static final ArrayList<OpenGLShader> SHADERS = new ArrayList<>();
+    private static final HashMap<Shader, OpenGLShader> SHADERS = new HashMap<>();
+
+    /**
+     * Returns the shader data corresponding to the given shader or returns a new one if it does not exist.
+     *
+     * @param shader Shader object.
+     * @return The corresponding shader data.
+     */
+    public static OpenGLShader getOrCreate(Shader shader) {
+        return SHADERS.computeIfAbsent(shader, key -> new OpenGLShader());
+    }
 
     /** Shader program object. */
     private final int program;
@@ -39,9 +50,8 @@ public class OpenGLShader extends ShaderData {
      *
      * @see GL20#glCreateProgram()
      */
-    public OpenGLShader() {
+    private OpenGLShader() {
         this.program = GL20.glCreateProgram();
-        SHADERS.add(this);
     }
 
     /**
@@ -65,8 +75,8 @@ public class OpenGLShader extends ShaderData {
         GL20.glShaderSource(shader, code);
         GL20.glCompileShader(shader);
         if(GL20.glGetShaderi(shader, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
-            System.err.println("Could not compile shader");
-            System.out.println(GL20.glGetShaderInfoLog(shader));
+            Logger.error("Could not compile shader");
+            Logger.info(GL20.glGetShaderInfoLog(shader));
             GL20.glDeleteShader(shader);
         } else {
             this.shaders.put(type, shader);
@@ -199,7 +209,7 @@ public class OpenGLShader extends ShaderData {
         if(texture != null) {
             var textureUnit = this.getTextureUnit(variable);
             GL13.glActiveTexture(GL13.GL_TEXTURE1 + textureUnit);
-            texture.bind();
+            OpenGLTexture.getOrCreate(texture).bindTexture();
             GL41.glProgramUniform1i(this.program, location, 1 + textureUnit);
         } else {
             GL13.glActiveTexture(GL13.GL_TEXTURE0);
@@ -216,7 +226,9 @@ public class OpenGLShader extends ShaderData {
 
     /**
      * Deletes this shader.
-     * Called when the {@link RenderingSystem} is terminated.
+     *
+     * @see GL20#glDeleteShader(int)
+     * @see GL20#glDeleteProgram(int)
      */
     private void delete() {
         for(var shader : this.shaders.values()) {
@@ -231,7 +243,7 @@ public class OpenGLShader extends ShaderData {
      * Called when the {@link RenderingSystem} is terminated.
      */
     public static void deleteShaders() {
-        for(var shader : SHADERS) {
+        for(var shader : SHADERS.values()) {
             shader.delete();
         }
     }

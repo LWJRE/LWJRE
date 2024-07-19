@@ -1,7 +1,8 @@
 package io.github.ardentengine.opengl;
 
-import io.github.ardentengine.core.DisplayServer;
 import io.github.ardentengine.core.EngineSystem;
+import io.github.ardentengine.core.display.DisplayServer;
+import io.github.ardentengine.core.logging.Logger;
 import io.github.ardentengine.core.rendering.RenderingServer;
 import org.lwjgl.Version;
 import org.lwjgl.opengl.GL;
@@ -14,7 +15,7 @@ public class RenderingSystem implements EngineSystem {
 
     @Override
     public void initialize() {
-        System.out.println("Initializing OpenGL rendering system using LWJGL " + Version.getVersion());
+        Logger.info("Initializing OpenGL rendering system using LWJGL " + Version.getVersion());
         GL.createCapabilities();
         RenderingServer.setDefaultClearColor(0.3f, 0.3f, 0.3f);
         // TODO: This should only be used for 2D
@@ -33,7 +34,8 @@ public class RenderingSystem implements EngineSystem {
 
     @Override
     public void terminate() {
-        OpenGLApi.deleteResources();
+        OpenGLMesh.deleteMeshes();
         OpenGLShader.deleteShaders();
+        OpenGLTexture.deleteTextures();
     }
 }

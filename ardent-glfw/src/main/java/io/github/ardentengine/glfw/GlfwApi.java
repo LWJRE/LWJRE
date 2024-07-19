@@ -1,6 +1,6 @@
 package io.github.ardentengine.glfw;
 
-import io.github.ardentengine.core.DisplayApi;
+import io.github.ardentengine.core.display.DisplayApi;
 import io.github.scalamath.vecmatlib.Vec2f;
 import io.github.scalamath.vecmatlib.Vec2i;
 

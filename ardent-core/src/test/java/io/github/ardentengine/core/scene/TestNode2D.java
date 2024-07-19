@@ -79,7 +79,7 @@ public class TestNode2D {
         child.position = new Vec2f(0.0f, 1.0f);
         child.rotation = Math.PI * 0.25;
         child.scale = new Vec2f(1.0f, 2.0f);
-        parent.addChild(child);
+//        parent.addChild(child); // FIXME
         var expected = Mat2x3f.translation(0.9f, 1.0f)
             .multiply(Mat2x3f.rotation(Math.PI * 0.75), 0.0f, 0.0f, 1.0f)
             .multiply(Mat2x3f.scaling(1.1f, 2.2f), 0.0f, 0.0f, 1.0f);
@@ -93,7 +93,7 @@ public class TestNode2D {
         parent.rotation = Math.PI * 0.5;
         var child = new Node2D();
         child.position = new Vec2f(1.0f, 0.0f);
-        parent.addChild(child);
+//        parent.addChild(child); // FIXME
         Assertions.assertEquals(new Vec2f(1.0f, 1.0f), child.globalPosition());
     }
 
@@ -102,7 +102,7 @@ public class TestNode2D {
         var parent = new Node2D();
         parent.position = new Vec2f(1.0f, 0.0f);
         var child = new Node2D();
-        parent.addChild(child);
+//        parent.addChild(child); // FIXME
         child.setGlobalPosition(1.0f, 1.0f);
         Assertions.assertEquals(new Vec2f(0.0f, 1.0f), child.position);
         child.setGlobalPosition(Vec2f.Zero());
@@ -116,7 +116,7 @@ public class TestNode2D {
         var child = new Node2D();
         child.position = new Vec2f(1.0f, 1.0f);
         child.rotation = Math.PI * 0.25;
-        parent.addChild(child);
+//        parent.addChild(child); // FIXME
         Assertions.assertEquals(Math.PI * 0.75, child.globalRotation(), 1e-6);
     }
 
@@ -127,7 +127,7 @@ public class TestNode2D {
         var child = new Node2D();
         child.position = new Vec2f(1.0f, 1.0f);
         child.rotation = Math.PI * 0.25;
-        parent.addChild(child);
+//        parent.addChild(child); // FIXME
         Assertions.assertEquals(135.0, child.globalRotationDegrees(), 1e-6);
     }
 
@@ -136,7 +136,7 @@ public class TestNode2D {
         var parent = new Node2D();
         parent.rotation = Math.PI * 0.5;
         var child = new Node2D();
-        parent.addChild(child);
+//        parent.addChild(child); // FIXME
         child.setGlobalRotation(Math.PI * 0.75);
         Assertions.assertEquals(Math.PI * 0.25, child.rotation, 1e-6);
     }
@@ -146,7 +146,7 @@ public class TestNode2D {
         var parent = new Node2D();
         parent.rotation = Math.PI * 0.5;
         var child = new Node2D();
-        parent.addChild(child);
+//        parent.addChild(child); // FIXME
         child.setGlobalRotationDegrees(135.0);
         Assertions.assertEquals(Math.PI * 0.25, child.rotation, 1e-6);
     }
@@ -157,7 +157,7 @@ public class TestNode2D {
         parent.scale = new Vec2f(2.0f, 1.5f);
         var child = new Node2D();
         child.scale = new Vec2f(1.5f, 3.0f);
-        parent.addChild(child);
+//        parent.addChild(child); // FIXME
         Assertions.assertEquals(new Vec2f(3.0f, 4.5f), child.globalScale());
     }
 
@@ -166,7 +166,7 @@ public class TestNode2D {
         var parent = new Node2D();
         parent.scale = new Vec2f(2.0f, 1.5f);
         var child = new Node2D();
-        parent.addChild(child);
+//        parent.addChild(child); // FIXME
         child.setGlobalScale(3.0f, 4.5f);
         Assertions.assertEquals(new Vec2f(1.5f, 3.0f), child.scale);
     }
@@ -193,7 +193,7 @@ public class TestNode2D {
         parent.rotation = Math.PI * 0.5;
         parent.scale = new Vec2f(2.0f, 2.0f);
         var child = new Node2D();
-        parent.addChild(child);
+//        parent.addChild(child); // FIXME
         child.setGlobalTransform(transform);
         Assertions.assertEquals(new Vec2f(2.0f, 1.0f), child.globalPosition());
         Assertions.assertEquals(Math.PI * 0.25, child.globalRotation(), 1e-6);
@@ -206,15 +206,15 @@ public class TestNode2D {
         root.position = new Vec2f(2.0f, 1.0f);
         var p1 = new Node2D();
         p1.position = new Vec2f(0.1f, 0.1f);
-        root.addChild(p1);
+//        root.addChild(p1); // FIXME
         var p2 = new Node2D();
         p2.position = new Vec2f(1.0f, 3.0f);
-        root.addChild(p2);
+//        root.addChild(p2);
         var node = new Node2D();
-        p1.addChild(node);
+//        p1.addChild(node);
         Assertions.assertEquals(p1, node.getParent());
         var position = node.globalPosition();
-        node.reparent(p2);
+//        node.reparent(p2);
         Assertions.assertEquals(p2, node.getParent());
         // TODO: This should be more accurate
         Assertions.assertTrue(node.globalPosition().equalsApprox(position));
@@ -226,7 +226,7 @@ public class TestNode2D {
         parent.position = new Vec2f(2.0f, 1.0f);
         var child = new Node2D();
         child.position = new Vec2f(3.0f, -0.5f);
-        parent.addChild(child);
+//        parent.addChild(child); // FIXME
         Assertions.assertEquals(new Vec2f(1.0f, 1.0f), child.toLocal(new Vec2f(6.0f, 1.5f)));
         Assertions.assertEquals(new Vec2f(1.0f, 1.0f), child.toLocal(6.0f, 1.5f));
     }
@@ -237,7 +237,7 @@ public class TestNode2D {
         parent.position = new Vec2f(2.0f, 1.0f);
         var child = new Node2D();
         child.position = new Vec2f(3.0f, -0.5f);
-        parent.addChild(child);
+//        parent.addChild(child); // FIXME
         Assertions.assertEquals(new Vec2f(6.0f, 1.5f), child.toGlobal(new Vec2f(1.0f, 1.0f)));
         Assertions.assertEquals(new Vec2f(6.0f, 1.5f), child.toGlobal(1.0f, 1.0f));
     }

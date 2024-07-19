@@ -8,6 +8,7 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.AbstractConstruct;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
+import org.yaml.snakeyaml.error.YAMLException;
 import org.yaml.snakeyaml.introspector.BeanAccess;
 import org.yaml.snakeyaml.nodes.*;
 
@@ -65,7 +66,7 @@ public class YamlLoader implements ResourceLoader {
         public LoaderConstructor(LoaderOptions loadingConfig) {
             super(loadingConfig);
             this.yamlConstructors.put(Tag.FLOAT, new ConstructActualFloat());
-            this.yamlConstructors.put(new Tag("!resource"), new ConstructResource());
+            this.yamlConstructors.put(new Tag("!getOrLoad"), new ConstructResource());
             this.yamlConstructors.put(new Tag("!Vec2f"), new ConstructVec2f());
             this.yamlConstructors.put(new Tag("!Vec3f"), new ConstructVec3f());
             this.yamlConstructors.put(new Tag("!Vec4f"), new ConstructVec4f());
@@ -77,6 +78,7 @@ public class YamlLoader implements ResourceLoader {
             this.yamlConstructors.put(new Tag("!Col1i"), new ConstructCol1i());
             this.yamlConstructors.put(new Tag("!Gradient"), new ConstructGradient());
             this.yamlConstructors.put(new Tag(Shader.class), new ConstructShader());
+            this.yamlConstructors.put(new Tag(Class.class), new ConstructClass());
         }
 
         private class ConstructActualFloat extends ConstructYamlFloat {
@@ -94,14 +96,11 @@ public class YamlLoader implements ResourceLoader {
         /**
          * YAML construct used to deserialize resources using {@link ResourceManager#getOrLoad(String)}.
          */
-        private class ConstructResource extends AbstractConstruct {
+        private class ConstructResource extends ConstructScalar {
 
             @Override
             public Object construct(Node node) {
-                if(node instanceof ScalarNode scalarNode) {
-                    return ResourceManager.getOrLoad(constructScalar(scalarNode));
-                }
-                return null;
+                return ResourceManager.getOrLoad(constructScalar((ScalarNode) node));
             }
         }
 
@@ -114,14 +113,10 @@ public class YamlLoader implements ResourceLoader {
             public Object construct(Node node) {
                 if(node instanceof SequenceNode sequenceNode) {
                     var sequence = constructSequence(sequenceNode);
-                    if(sequence.size() == 2 && sequence.get(0) instanceof Number x && sequence.get(1) instanceof Number y) {
-                        return new Vec2f(x.floatValue(), y.floatValue());
-                    }
-                } else if(node instanceof MappingNode mappingNode) {
-                    var mapping = constructMapping(mappingNode);
-                    if(mapping.get("x") instanceof Number x && mapping.get("y") instanceof Number y) {
-                        return new Vec2f(x.floatValue(), y.floatValue());
-                    }
+                    return new Vec2f(
+                        !sequence.isEmpty() && sequence.get(0) instanceof Number n ? n.floatValue() : 0.0f,
+                        sequence.size() > 1 && sequence.get(1) instanceof Number n ? n.floatValue() : 0.0f
+                    );
                 }
                 return Vec2f.Zero();
             }
@@ -136,14 +131,10 @@ public class YamlLoader implements ResourceLoader {
             public Object construct(Node node) {
                 if(node instanceof SequenceNode sequenceNode) {
                     var sequence = constructSequence(sequenceNode);
-                    if(sequence.size() == 2 && sequence.get(0) instanceof Number x && sequence.get(1) instanceof Number y) {
-                        return new Vec2i(x.intValue(), y.intValue());
-                    }
-                } else if(node instanceof MappingNode mappingNode) {
-                    var mapping = constructMapping(mappingNode);
-                    if(mapping.get("x") instanceof Number x && mapping.get("y") instanceof Number y) {
-                        return new Vec2i(x.intValue(), y.intValue());
-                    }
+                    return new Vec2i(
+                        !sequence.isEmpty() && sequence.get(0) instanceof Number n ? n.intValue() : 0,
+                        sequence.size() > 1 && sequence.get(1) instanceof Number n ? n.intValue() : 0
+                    );
                 }
                 return Vec2i.Zero();
             }
@@ -158,14 +149,11 @@ public class YamlLoader implements ResourceLoader {
             public Object construct(Node node) {
                 if(node instanceof SequenceNode sequenceNode) {
                     var sequence = constructSequence(sequenceNode);
-                    if(sequence.size() == 3 && sequence.get(0) instanceof Number x && sequence.get(1) instanceof Number y && sequence.get(2) instanceof Number z) {
-                        return new Vec3f(x.floatValue(), y.floatValue(), z.floatValue());
-                    }
-                } else if(node instanceof MappingNode mappingNode) {
-                    var mapping = constructMapping(mappingNode);
-                    if(mapping.get("x") instanceof Number x && mapping.get("y") instanceof Number y && mapping.get("z") instanceof Number z) {
-                        return new Vec3f(x.floatValue(), y.floatValue(), z.floatValue());
-                    }
+                    return new Vec3f(
+                        !sequence.isEmpty() && sequence.get(0) instanceof Number n ? n.floatValue() : 0.0f,
+                        sequence.size() > 1 && sequence.get(1) instanceof Number n ? n.floatValue() : 0.0f,
+                        sequence.size() > 2 && sequence.get(2) instanceof Number n ? n.floatValue() : 0.0f
+                    );
                 }
                 return Vec3f.Zero();
             }
@@ -180,14 +168,11 @@ public class YamlLoader implements ResourceLoader {
             public Object construct(Node node) {
                 if(node instanceof SequenceNode sequenceNode) {
                     var sequence = constructSequence(sequenceNode);
-                    if(sequence.size() == 3 && sequence.get(0) instanceof Number x && sequence.get(1) instanceof Number y && sequence.get(2) instanceof Number z) {
-                        return new Vec3i(x.intValue(), y.intValue(), z.intValue());
-                    }
-                } else if(node instanceof MappingNode mappingNode) {
-                    var mapping = constructMapping(mappingNode);
-                    if(mapping.get("x") instanceof Number x && mapping.get("y") instanceof Number y && mapping.get("z") instanceof Number z) {
-                        return new Vec3i(x.intValue(), y.intValue(), z.intValue());
-                    }
+                    return new Vec3i(
+                        !sequence.isEmpty() && sequence.get(0) instanceof Number n ? n.intValue() : 0,
+                        sequence.size() > 1 && sequence.get(1) instanceof Number n ? n.intValue() : 0,
+                        sequence.size() > 2 && sequence.get(2) instanceof Number n ? n.intValue() : 0
+                    );
                 }
                 return Vec3i.Zero();
             }
@@ -202,14 +187,12 @@ public class YamlLoader implements ResourceLoader {
             public Object construct(Node node) {
                 if(node instanceof SequenceNode sequenceNode) {
                     var sequence = constructSequence(sequenceNode);
-                    if(sequence.size() == 4 && sequence.get(0) instanceof Number x && sequence.get(1) instanceof Number y && sequence.get(2) instanceof Number z && sequence.get(3) instanceof Number w) {
-                        return new Vec4f(x.floatValue(), y.floatValue(), z.floatValue(), w.floatValue());
-                    }
-                } else if(node instanceof MappingNode mappingNode) {
-                    var mapping = constructMapping(mappingNode);
-                    if(mapping.get("x") instanceof Number x && mapping.get("y") instanceof Number y && mapping.get("z") instanceof Number z && mapping.get("w") instanceof Number w) {
-                        return new Vec4f(x.floatValue(), y.floatValue(), z.floatValue(), w.floatValue());
-                    }
+                    return new Vec4f(
+                        !sequence.isEmpty() && sequence.get(0) instanceof Number n ? n.floatValue() : 0.0f,
+                        sequence.size() > 1 && sequence.get(1) instanceof Number n ? n.floatValue() : 0.0f,
+                        sequence.size() > 2 && sequence.get(2) instanceof Number n ? n.floatValue() : 0.0f,
+                        sequence.size() > 3 && sequence.get(3) instanceof Number n ? n.floatValue() : 0.0f
+                    );
                 }
                 return Vec4f.Zero();
             }
@@ -224,14 +207,12 @@ public class YamlLoader implements ResourceLoader {
             public Object construct(Node node) {
                 if(node instanceof SequenceNode sequenceNode) {
                     var sequence = constructSequence(sequenceNode);
-                    if(sequence.size() == 4 && sequence.get(0) instanceof Number x && sequence.get(1) instanceof Number y && sequence.get(2) instanceof Number z && sequence.get(3) instanceof Number w) {
-                        return new Vec4i(x.intValue(), y.intValue(), z.intValue(), w.intValue());
-                    }
-                } else if(node instanceof MappingNode mappingNode) {
-                    var mapping = constructMapping(mappingNode);
-                    if(mapping.get("x") instanceof Number x && mapping.get("y") instanceof Number y && mapping.get("z") instanceof Number z && mapping.get("w") instanceof Number w) {
-                        return new Vec4i(x.intValue(), y.intValue(), z.intValue(), w.intValue());
-                    }
+                    return new Vec4i(
+                        !sequence.isEmpty() && sequence.get(0) instanceof Number n ? n.intValue() : 0,
+                        sequence.size() > 1 && sequence.get(1) instanceof Number n ? n.intValue() : 0,
+                        sequence.size() > 2 && sequence.get(2) instanceof Number n ? n.intValue() : 0,
+                        sequence.size() > 3 && sequence.get(3) instanceof Number n ? n.intValue() : 0
+                    );
                 }
                 return Vec4i.Zero();
             }
@@ -246,14 +227,11 @@ public class YamlLoader implements ResourceLoader {
             public Object construct(Node node) {
                 if(node instanceof SequenceNode sequenceNode) {
                     var sequence = constructSequence(sequenceNode);
-                    if(sequence.size() == 3 && sequence.get(0) instanceof Number r && sequence.get(1) instanceof Number g && sequence.get(2) instanceof Number b) {
-                        return new Col3f(r.floatValue(), g.floatValue(), b.floatValue());
-                    }
-                } else if(node instanceof MappingNode mappingNode) {
-                    var mapping = constructMapping(mappingNode);
-                    if(mapping.get("r") instanceof Number r && mapping.get("g") instanceof Number g && mapping.get("b") instanceof Number b) {
-                        return new Col3f(r.floatValue(), g.floatValue(), b.floatValue());
-                    }
+                    return new Col3f(
+                        !sequence.isEmpty() && sequence.get(0) instanceof Number n ? n.floatValue() : 0.0f,
+                        sequence.size() > 1 && sequence.get(1) instanceof Number n ? n.floatValue() : 0.0f,
+                        sequence.size() > 2 && sequence.get(2) instanceof Number n ? n.floatValue() : 0.0f
+                    );
                 }
                 return new Col3f(0.0f, 0.0f, 0.0f);
             }
@@ -268,14 +246,12 @@ public class YamlLoader implements ResourceLoader {
             public Object construct(Node node) {
                 if(node instanceof SequenceNode sequenceNode) {
                     var sequence = constructSequence(sequenceNode);
-                    if(sequence.size() == 4 && sequence.get(0) instanceof Number r && sequence.get(1) instanceof Number g && sequence.get(2) instanceof Number b && sequence.get(3) instanceof Number a) {
-                        return new Col4f(r.floatValue(), g.floatValue(), b.floatValue(), a.floatValue());
-                    }
-                } else if(node instanceof MappingNode mappingNode) {
-                    var mapping = constructMapping(mappingNode);
-                    if(mapping.get("r") instanceof Number r && mapping.get("g") instanceof Number g && mapping.get("b") instanceof Number b && mapping.get("a") instanceof Number a) {
-                        return new Col4f(r.floatValue(), g.floatValue(), b.floatValue(), a.floatValue());
-                    }
+                    return new Col4f(
+                        !sequence.isEmpty() && sequence.get(0) instanceof Number n ? n.floatValue() : 0.0f,
+                        sequence.size() > 1 && sequence.get(1) instanceof Number n ? n.floatValue() : 0.0f,
+                        sequence.size() > 2 && sequence.get(2) instanceof Number n ? n.floatValue() : 0.0f,
+                        sequence.size() > 3 && sequence.get(3) instanceof Number n ? n.floatValue() : 0.0f
+                    );
                 }
                 return new Col4f(0.0f, 0.0f, 0.0f);
             }
@@ -315,6 +291,9 @@ public class YamlLoader implements ResourceLoader {
             }
         }
 
+        /**
+         * YAML construct used to deserialize a {@link Shader} from a mapping node whose keys are its vertex and fragment code.
+         */
         private class ConstructShader extends AbstractConstruct {
 
             @Override
@@ -328,6 +307,18 @@ public class YamlLoader implements ResourceLoader {
                     return shader;
                 }
                 return null;
+            }
+        }
+
+        private class ConstructClass extends AbstractConstruct {
+
+            @Override
+            public Object construct(Node node) {
+                try {
+                    return Class.forName(constructScalar((ScalarNode) node));
+                } catch (ClassNotFoundException e) {
+                    throw new YAMLException("Cannot construct class", e);
+                }
             }
         }
     }

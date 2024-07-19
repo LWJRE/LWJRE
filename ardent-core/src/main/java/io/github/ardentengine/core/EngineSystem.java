@@ -3,7 +3,10 @@ package io.github.ardentengine.core;
 /**
  * Interface representing an engine support system.
  * <p>
- *     TODO: Explain what they are
+ *     Engine systems are low-level support systems that manage an aspect of the engine.
+ *     The contain an {@link EngineSystem#initialize()} function that is called when the engine is stared up,
+ *     an {@link EngineSystem#process()} method that is called at every process step,
+ *     and a {@link EngineSystem#terminate()} method that is called when the engine is being shut down.
  * </p>
  * <p>
  *     Engine support systems are loaded from the main {@link Application} class.

@@ -37,44 +37,59 @@ public interface RenderingApi {
     }
 
     /**
-     * Tells the rendering API that a mesh has been created.
-     * The returned {@link MeshData} is used internally in the {@link Mesh} class.
+     * Returns the {@code MeshData} corresponding to the given mesh or creates a new one.
+     * Used to abstract the low-level implementation of meshes across different rendering APIs.
      * <p>
-     *     The default implementation of this method returns an instance of {@link MeshData}.
-     *     Different rendering APIs must return their implementation of a mesh.
+     *     The returned object must be an implementation of {@code MeshData} for the current rendering API.
+     *     Low-level functions are normally only accessed by the rendering API.
+     * </p>
+     * <p>
+     *     The rendering API must guarantee that there is at most one instance of {@code MeshData} for each instance of {@code Mesh}.
+     *     This method must return the same instance if it already exists.
      * </p>
      *
-     * @return Mesh data used internally for meshes.
+     * @param mesh The mesh object.
+     * @return The mesh data object.
      */
-    default MeshData createMesh() {
+    default MeshData getMeshData(Mesh mesh) {
         return new MeshData();
     }
 
     /**
-     * Tells the rendering API that a shader has been created.
-     * The returned {@link ShaderData} is used internally in the {@link Shader} class.
+     * Returns the {@code ShaderData} corresponding to the given shader or creates a new one.
+     * Used to abstract the low-level implementation of shaders across different rendering APIs.
      * <p>
-     *     The default implementation of this method returns an instance of {@link ShaderData}.
-     *     Different rendering APIs must return their implementation of a shader.
+     *     The returned object must be an implementation of {@code ShaderData} for the current rendering API.
+     *     Low-level functions are normally only accessed by the rendering API.
+     * </p>
+     * <p>
+     *     The rendering API must guarantee that there is at most one instance of {@code ShaderData} for each instance of {@code Shader}.
+     *     This method must return the same instance if it already exists.
      * </p>
      *
-     * @return Shader data used internally for shaders.
+     * @param shader The shader object.
+     * @return The shader data object.
      */
-    default ShaderData createShader() {
+    default ShaderData getShaderData(Shader shader) {
         return new ShaderData();
     }
 
     /**
-     * Tells the rendering API that a texture has been created.
-     * The returned {@link TextureData} is used internally in the {@link Texture} class.
+     * Returns the {@code TextureData} corresponding to the given texture or creates a new one.
+     * Used to abstract the low-level implementation of textures across different rendering APIs.
      * <p>
-     *     The default implementation of this method returns an instance of {@link TextureData}.
-     *     Different rendering APIs must return their implementation of a texture.
+     *     The returned object must be an implementation of {@code TextureData} for the current rendering API.
+     *     Low-level functions are normally only accessed by the rendering API.
+     * </p>
+     * <p>
+     *     The rendering API must guarantee that there is at most one instance of {@code TextureData} for each instance of {@code Texture}.
+     *     This method must return the same instance if it already exists.
      * </p>
      *
-     * @return Texture data used internally for textures.
+     * @param texture The texture object.
+     * @return The texture data object.
      */
-    default TextureData createTexture() {
+    default TextureData getTextureData(Texture texture) {
         return new TextureData();
     }
 }

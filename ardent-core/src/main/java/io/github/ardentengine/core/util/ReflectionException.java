@@ -14,13 +14,4 @@ public class ReflectionException extends RuntimeException {
     public ReflectionException(String message, Throwable cause) {
         super(message, cause);
     }
-
-    /**
-     * Constructs a new reflection exception with the specified cause.
-     *
-     * @param cause The cause.
-     */
-    public ReflectionException(Throwable cause) {
-        super(cause);
-    }
 }

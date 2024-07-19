@@ -1,5 +1,6 @@
 package io.github.ardentengine.opengl;
 
+import io.github.ardentengine.core.rendering.Mesh;
 import io.github.ardentengine.core.rendering.MeshData;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
@@ -13,6 +14,19 @@ import java.util.HashMap;
  * OpenGL implementation of a mesh.
  */
 public class OpenGLMesh extends MeshData {
+
+    /** Keeps track of created meshes for them to be deleted when the rendering system is terminated. */
+    private static final HashMap<Mesh, OpenGLMesh> MESHES = new HashMap<>();
+
+    /**
+     * Returns the mesh data corresponding to the given mesh or returns a new one if it does not exist.
+     *
+     * @param mesh Mesh object.
+     * @return The corresponding mesh data.
+     */
+    public static OpenGLMesh getOrCreate(Mesh mesh) {
+        return MESHES.computeIfAbsent(mesh, key -> new OpenGLMesh());
+    }
 
     /** Vertex array object. */
     private final int vertexArray;
@@ -32,7 +46,7 @@ public class OpenGLMesh extends MeshData {
      *
      * @see GL30#glGenVertexArrays()
      */
-    public OpenGLMesh() {
+    private OpenGLMesh() {
         this.vertexArray = GL30.glGenVertexArrays();
     }
 
@@ -115,11 +129,21 @@ public class OpenGLMesh extends MeshData {
      * @see GL15#glDeleteBuffers(int)
      * @see GL30#glDeleteVertexArrays(int)
      */
-    public void delete() {
+    private void delete() {
         for(var vbo : this.vertexBuffers.values()) {
             GL15.glDeleteBuffers(vbo);
         }
         GL15.glDeleteBuffers(this.indexBuffer);
         GL30.glDeleteVertexArrays(this.vertexArray);
+    }
+
+    /**
+     * Deletes all meshes that were created.
+     * Called when the {@link RenderingSystem} is terminated.
+     */
+    public static void deleteMeshes() {
+        for(var mesh : MESHES.values()) {
+            mesh.delete();
+        }
     }
 }

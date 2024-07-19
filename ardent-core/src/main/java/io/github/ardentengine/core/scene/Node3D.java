@@ -265,10 +265,9 @@ public class Node3D extends Node {
      *
      * @see Node3D#setGlobalTransform(Mat3x4f)
      */
-    public final void reparent(Node parent) {
+    public final void setParentKeepTransform(Node parent) {
         var transform = this.globalTransform();
-        this.removeFromParent();
-        parent.addChild(this);
+        this.setParent(parent);
         this.setGlobalTransform(transform);
     }
 
