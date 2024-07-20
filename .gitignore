@@ -7,7 +7,8 @@ hs_err_pid*
 target/
 
 # IntelliJ
-.idea/
+.idea/*
+!.idea/icon.svg
 *.iml
 *.iws
 
