@@ -1,18 +1,31 @@
 package io.github.ardentengine.core.scene;
 
 import io.github.ardentengine.core.rendering.Mesh;
+import io.github.ardentengine.core.rendering.Shader;
+import io.github.scalamath.vecmatlib.Mat3x4f;
 
-public class MeshRenderer extends Node3D {
+/**
+ * Node that renders a mesh.
+ * <p>
+ *     Uses a shader of type {@code mesh_renderer}.
+ * </p>
+ */
+public class MeshRenderer extends VisualInstance3D {
 
+    /** The mesh rendered by this node. */
     public Mesh mesh;
 
+    // TODO: Modulate color and texture.
+
     @Override
-    protected void onUpdate(float delta) {
-        if(this.mesh != null) {
-            // TODO: Mesh shader
-            // TODO: Camera3D
-            this.mesh.draw();
+    protected void render(Mat3x4f transform) {
+        if(this.shader == null) {
+            this.shader = Shader.getOrLoad("io/github/ardentengine/core/shaders/mesh_renderer.yaml");
         }
-        super.onUpdate(delta);
+        super.render(transform);
+        if(this.visible && this.shader != null && this.mesh != null) {
+            this.shader.set("modulate", 1.0f, 1.0f, 1.0f, 1.0f);
+            this.shader.draw(this.mesh);
+        }
     }
 }

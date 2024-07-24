@@ -339,7 +339,7 @@ public final class Shader {
     /**
      * Uses this shader to draw the given mesh.
      *
-     * @param mesh The mesh to draw.
+     * @param mesh The mesh to draw. Must not be null.
      */
     public void draw(Mesh mesh) {
         this.shaderData.draw(mesh);

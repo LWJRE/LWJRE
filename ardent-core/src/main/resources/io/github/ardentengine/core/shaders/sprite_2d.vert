@@ -33,5 +33,5 @@ void main() {
     vertex = vertex * texture_size / frames + offset;
     uv = uv * uv_scale + uv_offset;
     vec2 world_position = transformation_matrix * vec3(vertex, 1.0);
-    gl_Position = projection_matrix * vec4(view_matrix * vec3(world_position, 1.0 + z_index), 1.0);
+    gl_Position = projection_matrix * vec4(view_matrix * vec3(world_position, z_index), 1.0);
 }

@@ -4,6 +4,8 @@ import io.github.ardentengine.core.ApplicationProperties;
 import io.github.ardentengine.core.EngineSystem;
 import io.github.ardentengine.core.input.Input;
 import io.github.ardentengine.core.input.InputEvent;
+import io.github.scalamath.vecmatlib.Mat2x3f;
+import io.github.scalamath.vecmatlib.Mat3x4f;
 
 import java.util.function.Consumer;
 
@@ -17,14 +19,10 @@ import java.util.function.Consumer;
  */
 public final class MainLoop implements EngineSystem {
 
-    /**
-     * The main scene tree.
-     */
+    /** The main scene tree. */
     private final SceneTree sceneTree = new SceneTree();
 
-    /**
-     * Previous time obtained using {@link System#nanoTime()} and used to compute {@code delta}.
-     */
+    /** Previous time obtained using {@link System#nanoTime()} and used to compute {@code delta}. */
     private long previousTime = 0;
 
     @Override
@@ -34,13 +32,11 @@ public final class MainLoop implements EngineSystem {
         if(!mainScene.isEmpty()) {
             this.sceneTree.changeScene(mainScene);
         }
+        this.previousTime = System.nanoTime();
     }
 
     @Override
     public void process() {
-        if(this.previousTime == 0) {
-            this.previousTime = System.nanoTime();
-        }
         var time = System.nanoTime();
         var delta = (time - this.previousTime) / 1_000_000_000.0f;
         if(this.sceneTree.getRoot() != null) {
@@ -57,9 +53,70 @@ public final class MainLoop implements EngineSystem {
      * @param delta Delta time.
      */
     private void process(Node node, float delta) {
-        for(var child : node.getChildren()) {
-            this.process(child, delta);
+        if(node instanceof Node2D node2D) {
+            this.process(node2D, delta, node2D.localTransform(), node2D.zIndex);
+        } else if(node instanceof Node3D node3D) {
+            this.process(node3D, delta, node3D.localTransform());
+        } else {
+            for(var child : node.getChildren()) {
+                this.process(child, delta);
+            }
         }
+        node.onUpdate(delta);
+    }
+
+    /**
+     * Recursive method used to process 2D nodes in the scene tree.
+     * Keeps the transform and the z index of the given node for rendering.
+     *
+     * @param node The node to process.
+     * @param delta Delta time.
+     * @param transform The given node's global transform.
+     * @param zIndex The given node's effective z index.
+     */
+    private void process(Node2D node, float delta, Mat2x3f transform, int zIndex) {
+        // Parent nodes are rendered first
+        if(node instanceof VisualInstance2D visualInstance) {
+            visualInstance.render(transform, zIndex);
+        }
+        // Child nodes are processed first
+        for(var child : node.getChildren()) {
+            if(child instanceof Node2D child2D) {
+                this.process(child2D, delta, transform.multiply(child2D.localTransform(), 0.0f, 0.0f, 1.0f), zIndex + child2D.zIndex);
+            } else if(child instanceof Node3D child3D) {
+                this.process(child3D, delta, child3D.localTransform());
+            } else {
+                this.process(child, delta);
+            }
+        }
+        // Processing happens after rendering
+        node.onUpdate(delta);
+    }
+
+    /**
+     * Recursive method used to process 3D nodes in the scene tree.
+     * Keeps the transform of the given node for rendering.
+     *
+     * @param node The node to process.
+     * @param delta Delta time.
+     * @param transform The given node's global transform.
+     */
+    private void process(Node3D node, float delta, Mat3x4f transform) {
+        // Parent nodes are rendered first
+        if(node instanceof VisualInstance3D visualInstance) {
+            visualInstance.render(transform);
+        }
+        // Child nodes are processed first
+        for(var child : node.getChildren()) {
+            if(child instanceof Node2D child2D) {
+                this.process(child2D, delta, child2D.localTransform(), child2D.zIndex);
+            } else if(child instanceof Node3D child3D) {
+                this.process(child3D, delta, transform.multiply(child3D.localTransform(), 0.0f, 0.0f, 0.0f, 1.0f));
+            } else {
+                this.process(child, delta);
+            }
+        }
+        // Processing happens after rendering
         node.onUpdate(delta);
     }
 

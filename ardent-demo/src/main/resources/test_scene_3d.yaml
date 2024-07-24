@@ -1,0 +1,13 @@
+!!io.github.ardentengine.core.resources.SceneResource
+type: !!java.lang.Class io.github.ardentengine.core.scene.Node3D
+properties:
+  name: Root
+children:
+  - type: !!java.lang.Class io.github.ardentengine.core.scene.MeshRenderer
+    properties:
+      mesh:
+        !!io.github.ardentengine.core.rendering.BoxMesh
+        size: !Vec3f [1.0, 1.0, 1.0]
+  - type: !!java.lang.Class io.github.ardentengine.core.scene.Camera3D
+    properties:
+      position: !Vec3f [1.0, 1.0, 2.0]

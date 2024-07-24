@@ -2,6 +2,8 @@ package io.github.ardentengine.core.rendering;
 
 import io.github.scalamath.vecmatlib.*;
 
+import java.util.Objects;
+
 /**
  * Class used internally by shaders to abstract the representation of a shader across different rendering APIs.
  * <p>
@@ -200,9 +202,9 @@ public class ShaderData {
      *     The rendering API must provide its way to use the shader.
      * </p>
      *
-     * @param mesh The mesh to draw.
+     * @param mesh The mesh to draw. Must not be null.
      */
     public void draw(Mesh mesh) {
-        mesh.draw();
+        Objects.requireNonNull(mesh, "Cannot draw a null mesh").draw();
     }
 }

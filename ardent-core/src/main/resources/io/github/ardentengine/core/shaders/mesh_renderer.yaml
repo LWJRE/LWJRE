@@ -1,0 +1,3 @@
+!!io.github.ardentengine.core.rendering.Shader
+vertexShader: !getOrLoad io/github/ardentengine/core/shaders/mesh_renderer.vert
+fragmentShader: !getOrLoad io/github/ardentengine/core/shaders/mesh_renderer.frag

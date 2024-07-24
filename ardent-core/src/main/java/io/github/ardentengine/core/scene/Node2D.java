@@ -122,20 +122,6 @@ public class Node2D extends Node {
     }
 
     /**
-     * Gets this node's effective z index.
-     * This node's {@link Node2D#zIndex} added to its parent z index.
-     *
-     * @return This node's effective z index.
-     */
-    public final int effectiveZIndex() {
-        // TODO: Use a render method that keeps the z index from its parent instead of this
-        if(this.getParent() instanceof Node2D parent) {
-            return parent.effectiveZIndex() + this.zIndex;
-        }
-        return this.zIndex;
-    }
-
-    /**
      * Returns this node's local transform as a 2x3 transformation matrix.
      *
      * @return This node's local transform as a 2x3 transformation matrix.

@@ -22,6 +22,7 @@ children:
     properties:
       name: Fourth
       position: !Vec2f [250.0, 100.0]
+      zIndex: 10
   - base: !getOrLoad test_sprite.yaml
     properties:
       name: Fifth

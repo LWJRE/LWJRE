@@ -1,9 +1,9 @@
 package io.github.ardentengine.core.scene;
 
-import io.github.ardentengine.core.rendering.QuadMesh2D;
 import io.github.ardentengine.core.rendering.Shader;
 import io.github.ardentengine.core.rendering.Texture;
 import io.github.scalamath.colorlib.Col4f;
+import io.github.scalamath.vecmatlib.Mat2x3f;
 import io.github.scalamath.vecmatlib.Vec2f;
 
 /**
@@ -12,7 +12,7 @@ import io.github.scalamath.vecmatlib.Vec2f;
  *     Uses a shader of type {@code sprite_shader}.
  * </p>
  */
-public class Sprite2D extends Node2D {
+public class Sprite2D extends VisualInstance2D {
 
     /**
      * The texture to use for this sprite.
@@ -81,19 +81,12 @@ public class Sprite2D extends Node2D {
      */
     public Col4f modulate = new Col4f(1.0f, 1.0f, 1.0f, 1.0f);
 
-    public Shader shader = Shader.getOrLoad("io/github/ardentengine/core/shaders/sprite_2d.yaml");
-
     @Override
-    protected void onUpdate(float delta) {
+    protected void render(Mat2x3f transform, int zIndex) {
         if(this.shader == null) {
             this.shader = Shader.getOrLoad("io/github/ardentengine/core/shaders/sprite_2d.yaml");
         }
-        // TODO: Do not render the sprite if it is outside of the camera's view
-        if(this.shader != null) {
-            this.shader.set("transformation_matrix", this.globalTransform());
-            this.shader.set("projection_matrix", Camera2D.currentProjection());
-            this.shader.set("view_matrix", Camera2D.currentView());
-            this.shader.set("z_index", this.effectiveZIndex());
+        if(this.visible && this.shader != null) {
             if(this.spriteTexture != null) {
                 this.shader.set("texture_size", this.spriteTexture.getWidth(), this.spriteTexture.getHeight());
             } else {
@@ -107,7 +100,7 @@ public class Sprite2D extends Node2D {
             this.shader.set("v_frames", this.vFrames);
             this.shader.set("frame", this.frame);
             this.shader.set("modulate", this.modulate);
-            this.shader.draw(QuadMesh2D.getInstance());
         }
+        super.render(transform, zIndex);
     }
 }
