@@ -2,7 +2,6 @@ package io.github.ardentengine.core.resources;
 
 import io.github.ardentengine.core.logging.Logger;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.ServiceLoader;
 
@@ -47,16 +46,8 @@ public final class ResourceManager {
                 var extension = resourcePath.substring(index);
                 var loader = RESOURCE_LOADERS.get(extension);
                 if(loader != null) {
-                    try(var inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourcePath)) {
-                        if(inputStream != null) {
-                            resource = loader.load(inputStream);
-                            RESOURCES.put(resourcePath, resource);
-                        } else {
-                            Logger.error("Could not find resource " + resourcePath);
-                        }
-                    } catch(IOException e) {
-                        Logger.error("Error loading resource " + resourcePath, e);
-                    }
+                    resource = loader.load(resourcePath);
+                    RESOURCES.put(resourcePath, resource);
                 } else {
                     Logger.error("There is no resource loader for resources of type '" + extension + "'");
                 }

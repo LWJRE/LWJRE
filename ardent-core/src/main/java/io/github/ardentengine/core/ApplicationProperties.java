@@ -1,5 +1,7 @@
 package io.github.ardentengine.core;
 
+import io.github.ardentengine.core.logging.Logger;
+
 import java.io.IOException;
 import java.util.Properties;
 import java.util.function.Function;
@@ -22,13 +24,12 @@ public class ApplicationProperties {
             properties = new Properties();
             try(var inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("application.properties")) {
                 if(inputStream == null) {
-                    System.err.println("Could not find application.properties file");
+                    Logger.error("Could not find application.properties file");
                 } else {
                     properties.load(inputStream);
                 }
             } catch(IOException e) {
-                System.err.println("Could not read application.properties file");
-                e.printStackTrace();
+                Logger.error("Could not read application.properties file", e);
             }
         }
         return properties;
@@ -75,7 +76,7 @@ public class ApplicationProperties {
     private static <T> T getOrLogError(String key, Function<String, T> function, T defaultValue) {
         var value = getProperties().getProperty(key);
         if(value == null) {
-            System.err.println("There is no property with key " + key + " in application properties");
+            Logger.error("There is no property with key " + key + " in application properties");
             return defaultValue;
         }
         return function.apply(value);
@@ -104,8 +105,7 @@ public class ApplicationProperties {
         try {
             return Integer.parseInt(value);
         } catch(NumberFormatException e) {
-            System.err.println("Property \"" + key + "\" with value \"" + value + "\" is not an integer");
-            e.printStackTrace();
+            Logger.error("Property \"" + key + "\" with value \"" + value + "\" is not an integer", e);
             return defaultValue;
         }
     }
@@ -145,8 +145,7 @@ public class ApplicationProperties {
         try {
             return Float.parseFloat(value);
         } catch(NumberFormatException e) {
-            System.err.println("Property \"" + key + "\" with value \"" + value + "\" is not a float");
-            e.printStackTrace();
+            Logger.error("Property \"" + key + "\" with value \"" + value + "\" is not a float", e);
             return defaultValue;
         }
     }

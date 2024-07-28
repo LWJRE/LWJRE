@@ -1,6 +1,6 @@
 package io.github.ardentengine.core.resources;
 
-import io.github.ardentengine.core.rendering.Shader;
+import io.github.ardentengine.core.logging.Logger;
 import io.github.scalamath.colorlib.*;
 import io.github.scalamath.vecmatlib.*;
 import org.yaml.snakeyaml.LoaderOptions;
@@ -13,13 +13,12 @@ import org.yaml.snakeyaml.introspector.BeanAccess;
 import org.yaml.snakeyaml.nodes.*;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * Resource loader used to load resources serialized as YAML files.
  * Supports {@code .yaml} and {@code .yml} extensions.
  * Only supports YAML files containing a single YAML document.
- * If the YAML file begins with a class tag, the resource returned from the {@link YamlLoader#load(InputStream)} method will be an instance of that class.
+ * If the YAML file begins with a class tag, the resource returned from the {@link YamlLoader#load(String)} method will be an instance of that class.
  */
 public class YamlLoader implements ResourceLoader {
 
@@ -44,8 +43,17 @@ public class YamlLoader implements ResourceLoader {
     }
 
     @Override
-    public Object load(InputStream inputStream) throws IOException {
-        return this.yaml.load(inputStream);
+    public Object load(String resourcePath) {
+        try(var inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourcePath)) {
+            if(inputStream == null) {
+                Logger.error("Could not find resource " + resourcePath);
+            } else {
+                return this.yaml.load(inputStream);
+            }
+        } catch (IOException e) {
+            Logger.error("Exception occurred while loading resource " + resourcePath, e);
+        }
+        return null;
     }
 
     @Override
@@ -77,7 +85,6 @@ public class YamlLoader implements ResourceLoader {
             this.yamlConstructors.put(new Tag("!Col4f"), new ConstructCol4f());
             this.yamlConstructors.put(new Tag("!Col1i"), new ConstructCol1i());
             this.yamlConstructors.put(new Tag("!Gradient"), new ConstructGradient());
-            this.yamlConstructors.put(new Tag(Shader.class), new ConstructShader());
             this.yamlConstructors.put(new Tag(Class.class), new ConstructClass());
         }
 
@@ -288,25 +295,6 @@ public class YamlLoader implements ResourceLoader {
                     }
                 }
                 return gradient;
-            }
-        }
-
-        /**
-         * YAML construct used to deserialize a {@link Shader} from a mapping node whose keys are its vertex and fragment code.
-         */
-        private class ConstructShader extends AbstractConstruct {
-
-            @Override
-            public Object construct(Node node) {
-                if(node instanceof MappingNode mappingNode) {
-                    var shader = new Shader();
-                    var mapping = constructMapping(mappingNode);
-                    if(mapping.get("vertexShader") instanceof CharSequence vertexCode && mapping.get("fragmentShader") instanceof CharSequence fragmentCode) {
-                        shader.compile(vertexCode, fragmentCode);
-                    }
-                    return shader;
-                }
-                return null;
             }
         }
 

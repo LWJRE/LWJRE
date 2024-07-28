@@ -4,6 +4,7 @@ import io.github.scalamath.colorlib.Gradient;
 import io.github.scalamath.vecmatlib.Vec2i;
 
 import java.nio.ByteBuffer;
+import java.util.Objects;
 
 /**
  * A texture created with colors sampled from a {@link Gradient}.
@@ -11,7 +12,7 @@ import java.nio.ByteBuffer;
 public class GradientTexture extends Texture {
 
     /** Gradient used to fill the texture. */
-    private Gradient gradient = null;
+    private Gradient gradient = new Gradient();
 
     // TODO: Direction and fill mode (linear, radial, square)
 
@@ -30,7 +31,7 @@ public class GradientTexture extends Texture {
      */
     public void setGradient(Gradient gradient) {
         this.dirty = !this.gradient.equals(gradient);
-        this.gradient = gradient;
+        this.gradient = Objects.requireNonNullElse(gradient, new Gradient());
     }
 
     /**
@@ -39,7 +40,7 @@ public class GradientTexture extends Texture {
      * @return Gradient used to fill the texture.
      */
     public Gradient getGradient() {
-        return this.gradient == null ? this.gradient = new Gradient() : this.gradient;
+        return this.gradient;
     }
 
     /**

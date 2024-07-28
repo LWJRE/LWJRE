@@ -33,8 +33,9 @@ public final class Shader {
         var resource = ResourceManager.getOrLoad(resourcePath);
         if(resource instanceof Shader) {
             return (Shader) resource;
+        } else if(resource != null) {
+            Logger.error("Resource " + resourcePath + " is not a shader");
         }
-        Logger.error("Resource " + resourcePath + " is not a shader");
         return null;
     }
 

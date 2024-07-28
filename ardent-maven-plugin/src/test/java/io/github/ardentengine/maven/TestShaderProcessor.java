@@ -21,56 +21,12 @@ public class TestShaderProcessor {
     }
 
     @Test
-    public void testGetBaseSpriteVertexShader() {
-        try {
-            var expected = loadTextFile("io/github/ardentengine/core/shaders/sprite_2d.vert");
-            var actual = ShaderProcessor.getBaseShaderCode("sprite_2d.vert");
-            Assertions.assertEquals(expected, actual);
-        } catch (ShaderProcessorException e) {
-            Assertions.fail(e);
-        }
-    }
-
-    @Test
-    public void testGetBaseSpriteFragmentShader() {
-        try {
-            var expected = loadTextFile("io/github/ardentengine/core/shaders/sprite_2d.frag");
-            var actual = ShaderProcessor.getBaseShaderCode("sprite_2d.frag");
-            Assertions.assertEquals(expected, actual);
-        } catch (ShaderProcessorException e) {
-            Assertions.fail(e);
-        }
-    }
-
-    @Test
-    public void testProcessVertexShaderNoTrim() {
-        try {
-            var expected = loadTextFile("expected_vertex_shader.glsl");
-            var shaderCode = loadTextFile("test_vertex_shader.glsl");
-            shaderCode = ShaderProcessor.processShaderCode(shaderCode);
-            Assertions.assertEquals(expected, shaderCode);
-        } catch (ShaderProcessorException e) {
-            Assertions.fail(e);
-        }
-    }
-
-    @Test
-    public void testProcessFragmentShaderNoTrim() {
-        try {
-            var expected = loadTextFile("expected_fragment_shader.glsl");
-            var shaderCode = loadTextFile("test_fragment_shader.glsl");
-            shaderCode = ShaderProcessor.processShaderCode(shaderCode);
-            Assertions.assertEquals(expected, shaderCode);
-        } catch (ShaderProcessorException e) {
-            Assertions.fail(e);
-        }
-    }
-
-    @Test
-    public void testTrimCode() {
-        var expected = loadTextFile("expected_trim_code.glsl");
-        var shaderCode = loadTextFile("test_trim_code.glsl");
-        shaderCode = ShaderProcessor.trimCode(shaderCode);
-        Assertions.assertEquals(expected, shaderCode);
+    public void testProcessBaseShader() {
+        var shaderProcessor = new ShaderProcessor("");
+        var baseShaderCode = loadTextFile("test_base.glsl");
+        var expectedVertexCode = loadTextFile("test_base.vert");
+        var expectedFragmentCode = loadTextFile("test_base.frag");
+        Assertions.assertEquals(expectedVertexCode, shaderProcessor.extractVertexCode(baseShaderCode));
+        Assertions.assertEquals(expectedFragmentCode, shaderProcessor.extractFragmentCode(baseShaderCode));
     }
 }

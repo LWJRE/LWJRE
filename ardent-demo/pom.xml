@@ -28,9 +28,6 @@
                         </goals>
                     </execution>
                 </executions>
-                <configuration>
-                    <trim>false</trim>
-                </configuration>
             </plugin>
         </plugins>
     </build>

@@ -15,6 +15,19 @@ import java.util.ServiceLoader;
  */
 public final class Application {
 
+    /** Reference to the main thread needed for {@link Application#isMainThread()}. */
+    private static Thread mainThread;
+
+    /**
+     * Checks if the calling thread is the main thread.
+     * Useful to access rendering functions that can only be accessed from the main thread.
+     *
+     * @return True if the current thread is the main thread, otherwise false.
+     */
+    public static boolean isMainThread() {
+        return Thread.currentThread().equals(mainThread);
+    }
+
     /** Singleton instance. */
     private static Application instance;
 
@@ -83,6 +96,7 @@ public final class Application {
     // TODO: Handle uncaught exceptions
 
     public static void main(String[] args) {
+        mainThread = Thread.currentThread();
         new Application().run();
     }
 }

@@ -1,8 +1,5 @@
 package io.github.ardentengine.core.resources;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 /**
  * Interface used to implement a resource loader.
  * <p>
@@ -14,12 +11,18 @@ public interface ResourceLoader {
     /**
      * Loads the resource.
      * Implementations of this interface should provide logic for resource loading in this method.
+     * <p>
+     *     This method is called from the {@link ResourceManager#getOrLoad(String)} method when a resource needs to be loaded.
+     *     The given path is the path at which the resource is expected to be.
+     * </p>
+     * <p>
+     *     Should return null and log an error if an error occurs while loading the resource.
+     * </p>
      *
-     * @param inputStream Input stream used to load the resource. Must not be null.
+     * @param resourcePath Path at which the resource is expected to be.
      * @return The loaded resource.
-     * @throws IOException If an error occurs while loading the resource.
      */
-    Object load(InputStream inputStream) throws IOException;
+    Object load(String resourcePath);
 
     /**
      * Returns an array of strings representing supported extensions that should be recognized by this resource loader.

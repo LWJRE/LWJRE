@@ -1,29 +1,46 @@
 package io.github.ardentengine.core.resources;
 
+import io.github.ardentengine.core.logging.Logger;
 import io.github.ardentengine.core.rendering.Shader;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * Resource loader used to load shader files.
  * <p>
- *     Loads the shader code as a {@link String}.
- *     The loaded code is used to create a {@link Shader} program.
+ *     Returns instances of {@link Shader}.
+ *     This loader expects the shader files in the classpath to contain the processed shader code.
  * </p>
  * <p>
- *     Supports {@code .glsl}, {@code .vert}, and {@code .frag} files.
+ *     Supports {@code .glsl} files.
  * </p>
  */
 public class ShaderLoader implements ResourceLoader {
 
     @Override
-    public Object load(InputStream inputStream) throws IOException {
-        return new String(inputStream.readAllBytes());
+    public Object load(String resourcePath) {
+        var classLoader = Thread.currentThread().getContextClassLoader();
+        var basePath = resourcePath.substring(0, resourcePath.lastIndexOf('.'));
+        try(var vertexFile = classLoader.getResourceAsStream(basePath + ".vert"); var fragmentFile = classLoader.getResourceAsStream(basePath + ".frag")) {
+            if(vertexFile == null) {
+                Logger.error("Could not find file " + basePath + ".vert");
+            } else if(fragmentFile == null) {
+                Logger.error("Could not find file " + basePath + ".frag");
+            } else {
+                var shader = new Shader();
+                var vertexCode = new String(vertexFile.readAllBytes());
+                var fragmentCode = new String(fragmentFile.readAllBytes());
+                shader.compile(vertexCode, fragmentCode);
+                return shader;
+            }
+        } catch (IOException e) {
+            Logger.error("Exception occurred while loading shader " + resourcePath, e);
+        }
+        return null;
     }
 
     @Override
     public String[] supportedExtensions() {
-        return new String[] {".glsl", ".vert", ".frag"};
+        return new String[] {".glsl"};
     }
 }

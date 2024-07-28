@@ -20,7 +20,7 @@ public class MeshRenderer extends VisualInstance3D {
     @Override
     protected void render(Mat3x4f transform) {
         if(this.shader == null) {
-            this.shader = Shader.getOrLoad("io/github/ardentengine/core/shaders/mesh_renderer.yaml");
+            this.shader = Shader.getOrLoad("io/github/ardentengine/core/shaders/mesh_renderer.glsl");
         }
         super.render(transform);
         if(this.visible && this.shader != null && this.mesh != null) {

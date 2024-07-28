@@ -1,17 +1,22 @@
 package io.github.ardentengine.maven;
 
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+/**
+ * Mojo used for shader processing that happens during resource processing.
+ * Processing shader code is necessary for shaders to be loaded correctly be the engine.
+ */
 @Mojo(name = "process-shaders", defaultPhase = LifecyclePhase.PROCESS_RESOURCES)
 public class ProcessShadersMojo extends AbstractMojo {
 
@@ -20,52 +25,60 @@ public class ProcessShadersMojo extends AbstractMojo {
     @SuppressWarnings("FieldMayBeFinal")
     private MavenProject project = null;
 
-    /** Parameter to trim spaces and remove blank lines from shader code. */
-    @Parameter(property = "trim", defaultValue = "true")
-    @SuppressWarnings({"FieldMayBeFinal", "FieldCanBeLocal"})
-    private boolean trim = true;
+    /** Artifact repository needed to get the location of the local maven repository. */
+    @Parameter(defaultValue = "${localRepository}", readonly = true, required = true)
+    @SuppressWarnings("FieldMayBeFinal")
+    private ArtifactRepository artifactRepository = null;
+
+    /** Plugin descriptor needed to get the plugin version. */
+    @Parameter(defaultValue = "${plugin}", readonly = true, required = true)
+    @SuppressWarnings("FieldMayBeFinal")
+    private PluginDescriptor pluginDescriptor = null;
+
+    /** Shader processor used to process shader code. */
+    private ShaderProcessor shaderProcessor;
+
+    // TODO: Add option to keep comments and blank spaces
 
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
-        var outputDirectory = Path.of(this.project.getBuild().getOutputDirectory());
+    public void execute() {
+        // Initialize the shader processor
+        var version = pluginDescriptor.getVersion();
+        this.shaderProcessor = new ShaderProcessor(this.artifactRepository.getBasedir(), "io/github/ardentengine/ardent-core", version, "ardent-core-" + version + ".jar");
+        // Look for shader files in the project's resources directories
+        var outputDirectory = this.project.getBuild().getOutputDirectory();
         for(var resource : this.project.getBuild().getResources()) {
             var resourcesDirectory = Path.of(resource.getDirectory());
-            try(var stream = Files.find(resourcesDirectory, Integer.MAX_VALUE, (path, attributes) -> {
-                var name = path.toString();
-                return name.endsWith(".glsl") || name.endsWith(".vert") || name.endsWith(".frag");
-            })) {
+            try(var stream = Files.find(resourcesDirectory, Integer.MAX_VALUE, (path, basicFileAttributes) -> path.toString().endsWith(".glsl"))) {
                 for(var shaderFile : stream.toList()) {
-                    this.process(resourcesDirectory, shaderFile, outputDirectory);
+                    this.process(shaderFile, Path.of(outputDirectory, resourcesDirectory.relativize(shaderFile.getParent()).toString()));
                 }
-            } catch(IOException e) {
-                throw new MojoExecutionException("Error while walking through resources directory", e);
+            } catch (IOException e) {
+                throw new UncheckedIOException("Exception occurred while walking through the resources directory " + resourcesDirectory, e);
             }
         }
     }
 
-    private void process(Path resourcesDirectory, Path resourceFile, Path outputDirectory) throws MojoExecutionException, MojoFailureException {
-        var shaderCode = "";
-        // Read the shader code from the shader file
+    /**
+     * Processes the shader file at the given path.
+     *
+     * @param shaderFile The shader file to process.
+     * @param outputPath Destination directory where the output shader files will be created.
+     */
+    private void process(Path shaderFile, Path outputPath) {
         try {
-            shaderCode = Files.readString(resourceFile);
+            var shaderCode = Files.readString(shaderFile);
+            // Create the output directory
+            Files.createDirectories(outputPath);
+            // Write the vertex and the fragment shader in separate files
+            var shaderFileStr = shaderFile.toString();
+            var baseOutputFile = outputPath + shaderFileStr.substring(shaderFileStr.lastIndexOf('/'), shaderFileStr.lastIndexOf('.'));
+            Files.writeString(Path.of(baseOutputFile + ".vert"), this.shaderProcessor.extractVertexCode(shaderCode));
+            Files.writeString(Path.of(baseOutputFile + ".frag"), this.shaderProcessor.extractFragmentCode(shaderCode));
+            // Delete the base output file
+            Files.deleteIfExists(Path.of(outputPath.toString(), shaderFile.getFileName().toString()));
         } catch (IOException e) {
-            throw new MojoExecutionException("Error reading file " + resourceFile, e);
-        }
-        // Process shader code
-        try {
-            shaderCode = ShaderProcessor.processShaderCode(shaderCode);
-            if(this.trim) {
-                shaderCode = ShaderProcessor.trimCode(shaderCode);
-            }
-        } catch (ShaderProcessorException e) {
-            throw new MojoFailureException("Error processing shader " + resourceFile, e);
-        }
-        // Write the processed shader code to the output directory
-        var outputFile = Path.of(outputDirectory.toString(), resourcesDirectory.relativize(resourceFile).toString());
-        try {
-            Files.writeString(outputFile, shaderCode);
-        } catch (IOException e) {
-            throw new MojoExecutionException("Error writing file " + outputFile, e);
+            throw new UncheckedIOException("Exception occurred while processing " + shaderFile, e);
         }
     }
 }

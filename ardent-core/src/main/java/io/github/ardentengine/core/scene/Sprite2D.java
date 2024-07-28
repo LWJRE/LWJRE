@@ -17,8 +17,8 @@ public class Sprite2D extends VisualInstance2D {
     /**
      * The texture to use for this sprite.
      * <p>
-     *     Accessible in the fragment shader as {@code sprite_texture}.
-     *     The size of the texture is accessible in the vertex shader as {@code texture_size}.
+     *     Accessible in the shader as {@code sprite_texture}.
+     *     The size of the texture is accessible in the shader as {@code texture_size}.
      * </p>
      */
     public Texture spriteTexture;
@@ -27,21 +27,21 @@ public class Sprite2D extends VisualInstance2D {
     /**
      * The sprite's drawing offset.
      * <p>
-     *     Accessible in the vertex shader as {@code offset}.
+     *     Accessible in the shader as {@code offset}.
      * </p>
      */
     public Vec2f offset = Vec2f.Zero();
     /**
      * True if the sprite is flipped horizontally.
      * <p>
-     *     If true, {@code flip_h} in the vertex shader will be -1, if false, it will be 1.
+     *     If true, {@code flip_h} in the shader will be -1, if false, it will be 1.
      * </p>
      */
     public boolean flipH = false;
     /**
      * True if the sprite is flipped vertically.
      * <p>
-     *     If true, {@code flip_v} in the vertex shader will be -1, if false, it will be 1.
+     *     If true, {@code flip_v} in the shader will be -1, if false, it will be 1.
      * </p>
      */
     public boolean flipV = false;
@@ -50,7 +50,7 @@ public class Sprite2D extends VisualInstance2D {
      * The number of columns in the sprite sheet.
      * Must be greater than zero.
      * <p>
-     *     Accessible in the vertex shader as {@code h_frames}.
+     *     Accessible in the shader as {@code h_frames}.
      * </p>
      */
     public int hFrames = 1;
@@ -58,15 +58,15 @@ public class Sprite2D extends VisualInstance2D {
      * The number of rows in the sprite sheet.
      * Must be greater than zero.
      * <p>
-     *     Accessible in the vertex shader as {@code v_frames}.
+     *     Accessible in the shader as {@code v_frames}.
      * </p>
      */
     public int vFrames = 1;
     /**
      * Index of the frame to display.
-     * Must be in the [0, {@link Sprite2D#hFrames} * {@link Sprite2D#vFrames}) range.
+     * Must be between 0 (inclusive) and {@link Sprite2D#hFrames} * {@link Sprite2D#vFrames} (exclusive).
      * <p>
-     *     Accessible in the vertex shader as {@code frame}.
+     *     Accessible in the shader as {@code frame}.
      * </p>
      */
     public int frame = 0;
@@ -76,7 +76,7 @@ public class Sprite2D extends VisualInstance2D {
     /**
      * The color applied to the sprite.
      * <p>
-     *     Accessible in the fragment shader as {@code modulate}.
+     *     Accessible in the shader as {@code modulate}.
      * </p>
      */
     public Col4f modulate = new Col4f(1.0f, 1.0f, 1.0f, 1.0f);
@@ -84,7 +84,7 @@ public class Sprite2D extends VisualInstance2D {
     @Override
     protected void render(Mat2x3f transform, int zIndex) {
         if(this.shader == null) {
-            this.shader = Shader.getOrLoad("io/github/ardentengine/core/shaders/sprite_2d.yaml");
+            this.shader = Shader.getOrLoad("io/github/ardentengine/core/shaders/sprite_2d.glsl");
         }
         if(this.visible && this.shader != null) {
             if(this.spriteTexture != null) {
