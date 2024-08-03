@@ -23,45 +23,19 @@ public class BoxMesh extends Mesh {
      * @param size Size of the box.
      */
     public BoxMesh(Vec3f size) {
-        this.meshData.setVertices3D(new float[] {
-            -0.5f * size.x(), 0.5f * size.y(), -0.5f * size.z(),
-            -0.5f * size.x(), -0.5f * size.y(), -0.5f * size.z(),
-            0.5f * size.x(), -0.5f * size.y(), -0.5f * size.z(),
-            0.5f * size.x(), 0.5f * size.y(), -0.5f * size.z(),
-            -0.5f * size.x(), 0.5f * size.y(), 0.5f * size.z(),
-            -0.5f * size.x(), -0.5f * size.y(), 0.5f * size.z(),
-            0.5f * size.x(), -0.5f * size.y(), 0.5f * size.z(),
-            0.5f * size.x(), 0.5f * size.y(), 0.5f * size.z(),
-            0.5f * size.x(), 0.5f * size.y(), -0.5f * size.z(),
-            0.5f * size.x(), -0.5f * size.y(), -0.5f * size.z(),
-            0.5f * size.x(), -0.5f * size.y(), 0.5f * size.z(),
-            0.5f * size.x(), 0.5f * size.y(), 0.5f * size.z(),
-            -0.5f * size.x(), 0.5f * size.y(), -0.5f * size.z(),
-            -0.5f * size.x(), -0.5f * size.y(), -0.5f * size.z(),
-            -0.5f * size.x(), -0.5f * size.y(), 0.5f * size.z(),
-            -0.5f * size.x(), 0.5f * size.y(), 0.5f * size.z(),
-            -0.5f * size.x(), 0.5f * size.y(), 0.5f * size.z(),
-            -0.5f * size.x(), 0.5f * size.y(), -0.5f * size.z(),
-            0.5f * size.x(), 0.5f * size.y(), -0.5f * size.z(),
-            0.5f * size.x(), 0.5f * size.y(), 0.5f * size.z(),
-            -0.5f * size.x(), -0.5f * size.y(), 0.5f * size.z(),
-            -0.5f * size.x(), -0.5f * size.y(), -0.5f * size.z(),
-            0.5f * size.x(), -0.5f * size.y(), -0.5f * size.z(),
-            0.5f * size.x(), -0.5f * size.y(), 0.5f * size.z()
-        });
         this.meshData.setIndices(new int[] {
-            0, 1, 3,
-            3, 1, 2,
-            4, 5, 7,
-            7, 5, 6,
-            8, 9, 11,
-            11, 9, 10,
-            12, 13, 15,
-            15, 13, 14,
-            16, 17, 19,
-            19, 17, 18,
-            20, 21, 23,
-            23, 21, 22
+            0, 3, 2,
+            2, 1, 0,
+            4, 5, 6,
+            6, 7 ,4,
+            11, 8, 9,
+            9, 10, 11,
+            12, 13, 14,
+            14, 15, 12,
+            16, 17, 18,
+            18, 19, 16,
+            20, 21, 22,
+            22, 23, 20
         });
         this.meshData.setUVs(new float[] {
             0, 0,
@@ -89,9 +63,34 @@ public class BoxMesh extends Mesh {
             1, 1,
             1, 0
         });
-        // TODO: Normals
+        this.meshData.setNormals(new float[] {
+            0.0f, 0.0f, -1.0f,
+            0.0f, 0.0f, -1.0f,
+            0.0f, 0.0f, -1.0f,
+            0.0f, 0.0f, -1.0f,
+            0.0f, 0.0f, 1.0f,
+            0.0f, 0.0f, 1.0f,
+            0.0f, 0.0f, 1.0f,
+            0.0f, 0.0f, 1.0f,
+            -1.0f, 0.0f, 0.0f,
+            -1.0f, 0.0f, 0.0f,
+            -1.0f, 0.0f, 0.0f,
+            -1.0f, 0.0f, 0.0f,
+            1.0f, 0.0f, 0.0f,
+            1.0f, 0.0f, 0.0f,
+            1.0f, 0.0f, 0.0f,
+            1.0f, 0.0f, 0.0f,
+            0.0f, -1.0f, 0.0f,
+            0.0f, -1.0f, 0.0f,
+            0.0f, -1.0f, 0.0f,
+            0.0f, -1.0f, 0.0f,
+            0.0f, 1.0f, 0.0f,
+            0.0f, 1.0f, 0.0f,
+            0.0f, 1.0f, 0.0f,
+            0.0f, 1.0f, 0.0f
+        });
         this.size = size;
-        this.dirty = false;
+        this.dirty = true;
     }
 
     /**
@@ -148,30 +147,30 @@ public class BoxMesh extends Mesh {
     public void draw() {
         if(this.dirty) {
             this.meshData.setVertices3D(new float[] {
-                -0.5f * this.size.x(), 0.5f * this.size.y(), -0.5f * this.size.z(),
                 -0.5f * this.size.x(), -0.5f * this.size.y(), -0.5f * this.size.z(),
                 0.5f * this.size.x(), -0.5f * this.size.y(), -0.5f * this.size.z(),
                 0.5f * this.size.x(), 0.5f * this.size.y(), -0.5f * this.size.z(),
-                -0.5f * this.size.x(), 0.5f * this.size.y(), 0.5f * this.size.z(),
+                -0.5f * this.size.x(), 0.5f * this.size.y(), -0.5f * this.size.z(),
                 -0.5f * this.size.x(), -0.5f * this.size.y(), 0.5f * this.size.z(),
                 0.5f * this.size.x(), -0.5f * this.size.y(), 0.5f * this.size.z(),
                 0.5f * this.size.x(), 0.5f * this.size.y(), 0.5f * this.size.z(),
+                -0.5f * this.size.x(), 0.5f * this.size.y(), 0.5f * this.size.z(),
+                -0.5f * this.size.x(), 0.5f * this.size.y(), -0.5f * this.size.z(),
+                -0.5f * this.size.x(), -0.5f * this.size.y(), -0.5f * this.size.z(),
+                -0.5f * this.size.x(), -0.5f * this.size.y(), 0.5f * this.size.z(),
+                -0.5f * this.size.x(), 0.5f * this.size.y(), 0.5f * this.size.z(),
+                0.5f * this.size.x(), -0.5f * this.size.y(), -0.5f * this.size.z(),
                 0.5f * this.size.x(), 0.5f * this.size.y(), -0.5f * this.size.z(),
+                0.5f * this.size.x(), 0.5f * this.size.y(), 0.5f * this.size.z(),
+                0.5f * this.size.x(), -0.5f * this.size.y(), 0.5f * this.size.z(),
+                -0.5f * this.size.x(), -0.5f * this.size.y(), -0.5f * this.size.z(),
                 0.5f * this.size.x(), -0.5f * this.size.y(), -0.5f * this.size.z(),
                 0.5f * this.size.x(), -0.5f * this.size.y(), 0.5f * this.size.z(),
-                0.5f * this.size.x(), 0.5f * this.size.y(), 0.5f * this.size.z(),
-                -0.5f * this.size.x(), 0.5f * this.size.y(), -0.5f * this.size.z(),
-                -0.5f * this.size.x(), -0.5f * this.size.y(), -0.5f * this.size.z(),
                 -0.5f * this.size.x(), -0.5f * this.size.y(), 0.5f * this.size.z(),
-                -0.5f * this.size.x(), 0.5f * this.size.y(), 0.5f * this.size.z(),
-                -0.5f * this.size.x(), 0.5f * this.size.y(), 0.5f * this.size.z(),
-                -0.5f * this.size.x(), 0.5f * this.size.y(), -0.5f * this.size.z(),
                 0.5f * this.size.x(), 0.5f * this.size.y(), -0.5f * this.size.z(),
-                0.5f * this.size.x(), 0.5f * this.size.y(), 0.5f * this.size.z(),
-                -0.5f * this.size.x(), -0.5f * this.size.y(), 0.5f * this.size.z(),
-                -0.5f * this.size.x(), -0.5f * this.size.y(), -0.5f * this.size.z(),
-                0.5f * this.size.x(), -0.5f * this.size.y(), -0.5f * this.size.z(),
-                0.5f * this.size.x(), -0.5f * this.size.y(), 0.5f * this.size.z()
+                -0.5f * this.size.x(), 0.5f * this.size.y(), -0.5f * this.size.z(),
+                -0.5f * this.size.x(), 0.5f * this.size.y(), 0.5f * this.size.z(),
+                0.5f * this.size.x(), 0.5f * this.size.y(), 0.5f * this.size.z()
             });
             this.dirty = false;
         }

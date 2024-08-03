@@ -90,6 +90,7 @@ public class OpenGLShader extends ShaderData {
         this.compile(GL20.GL_FRAGMENT_SHADER, fragmentCode);
         GL20.glLinkProgram(this.program);
         GL20.glValidateProgram(this.program);
+        UniformBufferObject.bind(this.program, "Lights");
     }
 
     /**

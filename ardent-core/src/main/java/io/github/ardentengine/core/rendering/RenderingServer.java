@@ -1,5 +1,6 @@
 package io.github.ardentengine.core.rendering;
 
+import io.github.ardentengine.core.scene.PointLight3D;
 import io.github.scalamath.colorlib.Color;
 
 import java.util.ServiceLoader;
@@ -35,7 +36,7 @@ public final class RenderingServer {
     }
 
     /**
-     * Sets the default clear color to use the next time {@link RenderingServer#clearScreen()} is called.
+     * Sets the default clear color to use the next time a new frame is rendered.
      *
      * @param red The red component of the color.
      * @param green The green component of the color.
@@ -47,7 +48,7 @@ public final class RenderingServer {
     }
 
     /**
-     * Sets the default clear color to use the next time {@link RenderingServer#clearScreen()} is called.
+     * Sets the default clear color to use the next time a new frame is rendered.
      *
      * @param red The red component of the color.
      * @param green The green component of the color.
@@ -58,20 +59,12 @@ public final class RenderingServer {
     }
 
     /**
-     * Sets the default clear color to use the next time {@link RenderingServer#clearScreen()} is called.
+     * Sets the default clear color to use the next time a new frame is rendered.
      *
      * @param color The color to use.
      */
     public static void setDefaultClearColor(Color color) {
         setDefaultClearColor(color.r(), color.g(), color.b(), color.a());
-    }
-
-    /**
-     * Clears the screen.
-     * Used to clear the screen before rendering a new frame.
-     */
-    public static void clearScreen() {
-        getApi().clearScreen();
     }
 
     /**
@@ -105,5 +98,9 @@ public final class RenderingServer {
      */
     public static TextureData getTextureData(Texture texture) {
         return getApi().getTextureData(texture);
+    }
+
+    public static void updateLight(PointLight3D light) {
+        getApi().updateLight(light);
     }
 }

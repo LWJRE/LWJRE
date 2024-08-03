@@ -76,7 +76,7 @@ public class ShaderProcessor {
      */
     public String extractVertexCode(String shaderCode) {
         // Remove the fragment function
-        shaderCode = shaderCode.replaceFirst("(?m)^void\\s*fragment_shader\\s*\\(\\s*\\)\\s*\\{[\\s\\S]*?}\\s*$", "");
+        shaderCode = shaderCode.replaceFirst("(?m)^(\\s*)void\\s+fragment_shader\\s*\\(\\s*\\)\\s*\\{[\\s\\S]*?^\\1}\\s*$", "");
         // Check if this shader file uses one of the built-in shaders
         var shaderTypeMatcher = SHADER_TYPE_REGEX.matcher(shaderCode);
         if(shaderTypeMatcher.find() && Files.exists(this.coreArtifactJarFile)) {
@@ -100,6 +100,8 @@ public class ShaderProcessor {
             }
             // Replace the vertex function with the main function
             shaderCode = shaderCode.replaceFirst("(?m)^void\\s*vertex_shader\\s*\\(\\s*\\)\\s*\\{", mainFunction.toString());
+            // Replace varying variables
+            shaderCode = shaderCode.replaceAll("\\bvarying\\b", "out");
         }
         // Remove comments and white spaces
         shaderCode = trimCode(shaderCode);
@@ -115,7 +117,7 @@ public class ShaderProcessor {
      */
     public String extractFragmentCode(String shaderCode) {
         // Remove the vertex function
-        shaderCode = shaderCode.replaceFirst("(?m)^void\\s*vertex_shader\\s*\\(\\s*\\)\\s*\\{[\\s\\S]*?}\\s*$", "");
+        shaderCode = shaderCode.replaceFirst("(?m)^(\\s*)void\\s+vertex_shader\\s*\\(\\s*\\)\\s*\\{[\\s\\S]*?^\\1}\\s*$", "");
         // Check if this shader file uses one of the built-in shaders
         var shaderTypeMatcher = SHADER_TYPE_REGEX.matcher(shaderCode);
         if(shaderTypeMatcher.find() && Files.exists(this.coreArtifactJarFile)) {
@@ -130,6 +132,8 @@ public class ShaderProcessor {
             shaderCode = shaderCode.replaceAll("(?m)^layout\\s*\\(\\s*location\\s*=\\s*\\d+\\s*\\)\\s*", "");
             // Replace the fragment function with the main function
             shaderCode = shaderCode.replaceFirst("(?m)^void\\s*fragment_shader\\s*\\(\\s*\\)\\s*\\{", "void main(){");
+            // Replace varying variables
+            shaderCode = shaderCode.replaceAll("\\bvarying\\b", "in");
         }
         // Remove comments and white spaces
         shaderCode = trimCode(shaderCode);

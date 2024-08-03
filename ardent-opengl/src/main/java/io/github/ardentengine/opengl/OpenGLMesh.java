@@ -15,6 +15,8 @@ import java.util.HashMap;
  */
 public class OpenGLMesh extends MeshData {
 
+    // TODO: Find a better solution that does not require constant binding and unbinding
+
     /** Keeps track of created meshes for them to be deleted when the rendering system is terminated. */
     private static final HashMap<Mesh, OpenGLMesh> MESHES = new HashMap<>();
 
@@ -64,6 +66,7 @@ public class OpenGLMesh extends MeshData {
         var buffer = BufferUtils.createFloatBuffer(array.length).put(array).flip();
         GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_DYNAMIC_DRAW);
         GL20.glVertexAttribPointer(index, size, GL11.GL_FLOAT, false, 0, 0);
+        GL30.glBindVertexArray(0);
         this.vertexBuffers.put(index, vbo);
     }
 
@@ -90,12 +93,14 @@ public class OpenGLMesh extends MeshData {
 
     @Override
     public void setIndices(int[] indices) {
+        GL30.glBindVertexArray(this.vertexArray);
         if(this.indicesCount == 0) {
             this.indexBuffer = GL15.glGenBuffers();
         }
         GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, this.indexBuffer);
         var buffer = BufferUtils.createIntBuffer(indices.length).put(indices).flip();
         GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, buffer, GL15.GL_DYNAMIC_DRAW);
+        GL30.glBindVertexArray(0);
         this.indicesCount = indices.length;
     }
 
@@ -121,6 +126,10 @@ public class OpenGLMesh extends MeshData {
         } else if(this.vertexCount > 0) {
             GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, this.vertexCount);
         }
+        for(var attribute : this.vertexBuffers.keySet()) {
+            GL20.glDisableVertexAttribArray(attribute);
+        }
+        GL30.glBindVertexArray(0);
     }
 
     /**

@@ -1,5 +1,7 @@
 package io.github.ardentengine.core.rendering;
 
+import io.github.ardentengine.core.scene.PointLight3D;
+
 /**
  * Interface used to abstract the rendering API.
  * <p>
@@ -17,7 +19,7 @@ package io.github.ardentengine.core.rendering;
 public interface RenderingApi {
 
     /**
-     * Sets the default clear color to use the next time {@link RenderingApi#clearScreen()} is called.
+     * Sets the default clear color to use the next time a new frame is rendered.
      *
      * @param red The red component of the color.
      * @param green The green component of the color.
@@ -25,14 +27,6 @@ public interface RenderingApi {
      * @param alpha The alpha component of the color.
      */
     default void setDefaultClearColor(float red, float green, float blue, float alpha) {
-
-    }
-
-    /**
-     * Clears the screen.
-     * Used to clear the screen before rendering a new frame.
-     */
-    default void clearScreen() {
 
     }
 
@@ -91,5 +85,9 @@ public interface RenderingApi {
      */
     default TextureData getTextureData(Texture texture) {
         return new TextureData();
+    }
+
+    default void updateLight(PointLight3D light) {
+
     }
 }

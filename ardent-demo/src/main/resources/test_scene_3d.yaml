@@ -5,9 +5,29 @@ properties:
 children:
   - type: !!java.lang.Class io.github.ardentengine.core.scene.MeshRenderer
     properties:
-      mesh:
+      mesh: &id001
         !!io.github.ardentengine.core.rendering.BoxMesh
         size: !Vec3f [1.0, 1.0, 1.0]
+  - type: !!java.lang.Class io.github.ardentengine.core.scene.MeshRenderer
+    properties:
+      mesh: *id001
+      position: !Vec3f [1.0, 1.0, -1.0]
+  - type: !!java.lang.Class io.github.ardentengine.core.scene.MeshRenderer
+    properties:
+      mesh: *id001
+      position: !Vec3f [-1.0, 2.0, -2.0]
   - type: !!java.lang.Class io.github.ardentengine.core.scene.Camera3D
     properties:
-      position: !Vec3f [1.0, 1.0, 2.0]
+      position: !Vec3f [1.0, 2.0, 2.0]
+  - type: !!java.lang.Class io.github.ardentengine.core.scene.PointLight3D
+    properties:
+      position: !Vec3f [10.0, 5.0, 0.0]
+      color: !Col3f [1.0, 1.0, 0.0]
+  - type: !!java.lang.Class io.github.ardentengine.core.scene.PointLight3D
+    properties:
+      position: !Vec3f [0.0, 5.0, 10.0]
+      color: !Col3f [1.0, 0.0, 0.0]
+  - type: !!java.lang.Class io.github.ardentengine.core.scene.PointLight3D
+    properties:
+      position: !Vec3f [-2.0, 10.0, 0.0]
+      color: !Col3f [0.0, 1.0, 0.0]

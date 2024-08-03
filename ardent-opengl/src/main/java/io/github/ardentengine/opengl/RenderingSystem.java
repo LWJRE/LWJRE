@@ -18,16 +18,17 @@ public class RenderingSystem implements EngineSystem {
         Logger.info("Initializing OpenGL rendering system using LWJGL " + Version.getVersion());
         GL.createCapabilities();
         RenderingServer.setDefaultClearColor(0.3f, 0.3f, 0.3f);
-        // TODO: Abstract this
         GL11.glEnable(GL11.GL_DEPTH_TEST);
+        GL11.glEnable(GL11.GL_CULL_FACE);
+        GL11.glCullFace(GL11.GL_BACK);
     }
 
     @Override
     public void process() {
-        // TODO: Abstract this
+        // TODO: Add viewport scaling options
         var windowSize = DisplayServer.getWindowSize();
         GL11.glViewport(0, 0, windowSize.x(), windowSize.y());
-        RenderingServer.clearScreen();
+        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
     }
 
     @Override
@@ -35,5 +36,6 @@ public class RenderingSystem implements EngineSystem {
         OpenGLMesh.deleteMeshes();
         OpenGLShader.deleteShaders();
         OpenGLTexture.deleteTextures();
+        UniformBufferObject.deleteBuffers();
     }
 }
