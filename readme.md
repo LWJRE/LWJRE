@@ -47,8 +47,8 @@ The engine will be responsible for loading the correct library for the current o
 | 2D rendering of textures | Done        |
 | 2D physics in Java       | Missing     |
 | Shaders system           | Done        |
-| Basic 3D lighting        | Missing     |
-| Resource manager         | In progress |
+| Basic 3D lighting        | In progress |
+| Resource manager         | Done        |
 | Nuklear bindings         | Missing     |
 | Stub editor application  | Missing     |
 

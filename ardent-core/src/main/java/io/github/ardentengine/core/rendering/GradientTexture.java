@@ -21,17 +21,17 @@ public class GradientTexture extends Texture {
     /** Height of the texture. */
     private int height = 0;
 
-    /** Set to true when the texture needs to be updated. */
-    private boolean dirty = true;
-
     /**
      * Setter method for gradient.
      *
      * @param gradient Gradient used to fill the texture.
      */
     public void setGradient(Gradient gradient) {
-        this.dirty = !this.gradient.equals(gradient);
-        this.gradient = Objects.requireNonNullElse(gradient, new Gradient());
+        gradient = Objects.requireNonNullElse(gradient, new Gradient());
+        if(!this.gradient.equals(gradient)) {
+            this.gradient = gradient;
+            RenderingServer.update(this);
+        }
     }
 
     /**
@@ -43,14 +43,28 @@ public class GradientTexture extends Texture {
         return this.gradient;
     }
 
+    @Override
+    public ByteBuffer getPixels() {
+        var pixels = ByteBuffer.allocateDirect(4 * this.getWidth() * this.getHeight());
+        for(var x = 0; x < this.getWidth(); x++) {
+            var color = this.getGradient().sample(x / (float) this.getWidth());
+            for(var y = 0; y < this.getHeight(); y++) {
+                pixels.putInt(color.rgba());
+            }
+        }
+        return pixels.flip();
+    }
+
     /**
      * Setter method for width.
      *
      * @param width Width of the texture. Also represents the number of horizontal color samples that will be obtained from the gradient.
      */
     public void setWidth(int width) {
-        this.dirty = this.width != width;
-        this.width = width;
+        if(this.width != width) {
+            this.width = width;
+            RenderingServer.update(this);
+        }
     }
 
     @Override
@@ -64,8 +78,10 @@ public class GradientTexture extends Texture {
      * @param height Height of the texture. Also represents the number of vertical color samples that will be obtained from the gradient.
      */
     public void setHeight(int height) {
-        this.dirty = this.height != height;
-        this.height = height;
+        if(this.height != height) {
+            this.height = height;
+            RenderingServer.update(this);
+        }
     }
 
     @Override
@@ -80,9 +96,11 @@ public class GradientTexture extends Texture {
      * @param height Height of the texture.
      */
     public void setSize(int width, int height) {
-        this.dirty = this.width != width || this.height != height;
-        this.width = width;
-        this.height = height;
+        if(this.width != width || this.height != height) {
+            this.width = width;
+            this.height = height;
+            RenderingServer.update(this);
+        }
     }
 
     /**
@@ -92,23 +110,5 @@ public class GradientTexture extends Texture {
      */
     public void setSize(Vec2i size) {
         this.setSize(size.x(), size.y());
-    }
-
-    @Override
-    public void updateTexture() {
-        if(this.dirty) {
-            var pixels = ByteBuffer.allocateDirect(4 * this.getWidth() * this.getHeight());
-            for(var x = 0; x < this.getWidth(); x++) {
-                var color = this.getGradient().sample(x / (float) this.getWidth());
-                for(var y = 0; y < this.getHeight(); y++) {
-                    pixels.put((byte) color.r8());
-                    pixels.put((byte) color.g8());
-                    pixels.put((byte) color.b8());
-                    pixels.put((byte) color.a8());
-                }
-            }
-            this.textureData.setImage(pixels.flip(), this.getWidth(), this.getHeight());
-            this.dirty = false;
-        }
     }
 }

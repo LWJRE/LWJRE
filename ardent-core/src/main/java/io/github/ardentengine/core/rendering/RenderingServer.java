@@ -67,15 +67,40 @@ public final class RenderingServer {
         setDefaultClearColor(color.r(), color.g(), color.b(), color.a());
     }
 
+    public static void draw(Mesh mesh) {
+        getApi().draw(mesh);
+    }
+
     /**
-     * Returns the {@code MeshData} corresponding to the given mesh or creates a new one.
-     * Used to abstract the low-level implementation of meshes across different rendering APIs.
+     * Tells the rendering api to update the given mesh.
+     * <p>
+     *     Implementations of the {@link Mesh} class should call this method every time the mesh is modified.
+     * </p>
+     * <p>
+     *     The mesh might not be updated immediately.
+     *     The rendering api might defer the update until the end of the rendering frame or until the mesh is drawn again.
+     * </p>
      *
-     * @param mesh The mesh object.
-     * @return The mesh data corresponding to the given mesh.
+     * @param mesh The mesh to update.
      */
-    public static MeshData getMeshData(Mesh mesh) {
-        return getApi().getMeshData(mesh);
+    public static void update(Mesh mesh) {
+        getApi().update(mesh);
+    }
+
+    /**
+     * Tells the rendering api to update the given texture.
+     * <p>
+     *     Implementations of the {@link Texture} class should call this method every time the texture is modified.
+     * </p>
+     * <p>
+     *     The texture might not be updated immediately.
+     *     The rendering might may defer the update until the end of the rendering frame or until the texture is used again.
+     * </p>
+     *
+     * @param texture The texture to update.
+     */
+    public static void update(Texture texture) {
+        getApi().update(texture);
     }
 
     /**
@@ -87,17 +112,6 @@ public final class RenderingServer {
      */
     public static ShaderData getShaderData(Shader shader) {
         return getApi().getShaderData(shader);
-    }
-
-    /**
-     * Returns the {@code TextureData} corresponding to the given texture or creates a new one.
-     * Used to abstract the low-level implementation of textures across different rendering APIs.
-     *
-     * @param texture The texture object.
-     * @return The texture data corresponding to the given texture.
-     */
-    public static TextureData getTextureData(Texture texture) {
-        return getApi().getTextureData(texture);
     }
 
     public static void updateLight(PointLight3D light) {

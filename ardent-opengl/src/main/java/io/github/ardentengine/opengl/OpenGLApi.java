@@ -17,18 +17,23 @@ public class OpenGLApi implements RenderingApi {
     }
 
     @Override
-    public MeshData getMeshData(Mesh mesh) {
-        return OpenGLMesh.getOrCreate(mesh);
+    public void draw(Mesh mesh) {
+        MeshData.getOrCreate(mesh).draw();
+    }
+
+    @Override
+    public void update(Mesh mesh) {
+        MeshData.requestUpdate(mesh);
+    }
+
+    @Override
+    public void update(Texture texture) {
+        TextureData.requestUpdate(texture);
     }
 
     @Override
     public ShaderData getShaderData(Shader shader) {
         return OpenGLShader.getOrCreate(shader);
-    }
-
-    @Override
-    public TextureData getTextureData(Texture texture) {
-        return OpenGLTexture.getOrCreate(texture);
     }
 
     private UniformBufferObject lightUbo;

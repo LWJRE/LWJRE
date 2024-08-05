@@ -3,9 +3,21 @@ package io.github.ardentengine.core.rendering;
 import io.github.ardentengine.core.logging.Logger;
 import io.github.ardentengine.core.resources.ResourceManager;
 
+import java.nio.ByteBuffer;
+
 /**
- * Base texture class.
- * Other classes may extend this one to provide different ways of updating the texture.
+ * Base class for all types of texture.
+ * <p>
+ *     TODO: Explain where Textures can be used.
+ * </p>
+ * <p>
+ *     The current rendering api is responsible for loading the texture in the video hardware before it is used in a {@link Shader}.
+ *     Implementations of the {@code Texture} class contain the relevant data that needs to be used for creating or updating the texture.
+ * </p>
+ * <p>
+ *     Textures are usually created by loading an image file.
+ *     See {@link ImageTexture}.
+ * </p>
  */
 public abstract class Texture {
 
@@ -24,15 +36,25 @@ public abstract class Texture {
         var resource = ResourceManager.getOrLoad(resourcePath);
         if(resource instanceof Texture) {
             return (Texture) resource;
+        } else if(resource != null) {
+            Logger.error("Resource " + resourcePath + " is not a texture");
         }
-        Logger.error("Resource " + resourcePath + " is not a texture");
         return null;
     }
 
     /**
-     * Texture data used internally to abstract the representation of a texture across different rendering APIs.
+     * Returns a byte buffer containing the pixels of this texture.
+     * <p>
+     *     The rendering api may call this method when a texture update is requested using {@link RenderingServer#update(Texture)}.
+     *     Implementations of the {@code Texture} class may use this method to create the texture and therefore it should only be called when the texture needs to be created or updated to avoid overhead.
+     * </p>
+     * <p>
+     *     The {@link ByteBuffer#flip()} method must be called before the buffer is returned.
+     * </p>
+     *
+     * @return A byte buffer containing the pixels of this texture.
      */
-    protected final TextureData textureData = RenderingServer.getTextureData(this);
+    public abstract ByteBuffer getPixels();
 
     /**
      * Returns the width of this texture.
@@ -47,15 +69,4 @@ public abstract class Texture {
      * @return The height of this texture.
      */
     public abstract int getHeight();
-
-    /**
-     * Updates this texture.
-     * <p>
-     *     Textures are updated before they are used in a shader.
-     *     Different types of textures may override this method to provide their own update logic.
-     * </p>
-     */
-    protected void updateTexture() {
-
-    }
 }

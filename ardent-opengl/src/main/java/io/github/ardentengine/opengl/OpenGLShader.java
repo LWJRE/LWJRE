@@ -210,7 +210,7 @@ public class OpenGLShader extends ShaderData {
         if(texture != null) {
             var textureUnit = this.getTextureUnit(variable);
             GL13.glActiveTexture(GL13.GL_TEXTURE1 + textureUnit);
-            OpenGLTexture.getOrCreate(texture).bindTexture();
+            TextureData.getOrCreate(texture).bindTexture();
             GL41.glProgramUniform1i(this.program, location, 1 + textureUnit);
         } else {
             GL13.glActiveTexture(GL13.GL_TEXTURE0);

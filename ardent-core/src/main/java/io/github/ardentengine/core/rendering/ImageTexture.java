@@ -8,6 +8,8 @@ import java.nio.ByteBuffer;
  */
 public class ImageTexture extends Texture {
 
+    /** Pixels buffer. */
+    private ByteBuffer pixels;
     /** Width of the texture */
     private int width = 0;
     /** Height of the texture */
@@ -16,14 +18,20 @@ public class ImageTexture extends Texture {
     /**
      * Sets the pixels of this texture.
      *
-     * @param pixels A ByteBuffer containing data about the pixels.
+     * @param pixels A buffer containing data about the pixels. The {@link ByteBuffer#flip()} method must be called on the buffer before passing it to this method.
      * @param width Width of the texture.
      * @param height Height of the texture.
      */
     public final void setImage(ByteBuffer pixels, int width, int height) {
-        this.textureData.setImage(pixels, width, height);
+        this.pixels = pixels;
         this.width = width;
         this.height = height;
+        RenderingServer.update(this);
+    }
+
+    @Override
+    public ByteBuffer getPixels() {
+        return this.pixels;
     }
 
     @Override

@@ -33,9 +33,9 @@ public class RenderingSystem implements EngineSystem {
 
     @Override
     public void terminate() {
-        OpenGLMesh.deleteMeshes();
+        MeshData.deleteMeshes();
         OpenGLShader.deleteShaders();
-        OpenGLTexture.deleteTextures();
+        TextureData.deleteTextures();
         UniformBufferObject.deleteBuffers();
     }
 }

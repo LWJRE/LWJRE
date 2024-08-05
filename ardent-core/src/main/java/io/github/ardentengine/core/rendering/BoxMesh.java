@@ -2,6 +2,8 @@ package io.github.ardentengine.core.rendering;
 
 import io.github.scalamath.vecmatlib.Vec3f;
 
+import java.util.Objects;
+
 /**
  * An axis-aligned box primitive mesh.
  * The origin of the mesh is the center of the box.
@@ -12,85 +14,12 @@ public class BoxMesh extends Mesh {
     private Vec3f size;
 
     /**
-     * Flag used to tell that the mesh should be updated.
-     * Set to false when the size is updated.
-     */
-    private boolean dirty;
-
-    /**
      * Constructs a box mesh with the given size.
      *
      * @param size Size of the box.
      */
     public BoxMesh(Vec3f size) {
-        this.meshData.setIndices(new int[] {
-            0, 3, 2,
-            2, 1, 0,
-            4, 5, 6,
-            6, 7 ,4,
-            11, 8, 9,
-            9, 10, 11,
-            12, 13, 14,
-            14, 15, 12,
-            16, 17, 18,
-            18, 19, 16,
-            20, 21, 22,
-            22, 23, 20
-        });
-        this.meshData.setUVs(new float[] {
-            0, 0,
-            0, 1,
-            1, 1,
-            1, 0,
-            0, 0,
-            0, 1,
-            1, 1,
-            1, 0,
-            0, 0,
-            0, 1,
-            1, 1,
-            1, 0,
-            0, 0,
-            0, 1,
-            1, 1,
-            1, 0,
-            0, 0,
-            0, 1,
-            1, 1,
-            1, 0,
-            0, 0,
-            0, 1,
-            1, 1,
-            1, 0
-        });
-        this.meshData.setNormals(new float[] {
-            0.0f, 0.0f, -1.0f,
-            0.0f, 0.0f, -1.0f,
-            0.0f, 0.0f, -1.0f,
-            0.0f, 0.0f, -1.0f,
-            0.0f, 0.0f, 1.0f,
-            0.0f, 0.0f, 1.0f,
-            0.0f, 0.0f, 1.0f,
-            0.0f, 0.0f, 1.0f,
-            -1.0f, 0.0f, 0.0f,
-            -1.0f, 0.0f, 0.0f,
-            -1.0f, 0.0f, 0.0f,
-            -1.0f, 0.0f, 0.0f,
-            1.0f, 0.0f, 0.0f,
-            1.0f, 0.0f, 0.0f,
-            1.0f, 0.0f, 0.0f,
-            1.0f, 0.0f, 0.0f,
-            0.0f, -1.0f, 0.0f,
-            0.0f, -1.0f, 0.0f,
-            0.0f, -1.0f, 0.0f,
-            0.0f, -1.0f, 0.0f,
-            0.0f, 1.0f, 0.0f,
-            0.0f, 1.0f, 0.0f,
-            0.0f, 1.0f, 0.0f,
-            0.0f, 1.0f, 0.0f
-        });
         this.size = size;
-        this.dirty = true;
     }
 
     /**
@@ -118,8 +47,11 @@ public class BoxMesh extends Mesh {
      * @param size The size of the mesh.
      */
     public void setSize(Vec3f size) {
-        this.size = size;
-        this.dirty = true;
+        size = Objects.requireNonNullElse(size, Vec3f.Zero());
+        if(!this.size.equals(size)) {
+            this.size = size;
+            RenderingServer.update(this);
+        }
     }
 
     /**
@@ -144,36 +76,110 @@ public class BoxMesh extends Mesh {
     }
 
     @Override
-    public void draw() {
-        if(this.dirty) {
-            this.meshData.setVertices3D(new float[] {
-                -0.5f * this.size.x(), -0.5f * this.size.y(), -0.5f * this.size.z(),
-                0.5f * this.size.x(), -0.5f * this.size.y(), -0.5f * this.size.z(),
-                0.5f * this.size.x(), 0.5f * this.size.y(), -0.5f * this.size.z(),
-                -0.5f * this.size.x(), 0.5f * this.size.y(), -0.5f * this.size.z(),
-                -0.5f * this.size.x(), -0.5f * this.size.y(), 0.5f * this.size.z(),
-                0.5f * this.size.x(), -0.5f * this.size.y(), 0.5f * this.size.z(),
-                0.5f * this.size.x(), 0.5f * this.size.y(), 0.5f * this.size.z(),
-                -0.5f * this.size.x(), 0.5f * this.size.y(), 0.5f * this.size.z(),
-                -0.5f * this.size.x(), 0.5f * this.size.y(), -0.5f * this.size.z(),
-                -0.5f * this.size.x(), -0.5f * this.size.y(), -0.5f * this.size.z(),
-                -0.5f * this.size.x(), -0.5f * this.size.y(), 0.5f * this.size.z(),
-                -0.5f * this.size.x(), 0.5f * this.size.y(), 0.5f * this.size.z(),
-                0.5f * this.size.x(), -0.5f * this.size.y(), -0.5f * this.size.z(),
-                0.5f * this.size.x(), 0.5f * this.size.y(), -0.5f * this.size.z(),
-                0.5f * this.size.x(), 0.5f * this.size.y(), 0.5f * this.size.z(),
-                0.5f * this.size.x(), -0.5f * this.size.y(), 0.5f * this.size.z(),
-                -0.5f * this.size.x(), -0.5f * this.size.y(), -0.5f * this.size.z(),
-                0.5f * this.size.x(), -0.5f * this.size.y(), -0.5f * this.size.z(),
-                0.5f * this.size.x(), -0.5f * this.size.y(), 0.5f * this.size.z(),
-                -0.5f * this.size.x(), -0.5f * this.size.y(), 0.5f * this.size.z(),
-                0.5f * this.size.x(), 0.5f * this.size.y(), -0.5f * this.size.z(),
-                -0.5f * this.size.x(), 0.5f * this.size.y(), -0.5f * this.size.z(),
-                -0.5f * this.size.x(), 0.5f * this.size.y(), 0.5f * this.size.z(),
-                0.5f * this.size.x(), 0.5f * this.size.y(), 0.5f * this.size.z()
-            });
-            this.dirty = false;
-        }
-        super.draw();
+    public float[] getVertices() {
+        return new float[] {
+            -0.5f * this.size.x(), -0.5f * this.size.y(), -0.5f * this.size.z(),
+            0.5f * this.size.x(), -0.5f * this.size.y(), -0.5f * this.size.z(),
+            0.5f * this.size.x(), 0.5f * this.size.y(), -0.5f * this.size.z(),
+            -0.5f * this.size.x(), 0.5f * this.size.y(), -0.5f * this.size.z(),
+            -0.5f * this.size.x(), -0.5f * this.size.y(), 0.5f * this.size.z(),
+            0.5f * this.size.x(), -0.5f * this.size.y(), 0.5f * this.size.z(),
+            0.5f * this.size.x(), 0.5f * this.size.y(), 0.5f * this.size.z(),
+            -0.5f * this.size.x(), 0.5f * this.size.y(), 0.5f * this.size.z(),
+            -0.5f * this.size.x(), 0.5f * this.size.y(), -0.5f * this.size.z(),
+            -0.5f * this.size.x(), -0.5f * this.size.y(), -0.5f * this.size.z(),
+            -0.5f * this.size.x(), -0.5f * this.size.y(), 0.5f * this.size.z(),
+            -0.5f * this.size.x(), 0.5f * this.size.y(), 0.5f * this.size.z(),
+            0.5f * this.size.x(), -0.5f * this.size.y(), -0.5f * this.size.z(),
+            0.5f * this.size.x(), 0.5f * this.size.y(), -0.5f * this.size.z(),
+            0.5f * this.size.x(), 0.5f * this.size.y(), 0.5f * this.size.z(),
+            0.5f * this.size.x(), -0.5f * this.size.y(), 0.5f * this.size.z(),
+            -0.5f * this.size.x(), -0.5f * this.size.y(), -0.5f * this.size.z(),
+            0.5f * this.size.x(), -0.5f * this.size.y(), -0.5f * this.size.z(),
+            0.5f * this.size.x(), -0.5f * this.size.y(), 0.5f * this.size.z(),
+            -0.5f * this.size.x(), -0.5f * this.size.y(), 0.5f * this.size.z(),
+            0.5f * this.size.x(), 0.5f * this.size.y(), -0.5f * this.size.z(),
+            -0.5f * this.size.x(), 0.5f * this.size.y(), -0.5f * this.size.z(),
+            -0.5f * this.size.x(), 0.5f * this.size.y(), 0.5f * this.size.z(),
+            0.5f * this.size.x(), 0.5f * this.size.y(), 0.5f * this.size.z()
+        };
+    }
+
+    @Override
+    public int[] getIndices() {
+        return new int[] {
+            0, 3, 2,
+            2, 1, 0,
+            4, 5, 6,
+            6, 7 ,4,
+            11, 8, 9,
+            9, 10, 11,
+            12, 13, 14,
+            14, 15, 12,
+            16, 17, 18,
+            18, 19, 16,
+            20, 21, 22,
+            22, 23, 20
+        };
+    }
+
+    @Override
+    public float[] getUVs() {
+        return new float[] {
+            0, 0,
+            0, 1,
+            1, 1,
+            1, 0,
+            0, 0,
+            0, 1,
+            1, 1,
+            1, 0,
+            0, 0,
+            0, 1,
+            1, 1,
+            1, 0,
+            0, 0,
+            0, 1,
+            1, 1,
+            1, 0,
+            0, 0,
+            0, 1,
+            1, 1,
+            1, 0,
+            0, 0,
+            0, 1,
+            1, 1,
+            1, 0
+        };
+    }
+
+    @Override
+    public float[] getNormals() {
+        return new float[] {
+            0.0f, 0.0f, -1.0f,
+            0.0f, 0.0f, -1.0f,
+            0.0f, 0.0f, -1.0f,
+            0.0f, 0.0f, -1.0f,
+            0.0f, 0.0f, 1.0f,
+            0.0f, 0.0f, 1.0f,
+            0.0f, 0.0f, 1.0f,
+            0.0f, 0.0f, 1.0f,
+            -1.0f, 0.0f, 0.0f,
+            -1.0f, 0.0f, 0.0f,
+            -1.0f, 0.0f, 0.0f,
+            -1.0f, 0.0f, 0.0f,
+            1.0f, 0.0f, 0.0f,
+            1.0f, 0.0f, 0.0f,
+            1.0f, 0.0f, 0.0f,
+            1.0f, 0.0f, 0.0f,
+            0.0f, -1.0f, 0.0f,
+            0.0f, -1.0f, 0.0f,
+            0.0f, -1.0f, 0.0f,
+            0.0f, -1.0f, 0.0f,
+            0.0f, 1.0f, 0.0f,
+            0.0f, 1.0f, 0.0f,
+            0.0f, 1.0f, 0.0f,
+            0.0f, 1.0f, 0.0f
+        };
     }
 }

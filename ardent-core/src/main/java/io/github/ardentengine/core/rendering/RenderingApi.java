@@ -30,23 +30,34 @@ public interface RenderingApi {
 
     }
 
+    default void draw(Mesh mesh) {
+
+    }
+
     /**
-     * Returns the {@code MeshData} corresponding to the given mesh or creates a new one.
-     * Used to abstract the low-level implementation of meshes across different rendering APIs.
+     * Tells the rendering api to update the given mesh.
      * <p>
-     *     The returned object must be an implementation of {@code MeshData} for the current rendering API.
-     *     Low-level functions are normally only accessed by the rendering API.
-     * </p>
-     * <p>
-     *     The rendering API must guarantee that there is at most one instance of {@code MeshData} for each instance of {@code Mesh}.
-     *     This method must return the same instance if it already exists.
+     *     The mesh might not be updated immediately.
+     *     The rendering api might defer the update until the end of the rendering frame or until the mesh is drawn again.
      * </p>
      *
-     * @param mesh The mesh object.
-     * @return The mesh data object.
+     * @param mesh The mesh to update.
      */
-    default MeshData getMeshData(Mesh mesh) {
-        return new MeshData();
+    default void update(Mesh mesh) {
+
+    }
+
+    /**
+     * Tells the rendering api to update the given texture.
+     * <p>
+     *     The texture might not be updated immediately.
+     *     The rendering might may defer the update until the end of the rendering frame or until the texture is used again.
+     * </p>
+     *
+     * @param texture The texture to update.
+     */
+    default void update(Texture texture) {
+
     }
 
     /**
@@ -66,25 +77,6 @@ public interface RenderingApi {
      */
     default ShaderData getShaderData(Shader shader) {
         return new ShaderData();
-    }
-
-    /**
-     * Returns the {@code TextureData} corresponding to the given texture or creates a new one.
-     * Used to abstract the low-level implementation of textures across different rendering APIs.
-     * <p>
-     *     The returned object must be an implementation of {@code TextureData} for the current rendering API.
-     *     Low-level functions are normally only accessed by the rendering API.
-     * </p>
-     * <p>
-     *     The rendering API must guarantee that there is at most one instance of {@code TextureData} for each instance of {@code Texture}.
-     *     This method must return the same instance if it already exists.
-     * </p>
-     *
-     * @param texture The texture object.
-     * @return The texture data object.
-     */
-    default TextureData getTextureData(Texture texture) {
-        return new TextureData();
     }
 
     default void updateLight(PointLight3D light) {

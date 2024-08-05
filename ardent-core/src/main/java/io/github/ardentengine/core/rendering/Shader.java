@@ -295,9 +295,6 @@ public final class Shader {
      * @param texture Texture to use for the {@code sampler2D}.
      */
     public void set(String variable, Texture texture) {
-        if(texture != null) {
-            texture.updateTexture();
-        }
         this.shaderData.set(variable, texture);
     }
 
