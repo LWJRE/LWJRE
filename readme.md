@@ -43,26 +43,27 @@ The engine will be responsible for loading the correct library for the current o
 
 | Feature                  | Status      |
 |--------------------------|-------------|
-| 3D rendering of meshes   | In progress |
+| 3D rendering of meshes   | Done        |
 | 2D rendering of textures | Done        |
-| 2D physics in Java       | Missing     |
 | Shaders system           | Done        |
 | Basic 3D lighting        | In progress |
 | Resource manager         | Done        |
-| Nuklear bindings         | Missing     |
-| Stub editor application  | Missing     |
+| Stub physics system      | Missing     |
+| Basic materials system   | Missing     |
+| Keyboard input system    | In progress |
 
 ### Version 0.2
 
-* Functioning editor application
+* Nuklear bindings (for the editor application)
+* Editor application
 * Rendering of 3D models
-* Materials system
+* Finished materials system
 * Support for multiple windows
 * Audio module (OpenAL bindings)
+* Gamepad input system
 
 ### Version 0.3
 
-* 3D physics in Java
 * More complex 2D rendering (Tile maps, lines, polygons...)
 * Finished 3D lighting system
 * Basic 2D lighting

@@ -38,7 +38,7 @@
             <dependency>
                 <groupId>org.lwjgl</groupId>
                 <artifactId>lwjgl-bom</artifactId>
-                <version>3.3.3</version>
+                <version>3.3.4</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
@@ -61,6 +61,8 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <!-- TODO: Include lwjgl-par for primitive meshes -->
 
     <dependencies>
         <dependency>
