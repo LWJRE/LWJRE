@@ -5,16 +5,6 @@ import io.github.ardentengine.core.rendering.Shader;
 
 import java.io.IOException;
 
-/**
- * Resource loader used to load shader files.
- * <p>
- *     Returns instances of {@link Shader}.
- *     This loader expects the shader files in the classpath to contain the processed shader code.
- * </p>
- * <p>
- *     Supports {@code .glsl} files.
- * </p>
- */
 public class ShaderLoader implements ResourceLoader {
 
     @Override
@@ -22,17 +12,16 @@ public class ShaderLoader implements ResourceLoader {
         var classLoader = Thread.currentThread().getContextClassLoader();
         var basePath = resourcePath.substring(0, resourcePath.lastIndexOf('.'));
         try(var vertexFile = classLoader.getResourceAsStream(basePath + ".vert"); var fragmentFile = classLoader.getResourceAsStream(basePath + ".frag")) {
+            var shader = new Shader();
             if(vertexFile == null) {
                 Logger.error("Could not find file " + basePath + ".vert");
             } else if(fragmentFile == null) {
                 Logger.error("Could not find file " + basePath + ".frag");
             } else {
-                var shader = new Shader();
-                var vertexCode = new String(vertexFile.readAllBytes());
-                var fragmentCode = new String(fragmentFile.readAllBytes());
-                shader.compile(vertexCode, fragmentCode);
-                return shader;
+                shader.setVertexCode(new String(vertexFile.readAllBytes()));
+                shader.setFragmentCode(new String(fragmentFile.readAllBytes()));
             }
+            return shader;
         } catch (IOException e) {
             Logger.error("Exception occurred while loading shader " + resourcePath, e);
         }

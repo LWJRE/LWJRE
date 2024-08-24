@@ -1,5 +1,6 @@
 package io.github.ardentengine.core.rendering;
 
+import io.github.ardentengine.core.RenderingSystem;
 import io.github.scalamath.vecmatlib.Vec3f;
 
 import java.util.Objects;
@@ -41,7 +42,7 @@ public class BoxMesh extends Mesh {
     }
 
     /**
-     * Setter method.
+     * Setter method for {@link BoxMesh#size}.
      * Updates the size of this mesh.
      *
      * @param size The size of the mesh.
@@ -50,12 +51,12 @@ public class BoxMesh extends Mesh {
         size = Objects.requireNonNullElse(size, Vec3f.Zero());
         if(!this.size.equals(size)) {
             this.size = size;
-            RenderingServer.update(this);
+            RenderingSystem.getInstance().update(this);
         }
     }
 
     /**
-     * Setter method.
+     * Setter method for {@link BoxMesh#size}.
      * Updates the size of this mesh.
      *
      * @param x Size of the mesh on the x axis.
@@ -67,7 +68,7 @@ public class BoxMesh extends Mesh {
     }
 
     /**
-     * Getter method.
+     * Getter method for {@link BoxMesh#size}.
      *
      * @return The size of the box mesh.
      */

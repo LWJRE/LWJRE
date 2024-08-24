@@ -1,16 +1,16 @@
 package io.github.ardentengine.core;
 
 /**
- * Interface representing an engine support system.
+ * Abstract class representing an engine support system.
  * <p>
  *     Engine systems are low-level support systems that manage an aspect of the engine.
- *     The contain an {@link EngineSystem#initialize()} function that is called when the engine is stared up,
+ *     They contain an {@link EngineSystem#initialize()} method that is called when the engine is stared up,
  *     an {@link EngineSystem#process()} method that is called at every process step,
  *     and a {@link EngineSystem#terminate()} method that is called when the engine is being shut down.
  * </p>
  * <p>
  *     Engine support systems are loaded from the main {@link Application} class.
- *     Modules providing an engine system must declare its implementation as a service.
+ *     Modules providing an engine system must declare its implementation as a service in the {@code META-INF/services} file.
  * </p>
  * <p>
  *     Engine systems can be given a {@link EngineSystem#priority()} to decide in which order they should be initialized.
@@ -18,25 +18,25 @@ package io.github.ardentengine.core;
  *     The termination happens in the reverse order.
  * </p>
  */
-public interface EngineSystem extends Comparable<EngineSystem> {
+public abstract class EngineSystem implements Comparable<EngineSystem> {
 
     /**
      * Initializes this system.
      * Called when the application starts.
      */
-    void initialize();
+    protected abstract void initialize();
 
     /**
      * Updates this system.
      * Called every iteration step.
      */
-    void process();
+    protected abstract void process();
 
     /**
      * Terminates this system.
      * Called before the application is terminated.
      */
-    void terminate();
+    protected abstract void terminate();
 
     /**
      * Determines the priority of this system.
@@ -45,12 +45,12 @@ public interface EngineSystem extends Comparable<EngineSystem> {
      *
      * @return An integer value representing the priority of this system.
      */
-    default int priority() {
+    protected int priority() {
         return 10;
     }
 
     @Override
-    default int compareTo(EngineSystem engineSystem) {
+    public int compareTo(EngineSystem engineSystem) {
         return Integer.compare(this.priority(), engineSystem.priority());
     }
 }

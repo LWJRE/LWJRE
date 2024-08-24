@@ -1,20 +1,8 @@
 package io.github.ardentengine.core.rendering;
 
-/**
- * Quad mesh used to render 2D objects.
- */
 public class QuadMesh2D extends Mesh {
 
-    private static QuadMesh2D instance;
-
-    public static QuadMesh2D getInstance() {
-        if(instance == null) {
-            instance = new QuadMesh2D();
-        }
-        return instance;
-    }
-
-    // TODO: Size?
+    // TODO: Are 2D meshes useful for anything other than rendering 2D stuff on a quad mesh?
 
     @Override
     public float[] getVertices() {

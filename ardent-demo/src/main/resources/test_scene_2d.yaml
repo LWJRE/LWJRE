@@ -24,3 +24,4 @@ children:
     properties:
       name: Fifth
       position: !Vec2f [300.0, 150.0]
+  - type: !!java.lang.Class io.github.ardentengine.core.scene.Camera2D

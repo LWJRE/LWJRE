@@ -98,7 +98,7 @@ public class TextureData {
 
     /**
      * Deletes all textures that were created.
-     * Called when the {@link RenderingSystem} is terminated.
+     * Called when the {@link OpenGLSystem} is terminated.
      */
     public static void deleteTextures() {
         for(var texture : TEXTURES.values()) {

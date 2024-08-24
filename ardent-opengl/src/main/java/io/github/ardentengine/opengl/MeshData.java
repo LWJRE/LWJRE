@@ -160,18 +160,36 @@ public class MeshData {
         this.setAttribute(normals, 3, 2);
     }
 
-    public void draw() {
-        // TODO: Implement batching
+    // TODO: How can we ensure the mesh is bound before drawing?
+
+    /**
+     * Binds this mesh.
+     * Meshes must be bound before they are drawn.
+     */
+    public void bind() {
         GL30.glBindVertexArray(this.vertexArray);
         for(var attribute : this.vertexBuffers.keySet()) {
             GL20.glEnableVertexAttribArray(attribute);
         }
+    }
+
+    /**
+     * Draws this mesh.
+     * Meshes must be bound before they are drawn.
+     */
+    public void draw() {
         // TODO: Use triangle strips for 2D vertices
         if(this.indicesCount > 0) {
             GL11.glDrawElements(GL11.GL_TRIANGLES, this.indicesCount, GL11.GL_UNSIGNED_INT, 0);
         } else if(this.vertexCount > 0) {
             GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, this.vertexCount);
         }
+    }
+
+    /**
+     * Unbinds this mesh.
+     */
+    public void unbind() {
         for(var attribute : this.vertexBuffers.keySet()) {
             GL20.glDisableVertexAttribArray(attribute);
         }
@@ -194,7 +212,7 @@ public class MeshData {
 
     /**
      * Deletes all meshes that were created.
-     * Called when the {@link RenderingSystem} is terminated.
+     * Called when the {@link OpenGLSystem} is terminated.
      */
     public static void deleteMeshes() {
         for(var mesh : MESHES.values()) {

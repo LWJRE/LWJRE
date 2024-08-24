@@ -1,5 +1,7 @@
 package io.github.ardentengine.core.rendering;
 
+import io.github.ardentengine.core.RenderingSystem;
+
 /**
  * A mesh constructed by specifying attributes as arrays.
  */
@@ -25,7 +27,7 @@ public class ArrayMesh extends Mesh {
      */
     public void setVertices(float[] vertices) {
         this.vertices = vertices;
-        RenderingServer.update(this);
+        RenderingSystem.getInstance().update(this);
     }
 
     @Override
@@ -44,7 +46,7 @@ public class ArrayMesh extends Mesh {
      */
     public void setIndices(int[] indices) {
         this.indices = indices;
-        RenderingServer.update(this);
+        RenderingSystem.getInstance().update(this);
     }
 
     @Override
@@ -64,7 +66,7 @@ public class ArrayMesh extends Mesh {
      */
     public void setUvs(float[] uvs) {
         this.uvs = uvs;
-        RenderingServer.update(this);
+        RenderingSystem.getInstance().update(this);
     }
 
     @Override
@@ -84,7 +86,7 @@ public class ArrayMesh extends Mesh {
      */
     public void setNormals(float[] normals) {
         this.normals = normals;
-        RenderingServer.update(this);
+        RenderingSystem.getInstance().update(this);
     }
 
     @Override

@@ -1,11 +1,9 @@
-#define SHADER_TYPE sprite_2d
+#define SHADER_TYPE sprite_shader
 
 // This is an example shader
 
 void vertex_shader() {
-    float v = uv.x;
-    uv.x = uv.y;
-    uv.y = v;
+    uv = uv.yx;
 }
 
 void fragment_shader() {

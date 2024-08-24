@@ -1,8 +1,10 @@
 package io.github.ardentengine.core.scene;
 
+import io.github.ardentengine.core.RenderingSystem;
 import io.github.ardentengine.core.rendering.Mesh;
-import io.github.ardentengine.core.rendering.Shader;
-import io.github.scalamath.vecmatlib.Mat3x4f;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Node that renders a mesh.
@@ -15,17 +17,23 @@ public class MeshRenderer extends VisualInstance3D {
     /** The mesh rendered by this node. */
     public Mesh mesh;
 
-    // TODO: Modulate color and texture.
+    @Override
+    public void onUpdate(float delta) {
+        if(this.mesh != null && this.visible) {
+            // TODO: Don't render objects that are outside of the camera's frustum
+            RenderingSystem.getInstance().render(this.mesh, this);
+        }
+    }
+
+    // TODO: The mesh_shader will probably be the same for all 3D objects. The same cannot be said for 2D though.
 
     @Override
-    protected void render(Mat3x4f transform) {
-        if(this.shader == null) {
-            this.shader = Shader.getOrLoad("io/github/ardentengine/core/shaders/mesh_renderer.glsl");
-        }
-        super.render(transform);
-        if(this.visible && this.shader != null && this.mesh != null) {
-            this.shader.set("modulate", 1.0f, 1.0f, 1.0f, 1.0f);
-            this.shader.draw(this.mesh);
-        }
+    public final String shaderType() {
+        return "mesh_shader";
+    }
+
+    @Override
+    public final Map<String, Object> getShaderParameters() {
+        return new HashMap<>();
     }
 }

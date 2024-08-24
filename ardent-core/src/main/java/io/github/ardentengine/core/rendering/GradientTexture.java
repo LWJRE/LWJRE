@@ -1,5 +1,6 @@
 package io.github.ardentengine.core.rendering;
 
+import io.github.ardentengine.core.RenderingSystem;
 import io.github.scalamath.colorlib.Gradient;
 import io.github.scalamath.vecmatlib.Vec2i;
 
@@ -22,7 +23,7 @@ public class GradientTexture extends Texture {
     private int height = 0;
 
     /**
-     * Setter method for gradient.
+     * Setter method for {@link GradientTexture#gradient}.
      *
      * @param gradient Gradient used to fill the texture.
      */
@@ -30,12 +31,12 @@ public class GradientTexture extends Texture {
         gradient = Objects.requireNonNullElse(gradient, new Gradient());
         if(!this.gradient.equals(gradient)) {
             this.gradient = gradient;
-            RenderingServer.update(this);
+            RenderingSystem.getInstance().update(this);
         }
     }
 
     /**
-     * Getter method for gradient.
+     * Getter method for {@link GradientTexture#gradient}.
      *
      * @return Gradient used to fill the texture.
      */
@@ -56,14 +57,14 @@ public class GradientTexture extends Texture {
     }
 
     /**
-     * Setter method for width.
+     * Setter method for {@link GradientTexture#width}.
      *
      * @param width Width of the texture. Also represents the number of horizontal color samples that will be obtained from the gradient.
      */
     public void setWidth(int width) {
         if(this.width != width) {
             this.width = width;
-            RenderingServer.update(this);
+            RenderingSystem.getInstance().update(this);
         }
     }
 
@@ -73,14 +74,14 @@ public class GradientTexture extends Texture {
     }
 
     /**
-     * Setter method for height.
+     * Setter method for {@link GradientTexture#height}.
      *
      * @param height Height of the texture. Also represents the number of vertical color samples that will be obtained from the gradient.
      */
     public void setHeight(int height) {
         if(this.height != height) {
             this.height = height;
-            RenderingServer.update(this);
+            RenderingSystem.getInstance().update(this);
         }
     }
 
@@ -90,7 +91,7 @@ public class GradientTexture extends Texture {
     }
 
     /**
-     * Setter method for width and height.
+     * Setter method for {@link GradientTexture#width} and {@link GradientTexture#height}.
      *
      * @param width Width of the texture.
      * @param height Height of the texture.
@@ -99,12 +100,12 @@ public class GradientTexture extends Texture {
         if(this.width != width || this.height != height) {
             this.width = width;
             this.height = height;
-            RenderingServer.update(this);
+            RenderingSystem.getInstance().update(this);
         }
     }
 
     /**
-     * Setter method for width and height.
+     * Setter method for {@link GradientTexture#width} and {@link GradientTexture#height}.
      *
      * @param size Size of the texture.
      */

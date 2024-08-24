@@ -1,7 +1,7 @@
 package io.github.ardentengine.core.scene;
 
-import io.github.ardentengine.core.display.DisplayServer;
-import io.github.ardentengine.core.logging.Logger;
+import io.github.ardentengine.core.DisplaySystem;
+import io.github.ardentengine.core.RenderingSystem;
 import io.github.scalamath.vecmatlib.Mat4f;
 
 /**
@@ -25,17 +25,8 @@ public class Camera3D extends Node3D {
     private boolean enabled = true;
 
     @Override
-    protected void onEnter() {
-        if(this.enabled && this.getSceneTree().getCamera3D() == null) {
-            this.getSceneTree().setCamera3D(this);
-        }
-    }
-
-    @Override
-    protected void onExit() {
-        if(this.isCurrent()) {
-            this.getSceneTree().setCamera3D(null);
-        }
+    public void onUpdate(float delta) {
+        RenderingSystem.getInstance().setCamera(this);
     }
 
     /**
@@ -45,7 +36,7 @@ public class Camera3D extends Node3D {
      * @return The camera's projection matrix.
      */
     public final Mat4f projectionMatrix() {
-        return Mat4f.perspectiveProjection(this.fov, DisplayServer.getWindowSize(), this.nearPlane, this.farPlane);
+        return Mat4f.perspectiveProjection(this.fov, DisplaySystem.getInstance().getWindowSize(), this.nearPlane, this.farPlane);
     }
 
     /**
@@ -58,63 +49,5 @@ public class Camera3D extends Node3D {
         return Mat4f.translation(this.globalPosition().negated()).multiply(Mat4f.rotation(this.rotation));
     }
 
-    /**
-     * Sets this camera as the current one in this scene.
-     * <p>
-     *     The camera must be inside the scene tree and must be enabled.
-     *     Logs an error if this camera is not enabled or is not inside the scene tree.
-     * </p>
-     *
-     * @see Camera3D#isCurrent()
-     * @see Camera3D#isEnabled()
-     */
-    public final void makeCurrent() {
-        if(this.isInsideTree()) {
-            this.getSceneTree().setCamera3D(this);
-        } else {
-            Logger.error("Camera " + this + " cannot be made current because it is not inside the scene tree");
-        }
-    }
-
-    /**
-     * Returns true if this camera is the current one in the current scene.
-     * Returns false if this node is not inside the scene tree.
-     *
-     * @return True if this camera is the current one in the current scene, otherwise false.
-     *
-     * @see Camera3D#makeCurrent()
-     */
-    public final boolean isCurrent() {
-        return this.isInsideTree() && this.getSceneTree().getCamera3D() == this;
-    }
-
-    /**
-     * Setter method.
-     * Enables or disables this camera.
-     * <p>
-     *     If this camera is the current one and is disabled, it will be made as non current.
-     * </p>
-     *
-     * @param enabled True to enable the camera, false to disable it.
-     *
-     * @see Camera3D#isEnabled()
-     */
-    public final void setEnabled(boolean enabled) {
-        if(this.isCurrent() && !enabled) {
-            this.getSceneTree().setCamera3D(null);
-        }
-        this.enabled = enabled;
-    }
-
-    /**
-     * Getter method.
-     * Returns true if this camera is enabled, false if it is disabled.
-     *
-     * @return True if this camera is enabled, false if it is disabled.
-     *
-     * @see Camera3D#setEnabled(boolean)
-     */
-    public final boolean isEnabled() {
-        return this.enabled;
-    }
+    // FIXME: Reimplement the ability to switch between cameras
 }

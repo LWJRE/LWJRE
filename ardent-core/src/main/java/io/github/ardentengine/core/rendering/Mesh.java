@@ -2,6 +2,7 @@ package io.github.ardentengine.core.rendering;
 
 import io.github.ardentengine.core.logging.Logger;
 import io.github.ardentengine.core.resources.ResourceManager;
+import io.github.ardentengine.core.RenderingSystem;
 
 /**
  * Base class for all types of mesh.
@@ -20,6 +21,7 @@ public abstract class Mesh {
      * <p>
      *     Returns null and logs an error if the resource at the given path is not of class {@code Mesh}.
      * </p>
+     *
      * @param resourcePath Path at which to load the texture resource. Must point to a {@code .yaml} resource file in the classpath.
      * @return The requested mesh.
      */
@@ -34,14 +36,6 @@ public abstract class Mesh {
     }
 
     /**
-     * Draws this mesh.
-     * Forwards the call to {@link RenderingServer#draw(Mesh)}.
-     */
-    public final void draw() {
-        RenderingServer.draw(this);
-    }
-
-    /**
      * Returns an array representing the vertices of this mesh.
      * <p>
      *     Vertices are essential for rendering the mesh.
@@ -51,7 +45,7 @@ public abstract class Mesh {
      *     This method may return null or an empty array if this mesh does not have any vertices, even though such mesh cannot be rendered.
      * </p>
      * <p>
-     *     The rendering api may call this method when a mesh update is requested using {@link RenderingServer#update(Mesh)}.
+     *     The rendering api may call this method when a mesh update is requested using {@link RenderingSystem#update(Mesh)}.
      *     Implementations of the {@code Mesh} class may use this method to create the vertices array and therefore it should only be called when the mesh needs to be created or updated to avoid overhead.
      * </p>
      *
@@ -83,7 +77,7 @@ public abstract class Mesh {
      *     In that case, vertices are connected in the order they appear in the vertex array.
      * </p>
      * <p>
-     *     The rendering api may call this method when a mesh update is requested using {@link RenderingServer#update(Mesh)}.
+     *     The rendering api may call this method when a mesh update is requested using {@link RenderingSystem#update(Mesh)}.
      *     Implementations of the {@code Mesh} class may use this method to create the vertices array and therefore it should only be called when the mesh needs to be created or updated to avoid overhead.
      * </p>
      *
@@ -104,7 +98,7 @@ public abstract class Mesh {
      *     This method may return null or an empty array if this mesh does not use UVs.
      * </p>
      * <p>
-     *     The rendering api may call this method when a mesh update is requested using {@link RenderingServer#update(Mesh)}.
+     *     The rendering api may call this method when a mesh update is requested using {@link RenderingSystem#update(Mesh)}.
      *     Implementations of the {@code Mesh} class may use this method to create the vertices array and therefore it should only be called when the mesh needs to be created or updated to avoid overhead.
      * </p>
      *
@@ -123,7 +117,7 @@ public abstract class Mesh {
      *     This method may return null or an empty array if this mesh does not have normals.
      * </p>
      * <p>
-     *     The rendering api may call this method when a mesh update is requested using {@link RenderingServer#update(Mesh)}.
+     *     The rendering api may call this method when a mesh update is requested using {@link RenderingSystem#update(Mesh)}.
      *     Implementations of the {@code Mesh} class may use this method to create the vertices array and therefore it should only be called when the mesh needs to be created or updated to avoid overhead.
      * </p>
      *

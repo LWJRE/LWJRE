@@ -1,8 +1,14 @@
 package io.github.ardentengine.core;
 
+import io.github.ardentengine.core.input.Input;
+import io.github.ardentengine.core.input.InputEvent;
+import io.github.ardentengine.core.scene.Node;
+import io.github.ardentengine.core.scene.SceneTree;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.ServiceLoader;
+import java.util.function.Consumer;
 
 /**
  * Application class that contains the main method and handles the running of the application.
@@ -52,34 +58,82 @@ public final class Application {
     private boolean running = true;
     private long processFrames = 0;
 
+    /** The main scene tree. */
+    private final SceneTree sceneTree = new SceneTree();
+    /** Previous time obtained using {@link System#nanoTime()} and used to compute {@code delta}. */
+    private long previousTime;
+
     /**
      * Application constructor.
      * Loads the engine systems and calls {@link EngineSystem#initialize()}.
      */
     private Application() {
         instance = this;
-        for(var engineSystem : ServiceLoader.load(EngineSystem.class)) {
-            this.engineSystems.add(engineSystem);
+        for(var engineSystem : ServiceLoader.load(EngineSystemProvider.class)) {
+            this.engineSystems.add(engineSystem.getEngineSystem());
         }
         Collections.sort(this.engineSystems);
         for(var engineSystem : this.engineSystems) {
             engineSystem.initialize();
         }
+        Input.setEventDispatchFunction(this::input);
+        var mainScene = ApplicationProperties.getString("application.run.mainScene");
+        if(!mainScene.isEmpty()) {
+            this.sceneTree.changeScene(mainScene);
+        }
+        this.previousTime = System.nanoTime();
     }
 
     /**
-     * Running process of the application.
-     * Runs in a loop until {@link Application#quit()} is called.
-     * Calls {@link EngineSystem#process()}.
+     * Recursive method used to process the scene tree.
+     * Children are processed first.
+     *
+     * @param node The node to process.
+     * @param delta Delta time.
      */
-    private void run() {
-        while(this.running) {
-            this.processFrames++;
-            for(var engineSystem : this.engineSystems) {
-                engineSystem.process();
-            }
+    private void process(Node node, float delta) {
+        for(var child : node.getChildren()) {
+            this.process(child, delta);
         }
-        this.terminate();
+        node.onUpdate(delta);
+    }
+
+    /**
+     * Private method called at every iteration to process the current scene.
+     */
+    private void process() {
+        var time = System.nanoTime();
+        var delta = (time - this.previousTime) / 1_000_000_000.0f;
+        if(this.sceneTree.getRoot() != null) {
+            this.process(this.sceneTree.getRoot(), delta);
+        }
+        this.previousTime = time;
+    }
+
+    /**
+     * Method used for {@link Input#setEventDispatchFunction(Consumer)}.
+     * Sends input events to the scene tree.
+     *
+     * @param event The input event.
+     */
+    private void input(InputEvent event) {
+        if(this.sceneTree.getRoot() != null) {
+            this.input(this.sceneTree.getRoot(), event);
+        }
+    }
+
+    /**
+     * Recursive method used to send input events to the scene tree.
+     * Input events are sent to children first.
+     *
+     * @param node The node to process.
+     * @param event The input event.
+     */
+    private void input(Node node, InputEvent event) {
+        for(var child : node.getChildren()) {
+            this.input(child, event);
+        }
+        node.onInput(event);
     }
 
     /**
@@ -93,7 +147,23 @@ public final class Application {
         }
     }
 
-    // TODO: Handle uncaught exceptions
+    /**
+     * Running process of the application.
+     * Runs in a loop until {@link Application#quit()} is called.
+     * Calls {@link EngineSystem#process()}.
+     */
+    private void run() {
+        while(this.running) {
+            this.processFrames++;
+            for(var engineSystem : this.engineSystems) {
+                engineSystem.process();
+                this.process();
+            }
+        }
+        this.terminate();
+    }
+
+    // TODO: Handle uncaught exceptions and handle Ctrl+C sigint
 
     public static void main(String[] args) {
         mainThread = Thread.currentThread();

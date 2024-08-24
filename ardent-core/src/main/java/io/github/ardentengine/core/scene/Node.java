@@ -60,7 +60,7 @@ public class Node {
      *
      * @param delta The time elapsed since the previous frame.
      */
-    protected void onUpdate(float delta) {
+    public void onUpdate(float delta) {
 
     }
 
@@ -69,7 +69,7 @@ public class Node {
      *
      * @param event The input event.
      */
-    protected void onInput(InputEvent event) {
+    public void onInput(InputEvent event) {
 
     }
 
