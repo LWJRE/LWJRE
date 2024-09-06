@@ -1,6 +1,6 @@
 package io.github.ardentengine.core.scene;
 
-import io.github.ardentengine.core.RenderingSystem;
+import io.github.ardentengine.core.RenderingServer;
 import io.github.ardentengine.core.rendering.Mesh;
 
 import java.util.HashMap;
@@ -18,11 +18,12 @@ public class MeshRenderer extends VisualInstance3D {
     public Mesh mesh;
 
     @Override
-    public void onUpdate(float delta) {
+    void update(float delta) {
         if(this.mesh != null && this.visible) {
             // TODO: Don't render objects that are outside of the camera's frustum
-            RenderingSystem.getInstance().render(this.mesh, this);
+            RenderingServer.getInstance().render(this.mesh, this);
         }
+        super.update(delta);
     }
 
     // TODO: The mesh_shader will probably be the same for all 3D objects. The same cannot be said for 2D though.

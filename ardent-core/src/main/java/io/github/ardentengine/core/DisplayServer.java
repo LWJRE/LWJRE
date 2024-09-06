@@ -7,41 +7,38 @@ import java.util.ServiceLoader;
 
 /**
  * An abstract representation of the display api.
- * The {@code DisplaySystem} handles everything related to window management.
+ * The {@code DisplayServer} handles everything related to window management.
  * <p>
- *     The {@code DisplaySystem} class is a singleton.
- *     The current display system will be loaded the first time the {@link DisplaySystem#getInstance()} method is called.
+ *     The {@code DisplayServer} class is a singleton.
+ *     The current display server will be loaded the first time the {@link DisplayServer#getInstance()} method is called.
+ *     Classes that extend {@code DisplayServer} are not required to be singletons.
  * </p>
  * <p>
- *     If there are multiple implementations of the display system, only the first loaded one will be used and a warning will be logged.
- *     If there are no implementations of the display system, a default implementation that returns dummy values will be used.
+ *     Modules providing an implementation of the display server must declare it as a service in the {@code META-INF/services} file.
  * </p>
  * <p>
- *     Dependencies that provide an implementation of the {@code DisplaySystem} must also provide an implementation of {@link DisplaySystemProvider}.
+ *     If there are multiple implementations of the display server, only the first loaded one will be used and a warning will be logged.
+ *     If there are no implementations of the display server, a default implementation that returns dummy values will be used.
  * </p>
  */
-public abstract class DisplaySystem extends EngineSystem {
+public abstract class DisplayServer {
 
     /** Singleton instance. */
-    private static DisplaySystem instance;
+    private static DisplayServer instance;
 
     /**
-     * Returns the singleton instance.
+     * Returns the singleton instance of the {@link DisplayServer}.
+     * The implementation is loaded the first time this method is called.
      * <p>
-     *     Logs a warning if there are multiple implementations of the {@link DisplaySystem}.
+     *     Logs a warning if there are multiple implementations of the {@code DisplayServer}.
      *     Returns a default implementation if there are none.
      * </p>
      *
-     * @return The {@code DisplaySystem} singleton instance.
+     * @return The {@code DisplayServer} singleton instance.
      */
-    public static synchronized DisplaySystem getInstance() {
-        if(instance == null) {
-            instance = ServiceLoader.load(DisplaySystemProvider.class)
-                .findFirst() // TODO: Log a warning if there are more than one
-                .map(DisplaySystemProvider::getDisplaySystem)
-                .orElse(null); // TODO: Default implementation
-        }
-        return instance;
+    public static synchronized DisplayServer getInstance() {
+        // TODO: Log a warning if there are more than one and add a default implementation
+        return instance == null ? instance = ServiceLoader.load(DisplayServer.class).findFirst().orElse(null) : instance;
     }
 
     /**
@@ -92,7 +89,12 @@ public abstract class DisplaySystem extends EngineSystem {
         this.setWindowPosition(position.x(), position.y());
     }
 
-    // TODO: Get window position
+    /**
+     * Returns the position of the main window in pixels from the upper-left corner of the monitor.
+     *
+     * @return Position of the window in pixels from the upper-left corner of the monitor.
+     */
+    public abstract Vec2i getWindowPosition();
 
     /**
      * Shows the main window if it is hidden.
@@ -127,9 +129,4 @@ public abstract class DisplaySystem extends EngineSystem {
      * @return The position of the cursor.
      */
     public abstract Vec2f getCursorPosition();
-
-    @Override
-    protected int priority() {
-        return 0;
-    }
 }

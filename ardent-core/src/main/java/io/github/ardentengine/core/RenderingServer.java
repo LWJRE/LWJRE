@@ -9,41 +9,38 @@ import java.util.ServiceLoader;
 
 /**
  * An abstract representation of the rendering api.
- * The {@code RenderingSystem} handles everything related to rendering and graphics.
+ * The {@code RenderingServer} handles everything related to rendering and graphics.
  * <p>
- *     The {@code RenderingSystem} class is a singleton.
- *     The current rendering system will be loaded the first time the {@link RenderingSystem#getInstance()} method is called.
+ *     The {@code RenderingServer} class is a singleton.
+ *     The current rendering system will be loaded the first time the {@link RenderingServer#getInstance()} method is called.
+ *     Classes that extend {@code RenderingServer} are not required to be singletons.
  * </p>
  * <p>
- *     If there are multiple implementations of the rendering system, only the first loaded one will be used and a warning will be logged.
- *     If there are no implementations of the rendering system, a default implementation that returns dummy values will be used.
+ *     Modules providing an implementation of the rendering server must declare it as a service in the {@code META-INF/services} file.
  * </p>
  * <p>
- *     Dependencies that provide an implementation of the {@code RenderingSystem} must also provide an implementation of {@link RenderingSystemProvider}.
+ *     If there are multiple implementations of the rendering server, only the first loaded one will be used and a warning will be logged.
+ *     If there are no implementations of the rendering server, a default implementation that returns dummy values will be used.
  * </p>
  */
-public abstract class RenderingSystem extends EngineSystem {
+public abstract class RenderingServer {
 
     /** Singleton instance. */
-    private static RenderingSystem instance;
+    private static RenderingServer instance;
 
     /**
-     * Returns the singleton instance.
+     * Returns the singleton instance of the {@link RenderingServer}.
+     * The implementation is loaded the first time this method is called.
      * <p>
-     *     Logs a warning if there are multiple implementations of the {@link RenderingSystem}.
+     *     Logs a warning if there are multiple implementations of the {@code RenderingServer}.
      *     Returns a default implementation if there are none.
      * </p>
      *
      * @return The {@code RenderingServer} singleton instance.
      */
-    public static synchronized RenderingSystem getInstance() {
-        if(instance == null) {
-            instance = ServiceLoader.load(RenderingSystemProvider.class)
-                .findFirst() // TODO: Log a warning if there are more than one
-                .map(RenderingSystemProvider::getRenderingSystem)
-                .orElse(null); // TODO: Default implementation
-        }
-        return instance;
+    public static synchronized RenderingServer getInstance() {
+        // TODO: Log a warning if there are more than one and add a default implementation
+        return instance == null ? instance = ServiceLoader.load(RenderingServer.class).findFirst().orElse(null) : instance;
     }
 
     /**
@@ -117,9 +114,4 @@ public abstract class RenderingSystem extends EngineSystem {
     public abstract void update(Texture texture);
 
     public abstract void updateLight(PointLight3D light);
-
-    @Override
-    protected int priority() {
-        return 1;
-    }
 }

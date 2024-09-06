@@ -61,7 +61,7 @@ public class Sprite2D extends VisualInstance2D {
     public final Map<String, Object> getShaderParameters() {
         var map = new HashMap<String, Object>();
         map.put("sprite_texture", this.spriteTexture);
-        map.put("texture_size", this.spriteTexture == null ? Vec2i.Zero() : this.spriteTexture.getSize());
+        map.put("texture_size", this.spriteTexture == null ? Vec2i.Zero() : this.spriteTexture.size());
         map.put("offset", this.offset == null ? Vec2i.Zero() : this.offset);
         map.put("flip", new Vec2i(this.flipH ? -1 : 1, this.flipV ? -1 : 1));
         map.put("frames", new Vec2i(this.hFrames, this.vFrames));

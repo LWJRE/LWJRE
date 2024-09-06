@@ -83,10 +83,10 @@ public class MeshData {
      */
     private void updateMesh(Mesh mesh) {
         GL30.glBindVertexArray(this.vertexArray);
-        this.setVertices(mesh.getVertices(), mesh.is2D() ? 2 : 3);
-        this.setIndices(mesh.getIndices());
-        this.setUVs(mesh.getUVs());
-        this.setNormals(mesh.getNormals());
+        this.setVertices(mesh.vertices(), mesh.is2D() ? 2 : 3);
+        this.setIndices(mesh.indices());
+        this.setUVs(mesh.uvs());
+        this.setNormals(mesh.normals());
         GL30.glBindVertexArray(0);
     }
 

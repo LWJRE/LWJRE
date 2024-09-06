@@ -1,8 +1,8 @@
 package io.github.ardentengine.core.rendering;
 
+import io.github.ardentengine.core.RenderingServer;
 import io.github.ardentengine.core.logging.Logger;
 import io.github.ardentengine.core.resources.ResourceManager;
-import io.github.ardentengine.core.RenderingSystem;
 import io.github.scalamath.vecmatlib.Vec2i;
 
 import java.nio.ByteBuffer;
@@ -47,7 +47,7 @@ public abstract class Texture {
     /**
      * Returns a byte buffer containing the pixels of this texture.
      * <p>
-     *     The rendering api may call this method when a texture update is requested using {@link RenderingSystem#update(Texture)}.
+     *     The rendering api may call this method when a texture update is requested using {@link RenderingServer#update(Texture)}.
      *     Implementations of the {@code Texture} class may use this method to create the texture and therefore it should only be called when the texture needs to be created or updated to avoid overhead.
      * </p>
      * <p>
@@ -56,29 +56,29 @@ public abstract class Texture {
      *
      * @return A byte buffer containing the pixels of this texture.
      */
-    public abstract ByteBuffer getPixels();
+    public abstract ByteBuffer pixels();
 
     /**
      * Returns the width of this texture.
      *
      * @return The width of this texture.
      */
-    public abstract int getWidth();
+    public abstract int width();
 
     /**
      * Returns the height of this texture.
      *
      * @return The height of this texture.
      */
-    public abstract int getHeight();
+    public abstract int height();
 
     /**
      * Returns the size of this texture.
-     * Combines the results of {@link Texture#getWidth()} and {@link Texture#getHeight()} into a {@code Vec2i}.
+     * Combines the results of {@link Texture#width()} and {@link Texture#height()} into a {@code Vec2i}.
      *
      * @return The size of this texture.
      */
-    public final Vec2i getSize() {
-        return new Vec2i(this.getWidth(), this.getHeight());
+    public final Vec2i size() {
+        return new Vec2i(this.width(), this.height());
     }
 }

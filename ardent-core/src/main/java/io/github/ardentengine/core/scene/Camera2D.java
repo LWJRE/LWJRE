@@ -1,7 +1,7 @@
 package io.github.ardentengine.core.scene;
 
-import io.github.ardentengine.core.DisplaySystem;
-import io.github.ardentengine.core.RenderingSystem;
+import io.github.ardentengine.core.DisplayServer;
+import io.github.ardentengine.core.RenderingServer;
 import io.github.scalamath.vecmatlib.Mat3f;
 import io.github.scalamath.vecmatlib.Mat4f;
 import io.github.scalamath.vecmatlib.Vec2f;
@@ -28,20 +28,21 @@ public class Camera2D extends Node2D {
     // TODO: Limits, drag, smoothing
 
     @Override
-    public void onUpdate(float delta) {
-        RenderingSystem.getInstance().setCamera(this);
+    void update(float delta) {
+        RenderingServer.getInstance().setCamera(this);
+        super.update(delta);
     }
 
     public final Mat4f projectionMatrix() {
         // TODO: Should the projection matrix be related to the camera?
-        var windowSize = DisplaySystem.getInstance().getWindowSize().toFloat();
+        var windowSize = DisplayServer.getInstance().getWindowSize().toFloat();
         return Mat4f.orthographicProjection(windowSize.x(), windowSize.aspect(), -4096.0f, 4096.0f);
     }
 
     public final Mat3f viewMatrix() {
         var pos = this.globalPosition();
-        var cos = (float) Math.cos(this.rotation);
-        var sin = (float) Math.sin(this.rotation);
+        var cos = (float) Math.cos(this.rotation());
+        var sin = (float) Math.sin(this.rotation());
         return new Mat3f(
             cos * this.zoom.x(), -sin * this.zoom.y(), -pos.x() - this.offset.x(),
             sin * this.zoom.x(), cos * this.zoom.y(), -pos.y() - this.offset.y(),

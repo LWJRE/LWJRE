@@ -1,6 +1,6 @@
 package io.github.ardentengine.core.rendering;
 
-import io.github.ardentengine.core.RenderingSystem;
+import io.github.ardentengine.core.RenderingServer;
 
 import java.nio.ByteBuffer;
 
@@ -28,21 +28,21 @@ public class ImageTexture extends Texture {
         this.pixels = pixels;
         this.width = width;
         this.height = height;
-        RenderingSystem.getInstance().update(this);
+        RenderingServer.getInstance().update(this);
     }
 
     @Override
-    public ByteBuffer getPixels() {
+    public ByteBuffer pixels() {
         return this.pixels;
     }
 
     @Override
-    public int getWidth() {
+    public int width() {
         return this.width;
     }
 
     @Override
-    public int getHeight() {
+    public int height() {
         return this.height;
     }
 }

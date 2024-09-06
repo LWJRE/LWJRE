@@ -1,8 +1,8 @@
 package io.github.ardentengine.core.rendering;
 
+import io.github.ardentengine.core.RenderingServer;
 import io.github.ardentengine.core.logging.Logger;
 import io.github.ardentengine.core.resources.ResourceManager;
-import io.github.ardentengine.core.RenderingSystem;
 
 /**
  * Base class for all types of mesh.
@@ -45,17 +45,17 @@ public abstract class Mesh {
      *     This method may return null or an empty array if this mesh does not have any vertices, even though such mesh cannot be rendered.
      * </p>
      * <p>
-     *     The rendering api may call this method when a mesh update is requested using {@link RenderingSystem#update(Mesh)}.
+     *     The rendering api may call this method when a mesh update is requested using {@link RenderingServer#update(Mesh)}.
      *     Implementations of the {@code Mesh} class may use this method to create the vertices array and therefore it should only be called when the mesh needs to be created or updated to avoid overhead.
      * </p>
      *
      * @return An array representing the vertices of this mesh.
      */
-    public abstract float[] getVertices();
+    public abstract float[] vertices();
 
     /**
      * Returns true if this mesh is a 2D mesh.
-     * In such case, the vertices returned by {@link Mesh#getVertices()} must be 2D coordinates.
+     * In such case, the vertices returned by {@link Mesh#vertices()} must be 2D coordinates.
      * <p>
      *     The default implementation of this method returns false.
      * </p>
@@ -77,15 +77,15 @@ public abstract class Mesh {
      *     In that case, vertices are connected in the order they appear in the vertex array.
      * </p>
      * <p>
-     *     The rendering api may call this method when a mesh update is requested using {@link RenderingSystem#update(Mesh)}.
+     *     The rendering api may call this method when a mesh update is requested using {@link RenderingServer#update(Mesh)}.
      *     Implementations of the {@code Mesh} class may use this method to create the vertices array and therefore it should only be called when the mesh needs to be created or updated to avoid overhead.
      * </p>
      *
      * @return An array containing the indices of this mesh.
      *
-     * @see Mesh#getVertices()
+     * @see Mesh#vertices()
      */
-    public abstract int[] getIndices();
+    public abstract int[] indices();
 
     /**
      * Returns an array containing the UVs (or texture coordinates) of this mesh.
@@ -98,13 +98,13 @@ public abstract class Mesh {
      *     This method may return null or an empty array if this mesh does not use UVs.
      * </p>
      * <p>
-     *     The rendering api may call this method when a mesh update is requested using {@link RenderingSystem#update(Mesh)}.
+     *     The rendering api may call this method when a mesh update is requested using {@link RenderingServer#update(Mesh)}.
      *     Implementations of the {@code Mesh} class may use this method to create the vertices array and therefore it should only be called when the mesh needs to be created or updated to avoid overhead.
      * </p>
      *
      * @return An array containing the UVs of this mesh
      */
-    public abstract float[] getUVs();
+    public abstract float[] uvs();
 
     /**
      * Returns an array containing the normal vectors to each vertex in this mesh.
@@ -117,11 +117,15 @@ public abstract class Mesh {
      *     This method may return null or an empty array if this mesh does not have normals.
      * </p>
      * <p>
-     *     The rendering api may call this method when a mesh update is requested using {@link RenderingSystem#update(Mesh)}.
+     *     The rendering api may call this method when a mesh update is requested using {@link RenderingServer#update(Mesh)}.
      *     Implementations of the {@code Mesh} class may use this method to create the vertices array and therefore it should only be called when the mesh needs to be created or updated to avoid overhead.
      * </p>
      *
      * @return An array containing the normals of this mesh.
      */
-    public abstract float[] getNormals();
+    public abstract float[] normals();
+
+    // TODO: Add vertex colors
+
+    // TODO: Add custom attributes
 }

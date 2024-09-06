@@ -1,6 +1,6 @@
 package io.github.ardentengine.core.rendering;
 
-import io.github.ardentengine.core.RenderingSystem;
+import io.github.ardentengine.core.RenderingServer;
 import io.github.scalamath.colorlib.Gradient;
 import io.github.scalamath.vecmatlib.Vec2i;
 
@@ -31,7 +31,7 @@ public class GradientTexture extends Texture {
         gradient = Objects.requireNonNullElse(gradient, new Gradient());
         if(!this.gradient.equals(gradient)) {
             this.gradient = gradient;
-            RenderingSystem.getInstance().update(this);
+            RenderingServer.getInstance().update(this);
         }
     }
 
@@ -40,16 +40,16 @@ public class GradientTexture extends Texture {
      *
      * @return Gradient used to fill the texture.
      */
-    public Gradient getGradient() {
+    public Gradient gradient() {
         return this.gradient;
     }
 
     @Override
-    public ByteBuffer getPixels() {
-        var pixels = ByteBuffer.allocateDirect(4 * this.getWidth() * this.getHeight());
-        for(var x = 0; x < this.getWidth(); x++) {
-            var color = this.getGradient().sample(x / (float) this.getWidth());
-            for(var y = 0; y < this.getHeight(); y++) {
+    public ByteBuffer pixels() {
+        var pixels = ByteBuffer.allocateDirect(4 * this.width() * this.height());
+        for(var x = 0; x < this.width(); x++) {
+            var color = this.gradient().sample(x / (float) this.width());
+            for(var y = 0; y < this.height(); y++) {
                 pixels.putInt(color.rgba());
             }
         }
@@ -64,12 +64,12 @@ public class GradientTexture extends Texture {
     public void setWidth(int width) {
         if(this.width != width) {
             this.width = width;
-            RenderingSystem.getInstance().update(this);
+            RenderingServer.getInstance().update(this);
         }
     }
 
     @Override
-    public int getWidth() {
+    public int width() {
         return this.width;
     }
 
@@ -81,12 +81,12 @@ public class GradientTexture extends Texture {
     public void setHeight(int height) {
         if(this.height != height) {
             this.height = height;
-            RenderingSystem.getInstance().update(this);
+            RenderingServer.getInstance().update(this);
         }
     }
 
     @Override
-    public int getHeight() {
+    public int height() {
         return this.height;
     }
 
@@ -100,7 +100,7 @@ public class GradientTexture extends Texture {
         if(this.width != width || this.height != height) {
             this.width = width;
             this.height = height;
-            RenderingSystem.getInstance().update(this);
+            RenderingServer.getInstance().update(this);
         }
     }
 

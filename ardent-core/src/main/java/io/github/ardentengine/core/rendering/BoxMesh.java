@@ -1,6 +1,6 @@
 package io.github.ardentengine.core.rendering;
 
-import io.github.ardentengine.core.RenderingSystem;
+import io.github.ardentengine.core.RenderingServer;
 import io.github.scalamath.vecmatlib.Vec3f;
 
 import java.util.Objects;
@@ -51,7 +51,7 @@ public class BoxMesh extends Mesh {
         size = Objects.requireNonNullElse(size, Vec3f.Zero());
         if(!this.size.equals(size)) {
             this.size = size;
-            RenderingSystem.getInstance().update(this);
+            RenderingServer.getInstance().update(this);
         }
     }
 
@@ -72,12 +72,12 @@ public class BoxMesh extends Mesh {
      *
      * @return The size of the box mesh.
      */
-    public Vec3f getSize() {
+    public Vec3f size() {
         return this.size;
     }
 
     @Override
-    public float[] getVertices() {
+    public float[] vertices() {
         return new float[] {
             -0.5f * this.size.x(), -0.5f * this.size.y(), -0.5f * this.size.z(),
             0.5f * this.size.x(), -0.5f * this.size.y(), -0.5f * this.size.z(),
@@ -107,7 +107,7 @@ public class BoxMesh extends Mesh {
     }
 
     @Override
-    public int[] getIndices() {
+    public int[] indices() {
         return new int[] {
             0, 3, 2,
             2, 1, 0,
@@ -125,7 +125,7 @@ public class BoxMesh extends Mesh {
     }
 
     @Override
-    public float[] getUVs() {
+    public float[] uvs() {
         return new float[] {
             0, 0,
             0, 1,
@@ -155,7 +155,7 @@ public class BoxMesh extends Mesh {
     }
 
     @Override
-    public float[] getNormals() {
+    public float[] normals() {
         return new float[] {
             0.0f, 0.0f, -1.0f,
             0.0f, 0.0f, -1.0f,

@@ -1,6 +1,6 @@
 package io.github.ardentengine.core.scene;
 
-import io.github.ardentengine.core.RenderingSystem;
+import io.github.ardentengine.core.RenderingServer;
 import io.github.scalamath.colorlib.Col3f;
 
 public class PointLight3D extends Node3D {
@@ -10,7 +10,8 @@ public class PointLight3D extends Node3D {
     // TODO: Finish 3D lighting
 
     @Override
-    public void onUpdate(float delta) {
-        RenderingSystem.getInstance().updateLight(this);
+    void update(float delta) {
+        RenderingServer.getInstance().updateLight(this);
+        super.update(delta);
     }
 }

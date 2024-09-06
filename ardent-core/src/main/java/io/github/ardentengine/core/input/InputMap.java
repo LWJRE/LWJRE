@@ -1,6 +1,9 @@
 package io.github.ardentengine.core.input;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Static class that manages input actions.
@@ -29,8 +32,7 @@ public final class InputMap {
      * @return True if the given input event was not already mapped to the given action.
      */
     public static boolean addActionEvent(String action, InputEvent event) {
-        var actionEvents = INPUT_MAP.computeIfAbsent(action, key -> new HashSet<>());
-        return actionEvents.add(event);
+        return INPUT_MAP.computeIfAbsent(action, key -> new HashSet<>()).add(event);
     }
 
     /**
@@ -42,8 +44,7 @@ public final class InputMap {
      * @return True if any of the given events was not already mapped to the given action.
      */
     public static boolean addActionEvents(String action, Collection<? extends InputEvent> events) {
-        var actionEvents = INPUT_MAP.computeIfAbsent(action, key -> new HashSet<>());
-        return actionEvents.addAll(events);
+        return INPUT_MAP.computeIfAbsent(action, key -> new HashSet<>()).addAll(events);
     }
 
     /**

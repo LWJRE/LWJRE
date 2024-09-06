@@ -21,23 +21,14 @@ import java.util.Objects;
  */
 public class Node {
 
-    /**
-     * The name of this node.
-     */
+    /** The name of this node. */
     public String name = "";
 
-    /**
-     * List of child nodes.
-     */
+    /** List of child nodes. */
     private final ArrayList<Node> children = new ArrayList<>();
-    /**
-     * Reference to the {@link SceneTree} this node is in.
-     * Passed to the {@link Node#enterTree(SceneTree)} function when the node enters the scene.
-     */
+    /** Reference to the {@link SceneTree} this node is in. */
     private SceneTree sceneTree = null;
-    /**
-     * The parent of this node.
-     */
+    /** The parent of this node. */
     private Node parent = null;
 
     /**
@@ -56,12 +47,41 @@ public class Node {
     }
 
     /**
+     * Called when a node enters the scene tree.
+     * Iterates through the children of this node and calls {@code enterTree} on each of them.
+     * <p>
+     *     This method is package-protected to ensure users cannot replace a node's functionality when overriding {@link Node#onEnter()}.
+     * </p>
+     */
+    void enterTree(SceneTree sceneTree) {
+        this.sceneTree = sceneTree;
+        for(var child : this.children) {
+            child.enterTree(sceneTree);
+        }
+        this.onEnter();
+    }
+
+    /**
      * Called every frame while this node is inside the scene tree.
      *
      * @param delta The time elapsed since the previous frame.
      */
-    public void onUpdate(float delta) {
+    protected void onUpdate(float delta) {
 
+    }
+
+    void update(float delta) {
+        for(var child : this.children) {
+            child.update(delta);
+        }
+        this.onUpdate(delta);
+    }
+
+    void input(InputEvent event) {
+        for(var child : this.children) {
+            child.input(event);
+        }
+        this.onInput(event);
     }
 
     /**
@@ -69,7 +89,7 @@ public class Node {
      *
      * @param event The input event.
      */
-    public void onInput(InputEvent event) {
+    protected void onInput(InputEvent event) {
 
     }
 
@@ -88,24 +108,13 @@ public class Node {
     }
 
     /**
-     * Package-protected method called when a node enters the scene tree.
-     * Iterates through the children of this node and calls {@code enterTree} on each of them.
-     *
-     * @param sceneTree The scene tree this node is in.
-     */
-    final void enterTree(SceneTree sceneTree) {
-        for(var child : this.children) {
-            child.enterTree(sceneTree);
-        }
-        this.sceneTree = sceneTree;
-        this.onEnter();
-    }
-
-    /**
-     * Package-protected method called when a node exits the scene tree.
+     * Called when a node exits the scene tree.
      * Iterates through the children of this node and calls {@code exitTree} on each of them.
+     * <p>
+     *     This method is package-protected to ensure users cannot replace a node's functionality when overriding {@link Node#onExit()}.
+     * </p>
      */
-    final void exitTree() {
+    void exitTree() {
         for(var child : this.children) {
             child.exitTree();
         }
@@ -131,7 +140,7 @@ public class Node {
      *
      * @return The scene tree this node is in.
      */
-    public final SceneTree getSceneTree() {
+    public final SceneTree sceneTree() {
         return this.sceneTree;
     }
 
@@ -140,7 +149,7 @@ public class Node {
      *
      * @return This node's parent or null if this node does not have a parent.
      */
-    public final Node getParent() {
+    public final Node parent() {
         return this.parent;
     }
 
@@ -155,7 +164,7 @@ public class Node {
      *
      * @param parent This node's new parent or null to remove this node from its parent.
      *
-     * @see Node#getParent()
+     * @see Node#parent()
      * @see Node#isInsideTree()
      */
     public final void setParent(Node parent) {
@@ -184,7 +193,7 @@ public class Node {
      *     This method has no effect if this node has no parent.
      * </p>
      *
-     * @see Node#getParent()
+     * @see Node#parent()
      * @see Node#isInsideTree()
      */
     public final void removeFromParent() {
@@ -271,7 +280,7 @@ public class Node {
      *
      * @return The number of children of this node.
      */
-    public final int getChildCount() {
+    public final int childCount() {
         return this.children.size();
     }
 

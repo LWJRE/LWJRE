@@ -1,0 +1,20 @@
+!!io.github.ardentengine.core.resources.SceneResource
+type: !!java.lang.Class io.github.ardentengine.demo.ExampleScene3D
+properties:
+  name: Root
+children:
+  - type: !!java.lang.Class io.github.ardentengine.core.scene.MeshRenderer
+    properties:
+      mesh: &id001 !!io.github.ardentengine.core.rendering.BoxMesh {}
+  - type: !!java.lang.Class io.github.ardentengine.core.scene.MeshRenderer
+    properties:
+      mesh: *id001
+      shader: !getOrLoad shaders/example_mesh_shader.glsl
+      position: !Vec3f [2.0, 0.0, 0.0]
+  - type: !!java.lang.Class io.github.ardentengine.core.scene.PointLight3D
+    properties:
+      position: !Vec3f [3.0, 5.0, 2.0]
+      color: !Col3f [1.0, 1.0, 1.0]
+  - type: !!java.lang.Class io.github.ardentengine.demo.DemoCamera3D
+    properties:
+      position: !Vec3f [0.0, 0.0, 3.0]

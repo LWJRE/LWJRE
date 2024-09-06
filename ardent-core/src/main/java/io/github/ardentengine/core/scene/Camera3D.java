@@ -1,7 +1,7 @@
 package io.github.ardentengine.core.scene;
 
-import io.github.ardentengine.core.DisplaySystem;
-import io.github.ardentengine.core.RenderingSystem;
+import io.github.ardentengine.core.DisplayServer;
+import io.github.ardentengine.core.RenderingServer;
 import io.github.scalamath.vecmatlib.Mat4f;
 
 /**
@@ -25,8 +25,23 @@ public class Camera3D extends Node3D {
     private boolean enabled = true;
 
     @Override
-    public void onUpdate(float delta) {
-        RenderingSystem.getInstance().setCamera(this);
+    void update(float delta) {
+        RenderingServer.getInstance().setCamera(this);
+        super.update(delta);
+    }
+
+    // TODO: setYaw, setPitch, setRoll
+
+    public final float yaw() {
+        return this.rotation().y();
+    }
+
+    public final float pitch() {
+        return this.rotation().x();
+    }
+
+    public final float roll() {
+        return this.rotation().z();
     }
 
     /**
@@ -36,7 +51,8 @@ public class Camera3D extends Node3D {
      * @return The camera's projection matrix.
      */
     public final Mat4f projectionMatrix() {
-        return Mat4f.perspectiveProjection(this.fov, DisplaySystem.getInstance().getWindowSize(), this.nearPlane, this.farPlane);
+        // FIXME: Bug in vecmatlib
+        return Mat4f.perspectiveProjection(this.fov / 2.0, DisplayServer.getInstance().getWindowSize(), this.nearPlane, this.farPlane);
     }
 
     /**
@@ -46,7 +62,7 @@ public class Camera3D extends Node3D {
      * @return The camera's view matrix.
      */
     public final Mat4f viewMatrix() {
-        return Mat4f.translation(this.globalPosition().negated()).multiply(Mat4f.rotation(this.rotation));
+        return Mat4f.rotation(this.rotation()).multiply(Mat4f.translation(this.globalPosition().negated()));
     }
 
     // FIXME: Reimplement the ability to switch between cameras

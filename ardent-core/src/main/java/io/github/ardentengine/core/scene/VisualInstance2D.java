@@ -1,6 +1,6 @@
 package io.github.ardentengine.core.scene;
 
-import io.github.ardentengine.core.RenderingSystem;
+import io.github.ardentengine.core.RenderingServer;
 import io.github.ardentengine.core.rendering.Shader;
 
 import java.util.Map;
@@ -21,11 +21,12 @@ public abstract class VisualInstance2D extends Node2D {
     public boolean visible = true;
 
     @Override
-    public void onUpdate(float delta) {
+    void update(float delta) {
         if(this.visible) {
             // TODO: Check if this thing is inside of the camera's bounding rect
-            RenderingSystem.getInstance().render(this);
+            RenderingServer.getInstance().render(this);
         }
+        super.update(delta);
     }
 
     // TODO: Find a better alternative to this

@@ -1,6 +1,6 @@
 package io.github.ardentengine.core.rendering;
 
-import io.github.ardentengine.core.RenderingSystem;
+import io.github.ardentengine.core.RenderingServer;
 
 /**
  * A mesh constructed by specifying attributes as arrays.
@@ -27,11 +27,11 @@ public class ArrayMesh extends Mesh {
      */
     public void setVertices(float[] vertices) {
         this.vertices = vertices;
-        RenderingSystem.getInstance().update(this);
+        RenderingServer.getInstance().update(this);
     }
 
     @Override
-    public float[] getVertices() {
+    public float[] vertices() {
         return this.vertices;
     }
 
@@ -46,11 +46,11 @@ public class ArrayMesh extends Mesh {
      */
     public void setIndices(int[] indices) {
         this.indices = indices;
-        RenderingSystem.getInstance().update(this);
+        RenderingServer.getInstance().update(this);
     }
 
     @Override
-    public int[] getIndices() {
+    public int[] indices() {
         return this.indices;
     }
 
@@ -64,13 +64,13 @@ public class ArrayMesh extends Mesh {
      *
      * @param uvs Array of UVs.
      */
-    public void setUvs(float[] uvs) {
+    public void setUVs(float[] uvs) {
         this.uvs = uvs;
-        RenderingSystem.getInstance().update(this);
+        RenderingServer.getInstance().update(this);
     }
 
     @Override
-    public float[] getUVs() {
+    public float[] uvs() {
         return this.uvs;
     }
 
@@ -86,11 +86,11 @@ public class ArrayMesh extends Mesh {
      */
     public void setNormals(float[] normals) {
         this.normals = normals;
-        RenderingSystem.getInstance().update(this);
+        RenderingServer.getInstance().update(this);
     }
 
     @Override
-    public float[] getNormals() {
+    public float[] normals() {
         return this.normals;
     }
 }

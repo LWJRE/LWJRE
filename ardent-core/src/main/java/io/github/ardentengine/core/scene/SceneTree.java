@@ -57,7 +57,7 @@ public final class SceneTree {
      *
      * @return The root of the current scene or null if no scene is running.
      */
-    public Node getRoot() {
+    public Node root() {
         return this.root;
     }
 }
