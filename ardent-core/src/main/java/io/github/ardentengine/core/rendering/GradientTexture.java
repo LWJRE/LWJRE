@@ -1,6 +1,5 @@
 package io.github.ardentengine.core.rendering;
 
-import io.github.ardentengine.core.RenderingServer;
 import io.github.scalamath.colorlib.Gradient;
 import io.github.scalamath.vecmatlib.Vec2i;
 

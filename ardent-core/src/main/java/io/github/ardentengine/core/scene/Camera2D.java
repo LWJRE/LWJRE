@@ -1,7 +1,7 @@
 package io.github.ardentengine.core.scene;
 
-import io.github.ardentengine.core.DisplayServer;
-import io.github.ardentengine.core.RenderingServer;
+import io.github.ardentengine.core.display.DisplayServer;
+import io.github.ardentengine.core.rendering.RenderingServer;
 import io.github.scalamath.vecmatlib.Mat3f;
 import io.github.scalamath.vecmatlib.Mat4f;
 import io.github.scalamath.vecmatlib.Vec2f;

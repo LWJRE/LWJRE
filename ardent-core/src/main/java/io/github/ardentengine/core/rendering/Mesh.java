@@ -1,6 +1,5 @@
 package io.github.ardentengine.core.rendering;
 
-import io.github.ardentengine.core.RenderingServer;
 import io.github.ardentengine.core.logging.Logger;
 import io.github.ardentengine.core.resources.ResourceManager;
 

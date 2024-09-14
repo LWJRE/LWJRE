@@ -17,10 +17,22 @@ public final class InputMap {
 
     static {
         // TODO: Load from file
-        addActionEvent("up", new InputEventKey(Keyboard.KEY_W, 0, true, false));
-        addActionEvent("down", new InputEventKey(Keyboard.KEY_S, 0, true, false));
-        addActionEvent("left", new InputEventKey(Keyboard.KEY_A, 0, true, false));
-        addActionEvent("right", new InputEventKey(Keyboard.KEY_D, 0, true, false));
+        addActionEvent("up", new InputEventKey(InputEventKey.KEY_W, true));
+        addActionEvent("down", new InputEventKey(InputEventKey.KEY_S, true));
+        addActionEvent("left", new InputEventKey(InputEventKey.KEY_A, true));
+        addActionEvent("right", new InputEventKey(InputEventKey.KEY_D, true));
+        addActionEvent("jump", new InputEventKey(InputEventKey.KEY_SPACE, true));
+        addActionEvent("run", new InputEventKey(InputEventKey.KEY_LEFT_SHIFT, true));
+        addActionEvent("run", new InputEventKey(InputEventKey.KEY_RIGHT_SHIFT, true));
+        addActionEvent("cut", new InputEventKey(InputEventKey.KEY_X, InputEventKey.MOD_CONTROL, true));
+        addActionEvent("copy", new InputEventKey(InputEventKey.KEY_C, InputEventKey.MOD_CONTROL, true));
+        addActionEvent("paste", new InputEventKey(InputEventKey.KEY_V, InputEventKey.MOD_CONTROL, true));
+        addActionEvent("undo", new InputEventKey(InputEventKey.KEY_Z, InputEventKey.MOD_CONTROL, true));
+        addActionEvent("redo", new InputEventKey(InputEventKey.KEY_Z, InputEventKey.MOD_CONTROL | InputEventKey.MOD_SHIFT, true));
+    }
+
+    public static Set<String> getActions() {
+        return new HashSet<>(INPUT_MAP.keySet());
     }
 
     /**
@@ -33,6 +45,25 @@ public final class InputMap {
      */
     public static boolean addActionEvent(String action, InputEvent event) {
         return INPUT_MAP.computeIfAbsent(action, key -> new HashSet<>()).add(event);
+    }
+
+    /**
+     * Removes the given input event from the given action.
+     *
+     * @param action Name of the action from which the event should be removed.
+     * @param event The input event to remove.
+     * @return True if the given event was previously mapped to the given action, otherwise false.
+     */
+    public static boolean removeActionEvent(String action, InputEvent event) {
+        var actionEvents = INPUT_MAP.get(action);
+        if(actionEvents != null) {
+            var res = actionEvents.remove(event);
+            if(actionEvents.isEmpty()) {
+                INPUT_MAP.remove(action);
+            }
+            return res;
+        }
+        return false;
     }
 
     /**
@@ -59,32 +90,18 @@ public final class InputMap {
     }
 
     /**
-     * Removes the given input event from the given action.
-     *
-     * @param action Name of the action from which the event should be removed.
-     * @param event The input event to remove.
-     * @return True if the given event was previously mapped to the given action, otherwise false.
-     */
-    public static boolean removeActionEvent(String action, InputEvent event) {
-        var actionEvents = INPUT_MAP.get(action);
-        if(actionEvents != null) {
-            var res = actionEvents.remove(event);
-            if(actionEvents.isEmpty()) {
-                INPUT_MAP.remove(action);
-            }
-            return res;
-        }
-        return false;
-    }
-
-    /**
      * Checks if the input map contains an action with the given name.
      *
      * @param action Name of the action.
      * @return True if the input map contains an action with the given name, otherwise false.
      */
-    public static boolean actionExists(String action) {
+    public static boolean hasAction(String action) {
         return INPUT_MAP.containsKey(action);
+    }
+
+    public static Set<InputEvent> getActionEvents(String action) {
+        var events = INPUT_MAP.get(action);
+        return events == null ? new HashSet<>() : new HashSet<>(events);
     }
 
     /**

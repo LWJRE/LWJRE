@@ -1,6 +1,6 @@
 package io.github.ardentengine.core.scene;
 
-import io.github.ardentengine.core.RenderingServer;
+import io.github.ardentengine.core.rendering.RenderingServer;
 import io.github.ardentengine.core.rendering.Shader;
 
 import java.util.Map;

@@ -1,7 +1,5 @@
-package io.github.ardentengine.core;
+package io.github.ardentengine.core.rendering;
 
-import io.github.ardentengine.core.rendering.Mesh;
-import io.github.ardentengine.core.rendering.Texture;
 import io.github.ardentengine.core.scene.*;
 import io.github.scalamath.colorlib.Color;
 

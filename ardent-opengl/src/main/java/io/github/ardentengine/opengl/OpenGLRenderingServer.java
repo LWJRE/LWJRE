@@ -1,7 +1,7 @@
 package io.github.ardentengine.opengl;
 
-import io.github.ardentengine.core.RenderingServer;
 import io.github.ardentengine.core.rendering.Mesh;
+import io.github.ardentengine.core.rendering.RenderingServer;
 import io.github.ardentengine.core.rendering.Texture;
 import io.github.ardentengine.core.scene.*;
 import org.lwjgl.opengl.GL11;

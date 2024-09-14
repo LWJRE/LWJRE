@@ -30,7 +30,7 @@ public class TestInputEventWithModifiers {
 
     @Test
     public void testShiftPressed() {
-        var input = new MockInputEventWithModifiers(Keyboard.MOD_SHIFT);
+        var input = new MockInputEventWithModifiers(InputEventWithModifiers.MOD_SHIFT);
         Assertions.assertTrue(input.shiftPressed());
         Assertions.assertFalse(input.ctrlPressed());
         Assertions.assertFalse(input.altPressed());
@@ -39,7 +39,7 @@ public class TestInputEventWithModifiers {
 
     @Test
     public void testCtrlPressed() {
-        var input = new MockInputEventWithModifiers(Keyboard.MOD_CONTROL);
+        var input = new MockInputEventWithModifiers(InputEventWithModifiers.MOD_CONTROL);
         Assertions.assertFalse(input.shiftPressed());
         Assertions.assertTrue(input.ctrlPressed());
         Assertions.assertFalse(input.altPressed());
@@ -48,7 +48,7 @@ public class TestInputEventWithModifiers {
 
     @Test
     public void testAltPressed() {
-        var input = new MockInputEventWithModifiers(Keyboard.MOD_ALT);
+        var input = new MockInputEventWithModifiers(InputEventWithModifiers.MOD_ALT);
         Assertions.assertFalse(input.shiftPressed());
         Assertions.assertFalse(input.ctrlPressed());
         Assertions.assertTrue(input.altPressed());
@@ -57,7 +57,7 @@ public class TestInputEventWithModifiers {
 
     @Test
     public void testMetaPressed() {
-        var input = new MockInputEventWithModifiers(Keyboard.MOD_META);
+        var input = new MockInputEventWithModifiers(InputEventWithModifiers.MOD_META);
         Assertions.assertFalse(input.shiftPressed());
         Assertions.assertFalse(input.ctrlPressed());
         Assertions.assertFalse(input.altPressed());
@@ -66,7 +66,7 @@ public class TestInputEventWithModifiers {
 
     @Test
     public void testShiftCtrlPressed() {
-        var input = new MockInputEventWithModifiers(Keyboard.MOD_SHIFT | Keyboard.MOD_CONTROL);
+        var input = new MockInputEventWithModifiers(InputEventWithModifiers.MOD_SHIFT | InputEventWithModifiers.MOD_CONTROL);
         Assertions.assertTrue(input.shiftPressed());
         Assertions.assertTrue(input.ctrlPressed());
         Assertions.assertFalse(input.altPressed());
@@ -75,7 +75,7 @@ public class TestInputEventWithModifiers {
 
     @Test
     public void testAltShiftPressed() {
-        var input = new MockInputEventWithModifiers(Keyboard.MOD_ALT | Keyboard.MOD_SHIFT);
+        var input = new MockInputEventWithModifiers(InputEventWithModifiers.MOD_ALT | InputEventWithModifiers.MOD_SHIFT);
         Assertions.assertTrue(input.shiftPressed());
         Assertions.assertFalse(input.ctrlPressed());
         Assertions.assertTrue(input.altPressed());

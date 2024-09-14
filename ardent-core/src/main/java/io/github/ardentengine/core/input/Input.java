@@ -4,6 +4,7 @@ import io.github.ardentengine.core.Application;
 import io.github.scalamath.vecmatlib.Vec2f;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.function.Consumer;
 
 /**
@@ -11,13 +12,14 @@ import java.util.function.Consumer;
  */
 public final class Input {
 
-    /**
-     * Set of pressed action events.
-     */
-    private static final HashMap<InputEvent, Long> PRESSED_STATE = new HashMap<>();
-    /**
-     * Current event dispatch function.
-     */
+    /** Map used to keep track of input action states. */
+    private static final HashMap<String, ActionState> ACTION_STATES = new HashMap<>();
+    /** Set of keyboard keys that are currently being pressed. */
+    private static final HashSet<Integer> PRESSED_KEYS = new HashSet<>();
+    /** Set of mouse buttons that are currently being pressed. */
+    private static final HashSet<Integer> PRESSED_MOUSE_BUTTONS = new HashSet<>();
+
+    /** Current event dispatch function. */
     private static Consumer<InputEvent> eventDispatchFunction = null;
 
     /**
@@ -46,13 +48,45 @@ public final class Input {
      * @param event The event to parse.
      */
     public static void parseEvent(InputEvent event) {
+        // Update action states
+        for(var action : InputMap.getActions()) {
+            if(event.isAction(action)) {
+                var actionState = ACTION_STATES.computeIfAbsent(action, a -> new ActionState());
+                if(event.isPressed()) {
+                    // Update the action state for a pressed event
+                    if(!event.isEcho()) {
+                        actionState.pressed = Application.processFrames();
+                    }
+                    actionState.released = -1L;
+                    // Use the highest strenth for pressed events
+                    actionState.strength = Math.max(actionState.strength, event.strength());
+                } else if(event.isReleased()) {
+                    // Update the action state for a released event
+                    actionState.pressed = -1L;
+                    actionState.released = Application.processFrames();
+                    // Use the lower strength for released events
+                    actionState.strength = Math.min(actionState.strength, event.strength());
+                }
+                // TODO: Handle events that are not pressed nor released
+            }
+        }
+        if(event instanceof InputEventKey inputEventKey) {
+            // Update key state
+            if(event.isPressed()) {
+                PRESSED_KEYS.add(inputEventKey.keyCode());
+            } else if(event.isReleased()) {
+                PRESSED_KEYS.remove(inputEventKey.keyCode());
+            }
+        } else if(event instanceof InputEventMouseButton inputEventMouseButton) {
+            // Update mouse button state
+            if(event.isPressed()) {
+                PRESSED_MOUSE_BUTTONS.add(inputEventMouseButton.button());
+            } else if(event.isReleased()) {
+                PRESSED_MOUSE_BUTTONS.remove(inputEventMouseButton.button());
+            }
+        }
         if(eventDispatchFunction != null) {
             eventDispatchFunction.accept(event);
-        }
-        if(event.isPressed() && !event.isEcho()) {
-            PRESSED_STATE.put(event, Application.getProcessFrames());
-        } else if(event.isReleased()) {
-            PRESSED_STATE.keySet().removeIf(event::matches);
         }
     }
 
@@ -63,12 +97,8 @@ public final class Input {
      * @return True if the action is being pressed, otherwise false.
      */
     public static boolean isActionPressed(String action) {
-        for(var event : PRESSED_STATE.keySet()) {
-            if(event.isAction(action)) {
-                return true;
-            }
-        }
-        return false;
+        var actionState = ACTION_STATES.get(action);
+        return actionState != null && actionState.pressed >= 0;
     }
 
     /**
@@ -79,12 +109,8 @@ public final class Input {
      * @return True if the given action has been pressed in the current frame, otherwise false.
      */
     public static boolean isActionJustPressed(String action) {
-        for(var entry : PRESSED_STATE.entrySet()) {
-            if(entry.getKey().isAction(action) && entry.getValue() == Application.getProcessFrames()) {
-                return true;
-            }
-        }
-        return false;
+        var actionState = ACTION_STATES.get(action);
+        return actionState != null && actionState.pressed == Application.processFrames();
     }
 
     /**
@@ -94,22 +120,34 @@ public final class Input {
      * @return True if the given action has been released in the current frame, otherwise false.
      */
     public static boolean isActionJustReleased(String action) {
-        return false; // TODO: Better implementation of pressed / just pressed / just released
+        var actionState = ACTION_STATES.get(action);
+        return actionState != null && actionState.released == Application.processFrames();
     }
 
     /**
      * Returns true if the given key is being pressed.
+     * <p>
+     *     See {@link InputEventKey} for key code constants.
+     * </p>
      *
      * @param key The key code.
      * @return True if the key is being pressed, otherwise false.
      */
     public static boolean isKeyPressed(int key) {
-        for(var event : PRESSED_STATE.keySet()) {
-            if(event instanceof InputEventKey eventKey && eventKey.keyCode() == key) {
-                return true;
-            }
-        }
-        return false;
+        return PRESSED_KEYS.contains(key);
+    }
+
+    /**
+     * Returns true if the given mouse button is being pressed.
+     * <p>
+     *     See {@link InputEventMouseButton} for mouse button constants.
+     * </p>
+     *
+     * @param button The button code.
+     * @return True if the button is being pressed, otherwise false.
+     */
+    public static boolean isMouseButtonPressed(int button) {
+        return PRESSED_MOUSE_BUTTONS.contains(button);
     }
 
     /**
@@ -127,12 +165,8 @@ public final class Input {
      * @return The strength of the specified action.
      */
     public static float getActionStrength(String action, boolean exact) {
-        for(var event : PRESSED_STATE.keySet()) {
-            if(event.isAction(action, exact)) {
-                return event.strength();
-            }
-        }
-        return 0.0f;
+        var actionState = ACTION_STATES.get(action);
+        return actionState == null ? 0.0f : actionState.strength;
     }
 
     /**
@@ -177,5 +211,12 @@ public final class Input {
             return vector.normalized();
         }
         return vector;
+    }
+
+    private static class ActionState {
+
+        private long pressed = -1L;
+        private long released = -1L;
+        private float strength = 0.0f;
     }
 }

@@ -68,4 +68,12 @@ public record InputEventMouseMotion(Vec2f position, Vec2f motion) implements Inp
     public float strength() {
         return 0.0f;
     }
+
+    public float x() {
+        return this.motion().x();
+    }
+
+    public float y() {
+        return this.motion().y();
+    }
 }

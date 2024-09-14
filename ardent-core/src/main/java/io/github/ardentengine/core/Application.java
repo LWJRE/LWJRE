@@ -30,7 +30,7 @@ public final class Application {
     /** Singleton instance. */
     private static Application instance;
 
-    public static long getProcessFrames() {
+    public static long processFrames() {
         return instance != null ? instance.processFrames : 0;
     }
 

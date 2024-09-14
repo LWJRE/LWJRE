@@ -1,7 +1,7 @@
 package io.github.ardentengine.opengl;
 
-import io.github.ardentengine.core.DisplayServer;
 import io.github.ardentengine.core.EngineSystem;
+import io.github.ardentengine.core.display.DisplayServer;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 

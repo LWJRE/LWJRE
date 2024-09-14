@@ -5,18 +5,17 @@ import io.github.scalamath.vecmatlib.Vec2f;
 /**
  * Input event that represents a scroll on a mouse wheel or touchpad.
  *
- * @param scroll Scroll amount.
+ * @param horizontal Horizontal scroll.
+ * @param vertical Vertical scroll.
  */
-public record InputEventScroll(Vec2f scroll) implements InputEvent {
+public record InputEventScroll(float horizontal, float vertical) implements InputEvent {
 
-    /**
-     * Input event that represents a scroll on a mouse wheel or touchpad.
-     *
-     * @param x Scroll amount on the x axis.
-     * @param y Scroll amount on the y axis.
-     */
-    public InputEventScroll(float x, float y) {
-        this(new Vec2f(x, y));
+    public InputEventScroll(Vec2f scroll) {
+        this(scroll.x(), scroll.y());
+    }
+
+    public Vec2f scroll() {
+        return new Vec2f(this.horizontal, this.vertical);
     }
 
     @Override

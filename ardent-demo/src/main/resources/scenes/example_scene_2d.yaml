@@ -24,5 +24,4 @@ children:
     properties:
       name: Fifth
       position: !Vec2f [300.0, 150.0]
-#      zIndex: 10
   - type: !!java.lang.Class io.github.ardentengine.demo.DemoCamera2D

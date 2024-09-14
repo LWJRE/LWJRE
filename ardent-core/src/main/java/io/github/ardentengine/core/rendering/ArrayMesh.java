@@ -1,7 +1,5 @@
 package io.github.ardentengine.core.rendering;
 
-import io.github.ardentengine.core.RenderingServer;
-
 /**
  * A mesh constructed by specifying attributes as arrays.
  */

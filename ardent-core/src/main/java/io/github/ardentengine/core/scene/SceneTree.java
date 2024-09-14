@@ -23,6 +23,7 @@ public final class SceneTree {
      * @throws NullPointerException If the given scene is null.
      */
     public void changeScene(SceneResource sceneResource) {
+        // TODO: Defer scene changes until the next frame
         Objects.requireNonNull(sceneResource, "The new scene cannot be null");
         if(this.root != null) {
             this.root.exitTree();

@@ -1,7 +1,7 @@
 package io.github.ardentengine.core.scene;
 
-import io.github.ardentengine.core.DisplayServer;
-import io.github.ardentengine.core.RenderingServer;
+import io.github.ardentengine.core.rendering.RenderingServer;
+import io.github.ardentengine.core.display.DisplayServer;
 import io.github.scalamath.vecmatlib.Mat4f;
 
 /**
@@ -30,18 +30,28 @@ public class Camera3D extends Node3D {
         super.update(delta);
     }
 
-    // TODO: setYaw, setPitch, setRoll
-
     public final float yaw() {
         return this.rotation().y();
+    }
+
+    public final void setYaw(float yaw) {
+        this.setRotation(this.pitch(), yaw, this.roll());
     }
 
     public final float pitch() {
         return this.rotation().x();
     }
 
+    public final void setPitch(float pitch) {
+        this.setRotation(pitch, this.yaw(), this.roll());
+    }
+
     public final float roll() {
         return this.rotation().z();
+    }
+
+    public final void setRoll(float roll) {
+        this.setRotation(this.pitch(), this.yaw(), roll);
     }
 
     /**

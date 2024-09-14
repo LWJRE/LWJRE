@@ -1,7 +1,5 @@
 package io.github.ardentengine.core.rendering;
 
-import io.github.ardentengine.core.RenderingServer;
-
 import java.nio.ByteBuffer;
 
 /**

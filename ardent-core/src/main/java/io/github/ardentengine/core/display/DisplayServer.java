@@ -1,4 +1,4 @@
-package io.github.ardentengine.core;
+package io.github.ardentengine.core.display;
 
 import io.github.scalamath.vecmatlib.Vec2f;
 import io.github.scalamath.vecmatlib.Vec2i;
@@ -49,6 +49,13 @@ public abstract class DisplayServer {
     public abstract void setWindowTitle(String title);
 
     /**
+     * Returns the title of the main window.
+     *
+     * @return The title of the main window.
+     */
+    public abstract String getWindowTitle();
+
+    /**
      * Sets the size of the main window.
      *
      * @param width Width of the window in pixels.
@@ -71,6 +78,10 @@ public abstract class DisplayServer {
      * @return The size of the main window.
      */
     public abstract Vec2i getWindowSize();
+
+    // TODO: Set/get window size limits
+
+    // TODO: Set aspect ratio
 
     /**
      * Sets the position of the main window.
@@ -95,6 +106,18 @@ public abstract class DisplayServer {
      * @return Position of the window in pixels from the upper-left corner of the monitor.
      */
     public abstract Vec2i getWindowPosition();
+
+    public abstract void setOpacity(float alpha);
+
+    public abstract float getOpacity();
+
+    public abstract void setWindowMode(WindowMode windowMode);
+
+    // TODO: Window icons
+
+    public abstract void focusMainWindow();
+
+    public abstract void requestAttentionOnMainWindow();
 
     /**
      * Shows the main window if it is hidden.
@@ -129,4 +152,20 @@ public abstract class DisplayServer {
      * @return The position of the cursor.
      */
     public abstract Vec2f getCursorPosition();
+
+    public abstract void setCursorMode(CursorMode cursorMode);
+
+    public abstract CursorMode getCursorMode();
+
+    public abstract void setCursorShape(CursorShape cursorShape);
+
+    // TODO: Monitor functions
+
+    public abstract void setVSync(boolean enabled);
+
+    public abstract String getKeyLabel(int key);
+
+    public abstract void setClipboard(CharSequence clipboard);
+
+    public abstract String getClipboard();
 }
