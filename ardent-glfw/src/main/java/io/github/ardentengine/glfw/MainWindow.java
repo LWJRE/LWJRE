@@ -5,8 +5,8 @@ import io.github.ardentengine.core.display.CursorMode;
 import io.github.ardentengine.core.display.CursorShape;
 import io.github.ardentengine.core.display.WindowMode;
 import io.github.ardentengine.core.input.*;
-import io.github.scalamath.vecmatlib.Vec2f;
-import io.github.scalamath.vecmatlib.Vec2i;
+import io.github.ardentengine.core.math.Vector2;
+import io.github.ardentengine.core.math.Vector2i;
 import org.lwjgl.glfw.Callbacks;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.system.MemoryUtil;
@@ -103,8 +103,8 @@ public class MainWindow {
         GLFW.glfwSetWindowSize(this.handle, width, height);
     }
 
-    public Vec2i getSize() {
-        return new Vec2i(this.width, this.height);
+    public Vector2i getSize() {
+        return new Vector2i(this.width, this.height);
     }
 
     private void windowSizeCallback(int width, int height) {
@@ -116,8 +116,8 @@ public class MainWindow {
         GLFW.glfwSetWindowPos(this.handle, x, y);
     }
 
-    public Vec2i getPosition() {
-        return new Vec2i(this.xPos, this.yPos);
+    public Vector2i getPosition() {
+        return new Vector2i(this.xPos, this.yPos);
     }
 
     private void windowPosCallback(int x, int y) {
@@ -166,8 +166,8 @@ public class MainWindow {
         this.mouseY = y;
     }
 
-    public Vec2f getCursorPosition() {
-        return new Vec2f(this.mouseX, this.mouseY);
+    public Vector2 getCursorPosition() {
+        return new Vector2(this.mouseX, this.mouseY);
     }
 
     private void cursorPosCallback(float x, float y) {

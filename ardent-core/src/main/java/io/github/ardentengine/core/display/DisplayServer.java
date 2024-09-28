@@ -1,7 +1,7 @@
 package io.github.ardentengine.core.display;
 
-import io.github.scalamath.vecmatlib.Vec2f;
-import io.github.scalamath.vecmatlib.Vec2i;
+import io.github.ardentengine.core.math.Vector2;
+import io.github.ardentengine.core.math.Vector2i;
 
 import java.util.ServiceLoader;
 
@@ -68,7 +68,7 @@ public abstract class DisplayServer {
      *
      * @param size Size of the window in pixels.
      */
-    public void setWindowSize(Vec2i size) {
+    public void setWindowSize(Vector2i size) {
         this.setWindowSize(size.x(), size.y());
     }
 
@@ -77,7 +77,7 @@ public abstract class DisplayServer {
      *
      * @return The size of the main window.
      */
-    public abstract Vec2i getWindowSize();
+    public abstract Vector2i getWindowSize();
 
     // TODO: Set/get window size limits
 
@@ -96,7 +96,7 @@ public abstract class DisplayServer {
      *
      * @param position Position of the window in pixels from the top-left corner of the monitor.
      */
-    public void setWindowPosition(Vec2i position) {
+    public void setWindowPosition(Vector2i position) {
         this.setWindowPosition(position.x(), position.y());
     }
 
@@ -105,7 +105,7 @@ public abstract class DisplayServer {
      *
      * @return Position of the window in pixels from the upper-left corner of the monitor.
      */
-    public abstract Vec2i getWindowPosition();
+    public abstract Vector2i getWindowPosition();
 
     public abstract void setOpacity(float alpha);
 
@@ -142,7 +142,7 @@ public abstract class DisplayServer {
      *
      * @param position The position of the cursor in pixels from the top-left corner of the main window.
      */
-    public void setCursorPosition(Vec2f position) {
+    public void setCursorPosition(Vector2 position) {
         this.setCursorPosition(position.x(), position.y());
     }
 
@@ -151,7 +151,7 @@ public abstract class DisplayServer {
      *
      * @return The position of the cursor.
      */
-    public abstract Vec2f getCursorPosition();
+    public abstract Vector2 getCursorPosition();
 
     public abstract void setCursorMode(CursorMode cursorMode);
 

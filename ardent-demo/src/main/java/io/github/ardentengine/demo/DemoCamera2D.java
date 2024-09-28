@@ -10,7 +10,7 @@ public class DemoCamera2D extends Camera2D {
     @Override
     public void onUpdate(float delta) {
         var input = Input.getVector("up", "down", "left", "right");
-        this.translate(input.multipliedBy(this.speed * delta));
+        this.translate(input.multiply(this.speed * delta));
         super.onUpdate(delta);
     }
 }

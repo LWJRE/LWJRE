@@ -1,6 +1,6 @@
 package io.github.ardentengine.core.scene;
 
-import io.github.scalamath.vecmatlib.*;
+import io.github.ardentengine.core.math.*;
 
 import java.util.Objects;
 
@@ -11,16 +11,16 @@ import java.util.Objects;
 public class Node3D extends Node {
 
     /** Position of this node relative to its parent. */
-    private Vec3f position = Vec3f.Zero();
+    private Vector3 position = Vector3.ZERO;
     /**Rotation in radians of this node relative to its parent. */
-    private Vec3f rotation = Vec3f.Zero();
+    private Vector3 rotation = Vector3.ZERO;
     /** Scale of this node. */
-    private Vec3f scale = Vec3f.One();
+    private Vector3 scale = Vector3.ONE;
 
     /** Cached local transform. */
-    private Mat3x4f localTransform = null;
+    private Matrix3x4 localTransform = null;
     /** Cached global transform. */
-    private Mat3x4f globalTransform = null;
+    private Matrix3x4 globalTransform = null;
 
     /**
      * Private method used to invalidate this node's transform when its position, rotation, or scale are changed.
@@ -58,7 +58,7 @@ public class Node3D extends Node {
      *
      * @return The position of this node relative to its parent.
      */
-    public final Vec3f position() {
+    public final Vector3 position() {
         return this.position;
     }
 
@@ -71,7 +71,7 @@ public class Node3D extends Node {
      *
      * @see Node3D#setPosition(float, float, float)
      */
-    public final void setPosition(Vec3f position) {
+    public final void setPosition(Vector3 position) {
         Objects.requireNonNull(position, "Position cannot be null");
         if(!this.position.equals(position)) {
             this.position = position;
@@ -87,11 +87,11 @@ public class Node3D extends Node {
      * @param y Position of this node on the y axis.
      * @param z Position of this node on the z axis.
      *
-     * @see Node3D#setPosition(Vec3f)
+     * @see Node3D#setPosition(Vector3)
      */
     public final void setPosition(float x, float y, float z) {
         if(!this.position.equals(x, y, z)) {
-            this.position = new Vec3f(x, y, z);
+            this.position = new Vector3(x, y, z);
             this.invalidateTransform();
         }
     }
@@ -104,7 +104,7 @@ public class Node3D extends Node {
      *
      * @see Node3D#translate(float, float, float)
      */
-    public final void translate(Vec3f offset) {
+    public final void translate(Vector3 offset) {
         Objects.requireNonNull(offset, "Offset cannot be null");
         if(!offset.equals(0.0f, 0.0f, 0.0f)) {
             this.position = this.position.plus(offset);
@@ -119,7 +119,7 @@ public class Node3D extends Node {
      * @param y Translation on the y axis.
      * @param z Translation on the z axis.
      *
-     * @see Node3D#translate(Vec3f)
+     * @see Node3D#translate(Vector3)
      */
     public final void translate(float x, float y, float z) {
         if(x != 0.0f || y != 0.0f || z != 0.0f) {
@@ -128,12 +128,12 @@ public class Node3D extends Node {
         }
     }
 
-    public final Vec3f rotation() {
+    public final Vector3 rotation() {
         return this.rotation;
     }
 
-    public final Vec3f rotationDegrees() {
-        return new Vec3f(
+    public final Vector3 rotationDegrees() {
+        return new Vector3(
             (float) Math.toDegrees(this.rotation().x()),
             (float) Math.toDegrees(this.rotation().y()),
             (float) Math.toDegrees(this.rotation().z())
@@ -144,12 +144,12 @@ public class Node3D extends Node {
 
     public final void setRotation(float x, float y, float z) {
         if(!this.rotation.equals(x, y, z)) {
-            this.rotation = new Vec3f(x, y, z);
+            this.rotation = new Vector3(x, y, z);
             this.invalidateTransform();
         }
     }
 
-    public final void setRotation(Vec3f rotation) {
+    public final void setRotation(Vector3 rotation) {
         Objects.requireNonNull(rotation, "Rotation cannot be null");
         if(!this.rotation.equals(rotation)) {
             this.rotation = rotation;
@@ -165,7 +165,7 @@ public class Node3D extends Node {
         );
     }
 
-    public final void setRotationDegrees(Vec3f rotation) {
+    public final void setRotationDegrees(Vector3 rotation) {
         Objects.requireNonNull(rotation, "Rotation cannot be null");
         this.setRotationDegrees(rotation.x(), rotation.y(), rotation.z());
     }
@@ -179,7 +179,7 @@ public class Node3D extends Node {
         }
     }
 
-    public final void rotate(Vec3f rotation) {
+    public final void rotate(Vector3 rotation) {
         Objects.requireNonNull(rotation, "Rotation cannot be null");
         if(!rotation.equals(0.0f, 0.0f, 0.0f)) {
             this.rotation = this.rotation.plus(rotation);
@@ -195,7 +195,7 @@ public class Node3D extends Node {
         );
     }
 
-    public final void rotateDegrees(Vec3f rotation) {
+    public final void rotateDegrees(Vector3 rotation) {
         Objects.requireNonNull(rotation, "Rotation cannot be null");
         this.rotateDegrees(rotation.x(), rotation.y(), rotation.z());
     }
@@ -208,7 +208,7 @@ public class Node3D extends Node {
      *
      * @return The scale of this node.
      */
-    public final Vec3f scale() {
+    public final Vector3 scale() {
         return this.scale;
     }
 
@@ -221,7 +221,7 @@ public class Node3D extends Node {
      *
      * @see Node3D#setScale(float, float, float)
      */
-    public final void setScale(Vec3f scale) {
+    public final void setScale(Vector3 scale) {
         Objects.requireNonNull(scale, "Scale cannot be null");
         if(!this.scale.equals(scale)) {
             this.scale = scale;
@@ -237,11 +237,11 @@ public class Node3D extends Node {
      * @param y Scale on the y axis.
      * @param z Scale on the z axis.
      *
-     * @see Node3D#setScale(Vec3f)
+     * @see Node3D#setScale(Vector3)
      */
     public final void setScale(float x, float y, float z) {
         if(!this.scale.equals(x, y, z)) {
-            this.scale = new Vec3f(x, y, z);
+            this.scale = new Vector3(x, y, z);
             this.invalidateTransform();
         }
     }
@@ -254,7 +254,7 @@ public class Node3D extends Node {
      *
      * @see Node3D#applyScale(float, float, float)
      */
-    public final void applyScale(Vec3f scale) {
+    public final void applyScale(Vector3 scale) {
         Objects.requireNonNull(scale, "Scale cannot be null");
         if(!scale.equals(1.0f, 1.0f, 1.0f)) {
             this.scale = this.scale.multiply(scale);
@@ -269,7 +269,7 @@ public class Node3D extends Node {
      * @param y Scale ratio on the y axis.
      * @param z Scale ratio on the z axis.
      *
-     * @see Node3D#applyScale(Vec3f)
+     * @see Node3D#applyScale(Vector3)
      */
     public final void applyScale(float x, float y, float z) {
         if(x != 1.0f || y != 1.0f || z != 1.0f) {
@@ -283,13 +283,13 @@ public class Node3D extends Node {
      *
      * @return This node's local transform as a 3x4 transformation matrix.
      */
-    public final Mat3x4f localTransform() {
+    public final Matrix3x4 localTransform() {
         if(this.localTransform != null) {
             return this.localTransform;
         }
-        return this.localTransform = Mat3x4f.translation(this.position())
-            .multiply(Mat4f.rotation(this.rotation()))
-            .multiply(Mat4f.scaling(this.scale()));
+        return this.localTransform = Matrix3x4.translation(this.position())
+            .multiply(Matrix4.rotation(this.rotation()))
+            .multiply(Matrix4.scaling(this.scale()));
     }
 
     /**
@@ -300,7 +300,7 @@ public class Node3D extends Node {
      *
      * @return This node's global transform as a 3x4 transformation matrix.
      */
-    public final Mat3x4f globalTransform() {
+    public final Matrix3x4 globalTransform() {
         if(this.globalTransform != null) {
             return this.globalTransform;
         } else if(this.parent() instanceof Node3D parent) {
@@ -314,8 +314,8 @@ public class Node3D extends Node {
      *
      * @return The global position of this node.
      */
-    public final Vec3f globalPosition() {
-        return this.globalTransform().col3();
+    public final Vector3 globalPosition() {
+        return this.globalTransform().column3();
     }
 
     /**
@@ -329,7 +329,7 @@ public class Node3D extends Node {
      *
      * @see Node3D#setGlobalPosition(float, float, float)
      */
-    public final void setGlobalPosition(Vec3f position) {
+    public final void setGlobalPosition(Vector3 position) {
         Objects.requireNonNull(position, "Position cannot be null");
         if(this.parent() instanceof Node3D parent) {
             this.setPosition(parent.globalTransform().affineInverse().multiply(position, 1.0f));
@@ -348,7 +348,7 @@ public class Node3D extends Node {
      * @param y Global position on the y axis.
      * @param z Global position on the z axis.
      *
-     * @see Node3D#setGlobalPosition(Vec3f)
+     * @see Node3D#setGlobalPosition(Vector3)
      */
     public final void setGlobalPosition(float x, float y, float z) {
         if(this.parent() instanceof Node3D parent) {
@@ -371,14 +371,14 @@ public class Node3D extends Node {
      * @param transform Local transform as a 3x4 transformation matrix.
      * @throws NullPointerException If the given transform is null.
      */
-    public final void setLocalTransform(Mat3x4f transform) {
+    public final void setLocalTransform(Matrix3x4 transform) {
         Objects.requireNonNull(transform, "Transform cannot be null");
         this.setPosition(transform.m03(), transform.m13(), transform.m23());
-        var basis = transform.submatrix(3);
+        var basis = new Matrix3(transform.m00(), transform.m01(), transform.m02(), transform.m10(), transform.m11(), transform.m12(), transform.m20(), transform.m21(), transform.m22());
         // TODO: Add a better implementation for this
-        this.setRotation(EulerOrder.ZYX.toEulerAngles(basis.toDouble()).toFloat());
+        this.setRotation(EulerOrder.ZYX.toEulerAngles(basis));
         var sign = Math.signum(basis.determinant());
-        this.setScale(basis.col0().length() * sign, basis.col1().length() * sign, basis.col2().length() * sign);
+        this.setScale(basis.column0().length() * sign, basis.column1().length() * sign, basis.column2().length() * sign);
     }
 
     /**
@@ -387,13 +387,13 @@ public class Node3D extends Node {
      *     Sets the {@link Node3D#position}, {@link Node3D#rotation}, and {@link Node3D#scale} of this node so that its {@link Node3D#globalTransform()} will be equal to the given transform.
      * </p>
      * <p>
-     *     If this node's parent is not a {@code Node3D}, this method is equivalent to {@link Node3D#setLocalTransform(Mat3x4f)}.
+     *     If this node's parent is not a {@code Node3D}, this method is equivalent to {@link Node3D#setLocalTransform(Matrix3x4)}.
      * </p>
      *
      * @param transform Global transform as a 3x4 transformation matrix.
      * @throws NullPointerException If the given transform is null.
      */
-    public final void setGlobalTransform(Mat3x4f transform) {
+    public final void setGlobalTransform(Matrix3x4 transform) {
         Objects.requireNonNull(transform, "Transform cannot be null");
         if(this.parent() instanceof Node3D parent) {
             this.setLocalTransform(parent.globalTransform().affineInverse().multiply(transform, 0.0f, 0.0f, 0.0f, 1.0f));
@@ -425,7 +425,7 @@ public class Node3D extends Node {
      *
      * @see Node3D#toLocal(float, float, float)
      */
-    public final Vec3f toLocal(Vec3f globalPosition) {
+    public final Vector3 toLocal(Vector3 globalPosition) {
         Objects.requireNonNull(globalPosition, "Position cannot be null");
         return this.globalTransform().affineInverse().multiply(globalPosition, 1.0f);
     }
@@ -438,9 +438,9 @@ public class Node3D extends Node {
      * @param z Position in local coordinates on the z axis relative to this node.
      * @return The given global position in local coordinates relative to this node.
      *
-     * @see Node3D#toLocal(Vec3f)
+     * @see Node3D#toLocal(Vector3)
      */
-    public final Vec3f toLocal(float x, float y, float z) {
+    public final Vector3 toLocal(float x, float y, float z) {
         return this.globalTransform().affineInverse().multiply(x, y, z, 1.0f);
     }
 
@@ -453,7 +453,7 @@ public class Node3D extends Node {
      *
      * @see Node3D#toGlobal(float, float, float)
      */
-    public final Vec3f toGlobal(Vec3f localPosition) {
+    public final Vector3 toGlobal(Vector3 localPosition) {
         Objects.requireNonNull(localPosition, "Position cannot be null");
         return this.globalTransform().multiply(localPosition, 1.0f);
     }
@@ -466,13 +466,13 @@ public class Node3D extends Node {
      * @param z Position in local coordinates on the z axis relative to this node.
      * @return The given local position relative to this node in global coordinates.
      *
-     * @see Node3D#toGlobal(Vec3f)
+     * @see Node3D#toGlobal(Vector3)
      */
-    public final Vec3f toGlobal(float x, float y, float z) {
+    public final Vector3 toGlobal(float x, float y, float z) {
         return this.globalTransform().multiply(x, y, z, 1.0f);
     }
 
-    public final void lookAtFromPosition(Vec3f position, Vec3f target, Vec3f up) {
+    public final void lookAtFromPosition(Vector3 position, Vector3 target, Vector3 up) {
         // TODO: Pos must not be approximately equal to target
         // TODO: Up must bot be approximately zero
         // TODO: Up X (target - position) must not be approximately zero
@@ -481,22 +481,22 @@ public class Node3D extends Node {
         var vx = up.cross(vz).normalized();
         // TODO: The target vector and up vector can't be parallel to each other
         var vy = vz.cross(vx);
-        var basis = Mat3f.fromColumns(vx, vy, vz);
-        // TODO: Add a Quatf#fromEuler(Mat3f) method
-        this.rotation = EulerOrder.ZYX.toEulerAngles(basis.toDouble()).toFloat();
+        var basis = Matrix3.fromColumns(vx, vy, vz);
+        // TODO: Add a Quatf#fromEuler(Matrix3) method
+        this.rotation = EulerOrder.ZYX.toEulerAngles(basis);
     }
 
-    public final void lookAtFromPosition(Vec3f position, Vec3f target) {
-        this.lookAtFromPosition(position, target, Vec3f.Up());
+    public final void lookAtFromPosition(Vector3 position, Vector3 target) {
+        this.lookAtFromPosition(position, target, Vector3.UP);
     }
 
-    public final void lookAt(Vec3f target, Vec3f up) {
+    public final void lookAt(Vector3 target, Vector3 up) {
         this.lookAtFromPosition(this.globalPosition(), target, up);
     }
 
-    public final void lookAt(Vec3f target) {
-        this.lookAt(target, Vec3f.Up());
+    public final void lookAt(Vector3 target) {
+        this.lookAt(target, Vector3.UP);
     }
 
-    // TODO: Vec3f forward direction
+    // TODO: Vector3 forward direction
 }

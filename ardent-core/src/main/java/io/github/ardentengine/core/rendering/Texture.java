@@ -1,8 +1,8 @@
 package io.github.ardentengine.core.rendering;
 
 import io.github.ardentengine.core.logging.Logger;
+import io.github.ardentengine.core.math.Vector2i;
 import io.github.ardentengine.core.resources.ResourceManager;
-import io.github.scalamath.vecmatlib.Vec2i;
 
 import java.nio.ByteBuffer;
 
@@ -73,11 +73,11 @@ public abstract class Texture {
 
     /**
      * Returns the size of this texture.
-     * Combines the results of {@link Texture#width()} and {@link Texture#height()} into a {@code Vec2i}.
+     * Combines the results of {@link Texture#width()} and {@link Texture#height()} into a {@code Vector2i}.
      *
      * @return The size of this texture.
      */
-    public final Vec2i size() {
-        return new Vec2i(this.width(), this.height());
+    public final Vector2i size() {
+        return new Vector2i(this.width(), this.height());
     }
 }

@@ -1,6 +1,6 @@
 package io.github.ardentengine.core.input;
 
-import io.github.scalamath.vecmatlib.Vec2f;
+import io.github.ardentengine.core.math.Vector2;
 
 /**
  * An input event that represents a mouse button being pressed or released.
@@ -10,7 +10,7 @@ import io.github.scalamath.vecmatlib.Vec2f;
  * @param position Position of the mouse in pixels from the top left corner of the window.
  * @param isPressed If true, the mouse button's state is pressed. If false, the mouse button's state is released.
  */
-public record InputEventMouseButton(int button, int modifiers, Vec2f position, boolean isPressed) implements InputEventMouse, InputEventWithModifiers {
+public record InputEventMouseButton(int button, int modifiers, Vector2 position, boolean isPressed) implements InputEventMouse, InputEventWithModifiers {
 
     public static final int BUTTON_LEFT = 0;
     public static final int BUTTON_RIGHT = 1;
@@ -31,10 +31,10 @@ public record InputEventMouseButton(int button, int modifiers, Vec2f position, b
      * @param isPressed If true, the mouse button's state is pressed. If false, the mouse button's state is released.
      */
     public InputEventMouseButton(int button, int modifiers, float x, float y, boolean isPressed) {
-        this(button, modifiers, new Vec2f(x, y), isPressed);
+        this(button, modifiers, new Vector2(x, y), isPressed);
     }
 
-    public InputEventMouseButton(int button, Vec2f position, boolean isPressed) {
+    public InputEventMouseButton(int button, Vector2 position, boolean isPressed) {
         this(button, 0, position, isPressed);
     }
 

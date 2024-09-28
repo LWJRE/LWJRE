@@ -1,6 +1,6 @@
 package io.github.ardentengine.core.rendering;
 
-import io.github.scalamath.vecmatlib.Vec3f;
+import io.github.ardentengine.core.math.Vector3;
 
 import java.util.Objects;
 
@@ -11,14 +11,14 @@ import java.util.Objects;
 public class BoxMesh extends Mesh {
 
     /** Size of the box mesh. */
-    private Vec3f size;
+    private Vector3 size;
 
     /**
      * Constructs a box mesh with the given size.
      *
      * @param size Size of the box.
      */
-    public BoxMesh(Vec3f size) {
+    public BoxMesh(Vector3 size) {
         this.size = size;
     }
 
@@ -30,14 +30,14 @@ public class BoxMesh extends Mesh {
      * @param z Depth of the box.
      */
     public BoxMesh(float x, float y, float z) {
-        this(new Vec3f(x, y, z));
+        this(new Vector3(x, y, z));
     }
 
     /**
      * Constructs a box mesh of size (1, 1, 1).
      */
     public BoxMesh() {
-        this(Vec3f.One());
+        this(Vector3.ONE);
     }
 
     /**
@@ -46,8 +46,8 @@ public class BoxMesh extends Mesh {
      *
      * @param size The size of the mesh.
      */
-    public void setSize(Vec3f size) {
-        size = Objects.requireNonNullElse(size, Vec3f.Zero());
+    public void setSize(Vector3 size) {
+        size = Objects.requireNonNullElse(size, Vector3.ZERO);
         if(!this.size.equals(size)) {
             this.size = size;
             RenderingServer.getInstance().update(this);
@@ -63,7 +63,7 @@ public class BoxMesh extends Mesh {
      * @param z Size of the mesh on the z axis.
      */
     public void setSize(float x, float y, float z) {
-        this.setSize(new Vec3f(x, y, z));
+        this.setSize(new Vector3(x, y, z));
     }
 
     /**
@@ -71,7 +71,7 @@ public class BoxMesh extends Mesh {
      *
      * @return The size of the box mesh.
      */
-    public Vec3f size() {
+    public Vector3 size() {
         return this.size;
     }
 

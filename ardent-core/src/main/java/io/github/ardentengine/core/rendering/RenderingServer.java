@@ -1,7 +1,7 @@
 package io.github.ardentengine.core.rendering;
 
+import io.github.ardentengine.core.math.Color;
 import io.github.ardentengine.core.scene.*;
-import io.github.scalamath.colorlib.Color;
 
 import java.util.ServiceLoader;
 

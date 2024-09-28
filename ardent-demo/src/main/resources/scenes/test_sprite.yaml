@@ -5,8 +5,8 @@ properties:
   spriteTexture:
       !!io.github.ardentengine.core.rendering.GradientTexture
       gradient: !Gradient
-        0.0: !Col4f [1.0, 0.0, 0.0, 1.0]
-        0.5: !Col4f [1.0, 1.0, 0.0, 1.0]
-        1.0: !Col4f [0.0, 1.0, 0.0, 1.0]
+        0.0: !Color [1.0, 0.0, 0.0, 1.0]
+        0.5: !Color [1.0, 1.0, 0.0, 1.0]
+        1.0: !Color [0.0, 1.0, 0.0, 1.0]
       width: 128
       height: 128

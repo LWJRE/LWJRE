@@ -1,7 +1,7 @@
 package io.github.ardentengine.core.input;
 
 import io.github.ardentengine.core.Application;
-import io.github.scalamath.vecmatlib.Vec2f;
+import io.github.ardentengine.core.math.Vector2;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -205,8 +205,8 @@ public final class Input {
      * @param right Name of the positive action on the x axis.
      * @return An input vector specified by the four given actions.
      */
-    public static Vec2f getVector(String up, String down, String left, String right) {
-        var vector = new Vec2f(getAxis(right, left), getAxis(up, down));
+    public static Vector2 getVector(String up, String down, String left, String right) {
+        var vector = new Vector2(getAxis(right, left), getAxis(up, down));
         if(vector.lengthSquared() > 1.0f) {
             return vector.normalized();
         }

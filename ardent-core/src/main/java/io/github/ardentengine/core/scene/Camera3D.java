@@ -1,8 +1,8 @@
 package io.github.ardentengine.core.scene;
 
-import io.github.ardentengine.core.rendering.RenderingServer;
 import io.github.ardentengine.core.display.DisplayServer;
-import io.github.scalamath.vecmatlib.Mat4f;
+import io.github.ardentengine.core.math.Matrix4;
+import io.github.ardentengine.core.rendering.RenderingServer;
 
 /**
  * Camera node for 3D scenes.
@@ -60,9 +60,9 @@ public class Camera3D extends Node3D {
      *
      * @return The camera's projection matrix.
      */
-    public final Mat4f projectionMatrix() {
+    public final Matrix4 projectionMatrix() {
         // FIXME: Bug in vecmatlib
-        return Mat4f.perspectiveProjection(this.fov / 2.0, DisplayServer.getInstance().getWindowSize(), this.nearPlane, this.farPlane);
+        return Matrix4.perspectiveProjection(this.fov / 2.0, DisplayServer.getInstance().getWindowSize(), this.nearPlane, this.farPlane);
     }
 
     /**
@@ -71,8 +71,8 @@ public class Camera3D extends Node3D {
      *
      * @return The camera's view matrix.
      */
-    public final Mat4f viewMatrix() {
-        return Mat4f.rotation(this.rotation()).multiply(Mat4f.translation(this.globalPosition().negated()));
+    public final Matrix4 viewMatrix() {
+        return Matrix4.rotation(this.rotation()).multiply(Matrix4.translation(this.globalPosition().negated()));
     }
 
     // FIXME: Reimplement the ability to switch between cameras

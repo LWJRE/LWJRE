@@ -1,7 +1,7 @@
 package io.github.ardentengine.core.rendering;
 
-import io.github.scalamath.colorlib.Gradient;
-import io.github.scalamath.vecmatlib.Vec2i;
+import io.github.ardentengine.core.math.Gradient;
+import io.github.ardentengine.core.math.Vector2i;
 
 import java.nio.ByteBuffer;
 import java.util.Objects;
@@ -108,7 +108,7 @@ public class GradientTexture extends Texture {
      *
      * @param size Size of the texture.
      */
-    public void setSize(Vec2i size) {
+    public void setSize(Vector2i size) {
         this.setSize(size.x(), size.y());
     }
 }

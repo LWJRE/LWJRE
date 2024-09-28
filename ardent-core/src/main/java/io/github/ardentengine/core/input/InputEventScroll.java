@@ -1,6 +1,6 @@
 package io.github.ardentengine.core.input;
 
-import io.github.scalamath.vecmatlib.Vec2f;
+import io.github.ardentengine.core.math.Vector2;
 
 /**
  * Input event that represents a scroll on a mouse wheel or touchpad.
@@ -10,12 +10,12 @@ import io.github.scalamath.vecmatlib.Vec2f;
  */
 public record InputEventScroll(float horizontal, float vertical) implements InputEvent {
 
-    public InputEventScroll(Vec2f scroll) {
+    public InputEventScroll(Vector2 scroll) {
         this(scroll.x(), scroll.y());
     }
 
-    public Vec2f scroll() {
-        return new Vec2f(this.horizontal, this.vertical);
+    public Vector2 scroll() {
+        return new Vector2(this.horizontal, this.vertical);
     }
 
     @Override

@@ -1,7 +1,7 @@
 package io.github.ardentengine.core.scene;
 
-import io.github.scalamath.vecmatlib.Mat2x3f;
-import io.github.scalamath.vecmatlib.Vec2f;
+import io.github.ardentengine.core.math.Matrix2x3;
+import io.github.ardentengine.core.math.Vector2;
 
 import java.util.Objects;
 
@@ -15,11 +15,11 @@ import java.util.Objects;
 public class Node2D extends Node {
 
     /** Position of this node relative to its parent. */
-    private Vec2f position = Vec2f.Zero();
+    private Vector2 position = Vector2.ZERO;
     /**Rotation in radians of this node relative to its parent. */
     private double rotation = 0.0;
     /** Scale of this node. */
-    private Vec2f scale = Vec2f.One();
+    private Vector2 scale = Vector2.ONE;
 
     // TODO: Skew
 
@@ -32,9 +32,9 @@ public class Node2D extends Node {
     // TODO: Y-Sort
 
     /** Cached local transform. */
-    private Mat2x3f localTransform = null;
+    private Matrix2x3 localTransform = null;
     /** Cached global transform. */
-    private Mat2x3f globalTransform = null;
+    private Matrix2x3 globalTransform = null;
 
     /**
      * Private method used to invalidate this node's transform when its position, rotation, or scale are changed.
@@ -72,7 +72,7 @@ public class Node2D extends Node {
      *
      * @return The position of this node relative to its parent.
      */
-    public final Vec2f position() {
+    public final Vector2 position() {
         return this.position;
     }
 
@@ -85,7 +85,7 @@ public class Node2D extends Node {
      *
      * @see Node2D#setPosition(float, float)
      */
-    public final void setPosition(Vec2f position) {
+    public final void setPosition(Vector2 position) {
         Objects.requireNonNull(position, "Position cannot be null");
         if(!this.position.equals(position)) {
             this.position = position;
@@ -100,11 +100,11 @@ public class Node2D extends Node {
      * @param x Position of this node on the x axis.
      * @param y Position of this node on the y axis.
      *
-     * @see Node2D#setPosition(Vec2f)
+     * @see Node2D#setPosition(Vector2)
      */
     public final void setPosition(float x, float y) {
         if(!this.position.equals(x, y)) {
-            this.position = new Vec2f(x, y);
+            this.position = new Vector2(x, y);
             this.invalidateTransform();
         }
     }
@@ -117,7 +117,7 @@ public class Node2D extends Node {
      *
      * @see Node2D#translate(float, float)
      */
-    public final void translate(Vec2f offset) {
+    public final void translate(Vector2 offset) {
         Objects.requireNonNull(offset, "Offset cannot be null");
         if(!offset.equals(0.0f, 0.0f)) {
             this.position = this.position.plus(offset);
@@ -131,7 +131,7 @@ public class Node2D extends Node {
      * @param x Translation on the x axis.
      * @param y Translation on the y axis.
      *
-     * @see Node2D#translate(Vec2f)
+     * @see Node2D#translate(Vector2)
      */
     public final void translate(float x, float y) {
         if(x != 0.0f || y != 0.0f) {
@@ -226,7 +226,7 @@ public class Node2D extends Node {
      *
      * @return The scale of this node.
      */
-    public final Vec2f scale() {
+    public final Vector2 scale() {
         return this.scale;
     }
 
@@ -239,7 +239,7 @@ public class Node2D extends Node {
      *
      * @see Node2D#setScale(float, float)
      */
-    public final void setScale(Vec2f scale) {
+    public final void setScale(Vector2 scale) {
         Objects.requireNonNull(scale, "Scale cannot be null");
         if(!this.scale.equals(scale)) {
             this.scale = scale;
@@ -254,11 +254,11 @@ public class Node2D extends Node {
      * @param x Scale on the x axis.
      * @param y Scale on the y axis.
      *
-     * @see Node2D#setScale(Vec2f)
+     * @see Node2D#setScale(Vector2)
      */
     public final void setScale(float x, float y) {
         if(!this.scale.equals(x, y)) {
-            this.scale = new Vec2f(x, y);
+            this.scale = new Vector2(x, y);
             this.invalidateTransform();
         }
     }
@@ -271,7 +271,7 @@ public class Node2D extends Node {
      *
      * @see Node2D#applyScale(float, float)
      */
-    public final void applyScale(Vec2f scale) {
+    public final void applyScale(Vector2 scale) {
         Objects.requireNonNull(scale, "Scale cannot be null");
         if(!scale.equals(1.0f, 1.0f)) {
             this.scale = this.scale.multiply(scale);
@@ -285,7 +285,7 @@ public class Node2D extends Node {
      * @param x Scale ratio on the x axis.
      * @param y Scale ratio on the y axis.
      *
-     * @see Node2D#applyScale(Vec2f)
+     * @see Node2D#applyScale(Vector2)
      */
     public final void applyScale(float x, float y) {
         if(x != 1.0f || y != 1.0f) {
@@ -319,13 +319,13 @@ public class Node2D extends Node {
      *
      * @return This node's local transform as a 2x3 transformation matrix.
      */
-    public final Mat2x3f localTransform() {
+    public final Matrix2x3 localTransform() {
         if(this.localTransform != null) {
             return this.localTransform;
         }
         var sin = (float) Math.sin(this.rotation());
         var cos = (float) Math.cos(this.rotation());
-        return this.localTransform = new Mat2x3f(
+        return this.localTransform = new Matrix2x3(
             cos * this.scale().x(), -sin * this.scale().y(), this.position().x(),
             sin * this.scale().x(), cos * this.scale().y(), this.position().y()
         );
@@ -339,7 +339,7 @@ public class Node2D extends Node {
      *
      * @return This node's global transform as a 2x3 transformation matrix.
      */
-    public final Mat2x3f globalTransform() {
+    public final Matrix2x3 globalTransform() {
         if(this.globalTransform != null) {
             return this.globalTransform;
         } else if(this.parent() instanceof Node2D parent) {
@@ -353,8 +353,8 @@ public class Node2D extends Node {
      *
      * @return The global position of this node.
      */
-    public final Vec2f globalPosition() {
-        return this.globalTransform().col2();
+    public final Vector2 globalPosition() {
+        return this.globalTransform().column2();
     }
 
     /**
@@ -366,7 +366,7 @@ public class Node2D extends Node {
      * @param x Global position on the x axis.
      * @param y Global position on the y axis.
      *
-     * @see Node2D#setGlobalPosition(Vec2f)
+     * @see Node2D#setGlobalPosition(Vector2)
      */
     public final void setGlobalPosition(float x, float y) {
         if(this.parent() instanceof Node2D parent) {
@@ -387,7 +387,7 @@ public class Node2D extends Node {
      *
      * @see Node2D#setGlobalPosition(float, float)
      */
-    public final void setGlobalPosition(Vec2f position) {
+    public final void setGlobalPosition(Vector2 position) {
         Objects.requireNonNull(position, "Position cannot be null");
         if(this.parent() instanceof Node2D parent) {
             this.setPosition(parent.globalTransform().affineInverse().multiply(position, 1.0f));
@@ -440,9 +440,9 @@ public class Node2D extends Node {
             // Set rotation
             var sin = (float) Math.sin(rotation);
             var cos = (float) Math.cos(rotation);
-            var sx = transform.col0().length();
-            var sy = Math.signum(transform.m00() * transform.m11() - transform.m10() * transform.m01()) * transform.col1().length();
-            transform = new Mat2x3f(cos * sx, -sin * sy, transform.m02(), sin * sx, cos * sy, transform.m12());
+            var sx = transform.column0().length();
+            var sy = Math.signum(transform.m00() * transform.m11() - transform.m10() * transform.m01()) * transform.column1().length();
+            transform = new Matrix2x3(cos * sx, -sin * sy, transform.m02(), sin * sx, cos * sy, transform.m12());
             // Get local transform from global transform
             transform = parentTransform.affineInverse().multiply(transform, 0.0f, 0.0f, 1.0f);
             // Set rotation
@@ -472,10 +472,10 @@ public class Node2D extends Node {
      *
      * @return The global scale of this node.
      */
-    public final Vec2f globalScale() {
+    public final Vector2 globalScale() {
         var transform = this.globalTransform();
         var sign = Math.signum(transform.m00() * transform.m11() - transform.m10() * transform.m01());
-        return new Vec2f(transform.col0().length(), sign * transform.col1().length());
+        return new Vector2(transform.column0().length(), sign * transform.column1().length());
     }
 
     /**
@@ -487,7 +487,7 @@ public class Node2D extends Node {
      * @param x Global scale on the x axis.
      * @param y Global scale on the y axis.
      *
-     * @see Node2D#setGlobalScale(Vec2f)
+     * @see Node2D#setGlobalScale(Vector2)
      */
     public final void setGlobalScale(float x, float y) {
         if(this.parent() instanceof Node2D parent) {
@@ -495,16 +495,16 @@ public class Node2D extends Node {
             var parentTransform = parent.globalTransform();
             var transform = parentTransform.multiply(this.localTransform(), 0.0f, 0.0f, 1.0f);
             // Set scale
-            transform = Mat2x3f.fromColumns(
-                transform.col0().normalized().multipliedBy(x),
-                transform.col1().normalized().multipliedBy(y),
-                transform.col2()
+            transform = Matrix2x3.fromColumns(
+                transform.column0().normalized().multiply(x),
+                transform.column1().normalized().multiply(y),
+                transform.column2()
             );
             // Get local transform from global transform
             transform = parentTransform.affineInverse().multiply(transform, 0.0f, 0.0f, 1.0f);
             // Set scale
             var sign = Math.signum(transform.m00() * transform.m11() - transform.m10() * transform.m01());
-            this.setScale(transform.col0().length(), sign * transform.col1().length());
+            this.setScale(transform.column0().length(), sign * transform.column1().length());
         } else {
             this.setScale(x, y);
         }
@@ -521,7 +521,7 @@ public class Node2D extends Node {
      *
      * @see Node2D#setGlobalScale(float, float)
      */
-    public final void setGlobalScale(Vec2f scale) {
+    public final void setGlobalScale(Vector2 scale) {
         Objects.requireNonNull(scale, "Scale cannot be null");
         this.setGlobalScale(scale.x(), scale.y());
     }
@@ -535,12 +535,12 @@ public class Node2D extends Node {
      * @param transform Local transform as a 2x3 transformation matrix.
      * @throws NullPointerException If the given transform is null.
      */
-    public final void setLocalTransform(Mat2x3f transform) {
+    public final void setLocalTransform(Matrix2x3 transform) {
         Objects.requireNonNull(transform, "Transform cannot be null");
         this.setPosition(transform.m02(), transform.m12());
         this.setRotation(Math.atan2(transform.m10(), transform.m00()));
         var sign = Math.signum(transform.m00() * transform.m11() - transform.m10() * transform.m01());
-        this.setScale(transform.col0().length(), sign * transform.col1().length());
+        this.setScale(transform.column0().length(), sign * transform.column1().length());
     }
 
     /**
@@ -549,13 +549,13 @@ public class Node2D extends Node {
      *     Sets the {@link Node2D#position}, {@link Node2D#rotation}, and {@link Node2D#scale} of this node so that its {@link Node2D#globalTransform()} will be equal to the given transform.
      * </p>
      * <p>
-     *     If this node's parent is not a {@code Node2D}, this method is equivalent to {@link Node2D#setLocalTransform(Mat2x3f)}.
+     *     If this node's parent is not a {@code Node2D}, this method is equivalent to {@link Node2D#setLocalTransform(Matrix2x3)}.
      * </p>
      *
      * @param transform Global transform as a 2x3 transformation matrix.
      * @throws NullPointerException If the given transform is null.
      */
-    public final void setGlobalTransform(Mat2x3f transform) {
+    public final void setGlobalTransform(Matrix2x3 transform) {
         Objects.requireNonNull(transform, "Transform cannot be null");
         if(this.parent() instanceof Node2D parent) {
             this.setLocalTransform(parent.globalTransform().affineInverse().multiply(transform, 0.0f, 0.0f, 1.0f));
@@ -587,7 +587,7 @@ public class Node2D extends Node {
      *
      * @see Node2D#toLocal(float, float)
      */
-    public final Vec2f toLocal(Vec2f globalPosition) {
+    public final Vector2 toLocal(Vector2 globalPosition) {
         Objects.requireNonNull(globalPosition, "Position cannot be null");
         return this.globalTransform().affineInverse().multiply(globalPosition, 1.0f);
     }
@@ -599,9 +599,9 @@ public class Node2D extends Node {
      * @param y Position in global coordinates on the y axis,
      * @return The given global position in local coordinates relative to this node.
      *
-     * @see Node2D#toLocal(Vec2f)
+     * @see Node2D#toLocal(Vector2)
      */
-    public final Vec2f toLocal(float x, float y) {
+    public final Vector2 toLocal(float x, float y) {
         return this.globalTransform().affineInverse().multiply(x, y, 1.0f);
     }
 
@@ -614,7 +614,7 @@ public class Node2D extends Node {
      *
      * @see Node2D#toGlobal(float, float)
      */
-    public final Vec2f toGlobal(Vec2f localPosition) {
+    public final Vector2 toGlobal(Vector2 localPosition) {
         Objects.requireNonNull(localPosition, "Position cannot be null");
         return this.globalTransform().multiply(localPosition, 1.0f);
     }
@@ -626,9 +626,9 @@ public class Node2D extends Node {
      * @param y Position in local coordinates on the y axis relative to this node.
      * @return The given local position relative to this node in global coordinates.
      *
-     * @see Node2D#toGlobal(Vec2f)
+     * @see Node2D#toGlobal(Vector2)
      */
-    public final Vec2f toGlobal(float x, float y) {
+    public final Vector2 toGlobal(float x, float y) {
         return this.globalTransform().multiply(x, y, 1.0f);
     }
 
@@ -639,7 +639,7 @@ public class Node2D extends Node {
      * @return The angle between this node and the given point in radians.
      * @throws NullPointerException If the given position is null.
      */
-    public final double angleTo(Vec2f position) {
+    public final double angleTo(Vector2 position) {
         Objects.requireNonNull(position, "Position cannot be null");
         return this.toLocal(position).multiply(this.scale()).angle();
     }
@@ -661,7 +661,7 @@ public class Node2D extends Node {
      * @param position The point this node should look at in global coordinates.
      * @throws NullPointerException If the given position is null.
      */
-    public final void lookAt(Vec2f position) {
+    public final void lookAt(Vector2 position) {
         Objects.requireNonNull(position, "Position cannot be null");
         this.rotate(this.angleTo(position));
     }

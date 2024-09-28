@@ -1,7 +1,7 @@
 package io.github.ardentengine.core.scene;
 
-import io.github.scalamath.vecmatlib.Mat2x3f;
-import io.github.scalamath.vecmatlib.Vec2f;
+import io.github.ardentengine.core.math.Matrix2x3;
+import io.github.ardentengine.core.math.Vector2;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -12,9 +12,9 @@ public class TestNode2D {
         var node = new Node2D();
         node.setPosition(1.0f, 2.0f);
         node.translate(1.0f, 0.5f);
-        Assertions.assertEquals(new Vec2f(2.0f, 2.5f), node.position());
-        node.translate(new Vec2f(-0.5f, 2.0f));
-        Assertions.assertEquals(new Vec2f(1.5f, 4.5f), node.position());
+        Assertions.assertEquals(new Vector2(2.0f, 2.5f), node.position());
+        node.translate(new Vector2(-0.5f, 2.0f));
+        Assertions.assertEquals(new Vector2(1.5f, 4.5f), node.position());
     }
 
     @Test
@@ -52,9 +52,9 @@ public class TestNode2D {
         var node = new Node2D();
         node.setScale(1.5f, 1.0f);
         node.applyScale(2.0f, 1.5f);
-        Assertions.assertEquals(new Vec2f(3.0f, 1.5f), node.scale());
-        node.applyScale(new Vec2f(2.0f, 0.5f));
-        Assertions.assertEquals(new Vec2f(6.0f, 0.75f), node.scale());
+        Assertions.assertEquals(new Vector2(3.0f, 1.5f), node.scale());
+        node.applyScale(new Vector2(2.0f, 0.5f));
+        Assertions.assertEquals(new Vector2(6.0f, 0.75f), node.scale());
     }
 
     @Test
@@ -63,9 +63,9 @@ public class TestNode2D {
         node.setPosition(2.0f, 1.0f);
         node.setRotation(Math.PI / 2.0);
         node.setScale(1.1f, 1.1f);
-        var expected = Mat2x3f.translation(2.0f, 1.0f)
-            .multiply(Mat2x3f.rotation(Math.PI / 2.0), 0.0f, 0.0f, 1.0f)
-            .multiply(Mat2x3f.scaling(1.1f, 1.1f), 0.0f, 0.0f, 1.0f);
+        var expected = Matrix2x3.translation(2.0f, 1.0f)
+            .multiply(Matrix2x3.rotation(Math.PI / 2.0), 0.0f, 0.0f, 1.0f)
+            .multiply(Matrix2x3.scaling(1.1f, 1.1f), 0.0f, 0.0f, 1.0f);
         Assertions.assertEquals(expected, node.localTransform());
     }
 
@@ -80,9 +80,9 @@ public class TestNode2D {
         child.setRotation(Math.PI / 4.0);
         child.setScale(1.0f, 2.0f);
         child.setParent(parent);
-        var expected = Mat2x3f.translation(0.9f, 1.0f)
-            .multiply(Mat2x3f.rotation(Math.PI * 0.75), 0.0f, 0.0f, 1.0f)
-            .multiply(Mat2x3f.scaling(1.1f, 2.2f), 0.0f, 0.0f, 1.0f);
+        var expected = Matrix2x3.translation(0.9f, 1.0f)
+            .multiply(Matrix2x3.rotation(Math.PI * 0.75), 0.0f, 0.0f, 1.0f)
+            .multiply(Matrix2x3.scaling(1.1f, 2.2f), 0.0f, 0.0f, 1.0f);
         Assertions.assertEquals(expected, child.globalTransform());
     }
 
@@ -94,7 +94,7 @@ public class TestNode2D {
         var child = new Node2D();
         child.setPosition(1.0f, 0.0f);
         child.setParent(parent);
-        Assertions.assertEquals(new Vec2f(1.0f, 1.0f), child.globalPosition());
+        Assertions.assertEquals(new Vector2(1.0f, 1.0f), child.globalPosition());
     }
 
     @Test
@@ -104,9 +104,9 @@ public class TestNode2D {
         var child = new Node2D();
         child.setParent(parent);
         child.setGlobalPosition(1.0f, 1.0f);
-        Assertions.assertEquals(new Vec2f(0.0f, 1.0f), child.position());
-        child.setGlobalPosition(Vec2f.Zero());
-        Assertions.assertEquals(new Vec2f(-1.0f, 0.0f), child.position());
+        Assertions.assertEquals(new Vector2(0.0f, 1.0f), child.position());
+        child.setGlobalPosition(Vector2.ZERO);
+        Assertions.assertEquals(new Vector2(-1.0f, 0.0f), child.position());
     }
 
     @Test
@@ -158,7 +158,7 @@ public class TestNode2D {
         var child = new Node2D();
         child.setScale(1.5f, 3.0f);
         child.setParent(parent);
-        Assertions.assertEquals(new Vec2f(3.0f, 4.5f), child.globalScale());
+        Assertions.assertEquals(new Vector2(3.0f, 4.5f), child.globalScale());
     }
 
     @Test
@@ -168,28 +168,28 @@ public class TestNode2D {
         var child = new Node2D();
         child.setParent(parent);
         child.setGlobalScale(3.0f, 4.5f);
-        Assertions.assertEquals(new Vec2f(1.5f, 3.0f), child.scale());
-        child.setGlobalScale(Vec2f.One());
-        Assertions.assertEquals(new Vec2f(0.5f, 1.0f / 1.5f), child.scale());
+        Assertions.assertEquals(new Vector2(1.5f, 3.0f), child.scale());
+        child.setGlobalScale(Vector2.ONE);
+        Assertions.assertEquals(new Vector2(0.5f, 1.0f / 1.5f), child.scale());
     }
 
     @Test
     public void testSetLocalTransform() {
-        var transform = Mat2x3f.translation(2.0f, 1.0f)
-            .multiply(Mat2x3f.rotation(Math.PI / 4.0), 0.0f, 0.0f, 1.0f)
-            .multiply(Mat2x3f.scaling(1.1f, 1.1f), 0.0f, 0.0f, 1.0f);
+        var transform = Matrix2x3.translation(2.0f, 1.0f)
+            .multiply(Matrix2x3.rotation(Math.PI / 4.0), 0.0f, 0.0f, 1.0f)
+            .multiply(Matrix2x3.scaling(1.1f, 1.1f), 0.0f, 0.0f, 1.0f);
         var node = new Node2D();
         node.setLocalTransform(transform);
-        Assertions.assertEquals(new Vec2f(2.0f, 1.0f), node.position());
+        Assertions.assertEquals(new Vector2(2.0f, 1.0f), node.position());
         Assertions.assertEquals(Math.PI / 4.0, node.rotation(), 1e-6);
-        Assertions.assertEquals(new Vec2f(1.1f, 1.1f), node.scale());
+        Assertions.assertEquals(new Vector2(1.1f, 1.1f), node.scale());
     }
 
     @Test
     public void testSetGlobalTransform() {
-        var transform = Mat2x3f.translation(2.0f, 1.0f)
-            .multiply(Mat2x3f.rotation(Math.PI / 4.0), 0.0f, 0.0f, 1.0f)
-            .multiply(Mat2x3f.scaling(1.1f, 1.1f), 0.0f, 0.0f, 1.0f);
+        var transform = Matrix2x3.translation(2.0f, 1.0f)
+            .multiply(Matrix2x3.rotation(Math.PI / 4.0), 0.0f, 0.0f, 1.0f)
+            .multiply(Matrix2x3.scaling(1.1f, 1.1f), 0.0f, 0.0f, 1.0f);
         var parent = new Node2D();
         parent.setPosition(3.0f, -1.0f);
         parent.setRotation(Math.PI / 2.0);
@@ -197,9 +197,9 @@ public class TestNode2D {
         var child = new Node2D();
         child.setParent(parent);
         child.setGlobalTransform(transform);
-        Assertions.assertEquals(new Vec2f(2.0f, 1.0f), child.globalPosition());
+        Assertions.assertEquals(new Vector2(2.0f, 1.0f), child.globalPosition());
         Assertions.assertEquals(Math.PI / 4.0, child.globalRotation(), 1e-6);
-        Assertions.assertEquals(new Vec2f(1.1f, 1.1f), child.globalScale());
+        Assertions.assertEquals(new Vector2(1.1f, 1.1f), child.globalScale());
     }
 
     @Test
@@ -230,8 +230,8 @@ public class TestNode2D {
         var child = new Node2D();
         child.setPosition(3.0f, -0.5f);
         child.setParent(parent);
-        Assertions.assertEquals(new Vec2f(1.0f, 1.0f), child.toLocal(new Vec2f(6.0f, 1.5f)));
-        Assertions.assertEquals(new Vec2f(1.0f, 1.0f), child.toLocal(6.0f, 1.5f));
+        Assertions.assertEquals(new Vector2(1.0f, 1.0f), child.toLocal(new Vector2(6.0f, 1.5f)));
+        Assertions.assertEquals(new Vector2(1.0f, 1.0f), child.toLocal(6.0f, 1.5f));
     }
 
     @Test
@@ -241,15 +241,15 @@ public class TestNode2D {
         var child = new Node2D();
         child.setPosition(3.0f, -0.5f);
         child.setParent(parent);
-        Assertions.assertEquals(new Vec2f(6.0f, 1.5f), child.toGlobal(new Vec2f(1.0f, 1.0f)));
-        Assertions.assertEquals(new Vec2f(6.0f, 1.5f), child.toGlobal(1.0f, 1.0f));
+        Assertions.assertEquals(new Vector2(6.0f, 1.5f), child.toGlobal(new Vector2(1.0f, 1.0f)));
+        Assertions.assertEquals(new Vector2(6.0f, 1.5f), child.toGlobal(1.0f, 1.0f));
     }
 
     @Test
     public void testAngleTo() {
         var node = new Node2D();
         node.setPosition(2.0f, 1.0f);
-        Assertions.assertEquals(Math.PI / 4.0, node.angleTo(new Vec2f(3.0f, 2.0f)), 1e-6);
+        Assertions.assertEquals(Math.PI / 4.0, node.angleTo(new Vector2(3.0f, 2.0f)), 1e-6);
         Assertions.assertEquals(Math.PI / 4.0, node.angleTo(3.0f, 2.0f), 1e-6);
     }
 
@@ -258,7 +258,7 @@ public class TestNode2D {
         var node = new Node2D();
         node.setPosition(2.0f, 1.0f);
         node.setRotation(0.1);
-        node.lookAt(new Vec2f(3.0f, 2.0f));
+        node.lookAt(new Vector2(3.0f, 2.0f));
         Assertions.assertEquals(Math.PI / 4.0, node.rotation(), 1e-6);
         node.lookAt(2.0f, 5.0f);
         Assertions.assertEquals(Math.PI / 2.0, node.rotation(), 1e-6);

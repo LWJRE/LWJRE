@@ -1,13 +1,11 @@
 package io.github.ardentengine.core.resources;
 
 import io.github.ardentengine.core.logging.Logger;
-import io.github.scalamath.colorlib.*;
-import io.github.scalamath.vecmatlib.*;
+import io.github.ardentengine.core.math.*;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.AbstractConstruct;
 import org.yaml.snakeyaml.constructor.Constructor;
-import org.yaml.snakeyaml.constructor.SafeConstructor;
 import org.yaml.snakeyaml.error.YAMLException;
 import org.yaml.snakeyaml.introspector.BeanAccess;
 import org.yaml.snakeyaml.nodes.*;
@@ -75,15 +73,15 @@ public class YamlLoader implements ResourceLoader {
             super(loadingConfig);
             this.yamlConstructors.put(Tag.FLOAT, new ConstructActualFloat());
             this.yamlConstructors.put(new Tag("!getOrLoad"), new ConstructResource());
-            this.yamlConstructors.put(new Tag("!Vec2f"), new ConstructVec2f());
-            this.yamlConstructors.put(new Tag("!Vec3f"), new ConstructVec3f());
-            this.yamlConstructors.put(new Tag("!Vec4f"), new ConstructVec4f());
-            this.yamlConstructors.put(new Tag("!Vec2i"), new ConstructVec2i());
-            this.yamlConstructors.put(new Tag("!Vec3i"), new ConstructVec3i());
-            this.yamlConstructors.put(new Tag("!Vec4i"), new ConstructVec4i());
-            this.yamlConstructors.put(new Tag("!Col3f"), new ConstructCol3f());
-            this.yamlConstructors.put(new Tag("!Col4f"), new ConstructCol4f());
-            this.yamlConstructors.put(new Tag("!Col1i"), new ConstructCol1i());
+            this.yamlConstructors.put(new Tag("!Vector2"), new ConstructVector2());
+            this.yamlConstructors.put(new Tag("!Vector3"), new ConstructVector3());
+            this.yamlConstructors.put(new Tag("!Vector4"), new ConstructVector4());
+            this.yamlConstructors.put(new Tag("!Vector2i"), new ConstructVector2i());
+            this.yamlConstructors.put(new Tag("!Vector3i"), new ConstructVector3i());
+            this.yamlConstructors.put(new Tag("!Vector4i"), new ConstructVector4i());
+            this.yamlConstructors.put(new Tag("!Color"), new ConstructColor());
+            this.yamlConstructors.put(new Tag("!Color"), new ConstructColor());
+            this.yamlConstructors.put(new Tag("!Color"), new ConstructColor());
             this.yamlConstructors.put(new Tag("!Gradient"), new ConstructGradient());
             this.yamlConstructors.put(new Tag(Class.class), new ConstructClass());
         }
@@ -112,169 +110,136 @@ public class YamlLoader implements ResourceLoader {
         }
 
         /**
-         * YAML construct used to deserialize a {@link Vec2f} from a sequence or mapping node.
+         * YAML construct used to deserialize a {@link Vector2} from a sequence or mapping node.
          */
-        private class ConstructVec2f extends AbstractConstruct {
+        private class ConstructVector2 extends AbstractConstruct {
 
             @Override
             public Object construct(Node node) {
                 if(node instanceof SequenceNode sequenceNode) {
                     var sequence = constructSequence(sequenceNode);
-                    return new Vec2f(
+                    return new Vector2(
                         !sequence.isEmpty() && sequence.get(0) instanceof Number n ? n.floatValue() : 0.0f,
                         sequence.size() > 1 && sequence.get(1) instanceof Number n ? n.floatValue() : 0.0f
                     );
                 }
-                return Vec2f.Zero();
+                return Vector2.ZERO;
             }
         }
 
         /**
-         * YAML construct used to deserialize a {@link Vec2i} from a sequence or mapping node.
+         * YAML construct used to deserialize a {@link Vector2i} from a sequence or mapping node.
          */
-        private class ConstructVec2i extends AbstractConstruct {
+        private class ConstructVector2i extends AbstractConstruct {
 
             @Override
             public Object construct(Node node) {
                 if(node instanceof SequenceNode sequenceNode) {
                     var sequence = constructSequence(sequenceNode);
-                    return new Vec2i(
+                    return new Vector2i(
                         !sequence.isEmpty() && sequence.get(0) instanceof Number n ? n.intValue() : 0,
                         sequence.size() > 1 && sequence.get(1) instanceof Number n ? n.intValue() : 0
                     );
                 }
-                return Vec2i.Zero();
+                return Vector2i.ZERO;
             }
         }
 
         /**
-         * YAML construct used to deserialize a {@link Vec3f} from a sequence or mapping node.
+         * YAML construct used to deserialize a {@link Vector3} from a sequence or mapping node.
          */
-        private class ConstructVec3f extends AbstractConstruct {
+        private class ConstructVector3 extends AbstractConstruct {
 
             @Override
             public Object construct(Node node) {
                 if(node instanceof SequenceNode sequenceNode) {
                     var sequence = constructSequence(sequenceNode);
-                    return new Vec3f(
+                    return new Vector3(
                         !sequence.isEmpty() && sequence.get(0) instanceof Number n ? n.floatValue() : 0.0f,
                         sequence.size() > 1 && sequence.get(1) instanceof Number n ? n.floatValue() : 0.0f,
                         sequence.size() > 2 && sequence.get(2) instanceof Number n ? n.floatValue() : 0.0f
                     );
                 }
-                return Vec3f.Zero();
+                return Vector3.ZERO;
             }
         }
 
         /**
-         * YAML construct used to deserialize a {@link Vec3i} from a sequence or mapping node.
+         * YAML construct used to deserialize a {@link Vector3i} from a sequence or mapping node.
          */
-        private class ConstructVec3i extends AbstractConstruct {
+        private class ConstructVector3i extends AbstractConstruct {
 
             @Override
             public Object construct(Node node) {
                 if(node instanceof SequenceNode sequenceNode) {
                     var sequence = constructSequence(sequenceNode);
-                    return new Vec3i(
+                    return new Vector3i(
                         !sequence.isEmpty() && sequence.get(0) instanceof Number n ? n.intValue() : 0,
                         sequence.size() > 1 && sequence.get(1) instanceof Number n ? n.intValue() : 0,
                         sequence.size() > 2 && sequence.get(2) instanceof Number n ? n.intValue() : 0
                     );
                 }
-                return Vec3i.Zero();
+                return Vector3i.ZERO;
             }
         }
 
         /**
-         * YAML construct used to deserialize a {@link Vec4f} from a sequence or mapping node.
+         * YAML construct used to deserialize a {@link Vector4} from a sequence or mapping node.
          */
-        private class ConstructVec4f extends AbstractConstruct {
+        private class ConstructVector4 extends AbstractConstruct {
 
             @Override
             public Object construct(Node node) {
                 if(node instanceof SequenceNode sequenceNode) {
                     var sequence = constructSequence(sequenceNode);
-                    return new Vec4f(
+                    return new Vector4(
                         !sequence.isEmpty() && sequence.get(0) instanceof Number n ? n.floatValue() : 0.0f,
                         sequence.size() > 1 && sequence.get(1) instanceof Number n ? n.floatValue() : 0.0f,
                         sequence.size() > 2 && sequence.get(2) instanceof Number n ? n.floatValue() : 0.0f,
                         sequence.size() > 3 && sequence.get(3) instanceof Number n ? n.floatValue() : 0.0f
                     );
                 }
-                return Vec4f.Zero();
+                return Vector4.ZERO;
             }
         }
 
         /**
-         * YAML construct used to deserialize a {@link Vec4i} from a sequence or mapping node.
+         * YAML construct used to deserialize a {@link Vector4i} from a sequence or mapping node.
          */
-        private class ConstructVec4i extends AbstractConstruct {
+        private class ConstructVector4i extends AbstractConstruct {
 
             @Override
             public Object construct(Node node) {
                 if(node instanceof SequenceNode sequenceNode) {
                     var sequence = constructSequence(sequenceNode);
-                    return new Vec4i(
+                    return new Vector4i(
                         !sequence.isEmpty() && sequence.get(0) instanceof Number n ? n.intValue() : 0,
                         sequence.size() > 1 && sequence.get(1) instanceof Number n ? n.intValue() : 0,
                         sequence.size() > 2 && sequence.get(2) instanceof Number n ? n.intValue() : 0,
                         sequence.size() > 3 && sequence.get(3) instanceof Number n ? n.intValue() : 0
                     );
                 }
-                return Vec4i.Zero();
+                return Vector4i.ZERO;
             }
         }
 
         /**
-         * YAML construct used to deserialize a {@link Col3f} from a sequence or mapping node.
+         * YAML construct used to deserialize a {@link Color} from a sequence or mapping node.
          */
-        private class ConstructCol3f extends AbstractConstruct {
+        private class ConstructColor extends AbstractConstruct {
 
             @Override
             public Object construct(Node node) {
                 if(node instanceof SequenceNode sequenceNode) {
                     var sequence = constructSequence(sequenceNode);
-                    return new Col3f(
-                        !sequence.isEmpty() && sequence.get(0) instanceof Number n ? n.floatValue() : 0.0f,
-                        sequence.size() > 1 && sequence.get(1) instanceof Number n ? n.floatValue() : 0.0f,
-                        sequence.size() > 2 && sequence.get(2) instanceof Number n ? n.floatValue() : 0.0f
-                    );
-                }
-                return new Col3f(0.0f, 0.0f, 0.0f);
-            }
-        }
-
-        /**
-         * YAML construct used to deserialize a {@link Col4f} from a sequence or mapping node.
-         */
-        private class ConstructCol4f extends AbstractConstruct {
-
-            @Override
-            public Object construct(Node node) {
-                if(node instanceof SequenceNode sequenceNode) {
-                    var sequence = constructSequence(sequenceNode);
-                    return new Col4f(
+                    return new Color(
                         !sequence.isEmpty() && sequence.get(0) instanceof Number n ? n.floatValue() : 0.0f,
                         sequence.size() > 1 && sequence.get(1) instanceof Number n ? n.floatValue() : 0.0f,
                         sequence.size() > 2 && sequence.get(2) instanceof Number n ? n.floatValue() : 0.0f,
                         sequence.size() > 3 && sequence.get(3) instanceof Number n ? n.floatValue() : 0.0f
                     );
                 }
-                return new Col4f(0.0f, 0.0f, 0.0f);
-            }
-        }
-
-        /**
-         * YAML construct used to deserialize a {@link Col1i} from a sequence or mapping node.
-         */
-        private class ConstructCol1i extends SafeConstructor.ConstructYamlInt {
-
-            @Override
-            public Object construct(Node node) {
-                if(super.construct(node) instanceof Number number) {
-                    return new Col1i(number.intValue());
-                }
-                return new Col1i(0);
+                return new Color(0.0f, 0.0f, 0.0f);
             }
         }
 
@@ -290,7 +255,7 @@ public class YamlLoader implements ResourceLoader {
                     var mapping = constructMapping(mappingNode);
                     for(var key : mapping.keySet()) {
                         if(key instanceof Number offset && mapping.get(key) instanceof Color color) {
-                            gradient = gradient.addPoint(offset.floatValue(), color);
+                            gradient = gradient.withPoint(offset.floatValue(), color);
                         }
                     }
                 }

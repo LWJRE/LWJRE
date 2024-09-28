@@ -1,8 +1,8 @@
 package io.github.ardentengine.core.scene;
 
+import io.github.ardentengine.core.math.Vector2;
+import io.github.ardentengine.core.math.Vector2i;
 import io.github.ardentengine.core.rendering.Texture;
-import io.github.scalamath.vecmatlib.Vec2f;
-import io.github.scalamath.vecmatlib.Vec2i;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +24,7 @@ public class Sprite2D extends VisualInstance2D {
     /**
      * The sprite's drawing offset.
      */
-    public Vec2f offset = Vec2f.Zero();
+    public Vector2 offset = Vector2.ZERO;
     /**
      * True if the sprite is flipped horizontally.
      */
@@ -61,10 +61,10 @@ public class Sprite2D extends VisualInstance2D {
     public final Map<String, Object> getShaderParameters() {
         var map = new HashMap<String, Object>();
         map.put("sprite_texture", this.spriteTexture);
-        map.put("texture_size", this.spriteTexture == null ? Vec2i.Zero() : this.spriteTexture.size());
-        map.put("offset", this.offset == null ? Vec2i.Zero() : this.offset);
-        map.put("flip", new Vec2i(this.flipH ? -1 : 1, this.flipV ? -1 : 1));
-        map.put("frames", new Vec2i(this.hFrames, this.vFrames));
+        map.put("texture_size", this.spriteTexture == null ? Vector2i.ZERO : this.spriteTexture.size());
+        map.put("offset", this.offset == null ? Vector2i.ZERO : this.offset);
+        map.put("flip", new Vector2i(this.flipH ? -1 : 1, this.flipV ? -1 : 1));
+        map.put("frames", new Vector2i(this.hFrames, this.vFrames));
         map.put("frame", this.frame);
         return map;
     }

@@ -4,8 +4,8 @@ import io.github.ardentengine.core.display.CursorMode;
 import io.github.ardentengine.core.display.CursorShape;
 import io.github.ardentengine.core.display.DisplayServer;
 import io.github.ardentengine.core.display.WindowMode;
-import io.github.scalamath.vecmatlib.Vec2f;
-import io.github.scalamath.vecmatlib.Vec2i;
+import io.github.ardentengine.core.math.Vector2;
+import io.github.ardentengine.core.math.Vector2i;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.system.MemoryUtil;
 
@@ -30,7 +30,7 @@ public class GlfwDisplayServer extends DisplayServer {
     }
 
     @Override
-    public Vec2i getWindowSize() {
+    public Vector2i getWindowSize() {
         return MainWindow.getInstance().getSize();
     }
 
@@ -40,7 +40,7 @@ public class GlfwDisplayServer extends DisplayServer {
     }
 
     @Override
-    public Vec2i getWindowPosition() {
+    public Vector2i getWindowPosition() {
         return MainWindow.getInstance().getPosition();
     }
 
@@ -85,7 +85,7 @@ public class GlfwDisplayServer extends DisplayServer {
     }
 
     @Override
-    public Vec2f getCursorPosition() {
+    public Vector2 getCursorPosition() {
         return MainWindow.getInstance().getCursorPosition();
     }
 

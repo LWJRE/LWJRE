@@ -1,11 +1,9 @@
 package io.github.ardentengine.opengl;
 
 import io.github.ardentengine.core.logging.Logger;
+import io.github.ardentengine.core.math.*;
 import io.github.ardentengine.core.rendering.Shader;
 import io.github.ardentengine.core.rendering.Texture;
-import io.github.scalamath.colorlib.Col3f;
-import io.github.scalamath.colorlib.Col4f;
-import io.github.scalamath.vecmatlib.*;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.*;
 
@@ -165,8 +163,8 @@ public class ShaderData {
      * @param variable Name of the uniform variable.
      * @param value Value to assign.
      */
-    public void set(String variable, Vec2f value) {
-        value = Objects.requireNonNullElse(value, Vec2f.Zero());
+    public void set(String variable, Vector2 value) {
+        value = Objects.requireNonNullElse(value, Vector2.ZERO);
         this.set(variable, value.x(), value.y());
     }
 
@@ -188,20 +186,9 @@ public class ShaderData {
      * @param variable Name of the uniform variable.
      * @param value Value to assign.
      */
-    public void set(String variable, Vec3f value) {
-        value = Objects.requireNonNullElse(value, Vec3f.Zero());
+    public void set(String variable, Vector3 value) {
+        value = Objects.requireNonNullElse(value, Vector3.ZERO);
         this.set(variable, value.x(), value.y(), value.z());
-    }
-
-    /**
-     * Sets the value of a vec3 uniform variable.
-     *
-     * @param variable Name of the uniform variable.
-     * @param value Value to assign.
-     */
-    public void set(String variable, Col3f value) {
-        value = Objects.requireNonNullElse(value, new Col3f(0.0f, 0.0f, 0.0f));
-        this.set(variable, value.r(), value.g(), value.b());
     }
 
     /**
@@ -223,8 +210,8 @@ public class ShaderData {
      * @param variable Name of the uniform variable.
      * @param value Value to assign.
      */
-    public void set(String variable, Vec4f value) {
-        value = Objects.requireNonNullElse(value, Vec4f.Zero());
+    public void set(String variable, Vector4 value) {
+        value = Objects.requireNonNullElse(value, Vector4.ZERO);
         this.set(variable, value.x(), value.y(), value.z(), value.w());
     }
 
@@ -234,8 +221,8 @@ public class ShaderData {
      * @param variable Name of the uniform variable.
      * @param value Value to assign.
      */
-    public void set(String variable, Col4f value) {
-        value = Objects.requireNonNullElse(value, new Col4f(0.0f, 0.0f, 0.0f, 0.0f));
+    public void set(String variable, Color value) {
+        value = Objects.requireNonNullElse(value, new Color(0.0f, 0.0f, 0.0f, 0.0f));
         this.set(variable, value.r(), value.g(), value.b(), value.a());
     }
 
@@ -266,8 +253,8 @@ public class ShaderData {
      * @param variable Name of the uniform variable.
      * @param value Value to assign.
      */
-    public void set(String variable, Vec2i value) {
-        value = Objects.requireNonNullElse(value, Vec2i.Zero());
+    public void set(String variable, Vector2i value) {
+        value = Objects.requireNonNullElse(value, Vector2i.ZERO);
         this.set(variable, value.x(), value.y());
     }
 
@@ -289,8 +276,8 @@ public class ShaderData {
      * @param variable Name of the uniform variable.
      * @param value Value to assign.
      */
-    public void set(String variable, Vec3i value) {
-        value = Objects.requireNonNullElse(value, Vec3i.Zero());
+    public void set(String variable, Vector3i value) {
+        value = Objects.requireNonNullElse(value, Vector3i.ZERO);
         this.set(variable, value.x(), value.y(), value.z());
     }
 
@@ -313,10 +300,13 @@ public class ShaderData {
      * @param variable Name of the uniform variable.
      * @param value Value to assign.
      */
-    public void set(String variable, Vec4i value) {
-        value = Objects.requireNonNullElse(value, Vec4i.Zero());
+    public void set(String variable, Vector4i value) {
+        value = Objects.requireNonNullElse(value, Vector4i.ZERO);
         this.set(variable, value.x(), value.y(), value.z(), value.w());
     }
+
+    // TODO: Invert multiplications in shaders instead of transposing matrices
+    // EG: vertex * transform instead of transform * vertex
 
     /**
      * Sets the value of a mat2 uniform variable.
@@ -324,8 +314,8 @@ public class ShaderData {
      * @param variable Name of the uniform variable.
      * @param matrix Matrix to assign to the variable.
      */
-    public void set(String variable, Mat2f matrix) {
-        matrix = Objects.requireNonNullElse(matrix, Mat2f.Zero());
+    public void set(String variable, Matrix2 matrix) {
+        matrix = Objects.requireNonNullElse(matrix, Matrix2.ZERO);
         var buffer = BufferUtils.createFloatBuffer(4);
         buffer.put(matrix.m00()); buffer.put(matrix.m01());
         buffer.put(matrix.m10()); buffer.put(matrix.m11());
@@ -338,8 +328,8 @@ public class ShaderData {
      * @param variable Name of the uniform variable.
      * @param matrix Matrix to assign to the variable.
      */
-    public void set(String variable, Mat2x3f matrix) {
-        matrix = Objects.requireNonNullElse(matrix, Mat2x3f.Zero());
+    public void set(String variable, Matrix2x3 matrix) {
+        matrix = Objects.requireNonNullElse(matrix, Matrix2x3.ZERO);
         var buffer = BufferUtils.createFloatBuffer(6);
         buffer.put(matrix.m00()); buffer.put(matrix.m01()); buffer.put(matrix.m02());
         buffer.put(matrix.m10()); buffer.put(matrix.m11()); buffer.put(matrix.m12());
@@ -352,8 +342,8 @@ public class ShaderData {
      * @param variable Name of the uniform variable.
      * @param matrix Matrix to assign to the variable.
      */
-    public void set(String variable, Mat3f matrix) {
-        matrix = Objects.requireNonNullElse(matrix, Mat3f.Zero());
+    public void set(String variable, Matrix3 matrix) {
+        matrix = Objects.requireNonNullElse(matrix, Matrix3.ZERO);
         var buffer = BufferUtils.createFloatBuffer(9);
         buffer.put(matrix.m00()); buffer.put(matrix.m01()); buffer.put(matrix.m02());
         buffer.put(matrix.m10()); buffer.put(matrix.m11()); buffer.put(matrix.m12());
@@ -367,8 +357,8 @@ public class ShaderData {
      * @param variable Name of the uniform variable.
      * @param matrix Matrix to assign to the variable.
      */
-    public void set(String variable, Mat3x4f matrix) {
-        matrix = Objects.requireNonNullElse(matrix, Mat3x4f.Zero());
+    public void set(String variable, Matrix3x4 matrix) {
+        matrix = Objects.requireNonNullElse(matrix, Matrix3x4.ZERO);
         var buffer = BufferUtils.createFloatBuffer(12);
         buffer.put(matrix.m00()); buffer.put(matrix.m01()); buffer.put(matrix.m02()); buffer.put(matrix.m03());
         buffer.put(matrix.m10()); buffer.put(matrix.m11()); buffer.put(matrix.m12()); buffer.put(matrix.m13());
@@ -382,8 +372,8 @@ public class ShaderData {
      * @param variable Name of the uniform variable.
      * @param matrix Matrix to assign to the variable.
      */
-    public void set(String variable, Mat4f matrix) {
-        matrix = Objects.requireNonNullElse(matrix, Mat4f.Zero());
+    public void set(String variable, Matrix4 matrix) {
+        matrix = Objects.requireNonNullElse(matrix, Matrix4.ZERO);
         var buffer = BufferUtils.createFloatBuffer(16);
         buffer.put(matrix.m00()); buffer.put(matrix.m01()); buffer.put(matrix.m02()); buffer.put(matrix.m03());
         buffer.put(matrix.m10()); buffer.put(matrix.m11()); buffer.put(matrix.m12()); buffer.put(matrix.m13());
@@ -427,29 +417,29 @@ public class ShaderData {
         // TODO: Not a good implementation
         if(value instanceof Float f) {
             this.set(variable, f.floatValue());
-        } else if(value instanceof Vec2f vec) {
+        } else if(value instanceof Vector2 vec) {
             this.set(variable, vec);
-        } else if(value instanceof Vec3f vec) {
+        } else if(value instanceof Vector3 vec) {
             this.set(variable, vec);
-        } else if(value instanceof Vec4f vec) {
+        } else if(value instanceof Vector4 vec) {
             this.set(variable, vec);
         } else if(value instanceof Integer i) {
             this.set(variable, i.intValue());
-        } else if(value instanceof Vec2i vec) {
+        } else if(value instanceof Vector2i vec) {
             this.set(variable, vec);
-        } else if(value instanceof Vec3i vec) {
+        } else if(value instanceof Vector3i vec) {
             this.set(variable, vec);
-        } else if(value instanceof Vec4i vec) {
+        } else if(value instanceof Vector4i vec) {
             this.set(variable, vec);
-        } else if(value instanceof Mat2f mat) {
+        } else if(value instanceof Matrix2 mat) {
             this.set(variable, mat);
-        } else if(value instanceof Mat2x3f mat) {
+        } else if(value instanceof Matrix2x3 mat) {
             this.set(variable, mat);
-        } else if(value instanceof Mat3f mat) {
+        } else if(value instanceof Matrix3 mat) {
             this.set(variable, mat);
-        } else if(value instanceof Mat3x4f mat) {
+        } else if(value instanceof Matrix3x4 mat) {
             this.set(variable, mat);
-        } else if(value instanceof Mat4f mat) {
+        } else if(value instanceof Matrix4 mat) {
             this.set(variable, mat);
         } else if(value instanceof Texture texture) {
             this.set(variable, texture);

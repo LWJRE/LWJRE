@@ -1,8 +1,8 @@
 package io.github.ardentengine.core.input;
 
-import io.github.scalamath.vecmatlib.Vec2f;
+import io.github.ardentengine.core.math.Vector2;
 
 public interface InputEventMouse extends InputEvent {
 
-    Vec2f position();
+    Vector2 position();
 }
