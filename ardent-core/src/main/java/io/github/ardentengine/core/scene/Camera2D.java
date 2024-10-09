@@ -28,9 +28,9 @@ public class Camera2D extends Node2D {
     // TODO: Limits, drag, smoothing
 
     @Override
-    void update(float delta) {
+    void update(float deltaTime) {
         RenderingServer.getInstance().setCamera(this);
-        super.update(delta);
+        super.update(deltaTime);
     }
 
     public final Matrix4 projectionMatrix() {

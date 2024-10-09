@@ -36,6 +36,13 @@ public class Node2D extends Node {
     /** Cached global transform. */
     private Matrix2x3 globalTransform = null;
 
+    @Override
+    void exitTree() {
+        this.localTransform = null;
+        this.globalTransform = null;
+        super.exitTree();
+    }
+
     /**
      * Private method used to invalidate this node's transform when its position, rotation, or scale are changed.
      * <p>
@@ -52,18 +59,12 @@ public class Node2D extends Node {
         if(this.globalTransform != null) {
             this.localTransform = null;
             this.globalTransform = null;
-            for(var child : this.getChildren()) {
+            for(var child : this.children()) {
                 if(child instanceof Node2D) {
                     ((Node2D) child).invalidateTransform();
                 }
             }
         }
-    }
-
-    @Override
-    void exitTree() {
-        this.invalidateTransform();
-        super.exitTree();
     }
 
     /**
@@ -323,12 +324,7 @@ public class Node2D extends Node {
         if(this.localTransform != null) {
             return this.localTransform;
         }
-        var sin = (float) Math.sin(this.rotation());
-        var cos = (float) Math.cos(this.rotation());
-        return this.localTransform = new Matrix2x3(
-            cos * this.scale().x(), -sin * this.scale().y(), this.position().x(),
-            sin * this.scale().x(), cos * this.scale().y(), this.position().y()
-        );
+        return this.localTransform = Matrix2x3.transformation(this.position(), this.rotation(), this.scale());
     }
 
     /**
@@ -565,17 +561,28 @@ public class Node2D extends Node {
     }
 
     /**
-     * Sets this node's parent and keeps its global transform.
+     * Sets the parent of this node.
      * <p>
-     *     Calls {@link Node#setParent(Node)} and then sets this node's global transform to its previous value.
+     *     This method is equivalent to removing the node from the scene and adding it again to the given parent.
+     *     Calls {@link Node#removeFromTree()} and {@link Node#addChild(Node)} in this order.
+     * </p>
+     * <p>
+     *     If {@code keepTransform} is true, this node will preserve its global transform.
      * </p>
      *
-     * @param parent This node's new parent or null to remove this node from its parent.
+     * @param parent The new parent of this node.
+     * @param keepTransform True to preserve the global transform.
+     * @throws NullPointerException If the given parent is null.
+     * @throws IllegalArgumentException If this node cannot be added as a child of the given node.
      */
-    public final void setParentKeepTransform(Node parent) {
-        var transform = this.globalTransform();
-        this.setParent(parent);
-        this.setGlobalTransform(transform);
+    public final void setParent(Node parent, boolean keepTransform) {
+        if(keepTransform) {
+            var transform = this.globalTransform();
+            this.setParent(parent);
+            this.setGlobalTransform(transform);
+        } else {
+            this.setParent(parent);
+        }
     }
 
     /**

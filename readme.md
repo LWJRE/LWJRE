@@ -50,12 +50,13 @@ The engine will be responsible for loading the correct library for the current o
 | Resource manager         | Done        |
 | Stub physics system      | Missing     |
 | Basic materials system   | Missing     |
-| Keyboard input system    | In progress |
+| Keyboard input system    | Done        |
 
 ### Version 0.2
 
 * Nuklear bindings (for the editor application)
 * Editor application
+* Events system (similar to C# delegates)
 * Rendering of 3D models
 * Finished materials system
 * Support for multiple windows

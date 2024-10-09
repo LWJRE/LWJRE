@@ -25,9 +25,9 @@ public class Camera3D extends Node3D {
     private boolean enabled = true;
 
     @Override
-    void update(float delta) {
+    void update(float deltaTime) {
         RenderingServer.getInstance().setCamera(this);
-        super.update(delta);
+        super.update(deltaTime);
     }
 
     public final float yaw() {
@@ -61,8 +61,7 @@ public class Camera3D extends Node3D {
      * @return The camera's projection matrix.
      */
     public final Matrix4 projectionMatrix() {
-        // FIXME: Bug in vecmatlib
-        return Matrix4.perspectiveProjection(this.fov / 2.0, DisplayServer.getInstance().getWindowSize(), this.nearPlane, this.farPlane);
+        return Matrix4.perspectiveProjection(this.fov, DisplayServer.getInstance().getWindowSize(), this.nearPlane, this.farPlane);
     }
 
     /**

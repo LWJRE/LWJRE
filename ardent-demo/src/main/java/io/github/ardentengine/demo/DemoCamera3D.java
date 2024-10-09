@@ -17,17 +17,17 @@ public class DemoCamera3D extends Camera3D {
     }
 
     @Override
-    public void onUpdate(float delta) {
+    public void onUpdate(float deltaTime) {
         // TODO: Find out why this is inverted
         var horizontalVelocity = Input.getVector("up", "down", "left", "right").multiply(this.speed).rotated(-this.yaw());
-        this.translate(horizontalVelocity.x() * delta, 0.0f, -horizontalVelocity.y() * delta);
+        this.translate(horizontalVelocity.x() * deltaTime, 0.0f, -horizontalVelocity.y() * deltaTime);
         if(Input.isActionPressed("jump")) {
-            this.translate(0.0f, this.speed * delta, 0.0f);
+            this.translate(0.0f, this.speed * deltaTime, 0.0f);
         }
         if(Input.isActionPressed("run")) {
-            this.translate(0.0f, -this.speed * delta, 0.0f);
+            this.translate(0.0f, -this.speed * deltaTime, 0.0f);
         }
-        super.onUpdate(delta);
+        super.onUpdate(deltaTime);
     }
 
     @Override

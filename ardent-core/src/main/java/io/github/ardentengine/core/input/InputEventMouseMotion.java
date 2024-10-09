@@ -69,10 +69,22 @@ public record InputEventMouseMotion(Vector2 position, Vector2 motion) implements
         return 0.0f;
     }
 
+    /**
+     * Returns the mouse motion on the x axis.
+     * Equivalent to {@code event.motion().x()}.
+     *
+     * @return The mouse motion on the x axis.
+     */
     public float x() {
         return this.motion().x();
     }
 
+    /**
+     * Returns the mouse motion on the y axis.
+     * Equivalent to {@code event.motion().y()}.
+     *
+     * @return The mouse motion on the y axis.
+     */
     public float y() {
         return this.motion().y();
     }

@@ -8,9 +8,9 @@ public class DemoCamera2D extends Camera2D {
     public float speed = 80.0f;
 
     @Override
-    public void onUpdate(float delta) {
+    public void onUpdate(float deltaTime) {
         var input = Input.getVector("up", "down", "left", "right");
-        this.translate(input.multiply(this.speed * delta));
-        super.onUpdate(delta);
+        this.translate(input.multiply(this.speed * deltaTime));
+        super.onUpdate(deltaTime);
     }
 }

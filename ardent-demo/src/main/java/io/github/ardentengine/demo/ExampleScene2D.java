@@ -15,10 +15,10 @@ public class ExampleScene2D extends Node2D {
 
     @Override
     protected void onInput(InputEvent event) {
-        if(event.isPressed() && event instanceof InputEventKey inputEventKey) {
-            if(inputEventKey.keyCode() == InputEventKey.KEY_ESCAPE) {
+        if(event.isPressed() && !event.isEcho() && event instanceof InputEventKey eventKey) {
+            if(eventKey.keyCode() == InputEventKey.KEY_ESCAPE) {
                 Application.quit();
-            } else if(inputEventKey.keyCode() == InputEventKey.KEY_PAGE_UP || inputEventKey.keyCode() == InputEventKey.KEY_PAGE_DOWN) {
+            } else if(eventKey.keyCode() == InputEventKey.KEY_PAGE_UP || eventKey.keyCode() == InputEventKey.KEY_PAGE_DOWN) {
                 this.sceneTree().changeScene("scenes/example_scene_3d.yaml");
             }
         }

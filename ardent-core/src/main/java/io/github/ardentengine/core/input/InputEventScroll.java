@@ -10,10 +10,20 @@ import io.github.ardentengine.core.math.Vector2;
  */
 public record InputEventScroll(float horizontal, float vertical) implements InputEvent {
 
+    /**
+     * Constructs a scroll event with the give scroll.
+     *
+     * @param scroll Scroll on the x and y axes.
+     */
     public InputEventScroll(Vector2 scroll) {
         this(scroll.x(), scroll.y());
     }
 
+    /**
+     * Returns the scroll on the x and y axes.
+     *
+     * @return The scroll on the x and y axes.
+     */
     public Vector2 scroll() {
         return new Vector2(this.horizontal, this.vertical);
     }
@@ -35,7 +45,7 @@ public record InputEventScroll(float horizontal, float vertical) implements Inpu
 
     @Override
     public boolean matches(InputEvent event, boolean exact) {
-        return event instanceof InputEventScroll inputEventScroll && inputEventScroll.scroll().equalsApprox(this.scroll());
+        return this.equals(event);
     }
 
     @Override

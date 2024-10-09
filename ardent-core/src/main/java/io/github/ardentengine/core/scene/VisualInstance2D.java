@@ -21,12 +21,12 @@ public abstract class VisualInstance2D extends Node2D {
     public boolean visible = true;
 
     @Override
-    void update(float delta) {
+    void update(float deltaTime) {
         if(this.visible) {
             // TODO: Check if this thing is inside of the camera's bounding rect
             RenderingServer.getInstance().render(this);
         }
-        super.update(delta);
+        super.update(deltaTime);
     }
 
     // TODO: Find a better alternative to this

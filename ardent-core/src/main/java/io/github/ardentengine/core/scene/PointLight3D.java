@@ -10,8 +10,8 @@ public class PointLight3D extends Node3D {
     // TODO: Finish 3D lighting
 
     @Override
-    void update(float delta) {
+    void update(float deltaTime) {
         RenderingServer.getInstance().updateLight(this);
-        super.update(delta);
+        super.update(deltaTime);
     }
 }

@@ -58,7 +58,7 @@ public final class Input {
                         actionState.pressed = Application.processFrames();
                     }
                     actionState.released = -1L;
-                    // Use the highest strenth for pressed events
+                    // Use the highest strength for pressed events
                     actionState.strength = Math.max(actionState.strength, event.strength());
                 } else if(event.isReleased()) {
                     // Update the action state for a released event
