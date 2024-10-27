@@ -1,11 +1,8 @@
 package io.github.ardentengine.core.scene;
 
 import io.github.ardentengine.core.math.Vector2;
-import io.github.ardentengine.core.math.Vector2i;
+import io.github.ardentengine.core.rendering.RenderingServer;
 import io.github.ardentengine.core.rendering.Texture;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Node that renders a 2D sprite.
@@ -15,11 +12,12 @@ import java.util.Map;
  */
 public class Sprite2D extends VisualInstance2D {
 
+    // TODO: Make these variables private and add getters and setters
+
     /**
      * The texture to use for this sprite.
      */
     public Texture spriteTexture;
-    // TODO: Add normal map
 
     /**
      * The sprite's drawing offset.
@@ -53,19 +51,14 @@ public class Sprite2D extends VisualInstance2D {
     // TODO: Region enabled and region rect
 
     @Override
-    public final String shaderType() {
-        return "sprite_shader";
-    }
-
-    @Override
-    public final Map<String, Object> getShaderParameters() {
-        var map = new HashMap<String, Object>();
-        map.put("sprite_texture", this.spriteTexture);
-        map.put("texture_size", this.spriteTexture == null ? Vector2i.ZERO : this.spriteTexture.size());
-        map.put("offset", this.offset == null ? Vector2i.ZERO : this.offset);
-        map.put("flip", new Vector2i(this.flipH ? -1 : 1, this.flipV ? -1 : 1));
-        map.put("frames", new Vector2i(this.hFrames, this.vFrames));
-        map.put("frame", this.frame);
-        return map;
+    void update(float deltaTime) {
+        if(this.spriteTexture != null) {
+            // TODO: Check if this thing is inside the camera's view rect
+            var vertexScale = new Vector2(1.0f / this.hFrames, 1.0f / this.vFrames);
+            var uvScale = new Vector2((this.flipH ? -1.0f : 1.0f) / this.hFrames, (this.flipV ? -1.0f : 1.0f) / this.vFrames);
+            var uvOffset = new Vector2((float) (this.frame % this.hFrames) / this.hFrames, (float) this.frame / this.hFrames / this.vFrames);
+            RenderingServer.getInstance().draw(this.spriteTexture, this.material(), this.offset, vertexScale, uvOffset, uvScale, this.globalTransform());
+        }
+        super.update(deltaTime);
     }
 }

@@ -1,8 +1,5 @@
 package io.github.ardentengine.core.rendering;
 
-import io.github.ardentengine.core.logging.Logger;
-import io.github.ardentengine.core.resources.ResourceManager;
-
 /**
  * Base class for all types of mesh.
  * <p>
@@ -13,26 +10,10 @@ import io.github.ardentengine.core.resources.ResourceManager;
 public abstract class Mesh {
 
     /**
-     * Utility method to get a mesh resource using {@link ResourceManager#getOrLoad(String)}.
-     * <p>
-     *     Loads the mesh at the given path or returns the same instance if it was already loaded.
-     * </p>
-     * <p>
-     *     Returns null and logs an error if the resource at the given path is not of class {@code Mesh}.
-     * </p>
-     *
-     * @param resourcePath Path at which to load the texture resource. Must point to a {@code .yaml} resource file in the classpath.
-     * @return The requested mesh.
+     * The material used by this mesh.
+     * Can be set to null to tell the rendering API to use the default material.
      */
-    public static Mesh getOrLoad(String resourcePath) {
-        var resource = ResourceManager.getOrLoad(resourcePath);
-        if(resource instanceof Mesh) {
-            return (Mesh) resource;
-        } else if(resource != null) {
-            Logger.error("Resource " + resourcePath + " is not a mesh");
-        }
-        return null;
-    }
+    private Material material;
 
     /**
      * Returns an array representing the vertices of this mesh.
@@ -126,5 +107,23 @@ public abstract class Mesh {
 
     // TODO: Add vertex colors
 
-    // TODO: Add custom attributes
+    // TODO: Add support for custom attributes
+
+    /**
+     * Setter method for {@link Mesh#material}.
+     *
+     * @param material The material used by this mesh. Can be set to null to tell the rendering API to use the default material.
+     */
+    public final void setMaterial(Material material) {
+        this.material = material;
+    }
+
+    /**
+     * Getter method for {@link Mesh#material}.
+     *
+     * @return The material used by this mesh. Can be null.
+     */
+    public final Material material() {
+        return this.material;
+    }
 }

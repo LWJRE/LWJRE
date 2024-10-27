@@ -1,37 +1,64 @@
 package io.github.ardentengine.core.scene;
 
-import io.github.ardentengine.core.rendering.RenderingServer;
-import io.github.ardentengine.core.rendering.Shader;
-
-import java.util.Map;
+import io.github.ardentengine.core.rendering.Material;
 
 /**
  * Base class for all visual 2D nodes.
  */
-public abstract class VisualInstance2D extends Node2D {
-
-    public Shader shader;
-
-    // TODO: Add properties common to all VisualInstance2Ds
+public class VisualInstance2D extends Node2D {
 
     /**
      * True if this visual instance is visible.
      * The visual instance won't be rendered if {@code visible} is set to false.
      */
-    public boolean visible = true;
+    private boolean visible = true;
 
-    @Override
-    void update(float deltaTime) {
-        if(this.visible) {
-            // TODO: Check if this thing is inside of the camera's bounding rect
-            RenderingServer.getInstance().render(this);
-        }
-        super.update(deltaTime);
+    // TODO: Don't render the children if visible is set to false
+
+    /**
+     * The material used by this visual instance.
+     * Can be used to customize how visual instances are rendered.
+     * Can be set to null to tell the rendering api to use the default material.
+     */
+    private Material material;
+
+    // TODO: Add an "inherit material" option to allow visual instances to use their ancestor's material
+
+    // TODO: Add modulate color
+
+    /**
+     * Getter method for {@link VisualInstance2D#visible}.
+     *
+     * @return True if this visual instance is visible, otherwise false.
+     */
+    public final boolean visible() {
+        return this.visible;
     }
 
-    // TODO: Find a better alternative to this
+    /**
+     * Setter method for {@link VisualInstance2D#visible}.
+     *
+     * @param visible True if this visual instance is visible, otherwise false.
+     */
+    public final void setVisible(boolean visible) {
+        this.visible = visible;
+    }
 
-    public abstract String shaderType();
+    /**
+     * Getter method for {@link VisualInstance2D#material}.
+     *
+     * @return The material used by this visual instance. Can be null.
+     */
+    public final Material material() {
+        return this.material;
+    }
 
-    public abstract Map<String, Object> getShaderParameters();
+    /**
+     * Setter method for {@link VisualInstance2D#material}.
+     *
+     * @param material The material used by this visual instance. Can be set to null to tell the rendering api to use the default material.
+     */
+    public final void setMaterial(Material material) {
+        this.material = material;
+    }
 }

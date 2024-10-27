@@ -71,6 +71,7 @@ public class YamlLoader implements ResourceLoader {
          */
         public LoaderConstructor(LoaderOptions loadingConfig) {
             super(loadingConfig);
+            // TODO: Change this to use a ServiceLoader that supports any object and does not require changing this class every time
             this.yamlConstructors.put(Tag.FLOAT, new ConstructActualFloat());
             this.yamlConstructors.put(new Tag("!getOrLoad"), new ConstructResource());
             this.yamlConstructors.put(new Tag("!Vector2"), new ConstructVector2());
@@ -79,8 +80,6 @@ public class YamlLoader implements ResourceLoader {
             this.yamlConstructors.put(new Tag("!Vector2i"), new ConstructVector2i());
             this.yamlConstructors.put(new Tag("!Vector3i"), new ConstructVector3i());
             this.yamlConstructors.put(new Tag("!Vector4i"), new ConstructVector4i());
-            this.yamlConstructors.put(new Tag("!Color"), new ConstructColor());
-            this.yamlConstructors.put(new Tag("!Color"), new ConstructColor());
             this.yamlConstructors.put(new Tag("!Color"), new ConstructColor());
             this.yamlConstructors.put(new Tag("!Gradient"), new ConstructGradient());
             this.yamlConstructors.put(new Tag(Class.class), new ConstructClass());

@@ -16,6 +16,10 @@ import java.io.Serializable;
  */
 public record Color(float r, float g, float b, float a) implements Serializable {
 
+    // TODO: Add color constants
+    public static final Color WHITE = new Color(1.0f, 1.0f, 1.0f);
+    public static final Color BLACK = new Color(0.0f, 0.0f, 0.0f);
+
     /**
      * Constructs a color with the given RGB values and an alpha value of one.
      *

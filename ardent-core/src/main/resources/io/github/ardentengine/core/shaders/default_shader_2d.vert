@@ -13,13 +13,9 @@ layout(std140) uniform Camera2D {
     mat4 projection_matrix;
 };
 
-uniform int z_index;
-
 uniform ivec2 texture_size;
-uniform vec2 offset;
-uniform ivec2 flip;
-uniform ivec2 frames;
-uniform int frame;
+
+void compute_position();
 
 void main() {
     vertex = in_vertex;
@@ -27,9 +23,19 @@ void main() {
 #ifdef SHADER_TYPE
     vertex_shader();
 #endif
-    vec2 uv_scale = flip / frames;
-    vec2 uv_offset = vec2(frame % frames.x, frame / frames.x) / frames;
-    vertex = vertex * texture_size / frames + offset;
+    compute_position();
+}
+
+uniform vec2 vertex_scale;
+uniform vec2 vertex_offset;
+uniform vec2 uv_scale;
+uniform vec2 uv_offset;
+
+// FIXME: The way z index is implemented is weird
+uniform int z_index;
+
+void compute_position() {
+    vertex = vertex * texture_size * vertex_scale + vertex_offset;
     uv = uv * uv_scale + uv_offset;
     vec2 world_position = transformation_matrix * vec3(vertex, 1.0);
     gl_Position = projection_matrix * vec4(view_matrix * vec3(world_position, 1.0), 1.0);

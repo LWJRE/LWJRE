@@ -23,12 +23,12 @@ public enum CursorShape {
      */
     POINTING_HAND,
     /**
-     * The horizontal resize/ move arrow shape.
+     * The horizontal resize/move arrow shape.
      * This is usually a horizontal double-headed arrow.
      */
     RESIZE_EW,
     /**
-     * The vertical resize/ move shape.
+     * The vertical resize/move shape.
      * This is usually a vertical double-headed arrow.
      */
     RESIZE_NS,

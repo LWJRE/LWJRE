@@ -31,6 +31,7 @@ public class ImageTexture extends Texture {
 
     @Override
     public ByteBuffer pixels() {
+        // FIXME: Bad things happen if the user calls texture.pixels().put(...)
         return this.pixels;
     }
 

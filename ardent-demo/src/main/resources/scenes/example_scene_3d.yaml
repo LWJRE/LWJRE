@@ -9,7 +9,8 @@ children:
   - type: !!java.lang.Class io.github.ardentengine.core.scene.MeshRenderer
     properties:
       mesh: *id001
-      shader: !getOrLoad shaders/example_mesh_shader.glsl
+      materialOverride: !!io.github.ardentengine.core.rendering.ShaderMaterial
+        shader: !getOrLoad shaders/example_shader_3d.glsl
       position: !Vector3 [2.0, 0.0, 0.0]
   - type: !!java.lang.Class io.github.ardentengine.core.scene.PointLight3D
     properties:

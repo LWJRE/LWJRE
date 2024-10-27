@@ -5,6 +5,8 @@ package io.github.ardentengine.core.rendering;
  */
 public class ArrayMesh extends Mesh {
 
+    // FIXME: This implementation does not work because if the user modifies one of the arrays returned by the getter methods the mesh won't be updated by the rendering API
+
     /** Vertices array. */
     private float[] vertices;
     /** Indices array. */

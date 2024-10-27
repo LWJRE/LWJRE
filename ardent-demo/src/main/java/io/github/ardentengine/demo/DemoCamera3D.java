@@ -13,7 +13,7 @@ public class DemoCamera3D extends Camera3D {
 
     @Override
     protected void onEnter() {
-        DisplayServer.getInstance().setCursorMode(CursorMode.CAPTURED);
+//        DisplayServer.getInstance().setCursorMode(CursorMode.CAPTURED);
     }
 
     @Override

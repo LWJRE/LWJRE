@@ -1,7 +1,12 @@
 package io.github.ardentengine.core.rendering;
 
 import io.github.ardentengine.core.math.Color;
-import io.github.ardentengine.core.scene.*;
+import io.github.ardentengine.core.math.Matrix2x3;
+import io.github.ardentengine.core.math.Matrix3x4;
+import io.github.ardentengine.core.math.Vector2;
+import io.github.ardentengine.core.scene.Camera2D;
+import io.github.ardentengine.core.scene.Camera3D;
+import io.github.ardentengine.core.scene.PointLight3D;
 
 import java.util.ServiceLoader;
 
@@ -41,6 +46,8 @@ public abstract class RenderingServer {
         return instance == null ? instance = ServiceLoader.load(RenderingServer.class).findFirst().orElse(null) : instance;
     }
 
+    // TODO: Change these methods so that they don't require nodes
+
     /**
      * Sets the default clear color to use when the screen is cleared before rendering a new frame.
      *
@@ -73,21 +80,19 @@ public abstract class RenderingServer {
 
     public abstract void setCamera(Camera3D camera);
 
-    /**
-     * Requests the rendering api to render the given mesh for the given visual instance.
-     * <p>
-     *     The rendering of meshes may not happen immediately.
-     *     If this method is called multiple times per frame, the given instance may still only be rendered once.
-     * </p>
-     *
-     * @param mesh The mesh to render.
-     * @param visualInstance The visual instance that uses the given mesh. Contains transformations and other data used for rendering.
-     */
-    public abstract void render(Mesh mesh, VisualInstance3D visualInstance);
+    public abstract void draw(Mesh mesh, Material materialOverride, Matrix3x4 transform);
+
+    public final void draw(Mesh mesh, Matrix3x4 transform) {
+        this.draw(mesh, null, transform);
+    }
 
     public abstract void setCamera(Camera2D camera);
 
-    public abstract void render(VisualInstance2D visualInstance);
+    // TODO: Use two rectangles instead of four vectors
+
+    public abstract void draw(Texture texture, Material material, Vector2 vertexOffset, Vector2 vertexScale, Vector2 uvOffset, Vector2 uvScale, Matrix2x3 transform);
+
+    // TODO: Add overloaded methods
 
     /**
      * Requests the rendering api to update the given mesh.

@@ -1,8 +1,5 @@
 package io.github.ardentengine.maven;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.util.HashMap;
 import java.util.regex.Pattern;
 
 /**
@@ -10,58 +7,12 @@ import java.util.regex.Pattern;
  */
 public class ShaderProcessor {
 
-    /** Regex pattern that matches the shader type preprocessor. */
-    private static final Pattern SHADER_TYPE_REGEX = Pattern.compile("#define\\s+SHADER_TYPE\\s+(\\w+)");
     /** Regex pattern that matches the header of the vertex shader function. */
     private static final Pattern VERTEX_FUNCTION_REGEX = Pattern.compile("(?m)\\bvoid\\s+vertex_shader\\s*\\(\\s*\\)\\s*\\{");
     /** Regex pattern that matches the header of the fragment shader function. */
     private static final Pattern FRAGMENT_FUNCTION_REGEX = Pattern.compile("(?m)\\bvoid\\s+fragment_shader\\s*\\(\\s*\\)\\s*\\{");
 
-    /** Store the code for base shaders for future use. */
-    private static final HashMap<String, String> BASE_SHADERS = new HashMap<>();
-
-    /**
-     * Returns the shader code for the given file in the {@code io/github/ardentengine/core/shaders/} directory in the classpath.
-     *
-     * @param shaderFileName Name of the shader file relative to the {@code io/github/ardentengine/core/shaders/} directory.
-     * @return Code of the requested shader file.
-     * @throws ShaderProcessingException If a shader file with the given name does not exist.
-     * @throws UncheckedIOException If an IO exception occurs while loading the base shader file.
-     */
-    private static String getBaseShaderFile(String shaderFileName) throws ShaderProcessingException {
-        var baseShaderCode = BASE_SHADERS.get(shaderFileName);
-        if(baseShaderCode == null) {
-            try(var inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("io/github/ardentengine/core/shaders/" + shaderFileName)) {
-                if(inputStream != null) {
-                    baseShaderCode = new String(inputStream.readAllBytes());
-                    BASE_SHADERS.put(shaderFileName, baseShaderCode);
-                } else {
-                    throw new ShaderProcessingException("There is no shader of type " + shaderFileName.substring(shaderFileName.lastIndexOf('.')));
-                }
-            } catch (IOException e) {
-                throw new UncheckedIOException("Could not load shader " + shaderFileName + " from classpath", e);
-            }
-        }
-        return baseShaderCode;
-    }
-
-    /**
-     * Returns the shader type defined in the given shader code.
-     * <p>
-     *     The shader type is defined in the shader code with a {@code #define SHADER_TYPE} macro.
-     * </p>
-     *
-     * @param shaderCode Shader code.
-     * @return The shader type defined in the given code.
-     * @throws ShaderProcessingException If the given code does not contain a {@code #define SHADER_TYPE} macro.
-     */
-    public static String getShaderType(String shaderCode) throws ShaderProcessingException {
-        var shaderTypeMatcher = SHADER_TYPE_REGEX.matcher(shaderCode);
-        if(shaderTypeMatcher.find()) {
-            return shaderTypeMatcher.group(1);
-        }
-        throw new ShaderProcessingException("No shader type defined in shader");
-    }
+    // TODO: Differentiate between shader processor for OpenGL and for Vulkan
 
     /**
      * Removes comments from the given code.
@@ -75,6 +26,39 @@ public class ShaderProcessor {
     public static String removeComments(String code) {
         return code.replaceAll("(?m)[ \\t]*((//.*)|(/\\*[\\s\\S]*?\\*/))", "");
     }
+
+    /**
+     * Removes all white spaces from the given code.
+     *
+     * @param code The code from which to remove white spaces.
+     * @return The resulting code with white spaces removed.
+     */
+    public static String removeWhiteSpaces(String code) {
+        return code.replaceAll("(?m)^\\s+\\r?", "").replaceAll("((?!\\b) +| +(?!\\b))", "").trim();
+    }
+
+    public static String trimCode(String code) {
+        // TODO: Remove '0.' and '.0'
+        return removeWhiteSpaces(removeComments(code));
+    }
+
+    private static String processVariables(String shaderCode) {
+        var regex = Pattern.compile("(uniform|varying)\\s+(\\w+)\\s+(\\w+)").matcher(shaderCode);
+        while(regex.find()) {
+            shaderCode = shaderCode.replaceAll("(?<!\\.)\\b" + regex.group(3) + "\\b", regex.group(1).charAt(0) + "_" + regex.group(3));
+        }
+        return shaderCode;
+    }
+
+    private static String processFunctions(String shaderCode) {
+        var regex = Pattern.compile("(\\w+)\\s*\\b(?!(fragment_shader|vertex_shader)\\b)(\\w+)\\b\\s*\\(([\\s\\S]*?)\\)\\s*\\{").matcher(shaderCode);
+        while(regex.find()) {
+            shaderCode = shaderCode.replace(regex.group(3), "f_" + regex.group(3));
+        }
+        return shaderCode;
+    }
+
+    // TODO: Do the same, but for structs
 
     /**
      * Finds the end position of a shader function by matching opening and closing brackets.
@@ -114,93 +98,46 @@ public class ShaderProcessor {
         return shaderCode;
     }
 
-    /**
-     * Removes a void function with the given name from the given code.
-     * The entire function, from its header to its last closing bracket is removed from the code.
-     *
-     * @param shaderCode Shader code.
-     * @param functionName Name of the function to remove.
-     * @return The resulting shader code without the removed function.
-     */
-    public static String removeFunction(String shaderCode, String functionName) {
-        return removeFunction(shaderCode, Pattern.compile("\\bvoid\\s+" + functionName + "\\s*\\(\\s*\\)\\s*\\{"));
+    public static String addConstants(String shaderCode) {
+        var index = shaderCode.indexOf('\n');
+        return shaderCode.substring(0, index) + "\n#define PI " + Math.PI + "\n#define E " + Math.E + "\n" + shaderCode.substring(index + 1);
     }
 
-    /**
-     * Removes all white spaces from the given code.
-     *
-     * @param code The code from which to remove white spaces.
-     * @return The resulting code with white spaces removed.
-     */
-    public static String removeWhiteSpaces(String code) {
-        return code.replaceAll("(?m)^\\s+\\r?", "").replaceAll("((?!\\b) +| +(?!\\b))", "").trim();
-    }
+    // TODO: Unify these two methods
 
-    // TODO: Add a method that looks for duplicate identifiers and renames them
-
-    /**
-     * Extracts the vertex shader code from the given unprocessed shader code.
-     *
-     * @param shaderCode Unprocessed shader code read from a {@code .glsl} shader file.
-     * @return Processed vertex shader code.
-     * @throws ShaderProcessingException If the given shader code does not contain a {@code #define SHADER_TYPE} macro or the defined shader type does not exist.
-     * @throws UncheckedIOException If an IO exception occurs while loading the base shader file.
-     */
-    public static String extractVertexCode(String shaderCode) throws ShaderProcessingException {
-        // Get the base shader file used by the given shader code
-        var baseShaderCode = getBaseShaderFile(getShaderType(shaderCode) + ".vert");
+    public static String extractVertexCode(String shaderCode) {
         // Check if this shader contains the vertex function
         if(VERTEX_FUNCTION_REGEX.matcher(shaderCode).find()) {
             // Remove comments to prevent the regex from matching commented code
             shaderCode = removeComments(shaderCode);
             // Remove the fragment function
             shaderCode = removeFunction(shaderCode, FRAGMENT_FUNCTION_REGEX);
-            // TODO: Throw an error if the fragment shader function is being invoked where not allowed
-            // Change 'main' to '_main' to prevent this function from clashing with the main function
-            shaderCode = shaderCode.replace("main", "_main");
-            // Add the shader code before the main function
-            // TODO: Add the #line directive for debugging purposes
-            shaderCode = baseShaderCode.replaceFirst("\\bvoid\\s+main\\s*\\(\\s*\\)\\s*\\{", shaderCode + "\nvoid main() {");
+            // Prepend a prefix to functions and variables to prevent them from clashing with the builtin shader
+            shaderCode = processVariables(shaderCode);
+            shaderCode = processFunctions(shaderCode);
             // Replace varying variables
             shaderCode = shaderCode.replaceAll("\\bvarying\\b", "out");
-        } else {
-            // Use the same shader code as the base if this shader does not contain the vertex function
-            return baseShaderCode;
+            // TODO: Add an option to keep white spaces for easier debugging
+            return removeWhiteSpaces(shaderCode);
         }
-        // TODO: Add an option to keep white spaces for easier debugging
-        return removeWhiteSpaces(shaderCode);
+        return "";
     }
 
-    /**
-     * Extracts the fragment shader code from the given unprocessed shader code.
-     *
-     * @param shaderCode Unprocessed shader code read from a {@code .glsl} shader file.
-     * @return Processed fragment shader code.
-     * @throws ShaderProcessingException If the given shader code does not contain a {@code #define SHADER_TYPE} macro or the defined shader type does not exist.
-     * @throws UncheckedIOException If an IO exception occurs while loading the base shader file.
-     */
-    public static String extractFragmentCode(String shaderCode) throws ShaderProcessingException {
-        // Get the base shader file used by the given shader code
-        var baseShaderCode = getBaseShaderFile(getShaderType(shaderCode) + ".frag");
+    public static String extractFragmentCode(String shaderCode) {
         // Check if this shader contains the fragment function
         if(FRAGMENT_FUNCTION_REGEX.matcher(shaderCode).find()) {
             // Remove comments to prevent the regex from matching commented code
             shaderCode = removeComments(shaderCode);
             // Remove the vertex function
             shaderCode = removeFunction(shaderCode, VERTEX_FUNCTION_REGEX);
-            // TODO: Throw an error if the vertex shader function is being invoked where not allowed
-            // Change 'main' to '_main' to prevent this function from clashing with the main function
-            shaderCode = shaderCode.replace("main", "_main");
-            // Add the shader code before the main function
-            // TODO: Add the #line directive for debugging purposes
-            shaderCode = baseShaderCode.replaceFirst("\\bvoid\\s+main\\s*\\(\\s*\\)\\s*\\{", shaderCode + "\nvoid main() {");
+            // Prepend a prefix to functions and variables to prevent them from clashing with the builtin shader
+            shaderCode = processVariables(shaderCode);
+            shaderCode = processFunctions(shaderCode);
             // Replace varying variables
             shaderCode = shaderCode.replaceAll("\\bvarying\\b", "in");
-        } else {
-            // Use the same shader code as the base if this shader does not contain the fragment function
-            return baseShaderCode;
+            // TODO: Add an option to keep white spaces for easier debugging
+            return removeWhiteSpaces(shaderCode);
         }
-        // TODO: Add an option to keep white spaces for easier debugging
-        return removeWhiteSpaces(shaderCode);
+        return "";
     }
 }

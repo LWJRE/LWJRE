@@ -32,7 +32,7 @@ public class OpenGLSystem extends EngineSystem {
     @Override
     protected void terminate() {
         MeshData.deleteMeshes();
-        ShaderData.deleteShaders();
+        ShaderProgram.deleteShaders();
         TextureData.deleteTextures();
     }
 

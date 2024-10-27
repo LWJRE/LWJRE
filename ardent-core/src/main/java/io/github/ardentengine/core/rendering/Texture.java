@@ -1,8 +1,6 @@
 package io.github.ardentengine.core.rendering;
 
-import io.github.ardentengine.core.logging.Logger;
 import io.github.ardentengine.core.math.Vector2i;
-import io.github.ardentengine.core.resources.ResourceManager;
 
 import java.nio.ByteBuffer;
 
@@ -22,26 +20,7 @@ import java.nio.ByteBuffer;
  */
 public abstract class Texture {
 
-    /**
-     * Utility method to get a texture resource using {@link ResourceManager#getOrLoad(String)}.
-     * <p>
-     *     Loads the texture at the given path or returns the same instance if it was already loaded.
-     * </p>
-     * <p>
-     *     Returns null and logs an error if the resource at the given path is not of class {@code Texture}.
-     * </p>
-     * @param resourcePath Path at which to load the texture resource. Must point to an image file or a {@code .yaml} resource file in the classpath.
-     * @return The requested texture.
-     */
-    public static Texture getOrLoad(String resourcePath) {
-        var resource = ResourceManager.getOrLoad(resourcePath);
-        if(resource instanceof Texture) {
-            return (Texture) resource;
-        } else if(resource != null) {
-            Logger.error("Resource " + resourcePath + " is not a texture");
-        }
-        return null;
-    }
+    // TODO: Turn this into Texture2D and make it extend from Texture, then create a CanvasTexture that extends Texture to implement normal maps and let the rendering api handle it
 
     /**
      * Returns a byte buffer containing the pixels of this texture.

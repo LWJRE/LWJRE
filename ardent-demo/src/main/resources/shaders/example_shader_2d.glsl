@@ -1,4 +1,4 @@
-#define SHADER_TYPE sprite_shader
+#define SHADER_TYPE default_shader_2d
 
 // This is an example shader
 

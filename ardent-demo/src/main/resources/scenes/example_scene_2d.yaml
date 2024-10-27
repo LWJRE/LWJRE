@@ -9,7 +9,8 @@ children:
   - base: !getOrLoad scenes/test_sprite.yaml
     properties:
       name: Second
-      shader: !getOrLoad shaders/example_sprite_shader.glsl
+      material: !!io.github.ardentengine.core.rendering.ShaderMaterial
+        shader: !getOrLoad shaders/example_shader_2d.glsl
       position: !Vector2 [150.0, 0.0]
   - base: !getOrLoad scenes/test_sprite.yaml
     properties:

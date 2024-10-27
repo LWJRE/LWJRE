@@ -1,12 +1,18 @@
 package io.github.ardentengine.opengl;
 
+import io.github.ardentengine.core.math.Matrix2x3;
+import io.github.ardentengine.core.math.Matrix3x4;
+import io.github.ardentengine.core.math.Vector2;
+import io.github.ardentengine.core.rendering.Material;
 import io.github.ardentengine.core.rendering.Mesh;
 import io.github.ardentengine.core.rendering.RenderingServer;
 import io.github.ardentengine.core.rendering.Texture;
-import io.github.ardentengine.core.scene.*;
+import io.github.ardentengine.core.scene.Camera2D;
+import io.github.ardentengine.core.scene.Camera3D;
+import io.github.ardentengine.core.scene.PointLight3D;
 import org.lwjgl.opengl.GL11;
 
-public class OpenGLRenderingServer extends RenderingServer {
+public class OpenGLServer extends RenderingServer {
 
     @Override
     public void setDefaultClearColor(float red, float green, float blue, float alpha) {
@@ -18,7 +24,8 @@ public class OpenGLRenderingServer extends RenderingServer {
         // TODO: Store an instance of the camera and set the uniform buffer before rendering to account for shaders loaded after the camera has been set
         var viewMatrix = camera.viewMatrix();
         var projectionMatrix = camera.projectionMatrix();
-        ShaderData.setBuffer("Camera3D", new float[] {
+        // TODO: The camera position needs to be set in the shader for specular lighting
+        ShaderProgram.setBuffer("Camera3D", new float[] {
             viewMatrix.m00(), viewMatrix.m10(), viewMatrix.m20(), viewMatrix.m30(),
             viewMatrix.m01(), viewMatrix.m11(), viewMatrix.m21(), viewMatrix.m31(),
             viewMatrix.m02(), viewMatrix.m12(), viewMatrix.m22(), viewMatrix.m32(),
@@ -31,8 +38,8 @@ public class OpenGLRenderingServer extends RenderingServer {
     }
 
     @Override
-    public void render(Mesh mesh, VisualInstance3D visualInstance) {
-        Renderer3D.getInstance().addToBatch(mesh, visualInstance);
+    public void draw(Mesh mesh, Material materialOverride, Matrix3x4 transform) {
+        Renderer3D.getInstance().addToBatch(mesh, materialOverride, transform);
     }
 
     @Override
@@ -40,7 +47,7 @@ public class OpenGLRenderingServer extends RenderingServer {
         // TODO: Store an instance of the camera and set the uniform buffer before rendering to account for shaders loaded after the camera has been set
         var viewMatrix = camera.viewMatrix();
         var projectionMatrix = camera.projectionMatrix();
-        ShaderData.setBuffer("Camera2D", new float[] {
+        ShaderProgram.setBuffer("Camera2D", new float[] {
             viewMatrix.m00(), viewMatrix.m10(), viewMatrix.m20(), 0.0f,
             viewMatrix.m01(), viewMatrix.m11(), viewMatrix.m21(), 0.0f,
             viewMatrix.m02(), viewMatrix.m12(), viewMatrix.m22(), 0.0f,
@@ -53,8 +60,8 @@ public class OpenGLRenderingServer extends RenderingServer {
     }
 
     @Override
-    public void render(VisualInstance2D visualInstance) {
-        Renderer2D.getInstance().addToBatch(visualInstance);
+    public void draw(Texture texture, Material material, Vector2 vertexOffset, Vector2 vertexScale, Vector2 uvOffset, Vector2 uvScale, Matrix2x3 transform) {
+        Renderer2D.getInstance().addToBatch(new DrawData2D(texture, vertexOffset, vertexScale, uvOffset, uvScale, transform), material);
     }
 
     @Override
