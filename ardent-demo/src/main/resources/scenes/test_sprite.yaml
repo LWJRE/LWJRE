@@ -1,12 +1,11 @@
 !!io.github.ardentengine.core.resources.SceneResource
-type: !!java.lang.Class io.github.ardentengine.core.scene.Sprite2D
+type: !class io.github.ardentengine.core.scene.Sprite2D
 properties:
   name: TestSprite
-  spriteTexture:
-      !!io.github.ardentengine.core.rendering.GradientTexture
-      gradient: !Gradient
-        0.0: !Color [1.0, 0.0, 0.0, 1.0]
-        0.5: !Color [1.0, 1.0, 0.0, 1.0]
-        1.0: !Color [0.0, 1.0, 0.0, 1.0]
+  spriteTexture: !!io.github.ardentengine.core.rendering.GradientTexture
+      gradient: !!io.github.ardentengine.core.math.Gradient
+        0.0: !color [1.0, 0.0, 0.0]
+        0.5: !color [1.0, 1.0, 0.0]
+        1.0: !color [0.0, 1.0, 0.0]
       width: 128
       height: 128

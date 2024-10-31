@@ -1,6 +1,9 @@
 package io.github.ardentengine.core.rendering;
 
 import io.github.ardentengine.core.math.Color;
+import io.github.ardentengine.core.resources.YamlMappingDeserializer;
+
+import java.util.Map;
 
 /**
  * A material for 3D objects that uses the Phong lighting model.
@@ -19,8 +22,6 @@ public final class Material3D extends Material {
         this.parameters.put("specular", Color.WHITE);
         this.parameters.put("shininess", 32.0f);
     }
-
-    // FIXME: Deserializing this from yaml requires an additional "parameters" mapping node
 
     /**
      * Returns the material's ambient color.
@@ -100,5 +101,26 @@ public final class Material3D extends Material {
      */
     public void setShininess(float shininess) {
         this.parameters.put("shininess", shininess);
+    }
+
+    /**
+     * Deserializer class for {@link Material3D} used to ensure the correct material parameters are used.
+     */
+    public static class Deserializer implements YamlMappingDeserializer {
+
+        @Override
+        public Object deserialize(Map<Object, Object> map) {
+            var material = new Material3D();
+            material.setAmbient((Color) map.getOrDefault("ambient", material.ambient()));
+            material.setDiffuse((Color) map.getOrDefault("diffuse", material.diffuse()));
+            material.setSpecular((Color) map.getOrDefault("specular", material.specular()));
+            material.setShininess((float) map.getOrDefault("shininess", material.shininess()));
+            return material;
+        }
+
+        @Override
+        public Class<?> getTag() {
+            return Material3D.class;
+        }
     }
 }

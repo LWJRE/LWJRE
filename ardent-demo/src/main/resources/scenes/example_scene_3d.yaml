@@ -1,21 +1,23 @@
 !!io.github.ardentengine.core.resources.SceneResource
-type: !!java.lang.Class io.github.ardentengine.demo.ExampleScene3D
+type: !class io.github.ardentengine.demo.ExampleScene3D
 properties:
   name: Root
 children:
-  - type: !!java.lang.Class io.github.ardentengine.core.scene.MeshRenderer
+  - type: !class io.github.ardentengine.core.scene.MeshRenderer
     properties:
-      mesh: &id001 !!io.github.ardentengine.core.rendering.BoxMesh {}
-  - type: !!java.lang.Class io.github.ardentengine.core.scene.MeshRenderer
+      mesh: &id001 !!io.github.ardentengine.core.rendering.BoxMesh
+        material: !!io.github.ardentengine.core.rendering.Material3D
+          diffuse: !color [0.0, 0.0, 1.0]
+  - type: !class io.github.ardentengine.core.scene.MeshRenderer
     properties:
       mesh: *id001
       materialOverride: !!io.github.ardentengine.core.rendering.ShaderMaterial
         shader: !getOrLoad shaders/example_shader_3d.glsl
-      position: !Vector3 [2.0, 0.0, 0.0]
-  - type: !!java.lang.Class io.github.ardentengine.core.scene.PointLight3D
+      position: !vec3 [2.0, 0.0, 0.0]
+  - type: !class io.github.ardentengine.core.scene.PointLight3D
     properties:
-      position: !Vector3 [3.0, 5.0, 2.0]
-      color: !Color [1.0, 1.0, 1.0]
-  - type: !!java.lang.Class io.github.ardentengine.demo.DemoCamera3D
+      position: !vec3 [3.0, 5.0, 2.0]
+      color: !color [1.0, 1.0, 1.0]
+  - type: !class io.github.ardentengine.demo.DemoCamera3D
     properties:
-      position: !Vector3 [0.0, 0.0, 3.0]
+      position: !vec3 [0.0, 0.0, 3.0]

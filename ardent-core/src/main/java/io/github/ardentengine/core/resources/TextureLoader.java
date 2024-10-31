@@ -19,9 +19,7 @@ public class TextureLoader implements ResourceLoader {
     @Override
     public Object load(String resourcePath) {
         try(var inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourcePath)) {
-            if(inputStream == null) {
-                Logger.error("Could not find image file " + resourcePath);
-            } else {
+            if(inputStream != null) {
                 var image = ImageIO.read(inputStream);
                 var buffer = ByteBuffer.allocateDirect(4 * image.getWidth() * image.getHeight());
                 for(var pixel : image.getRGB(0, 0, image.getWidth(), image.getHeight(), null, 0, image.getWidth())) {
@@ -35,6 +33,7 @@ public class TextureLoader implements ResourceLoader {
                 // TODO: Load texture properties
                 return texture;
             }
+            Logger.error("Could not find image file " + resourcePath);
         } catch (IOException e) {
             Logger.error("Exception occurred while loading image " + resourcePath, e);
         }

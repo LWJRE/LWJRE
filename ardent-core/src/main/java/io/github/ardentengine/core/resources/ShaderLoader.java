@@ -15,7 +15,11 @@ import java.util.regex.Pattern;
  */
 public class ShaderLoader implements ResourceLoader {
 
-    // TODO: Get the shader version from ApplicationSettings and add it here
+    /**
+     * Regex used to match the {@code #define SHADER_TYPE} preprocessor.
+     * Used to get the shader type from the shader code.
+     */
+    private static final Pattern SHADER_TYPE_REGEX = Pattern.compile("#define\\s+SHADER_TYPE\\s+(\\w+)");
 
     /**
      * Maps shader files to the contained shader code to ensure the same shader file is not loaded more than once.
@@ -66,7 +70,7 @@ public class ShaderLoader implements ResourceLoader {
     private String getShaderType(String... shaders) {
         for(var shaderCode : shaders) {
             // Return the shader type found in the first shader that contains it
-            var regex = Pattern.compile("#define\\s+SHADER_TYPE\\s+(\\w+)").matcher(shaderCode);
+            var regex = SHADER_TYPE_REGEX.matcher(shaderCode);
             if(regex.find()) {
                 return regex.group(1);
             }
@@ -124,6 +128,8 @@ public class ShaderLoader implements ResourceLoader {
         return builtinShader.replaceFirst("(void\\s+main\\s*\\(\\)\\s*\\{|#ifdef\\s+\\w+)", shaderCode + "\n$1");
     }
 
+    // TODO: Get the shader version from ApplicationProperties and add it here
+
     @Override
     public Object load(String resourcePath) {
         var basePath = resourcePath.substring(0, resourcePath.lastIndexOf('.'));
@@ -138,10 +144,7 @@ public class ShaderLoader implements ResourceLoader {
             fragmentCode = this.getFinalShaderCode(fragmentCode, shaderType + ".frag");
             // Return the created shader if there was no error while loading it
             if(!vertexCode.isEmpty() && !fragmentCode.isEmpty()) {
-                var shader = new Shader();
-                shader.setVertexCode(vertexCode);
-                shader.setFragmentCode(fragmentCode);
-                return shader;
+                return new Shader(vertexCode, fragmentCode);
             }
         } else {
             // Either the requested shader does not exist or it does not define a shader type
@@ -154,4 +157,6 @@ public class ShaderLoader implements ResourceLoader {
     public String[] supportedExtensions() {
         return new String[] {".glsl"};
     }
+
+    // TODO: Create tests
 }

@@ -1,9 +1,14 @@
 package io.github.ardentengine.core.math;
 
+import io.github.ardentengine.core.resources.YamlMappingDeserializer;
+
+import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
 
 public final class Gradient {
+
+    // TODO: Move the Gradient outside of the math package
 
     // TODO: Gradients being immutable cause too many allocations and copies of TreeMap. Make them mutable once the events system is implemented.
 
@@ -88,5 +93,24 @@ public final class Gradient {
         points.put(0.0f, start);
         points.put(1.0f, end);
         return new Gradient(points);
+    }
+
+    public static class Deserializer implements YamlMappingDeserializer {
+
+        @Override
+        public Object deserialize(Map<Object, Object> map) {
+            var gradient = new TreeMap<Float, Color>();
+            for(var key : map.keySet()) {
+                if(key instanceof Number offset && map.get(key) instanceof Color color) {
+                    gradient.put(offset.floatValue(), color);
+                }
+            }
+            return new Gradient(gradient);
+        }
+
+        @Override
+        public Class<?> getTag() {
+            return Gradient.class;
+        }
     }
 }

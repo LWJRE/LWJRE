@@ -1,5 +1,5 @@
 !!io.github.ardentengine.core.resources.SceneResource
-type: !!java.lang.Class io.github.ardentengine.demo.ExampleScene2D
+type: !class io.github.ardentengine.demo.ExampleScene2D
 properties:
   name: Root
 children:
@@ -11,18 +11,18 @@ children:
       name: Second
       material: !!io.github.ardentengine.core.rendering.ShaderMaterial
         shader: !getOrLoad shaders/example_shader_2d.glsl
-      position: !Vector2 [150.0, 0.0]
+      position: !vec2 [150.0, 0.0]
   - base: !getOrLoad scenes/test_sprite.yaml
     properties:
       name: Third
-      position: !Vector2 [200.0, 50.0]
+      position: !vec2 [200.0, 50.0]
   - base: !getOrLoad scenes/test_sprite.yaml
     properties:
       name: Fourth
-      position: !Vector2 [250.0, 100.0]
+      position: !vec2 [250.0, 100.0]
       zIndex: 10
   - base: !getOrLoad scenes/test_sprite.yaml
     properties:
       name: Fifth
-      position: !Vector2 [300.0, 150.0]
-  - type: !!java.lang.Class io.github.ardentengine.demo.DemoCamera2D
+      position: !vec2 [300.0, 150.0]
+  - type: !class io.github.ardentengine.demo.DemoCamera2D

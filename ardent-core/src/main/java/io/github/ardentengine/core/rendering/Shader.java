@@ -1,27 +1,56 @@
 package io.github.ardentengine.core.rendering;
 
-import java.util.Objects;
-
+/**
+ * Resource that represents a user-defined shader.
+ * Contains the code that the rendering api will use for rendering.
+ * <p>
+ *     Can be used in a {@link ShaderMaterial} to customize how visual instances are rendered.
+ * </p>
+ * <p>
+ *     The shader code is processed both at build time and when the shader file is loaded,
+ *     therefore the code may not correspond to the code written by the user in the {@code .glsl} file.
+ * </p>
+ */
+@SuppressWarnings("ClassCanBeRecord")
 public final class Shader {
 
-    private String vertexCode = "";
-    private String fragmentCode = "";
+    /**
+     * Code for the vertex shader.
+     * Must be a valid glsl program.
+     */
+    private final String vertexCode;
+    /**
+     * Code for the fragment shader.
+     * Must be a valid glsl program.
+     */
+    private final String fragmentCode;
 
-    // TODO: Shaders should be immutable because the shader code is processed at build time and it's pasted into the builtin shader when the shader is loaded
+    /**
+     * Creates a shader resource.
+     *
+     * @param vertexCode Code for the vertex shader. Must be a valid glsl program.
+     * @param fragmentCode Code for the fragment shader. Must be a valid glsl program.
+     */
+    public Shader(String vertexCode, String fragmentCode) {
+        this.vertexCode = vertexCode;
+        this.fragmentCode = fragmentCode;
+    }
 
+    /**
+     * Returns the code for the vertex shader.
+     *
+     * @return The code for the vertex shader.
+     */
     public String vertexCode() {
         return this.vertexCode;
     }
 
-    public void setVertexCode(String vertexCode) {
-        this.vertexCode = Objects.requireNonNullElse(vertexCode, "");
-    }
-
+    /**
+     * Returns the code for the fragment shader.
+     *
+     * @return The code for the fragment shader.
+     */
     public String fragmentCode() {
         return this.fragmentCode;
-    }
-
-    public void setFragmentCode(String fragmentCode) {
-        this.fragmentCode = Objects.requireNonNullElse(fragmentCode, "");
     }
 }

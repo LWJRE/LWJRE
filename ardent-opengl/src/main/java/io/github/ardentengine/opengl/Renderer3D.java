@@ -22,7 +22,7 @@ public final class Renderer3D {
     /** Batch used to group 3D lights to update the lights UBO before rendering. */
     private final HashSet<PointLight3D> lights = new HashSet<>();
 
-    private final Shader defaultShader = new Shader();
+    private final Shader defaultShader;
     private final Material3D defaultMaterial = new Material3D();
 
     private Renderer3D() {
@@ -35,8 +35,7 @@ public final class Renderer3D {
             if(vertexFile == null || fragmentFile == null) {
                 throw new RuntimeException(); // TODO: Better error handling
             }
-            this.defaultShader.setVertexCode(new String(vertexFile.readAllBytes()));
-            this.defaultShader.setFragmentCode(new String(fragmentFile.readAllBytes()));
+            this.defaultShader = new Shader(new String(vertexFile.readAllBytes()), new String(fragmentFile.readAllBytes()));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

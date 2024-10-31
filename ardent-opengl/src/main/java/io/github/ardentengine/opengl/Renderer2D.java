@@ -1,6 +1,9 @@
 package io.github.ardentengine.opengl;
 
-import io.github.ardentengine.core.rendering.*;
+import io.github.ardentengine.core.rendering.Material;
+import io.github.ardentengine.core.rendering.QuadMesh2D;
+import io.github.ardentengine.core.rendering.Shader;
+import io.github.ardentengine.core.rendering.ShaderMaterial;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -18,7 +21,7 @@ public final class Renderer2D {
     // TODO: Make something better than QuadMesh2D
     private final QuadMesh2D quadMesh = new QuadMesh2D();
 
-    private final Shader defaultShader = new Shader();
+    private final Shader defaultShader;
     private final Material defaultMaterial = new Material(); // TODO: Add a Material2D class
 
     private Renderer2D() {
@@ -31,8 +34,7 @@ public final class Renderer2D {
             if(vertexFile == null || fragmentFile == null) {
                 throw new RuntimeException(); // TODO: Better error handling
             }
-            this.defaultShader.setVertexCode(new String(vertexFile.readAllBytes()));
-            this.defaultShader.setFragmentCode(new String(fragmentFile.readAllBytes()));
+            this.defaultShader = new Shader(new String(vertexFile.readAllBytes()), new String(fragmentFile.readAllBytes()));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

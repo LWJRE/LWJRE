@@ -2,26 +2,36 @@ package io.github.ardentengine.core.resources;
 
 import io.github.ardentengine.core.logging.Logger;
 import io.github.ardentengine.core.math.*;
+import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.AbstractConstruct;
 import org.yaml.snakeyaml.constructor.Constructor;
-import org.yaml.snakeyaml.error.YAMLException;
 import org.yaml.snakeyaml.introspector.BeanAccess;
 import org.yaml.snakeyaml.nodes.*;
+import org.yaml.snakeyaml.representer.Representer;
 
 import java.io.IOException;
+import java.util.ServiceLoader;
 
 /**
- * Resource loader used to load resources serialized as YAML files.
- * Supports {@code .yaml} and {@code .yml} extensions.
- * Only supports YAML files containing a single YAML document.
- * If the YAML file begins with a class tag, the resource returned from the {@link YamlLoader#load(String)} method will be an instance of that class.
+ * Resource loader used to load resources serialized as Yaml files.
+ * <p>
+ *     Only supports files containing a single Yaml document.
+ *     If the Yaml file begins with a class tag, the resource returned from the {@link YamlLoader#load(String)} method will be an instance of that class.
+ * </p>
+ * <p>
+ *     Custom deserializer can be added by implementing the {@link YamlMappingDeserializer} or the {@link YamlSequenceDeserializer} interfaces.
+ *     Such deserializers must be registered as services in {@code META-INF/services}.
+ * </p>
+ * <p>
+ *     Supports {@code .yaml} and {@code .yml} extensions.
+ * </p>
  */
 public class YamlLoader implements ResourceLoader {
 
     /**
-     * YAML object.
+     * Yaml object.
      */
     private final Yaml yaml;
 
@@ -36,18 +46,21 @@ public class YamlLoader implements ResourceLoader {
         var loaderOptions = new LoaderOptions();
         loaderOptions.setAllowDuplicateKeys(false);
         loaderOptions.setTagInspector(tag -> true);
-        this.yaml = new Yaml(new LoaderConstructor(loaderOptions));
+        var representer = new Representer(new DumperOptions());
+        representer.getPropertyUtils().setSkipMissingProperties(true);
+        this.yaml = new Yaml(new LoaderConstructor(loaderOptions), representer);
         this.yaml.setBeanAccess(BeanAccess.FIELD);
     }
+
+    // TODO: Create tests for deserializing objects from yaml files
 
     @Override
     public Object load(String resourcePath) {
         try(var inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourcePath)) {
-            if(inputStream == null) {
-                Logger.error("Could not find resource " + resourcePath);
-            } else {
+            if(inputStream != null) {
                 return this.yaml.load(inputStream);
             }
+            Logger.error("Could not find resource " + resourcePath);
         } catch (IOException e) {
             Logger.error("Exception occurred while loading resource " + resourcePath, e);
         }
@@ -59,58 +72,58 @@ public class YamlLoader implements ResourceLoader {
         return new String[] {".yaml", ".yml"};
     }
 
-    /**
-     * YAML constructor needed to deserialize elements with specific tags.
-     */
     private static class LoaderConstructor extends Constructor {
 
-        /**
-         * Constructs a constructor.
-         *
-         * @param loadingConfig Loader options.
-         */
         public LoaderConstructor(LoaderOptions loadingConfig) {
             super(loadingConfig);
-            // TODO: Change this to use a ServiceLoader that supports any object and does not require changing this class every time
-            this.yamlConstructors.put(Tag.FLOAT, new ConstructActualFloat());
             this.yamlConstructors.put(new Tag("!getOrLoad"), new ConstructResource());
-            this.yamlConstructors.put(new Tag("!Vector2"), new ConstructVector2());
-            this.yamlConstructors.put(new Tag("!Vector3"), new ConstructVector3());
-            this.yamlConstructors.put(new Tag("!Vector4"), new ConstructVector4());
-            this.yamlConstructors.put(new Tag("!Vector2i"), new ConstructVector2i());
-            this.yamlConstructors.put(new Tag("!Vector3i"), new ConstructVector3i());
-            this.yamlConstructors.put(new Tag("!Vector4i"), new ConstructVector4i());
-            this.yamlConstructors.put(new Tag("!Color"), new ConstructColor());
-            this.yamlConstructors.put(new Tag("!Gradient"), new ConstructGradient());
-            this.yamlConstructors.put(new Tag(Class.class), new ConstructClass());
-        }
-
-        private class ConstructActualFloat extends ConstructYamlFloat {
-
-            @Override
-            public Object construct(Node node) {
-                var result = super.construct(node);
-                if(result instanceof Number number) {
-                    return number.floatValue();
+            this.yamlConstructors.put(new Tag("!vec2"), new ConstructVector2());
+            this.yamlConstructors.put(new Tag("!vec3"), new ConstructVector3());
+            this.yamlConstructors.put(new Tag("!vec4"), new ConstructVector4());
+            this.yamlConstructors.put(new Tag("!vec2i"), new ConstructVector2i());
+            this.yamlConstructors.put(new Tag("!vec3i"), new ConstructVector3i());
+            this.yamlConstructors.put(new Tag("!vec4i"), new ConstructVector4i());
+            this.yamlConstructors.put(new Tag("!color"), new ConstructColor());
+            this.yamlConstructors.put(new Tag("!quaternion"), new ConstructQuaternion());
+            this.yamlConstructors.put(new Tag("!class"), new ConstructClass());
+            for(var deserializer : ServiceLoader.load(YamlDeserializer.class)) {
+                var previous = this.yamlConstructors.putIfAbsent(new Tag(deserializer.getTag()), new CustomConstruct(deserializer));
+                if(previous != null) {
+                    Logger.error("Cannot add deserializer for " + deserializer.getTag() + " because " + previous + " already exists");
                 }
-                return result;
             }
         }
 
-        /**
-         * YAML construct used to deserialize resources using {@link ResourceManager#getOrLoad(String)}.
-         */
+        private class CustomConstruct extends AbstractConstruct {
+
+            private final YamlDeserializer deserializer;
+
+            private CustomConstruct(YamlDeserializer deserializer) {
+                this.deserializer = deserializer;
+            }
+
+            @Override
+            public Object construct(Node node) {
+                if(node instanceof MappingNode && this.deserializer instanceof YamlMappingDeserializer) {
+                    return ((YamlMappingDeserializer) this.deserializer).deserialize(constructMapping((MappingNode) node));
+                } else if(node instanceof SequenceNode && this.deserializer instanceof YamlSequenceDeserializer) {
+                    return ((YamlSequenceDeserializer) this.deserializer).deserialize(constructSequence((SequenceNode) node));
+                }
+                return null;
+            }
+        }
+
         private class ConstructResource extends ConstructScalar {
 
             @Override
             public Object construct(Node node) {
-                return ResourceManager.getOrLoad(constructScalar((ScalarNode) node));
+                if(node instanceof ScalarNode) {
+                    return ResourceManager.getOrLoad(constructScalar((ScalarNode) node));
+                }
+                return null;
             }
         }
 
-        /**
-         * YAML construct used to deserialize a {@link Vector2} from a sequence or mapping node.
-         */
         private class ConstructVector2 extends AbstractConstruct {
 
             @Override
@@ -126,9 +139,6 @@ public class YamlLoader implements ResourceLoader {
             }
         }
 
-        /**
-         * YAML construct used to deserialize a {@link Vector2i} from a sequence or mapping node.
-         */
         private class ConstructVector2i extends AbstractConstruct {
 
             @Override
@@ -144,9 +154,6 @@ public class YamlLoader implements ResourceLoader {
             }
         }
 
-        /**
-         * YAML construct used to deserialize a {@link Vector3} from a sequence or mapping node.
-         */
         private class ConstructVector3 extends AbstractConstruct {
 
             @Override
@@ -163,9 +170,6 @@ public class YamlLoader implements ResourceLoader {
             }
         }
 
-        /**
-         * YAML construct used to deserialize a {@link Vector3i} from a sequence or mapping node.
-         */
         private class ConstructVector3i extends AbstractConstruct {
 
             @Override
@@ -182,9 +186,6 @@ public class YamlLoader implements ResourceLoader {
             }
         }
 
-        /**
-         * YAML construct used to deserialize a {@link Vector4} from a sequence or mapping node.
-         */
         private class ConstructVector4 extends AbstractConstruct {
 
             @Override
@@ -202,9 +203,6 @@ public class YamlLoader implements ResourceLoader {
             }
         }
 
-        /**
-         * YAML construct used to deserialize a {@link Vector4i} from a sequence or mapping node.
-         */
         private class ConstructVector4i extends AbstractConstruct {
 
             @Override
@@ -222,9 +220,6 @@ public class YamlLoader implements ResourceLoader {
             }
         }
 
-        /**
-         * YAML construct used to deserialize a {@link Color} from a sequence or mapping node.
-         */
         private class ConstructColor extends AbstractConstruct {
 
             @Override
@@ -235,30 +230,27 @@ public class YamlLoader implements ResourceLoader {
                         !sequence.isEmpty() && sequence.get(0) instanceof Number n ? n.floatValue() : 0.0f,
                         sequence.size() > 1 && sequence.get(1) instanceof Number n ? n.floatValue() : 0.0f,
                         sequence.size() > 2 && sequence.get(2) instanceof Number n ? n.floatValue() : 0.0f,
-                        sequence.size() > 3 && sequence.get(3) instanceof Number n ? n.floatValue() : 0.0f
+                        sequence.size() > 3 && sequence.get(3) instanceof Number n ? n.floatValue() : 1.0f
                     );
                 }
-                return new Color(0.0f, 0.0f, 0.0f);
+                return Color.BLACK;
             }
         }
 
-        /**
-         * YAML construct used to deserialize a {@link Gradient} from a mapping node whose keys are offsets and whose values are colors.
-         */
-        private class ConstructGradient extends AbstractConstruct {
+        private class ConstructQuaternion extends AbstractConstruct {
 
             @Override
             public Object construct(Node node) {
-                var gradient = new Gradient();
-                if(node instanceof MappingNode mappingNode) {
-                    var mapping = constructMapping(mappingNode);
-                    for(var key : mapping.keySet()) {
-                        if(key instanceof Number offset && mapping.get(key) instanceof Color color) {
-                            gradient = gradient.withPoint(offset.floatValue(), color);
-                        }
-                    }
+                if(node instanceof SequenceNode sequenceNode) {
+                    var sequence = constructSequence(sequenceNode);
+                    return new Quaternion(
+                        !sequence.isEmpty() && sequence.get(0) instanceof Number n ? n.floatValue() : 0.0f,
+                        sequence.size() > 1 && sequence.get(1) instanceof Number n ? n.floatValue() : 0.0f,
+                        sequence.size() > 2 && sequence.get(2) instanceof Number n ? n.floatValue() : 0.0f,
+                        sequence.size() > 3 && sequence.get(3) instanceof Number n ? n.floatValue() : 0.0f
+                    );
                 }
-                return gradient;
+                return Quaternion.ZERO;
             }
         }
 
@@ -266,11 +258,15 @@ public class YamlLoader implements ResourceLoader {
 
             @Override
             public Object construct(Node node) {
-                try {
-                    return Class.forName(constructScalar((ScalarNode) node));
-                } catch (ClassNotFoundException e) {
-                    throw new YAMLException("Cannot construct class", e);
+                if(node instanceof ScalarNode) {
+                    var name = constructScalar((ScalarNode) node);
+                    try {
+                        return Class.forName(name);
+                    } catch (ClassNotFoundException e) {
+                        Logger.error("Cannot find class " + name, e);
+                    }
                 }
+                return null;
             }
         }
     }
